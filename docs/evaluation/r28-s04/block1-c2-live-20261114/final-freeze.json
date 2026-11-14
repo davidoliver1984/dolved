@@ -1,0 +1,10 @@
+{
+  "execution_head_before_and_after": "829bbf132429ab8d4b408e4df2654e1b76fd2070",
+  "implementation": "84f22f862e5001be998e6a8fe027f56a17db6941",
+  "runtime_aggregate_before_and_after": "7f20f123cb9e4af9567e0ea0240ebf715d54755ae2611dc66ecd6719756773af",
+  "main": "348f09e053c8ad73676921c5c616cced812111d7",
+  "application_changes": false,
+  "block_1": "HOLD",
+  "grading_performed": false,
+  "released_input_sha256": "7603fc82fc2f95f9852f584f28cc6a3d4949a2a30e17b8ab3b56a52ce4d2899f"
+}

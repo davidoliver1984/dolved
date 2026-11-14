@@ -1,0 +1,18 @@
+ Container dolved-r28-s03-ai-run-06da2fa05237 Creating 
+ Container dolved-r28-s03-ai-run-06da2fa05237 Created 
+ Container dolved-r28-s03-ai-run-192aa210726a Creating 
+ Container dolved-r28-s03-ai-run-192aa210726a Created 
+Runtime/schema/corpus snapshot unchanged
+ Container dolved-r28-s03-ai-run-e0664f34a089 Creating 
+ Container dolved-r28-s03-ai-run-e0664f34a089 Created 
+{"item": "G1", "action": "continue", "reason": "recorded_production_outcome_not_graded", "status": "completed", "grading": false}
+G1 completed; ungraded
+ Container dolved-r28-s03-ai-run-865462c3d582 Creating 
+ Container dolved-r28-s03-ai-run-865462c3d582 Created 
+ Container dolved-r28-s03-ai-run-372f64c0f7f3 Creating 
+ Container dolved-r28-s03-ai-run-372f64c0f7f3 Created 
+Runtime/schema/corpus snapshot unchanged
+ Container dolved-r28-s03-ai-run-71bd59e8205c Creating 
+ Container dolved-r28-s03-ai-run-71bd59e8205c Created 
+{"item": "G2", "action": "stop", "reason": "infrastructure_or_ambiguous:http_failure", "status": "retrieval_no_answer", "grading": false}
+

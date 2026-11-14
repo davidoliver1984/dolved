@@ -1,0 +1,28 @@
+{
+  "items": [
+    {
+      "item": "G1",
+      "run_id": "9e3b3b47-1483-46c9-b950-8f0fed9aa5e5"
+    },
+    {
+      "item": "G2",
+      "run_id": "0b18a268-2af5-4471-b390-ecac01a80154"
+    },
+    {
+      "item": "G3",
+      "run_id": "b3fe510a-0bd8-41de-a27b-071e71464366"
+    },
+    {
+      "item": "G4",
+      "run_id": "da7b99a1-53cd-4eb5-ac20-2968b3d3eb4e"
+    },
+    {
+      "item": "G5",
+      "run_id": "86f3bbec-ff64-4b4a-8c89-ea5abfe22291"
+    },
+    {
+      "item": "R16",
+      "run_id": "538566b3-a22d-4db6-83ee-8daeaa0dd7a4"
+    }
+  ]
+}

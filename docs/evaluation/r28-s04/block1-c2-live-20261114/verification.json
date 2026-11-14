@@ -1,0 +1,34 @@
+{
+  "dispatch_order": [
+    "G1",
+    "G2",
+    "G3",
+    "G4",
+    "G5",
+    "R16"
+  ],
+  "recorded_order": [
+    "G1",
+    "G2",
+    "G3",
+    "G4",
+    "G5",
+    "R16"
+  ],
+  "all_six_executed": true,
+  "once_only": true,
+  "unique_persisted_conversations": 6,
+  "one_user_turn_and_run_each": true,
+  "persistence_and_rendering_equal": true,
+  "ledger_final_hashes": {
+    "G1": "24240276e471f1181ba9b5a9b15bd0f85d4e43abeef952bb6532ad967c7f2816",
+    "G2": "e084f95d7c12c216249f55c40210101d9a287071305cc6c2d61b94cc5ce63ac1",
+    "G3": "3cb7255a945e58f5963de5a6bb7bde326ba7ebf9857c72221bd5ad5fd9a561e4",
+    "G4": "8a34fe3ede52537fda137e044cfe63e7d4898484acd0b55b1f70d4eff3791b2f",
+    "G5": "c8d65e9c7dc27e02939e420adc3cc97545b2fc121534d96ecaa72a191ad184d2",
+    "R16": "3a8b6d59c865409e910c6eaa510b168f4ba95ae2c85c06247dc619fc844612e1"
+  },
+  "input_sha256": "7603fc82fc2f95f9852f584f28cc6a3d4949a2a30e17b8ab3b56a52ce4d2899f",
+  "grading_performed": false,
+  "provider_calls_for_verification": 0
+}

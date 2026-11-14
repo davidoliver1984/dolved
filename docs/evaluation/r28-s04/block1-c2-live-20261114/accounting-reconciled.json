@@ -1,0 +1,3915 @@
+{
+  "summary": {
+    "recorded_and_retained_rate_subtotal_usd": 0.08847327,
+    "rerank_allowance_usd": 0.0021876,
+    "uncertainty_reserve_usd": 0.5,
+    "conservative_total_usd": 0.59066087,
+    "cap_usd": 1.5,
+    "invoice_total_available": false,
+    "service_calls": 32,
+    "physical_provider_attempt_count": null,
+    "reported_provider_input_tokens": 294359,
+    "reported_provider_output_tokens": 13328
+  },
+  "receipts": [
+    {
+      "item": "G1",
+      "call": "da8ebad0-9958-4669-8949-0c6ea5250493:0",
+      "path": "/api/internal/retrieval/plan-needs",
+      "receipt": {
+        "stage": "planner",
+        "provider": "openai",
+        "model": "gpt-5-mini",
+        "execution": "provider_api",
+        "request_count": 2,
+        "retry_count": 0,
+        "provider_attempt_count": null,
+        "provider_retry_count": null,
+        "outer_attempt_count": null,
+        "outer_retry_count": null,
+        "rate_limit_event_count": null,
+        "retry_delays": [],
+        "first_provider_attempt_at": null,
+        "final_provider_success_at": null,
+        "provider_retry_elapsed_ms": null,
+        "input_tokens": 19658,
+        "cached_input_tokens": null,
+        "output_tokens": 1116,
+        "latency_ms": 19705.208842999127,
+        "cost_basis": "unavailable",
+        "cost_usd": null,
+        "pricing_snapshot": null,
+        "validation_attempts": [
+          {
+            "attempt": 1,
+            "request_count": 2,
+            "retry_count": 0,
+            "status": "accepted",
+            "category": null,
+            "input_tokens": 19658,
+            "output_tokens": 1116,
+            "latency_ms": 19705.208842999127,
+            "cost_usd": null,
+            "cost_basis": "unavailable",
+            "interpretation_check": {
+              "version": "interpretation-check-v2",
+              "code": "accepted",
+              "checker_code": "accepted",
+              "citation": null,
+              "citation_verification": "not_applicable",
+              "verification_reason": null,
+              "provider": "openai",
+              "model": "gpt-5-mini",
+              "request_count": 1,
+              "input_tokens": 1043,
+              "output_tokens": 87,
+              "latency_ms": 2669.290085003013,
+              "cost_basis": "unavailable",
+              "cost_usd": null,
+              "reviewed_plan": {
+                "schema_version": "evidence-needs-plan-v4",
+                "decision": "plan",
+                "clarification": null,
+                "needs": [
+                  {
+                    "need_id": "n1",
+                    "aspect": "What was the maximum opening allowed for a window restrictor on an upstairs resident's window in March 2025?",
+                    "central": true,
+                    "question_span": {
+                      "turn_id": "user-1",
+                      "quote": "What was the maximum opening allowed for a window restrictor on an upstairs resident's window in March 2025?"
+                    },
+                    "context_spans": [],
+                    "operation": "retrieve",
+                    "authority": {
+                      "kind": "period",
+                      "value": "2025-03",
+                      "precision": "month",
+                      "source": {
+                        "turn_id": "user-1",
+                        "quote": "March 2025"
+                      }
+                    },
+                    "fact_reference": null,
+                    "applicability": {
+                      "kind": "generic",
+                      "source": null
+                    },
+                    "claim_under_test": null,
+                    "scope_question": null,
+                    "supports_need_id": null
+                  }
+                ],
+                "bindings": [
+                  {
+                    "need_id": "n1",
+                    "subject_status": "topic",
+                    "family_ids": [],
+                    "ownership": "authorised_workspace",
+                    "ownership_source": null
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "accounted_usd": 0.0071465,
+      "basis": "retained_2026-08-19_rate_estimate",
+      "allowance_usd": 0
+    },
+    {
+      "item": "G1",
+      "call": "aa2910f9-6702-49b8-97d5-35b4b3e38052:1",
+      "path": "/api/internal/retrieval/search",
+      "receipt": {
+        "stage": "dense_embedding",
+        "provider": "voyage",
+        "model": "voyage-4-large",
+        "execution": "provider_api",
+        "request_count": 1,
+        "retry_count": 0,
+        "provider_attempt_count": 1,
+        "provider_retry_count": 0,
+        "outer_attempt_count": null,
+        "outer_retry_count": null,
+        "rate_limit_event_count": 0,
+        "retry_delays": [],
+        "first_provider_attempt_at": "2026-11-14T11:39:34.694076Z",
+        "final_provider_success_at": "2026-11-14T11:39:35.028573Z",
+        "provider_retry_elapsed_ms": 0,
+        "input_tokens": 24,
+        "cached_input_tokens": null,
+        "output_tokens": null,
+        "latency_ms": 341.2106670002686,
+        "cost_basis": "estimated",
+        "cost_usd": 2.88e-06,
+        "pricing_snapshot": "voyage-pricing-2026-08-12"
+      },
+      "accounted_usd": 2.88e-06,
+      "basis": "estimated",
+      "allowance_usd": 0
+    },
+    {
+      "item": "G1",
+      "call": "aa2910f9-6702-49b8-97d5-35b4b3e38052:1",
+      "path": "/api/internal/retrieval/search",
+      "receipt": {
+        "stage": "qdrant_dense_search",
+        "provider": "qdrant",
+        "model": "rag-platform-vectors-v1",
+        "execution": "infrastructure",
+        "request_count": 1,
+        "retry_count": 0,
+        "provider_attempt_count": null,
+        "provider_retry_count": null,
+        "outer_attempt_count": null,
+        "outer_retry_count": null,
+        "rate_limit_event_count": null,
+        "retry_delays": [],
+        "first_provider_attempt_at": null,
+        "final_provider_success_at": null,
+        "provider_retry_elapsed_ms": null,
+        "input_tokens": null,
+        "cached_input_tokens": null,
+        "output_tokens": null,
+        "latency_ms": 91.41266700316919,
+        "cost_basis": "unavailable",
+        "cost_usd": null,
+        "pricing_snapshot": null
+      },
+      "accounted_usd": null,
+      "basis": "unavailable",
+      "allowance_usd": 0
+    },
+    {
+      "item": "G1",
+      "call": "aa2910f9-6702-49b8-97d5-35b4b3e38052:1",
+      "path": "/api/internal/retrieval/search",
+      "receipt": {
+        "stage": "sparse_encoding",
+        "provider": "fastembed",
+        "model": "prithivida/Splade_PP_en_v1",
+        "execution": "local",
+        "request_count": 1,
+        "retry_count": 0,
+        "provider_attempt_count": null,
+        "provider_retry_count": null,
+        "outer_attempt_count": null,
+        "outer_retry_count": null,
+        "rate_limit_event_count": null,
+        "retry_delays": [],
+        "first_provider_attempt_at": null,
+        "final_provider_success_at": null,
+        "provider_retry_elapsed_ms": null,
+        "input_tokens": null,
+        "cached_input_tokens": null,
+        "output_tokens": null,
+        "latency_ms": 3076.761374999478,
+        "cost_basis": "zero_cost_local",
+        "cost_usd": 0,
+        "pricing_snapshot": null
+      },
+      "accounted_usd": 0,
+      "basis": "zero_cost_local",
+      "allowance_usd": 0
+    },
+    {
+      "item": "G1",
+      "call": "aa2910f9-6702-49b8-97d5-35b4b3e38052:1",
+      "path": "/api/internal/retrieval/search",
+      "receipt": {
+        "stage": "qdrant_sparse_search",
+        "provider": "qdrant",
+        "model": "rag-platform-vectors-v1",
+        "execution": "infrastructure",
+        "request_count": 1,
+        "retry_count": 0,
+        "provider_attempt_count": null,
+        "provider_retry_count": null,
+        "outer_attempt_count": null,
+        "outer_retry_count": null,
+        "rate_limit_event_count": null,
+        "retry_delays": [],
+        "first_provider_attempt_at": null,
+        "final_provider_success_at": null,
+        "provider_retry_elapsed_ms": null,
+        "input_tokens": null,
+        "cached_input_tokens": null,
+        "output_tokens": null,
+        "latency_ms": 53.222832997562364,
+        "cost_basis": "unavailable",
+        "cost_usd": null,
+        "pricing_snapshot": null
+      },
+      "accounted_usd": null,
+      "basis": "unavailable",
+      "allowance_usd": 0
+    },
+    {
+      "item": "G1",
+      "call": "14927dee-db60-4386-a453-e2a851857780:2",
+      "path": "/api/internal/retrieval/rerank",
+      "receipt": {
+        "stage": "reranking",
+        "provider": "voyage",
+        "model": "rerank-2.5",
+        "cost_usd": null,
+        "cost_basis": "unavailable",
+        "input_tokens": 6580,
+        "provider_input_tokens": 6580,
+        "provider_attempt_count": 1,
+        "provider_retry_count": 0,
+        "rate_limit_event_count": 0,
+        "retry_delays": [],
+        "first_provider_attempt_at": "2026-11-14T11:39:38.618668Z",
+        "final_provider_success_at": "2026-11-14T11:39:38.896107Z",
+        "provider_retry_elapsed_seconds": 0
+      },
+      "accounted_usd": null,
+      "basis": "unavailable",
+      "allowance_usd": 0.000329
+    },
+    {
+      "item": "G1",
+      "call": "5ae6b873-1e6c-45cc-8415-8c65cc290141:3",
+      "path": "/api/internal/retrieval/compare-family",
+      "receipt": {
+        "stage": "compare_family_selection",
+        "provider": "openai",
+        "model": "gpt-5-mini",
+        "execution": "provider_api",
+        "request_count": 1,
+        "retry_count": 0,
+        "provider_attempt_count": null,
+        "provider_retry_count": null,
+        "outer_attempt_count": null,
+        "outer_retry_count": null,
+        "rate_limit_event_count": null,
+        "retry_delays": [],
+        "first_provider_attempt_at": null,
+        "final_provider_success_at": null,
+        "provider_retry_elapsed_ms": null,
+        "input_tokens": 5329,
+        "cached_input_tokens": null,
+        "output_tokens": 336,
+        "latency_ms": 6642.442585995013,
+        "cost_basis": "unavailable",
+        "cost_usd": null,
+        "pricing_snapshot": null
+      },
+      "accounted_usd": 0.00200425,
+      "basis": "retained_2026-08-19_rate_estimate",
+      "allowance_usd": 0
+    },
+    {
+      "item": "G1",
+      "call": "8920a7e9-1c8c-4717-b5e7-ae7e2750c3c0:4",
+      "path": "/api/internal/retrieval/search",
+      "receipt": {
+        "stage": "dense_embedding",
+        "provider": "voyage",
+        "model": "voyage-4-large",
+        "execution": "provider_api",
+        "request_count": 1,
+        "retry_count": 0,
+        "provider_attempt_count": 1,
+        "provider_retry_count": 0,
+        "outer_attempt_count": null,
+        "outer_retry_count": null,
+        "rate_limit_event_count": 0,
+        "retry_delays": [],
+        "first_provider_attempt_at": "2026-11-14T11:39:45.933355Z",
+        "final_provider_success_at": "2026-11-14T11:39:46.214997Z",
+        "provider_retry_elapsed_ms": 0,
+        "input_tokens": 24,
+        "cached_input_tokens": null,
+        "output_tokens": null,
+        "latency_ms": 286.33675000310177,
+        "cost_basis": "estimated",
+        "cost_usd": 2.88e-06,
+        "pricing_snapshot": "voyage-pricing-2026-08-12"
+      },
+      "accounted_usd": 2.88e-06,
+      "basis": "estimated",
+      "allowance_usd": 0
+    },
+    {
+      "item": "G1",
+      "call": "8920a7e9-1c8c-4717-b5e7-ae7e2750c3c0:4",
+      "path": "/api/internal/retrieval/search",
+      "receipt": {
+        "stage": "qdrant_dense_search",
+        "provider": "qdrant",
+        "model": "rag-platform-vectors-v1",
+        "execution": "infrastructure",
+        "request_count": 1,
+        "retry_count": 0,
+        "provider_attempt_count": null,
+        "provider_retry_count": null,
+        "outer_attempt_count": null,
+        "outer_retry_count": null,
+        "rate_limit_event_count": null,
+        "retry_delays": [],
+        "first_provider_attempt_at": null,
+        "final_provider_success_at": null,
+        "provider_retry_elapsed_ms": null,
+        "input_tokens": null,
+        "cached_input_tokens": null,
+        "output_tokens": null,
+        "latency_ms": 92.88883300177986,
+        "cost_basis": "unavailable",
+        "cost_usd": null,
+        "pricing_snapshot": null
+      },
+      "accounted_usd": null,
+      "basis": "unavailable",
+      "allowance_usd": 0
+    },
+    {
+      "item": "G1",
+      "call": "8920a7e9-1c8c-4717-b5e7-ae7e2750c3c0:4",
+      "path": "/api/internal/retrieval/search",
+      "receipt": {
+        "stage": "sparse_encoding",
+        "provider": "fastembed",
+        "model": "prithivida/Splade_PP_en_v1",
+        "execution": "local",
+        "request_count": 1,
+        "retry_count": 0,
+        "provider_attempt_count": null,
+        "provider_retry_count": null,
+        "outer_attempt_count": null,
+        "outer_retry_count": null,
+        "rate_limit_event_count": null,
+        "retry_delays": [],
+        "first_provider_attempt_at": null,
+        "final_provider_success_at": null,
+        "provider_retry_elapsed_ms": null,
+        "input_tokens": null,
+        "cached_input_tokens": null,
+        "output_tokens": null,
+        "latency_ms": 6670.323669997742,
+        "cost_basis": "zero_cost_local",
+        "cost_usd": 0,
+        "pricing_snapshot": null
+      },
+      "accounted_usd": 0,
+      "basis": "zero_cost_local",
+      "allowance_usd": 0
+    },
+    {
+      "item": "G1",
+      "call": "8920a7e9-1c8c-4717-b5e7-ae7e2750c3c0:4",
+      "path": "/api/internal/retrieval/search",
+      "receipt": {
+        "stage": "qdrant_sparse_search",
+        "provider": "qdrant",
+        "model": "rag-platform-vectors-v1",
+        "execution": "infrastructure",
+        "request_count": 1,
+        "retry_count": 0,
+        "provider_attempt_count": null,
+        "provider_retry_count": null,
+        "outer_attempt_count": null,
+        "outer_retry_count": null,
+        "rate_limit_event_count": null,
+        "retry_delays": [],
+        "first_provider_attempt_at": null,
+        "final_provider_success_at": null,
+        "provider_retry_elapsed_ms": null,
+        "input_tokens": null,
+        "cached_input_tokens": null,
+        "output_tokens": null,
+        "latency_ms": 90.02708299522055,
+        "cost_basis": "unavailable",
+        "cost_usd": null,
+        "pricing_snapshot": null
+      },
+      "accounted_usd": null,
+      "basis": "unavailable",
+      "allowance_usd": 0
+    },
+    {
+      "item": "G1",
+      "call": "f048c2a9-bddb-4110-9ad7-654eb6394580:5",
+      "path": "/api/internal/retrieval/rerank",
+      "receipt": {
+        "stage": "reranking",
+        "provider": "voyage",
+        "model": "rerank-2.5",
+        "cost_usd": null,
+        "cost_basis": "unavailable",
+        "input_tokens": 833,
+        "provider_input_tokens": 833,
+        "provider_attempt_count": 1,
+        "provider_retry_count": 0,
+        "rate_limit_event_count": 0,
+        "retry_delays": [],
+        "first_provider_attempt_at": "2026-11-14T11:39:53.330249Z",
+        "final_provider_success_at": "2026-11-14T11:39:53.551451Z",
+        "provider_retry_elapsed_seconds": 0
+      },
+      "accounted_usd": null,
+      "basis": "unavailable",
+      "allowance_usd": 4.165e-05
+    },
+    {
+      "item": "G1",
+      "call": "fc99bf50-2cdf-4e12-9133-eb77413dbd3d:6",
+      "path": "/api/internal/retrieval/generation/answer-needs",
+      "receipt": {
+        "stage": "generation",
+        "provider": "openai",
+        "model": "gpt-5-mini",
+        "execution": "provider_api",
+        "prompt_version": "grounded-generation-temporal-v2",
+        "contract_version": "generation-result-v4",
+        "adapter_version": "openai-responses-temporal-v2",
+        "generation_fingerprint": "63233d5e2d34484c97d787a27ac92d4988fc6bfc0007dd25c5fa5ecfe99c76d9",
+        "reasoning_effort": "low",
+        "max_output_tokens": 4096,
+        "request_count": 2,
+        "retry_count": 0,
+        "measured_input_tokens": 5790,
+        "input_tokens": 7734,
+        "cached_input_tokens": 0,
+        "output_tokens": 704,
+        "latency_ms": 8564.891586996964,
+        "cost_usd": 0.0033415,
+        "cost_basis": "estimated",
+        "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+        "entailment_review": {
+          "stage": "generation",
+          "provider": "openai",
+          "model": "gpt-5-mini",
+          "request_count": 1,
+          "retry_count": 0,
+          "input_tokens": 2066,
+          "output_tokens": 219,
+          "cached_input_tokens": 0,
+          "latency_ms": 9364.30800400558,
+          "cost_usd": 0.0009545,
+          "cost_basis": "estimated",
+          "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19"
+        }
+      },
+      "accounted_usd": 0.0033415,
+      "basis": "estimated",
+      "allowance_usd": 0
+    },
+    {
+      "item": "G2",
+      "call": "90b0fcc0-2580-4c03-944f-22d141ef6f4d:0",
+      "path": "/api/internal/retrieval/plan-needs",
+      "receipt": null,
+      "accounted_usd": null,
+      "basis": null,
+      "allowance_usd": 0
+    },
+    {
+      "item": "G2",
+      "call": "retained_planner_attempts",
+      "path": "persisted:planner_failure",
+      "receipt": {
+        "request_count": 1,
+        "retry_count": 0,
+        "input_tokens": 18618,
+        "output_tokens": 1070,
+        "cached_input_tokens": null,
+        "latency_ms": 16379.613549004716,
+        "cost_usd": null,
+        "pricing_snapshot": null,
+        "cost_basis": "unavailable",
+        "validation": {
+          "stage": "schema",
+          "field": "needs.0.fact_reference",
+          "code": "fact_date_precision"
+        },
+        "status": "rejected",
+        "provider": "openai",
+        "model": "gpt-5-mini"
+      },
+      "accounted_usd": 0.0067945,
+      "basis": "retained_2026-08-19_rate_estimate",
+      "allowance_usd": 0
+    },
+    {
+      "item": "G2",
+      "call": "retained_planner_attempts",
+      "path": "persisted:planner_failure",
+      "receipt": {
+        "request_count": 1,
+        "retry_count": 0,
+        "input_tokens": 18705,
+        "output_tokens": 902,
+        "cached_input_tokens": null,
+        "latency_ms": 14219.261256002937,
+        "cost_usd": null,
+        "pricing_snapshot": null,
+        "cost_basis": "unavailable",
+        "validation": {
+          "stage": "schema",
+          "field": "needs.0.fact_reference",
+          "code": "fact_date_precision"
+        },
+        "status": "rejected",
+        "provider": "openai",
+        "model": "gpt-5-mini"
+      },
+      "accounted_usd": 0.00648025,
+      "basis": "retained_2026-08-19_rate_estimate",
+      "allowance_usd": 0
+    },
+    {
+      "item": "G3",
+      "call": "2798f4e2-ff49-44ae-ba0e-ed121cd449d3:0",
+      "path": "/api/internal/retrieval/plan-needs",
+      "receipt": null,
+      "accounted_usd": null,
+      "basis": null,
+      "allowance_usd": 0
+    },
+    {
+      "item": "G3",
+      "call": "retained_planner_attempts",
+      "path": "persisted:planner_failure",
+      "receipt": {
+        "request_count": 1,
+        "retry_count": 0,
+        "input_tokens": 18632,
+        "output_tokens": 1030,
+        "cached_input_tokens": null,
+        "latency_ms": 14550.568172999192,
+        "cost_usd": null,
+        "pricing_snapshot": null,
+        "cost_basis": "unavailable",
+        "validation": {
+          "stage": "schema",
+          "field": "needs.0.fact_reference",
+          "code": "fact_date_precision"
+        },
+        "status": "rejected",
+        "provider": "openai",
+        "model": "gpt-5-mini"
+      },
+      "accounted_usd": 0.006718,
+      "basis": "retained_2026-08-19_rate_estimate",
+      "allowance_usd": 0
+    },
+    {
+      "item": "G3",
+      "call": "retained_planner_attempts",
+      "path": "persisted:planner_failure",
+      "receipt": {
+        "request_count": 1,
+        "retry_count": 0,
+        "input_tokens": 18719,
+        "output_tokens": 1035,
+        "cached_input_tokens": null,
+        "latency_ms": 14063.006839998707,
+        "cost_usd": null,
+        "pricing_snapshot": null,
+        "cost_basis": "unavailable",
+        "validation": {
+          "stage": "grounding",
+          "field": "root",
+          "code": "temporal_relation_grounding"
+        },
+        "status": "rejected",
+        "provider": "openai",
+        "model": "gpt-5-mini"
+      },
+      "accounted_usd": 0.00674975,
+      "basis": "retained_2026-08-19_rate_estimate",
+      "allowance_usd": 0
+    },
+    {
+      "item": "G4",
+      "call": "66ec30d0-81be-4b59-8984-23a27d0e2aab:0",
+      "path": "/api/internal/retrieval/plan-needs",
+      "receipt": {
+        "stage": "planner",
+        "provider": "openai",
+        "model": "gpt-5-mini",
+        "execution": "provider_api",
+        "request_count": 2,
+        "retry_count": 0,
+        "provider_attempt_count": null,
+        "provider_retry_count": null,
+        "outer_attempt_count": null,
+        "outer_retry_count": null,
+        "rate_limit_event_count": null,
+        "retry_delays": [],
+        "first_provider_attempt_at": null,
+        "final_provider_success_at": null,
+        "provider_retry_elapsed_ms": null,
+        "input_tokens": 19927,
+        "cached_input_tokens": null,
+        "output_tokens": 1461,
+        "latency_ms": 20508.363885004655,
+        "cost_basis": "unavailable",
+        "cost_usd": null,
+        "pricing_snapshot": null,
+        "validation_attempts": [
+          {
+            "attempt": 1,
+            "request_count": 2,
+            "retry_count": 0,
+            "status": "accepted",
+            "category": null,
+            "input_tokens": 19927,
+            "output_tokens": 1461,
+            "latency_ms": 20508.363885004655,
+            "cost_usd": null,
+            "cost_basis": "unavailable",
+            "interpretation_check": {
+              "version": "interpretation-check-v2",
+              "code": "accepted",
+              "checker_code": "accepted",
+              "citation": null,
+              "citation_verification": "not_applicable",
+              "verification_reason": null,
+              "provider": "openai",
+              "model": "gpt-5-mini",
+              "request_count": 1,
+              "input_tokens": 1311,
+              "output_tokens": 87,
+              "latency_ms": 2537.92533500382,
+              "cost_basis": "unavailable",
+              "cost_usd": null,
+              "reviewed_plan": {
+                "schema_version": "evidence-needs-plan-v4",
+                "decision": "plan",
+                "clarification": null,
+                "needs": [
+                  {
+                    "need_id": "n1",
+                    "aspect": "How often did IT have to run a backup test restoration in July 2025, and how often is it now?",
+                    "central": true,
+                    "question_span": {
+                      "turn_id": "user-1",
+                      "quote": "How often did IT have to run a backup test restoration in July 2025"
+                    },
+                    "context_spans": [
+                      {
+                        "turn_id": "user-1",
+                        "quote": "How often did IT have to run a backup test restoration in July 2025, and how often is it now?"
+                      }
+                    ],
+                    "operation": "retrieve",
+                    "authority": {
+                      "kind": "period",
+                      "value": "2025-07",
+                      "precision": "month",
+                      "source": {
+                        "turn_id": "user-1",
+                        "quote": "July 2025"
+                      }
+                    },
+                    "fact_reference": null,
+                    "applicability": {
+                      "kind": "generic",
+                      "source": null
+                    },
+                    "claim_under_test": null,
+                    "scope_question": null,
+                    "supports_need_id": null
+                  },
+                  {
+                    "need_id": "n2",
+                    "aspect": "How often did IT have to run a backup test restoration in July 2025, and how often is it now?",
+                    "central": true,
+                    "question_span": {
+                      "turn_id": "user-1",
+                      "quote": "and how often is it now?"
+                    },
+                    "context_spans": [
+                      {
+                        "turn_id": "user-1",
+                        "quote": "How often did IT have to run a backup test restoration in July 2025, and how often is it now?"
+                      },
+                      {
+                        "turn_id": "user-1",
+                        "quote": "run a backup test restoration"
+                      }
+                    ],
+                    "operation": "retrieve",
+                    "authority": {
+                      "kind": "current",
+                      "value": null,
+                      "precision": "none",
+                      "source": null
+                    },
+                    "fact_reference": null,
+                    "applicability": {
+                      "kind": "generic",
+                      "source": null
+                    },
+                    "claim_under_test": null,
+                    "scope_question": null,
+                    "supports_need_id": null
+                  }
+                ],
+                "bindings": [
+                  {
+                    "need_id": "n1",
+                    "subject_status": "topic",
+                    "family_ids": [],
+                    "ownership": "authorised_workspace",
+                    "ownership_source": null
+                  },
+                  {
+                    "need_id": "n2",
+                    "subject_status": "topic",
+                    "family_ids": [],
+                    "ownership": "authorised_workspace",
+                    "ownership_source": null
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "accounted_usd": 0.00790375,
+      "basis": "retained_2026-08-19_rate_estimate",
+      "allowance_usd": 0
+    },
+    {
+      "item": "G4",
+      "call": "3d0a925b-d368-4338-92a1-42a0a63ec020:1",
+      "path": "/api/internal/retrieval/search",
+      "receipt": {
+        "stage": "dense_embedding",
+        "provider": "voyage",
+        "model": "voyage-4-large",
+        "execution": "provider_api",
+        "request_count": 1,
+        "retry_count": 0,
+        "provider_attempt_count": 1,
+        "provider_retry_count": 0,
+        "outer_attempt_count": null,
+        "outer_retry_count": null,
+        "rate_limit_event_count": 0,
+        "retry_delays": [],
+        "first_provider_attempt_at": "2026-11-14T11:44:05.695019Z",
+        "final_provider_success_at": "2026-11-14T11:44:05.980625Z",
+        "provider_retry_elapsed_ms": 0,
+        "input_tokens": 25,
+        "cached_input_tokens": null,
+        "output_tokens": null,
+        "latency_ms": 293.30974999902537,
+        "cost_basis": "estimated",
+        "cost_usd": 3e-06,
+        "pricing_snapshot": "voyage-pricing-2026-08-12"
+      },
+      "accounted_usd": 3e-06,
+      "basis": "estimated",
+      "allowance_usd": 0
+    },
+    {
+      "item": "G4",
+      "call": "3d0a925b-d368-4338-92a1-42a0a63ec020:1",
+      "path": "/api/internal/retrieval/search",
+      "receipt": {
+        "stage": "qdrant_dense_search",
+        "provider": "qdrant",
+        "model": "rag-platform-vectors-v1",
+        "execution": "infrastructure",
+        "request_count": 1,
+        "retry_count": 0,
+        "provider_attempt_count": null,
+        "provider_retry_count": null,
+        "outer_attempt_count": null,
+        "outer_retry_count": null,
+        "rate_limit_event_count": null,
+        "retry_delays": [],
+        "first_provider_attempt_at": null,
+        "final_provider_success_at": null,
+        "provider_retry_elapsed_ms": null,
+        "input_tokens": null,
+        "cached_input_tokens": null,
+        "output_tokens": null,
+        "latency_ms": 66.12204100383678,
+        "cost_basis": "unavailable",
+        "cost_usd": null,
+        "pricing_snapshot": null
+      },
+      "accounted_usd": null,
+      "basis": "unavailable",
+      "allowance_usd": 0
+    },
+    {
+      "item": "G4",
+      "call": "3d0a925b-d368-4338-92a1-42a0a63ec020:1",
+      "path": "/api/internal/retrieval/search",
+      "receipt": {
+        "stage": "sparse_encoding",
+        "provider": "fastembed",
+        "model": "prithivida/Splade_PP_en_v1",
+        "execution": "local",
+        "request_count": 1,
+        "retry_count": 0,
+        "provider_attempt_count": null,
+        "provider_retry_count": null,
+        "outer_attempt_count": null,
+        "outer_retry_count": null,
+        "rate_limit_event_count": null,
+        "retry_delays": [],
+        "first_provider_attempt_at": null,
+        "final_provider_success_at": null,
+        "provider_retry_elapsed_ms": null,
+        "input_tokens": null,
+        "cached_input_tokens": null,
+        "output_tokens": null,
+        "latency_ms": 3151.4933349972125,
+        "cost_basis": "zero_cost_local",
+        "cost_usd": 0,
+        "pricing_snapshot": null
+      },
+      "accounted_usd": 0,
+      "basis": "zero_cost_local",
+      "allowance_usd": 0
+    },
+    {
+      "item": "G4",
+      "call": "3d0a925b-d368-4338-92a1-42a0a63ec020:1",
+      "path": "/api/internal/retrieval/search",
+      "receipt": {
+        "stage": "qdrant_sparse_search",
+        "provider": "qdrant",
+        "model": "rag-platform-vectors-v1",
+        "execution": "infrastructure",
+        "request_count": 1,
+        "retry_count": 0,
+        "provider_attempt_count": null,
+        "provider_retry_count": null,
+        "outer_attempt_count": null,
+        "outer_retry_count": null,
+        "rate_limit_event_count": null,
+        "retry_delays": [],
+        "first_provider_attempt_at": null,
+        "final_provider_success_at": null,
+        "provider_retry_elapsed_ms": null,
+        "input_tokens": null,
+        "cached_input_tokens": null,
+        "output_tokens": null,
+        "latency_ms": 49.21420800383203,
+        "cost_basis": "unavailable",
+        "cost_usd": null,
+        "pricing_snapshot": null
+      },
+      "accounted_usd": null,
+      "basis": "unavailable",
+      "allowance_usd": 0
+    },
+    {
+      "item": "G4",
+      "call": "ece6f8c7-2404-44e2-8ffa-6f5a6b8040af:2",
+      "path": "/api/internal/retrieval/rerank",
+      "receipt": {
+        "stage": "reranking",
+        "provider": "voyage",
+        "model": "rerank-2.5",
+        "cost_usd": null,
+        "cost_basis": "unavailable",
+        "input_tokens": 6842,
+        "provider_input_tokens": 6842,
+        "provider_attempt_count": 1,
+        "provider_retry_count": 0,
+        "rate_limit_event_count": 0,
+        "retry_delays": [],
+        "first_provider_attempt_at": "2026-11-14T11:44:09.722355Z",
+        "final_provider_success_at": "2026-11-14T11:44:09.990297Z",
+        "provider_retry_elapsed_seconds": 0
+      },
+      "accounted_usd": null,
+      "basis": "unavailable",
+      "allowance_usd": 0.0003421
+    },
+    {
+      "item": "G4",
+      "call": "3c0681c4-4901-4bd5-90fc-c9e7cda27711:3",
+      "path": "/api/internal/retrieval/compare-family",
+      "receipt": {
+        "stage": "compare_family_selection",
+        "provider": "openai",
+        "model": "gpt-5-mini",
+        "execution": "provider_api",
+        "request_count": 1,
+        "retry_count": 0,
+        "provider_attempt_count": null,
+        "provider_retry_count": null,
+        "outer_attempt_count": null,
+        "outer_retry_count": null,
+        "rate_limit_event_count": null,
+        "retry_delays": [],
+        "first_provider_attempt_at": null,
+        "final_provider_success_at": null,
+        "provider_retry_elapsed_ms": null,
+        "input_tokens": 5285,
+        "cached_input_tokens": null,
+        "output_tokens": 418,
+        "latency_ms": 5753.468877002888,
+        "cost_basis": "unavailable",
+        "cost_usd": null,
+        "pricing_snapshot": null
+      },
+      "accounted_usd": 0.00215725,
+      "basis": "retained_2026-08-19_rate_estimate",
+      "allowance_usd": 0
+    },
+    {
+      "item": "G4",
+      "call": "af47bfb7-1f7c-4266-8aa5-c3a96c925150:4",
+      "path": "/api/internal/retrieval/search",
+      "receipt": {
+        "stage": "dense_embedding",
+        "provider": "voyage",
+        "model": "voyage-4-large",
+        "execution": "provider_api",
+        "request_count": 1,
+        "retry_count": 0,
+        "provider_attempt_count": 1,
+        "provider_retry_count": 0,
+        "outer_attempt_count": null,
+        "outer_retry_count": null,
+        "rate_limit_event_count": 0,
+        "retry_delays": [],
+        "first_provider_attempt_at": "2026-11-14T11:44:16.526285Z",
+        "final_provider_success_at": "2026-11-14T11:44:17.233119Z",
+        "provider_retry_elapsed_ms": 0,
+        "input_tokens": 25,
+        "cached_input_tokens": null,
+        "output_tokens": null,
+        "latency_ms": 712.2174999967683,
+        "cost_basis": "estimated",
+        "cost_usd": 3e-06,
+        "pricing_snapshot": "voyage-pricing-2026-08-12"
+      },
+      "accounted_usd": 3e-06,
+      "basis": "estimated",
+      "allowance_usd": 0
+    },
+    {
+      "item": "G4",
+      "call": "af47bfb7-1f7c-4266-8aa5-c3a96c925150:4",
+      "path": "/api/internal/retrieval/search",
+      "receipt": {
+        "stage": "qdrant_dense_search",
+        "provider": "qdrant",
+        "model": "rag-platform-vectors-v1",
+        "execution": "infrastructure",
+        "request_count": 1,
+        "retry_count": 0,
+        "provider_attempt_count": null,
+        "provider_retry_count": null,
+        "outer_attempt_count": null,
+        "outer_retry_count": null,
+        "rate_limit_event_count": null,
+        "retry_delays": [],
+        "first_provider_attempt_at": null,
+        "final_provider_success_at": null,
+        "provider_retry_elapsed_ms": null,
+        "input_tokens": null,
+        "cached_input_tokens": null,
+        "output_tokens": null,
+        "latency_ms": 31.443375002709217,
+        "cost_basis": "unavailable",
+        "cost_usd": null,
+        "pricing_snapshot": null
+      },
+      "accounted_usd": null,
+      "basis": "unavailable",
+      "allowance_usd": 0
+    },
+    {
+      "item": "G4",
+      "call": "af47bfb7-1f7c-4266-8aa5-c3a96c925150:4",
+      "path": "/api/internal/retrieval/search",
+      "receipt": {
+        "stage": "sparse_encoding",
+        "provider": "fastembed",
+        "model": "prithivida/Splade_PP_en_v1",
+        "execution": "local",
+        "request_count": 1,
+        "retry_count": 0,
+        "provider_attempt_count": null,
+        "provider_retry_count": null,
+        "outer_attempt_count": null,
+        "outer_retry_count": null,
+        "rate_limit_event_count": null,
+        "retry_delays": [],
+        "first_provider_attempt_at": null,
+        "final_provider_success_at": null,
+        "provider_retry_elapsed_ms": null,
+        "input_tokens": null,
+        "cached_input_tokens": null,
+        "output_tokens": null,
+        "latency_ms": 1759.0107930009253,
+        "cost_basis": "zero_cost_local",
+        "cost_usd": 0,
+        "pricing_snapshot": null
+      },
+      "accounted_usd": 0,
+      "basis": "zero_cost_local",
+      "allowance_usd": 0
+    },
+    {
+      "item": "G4",
+      "call": "af47bfb7-1f7c-4266-8aa5-c3a96c925150:4",
+      "path": "/api/internal/retrieval/search",
+      "receipt": {
+        "stage": "qdrant_sparse_search",
+        "provider": "qdrant",
+        "model": "rag-platform-vectors-v1",
+        "execution": "infrastructure",
+        "request_count": 1,
+        "retry_count": 0,
+        "provider_attempt_count": null,
+        "provider_retry_count": null,
+        "outer_attempt_count": null,
+        "outer_retry_count": null,
+        "rate_limit_event_count": null,
+        "retry_delays": [],
+        "first_provider_attempt_at": null,
+        "final_provider_success_at": null,
+        "provider_retry_elapsed_ms": null,
+        "input_tokens": null,
+        "cached_input_tokens": null,
+        "output_tokens": null,
+        "latency_ms": 49.09820899774786,
+        "cost_basis": "unavailable",
+        "cost_usd": null,
+        "pricing_snapshot": null
+      },
+      "accounted_usd": null,
+      "basis": "unavailable",
+      "allowance_usd": 0
+    },
+    {
+      "item": "G4",
+      "call": "28dba441-b5fb-4e60-a6cb-b5bd39412c0a:5",
+      "path": "/api/internal/retrieval/rerank",
+      "receipt": {
+        "stage": "reranking",
+        "provider": "voyage",
+        "model": "rerank-2.5",
+        "cost_usd": null,
+        "cost_basis": "unavailable",
+        "input_tokens": 7121,
+        "provider_input_tokens": 7121,
+        "provider_attempt_count": 1,
+        "provider_retry_count": 0,
+        "rate_limit_event_count": 0,
+        "retry_delays": [],
+        "first_provider_attempt_at": "2026-11-14T11:44:19.933751Z",
+        "final_provider_success_at": "2026-11-14T11:44:20.213369Z",
+        "provider_retry_elapsed_seconds": 0
+      },
+      "accounted_usd": null,
+      "basis": "unavailable",
+      "allowance_usd": 0.00035605
+    },
+    {
+      "item": "G4",
+      "call": "98bd574c-56d9-4d40-8de8-02679176739f:6",
+      "path": "/api/internal/retrieval/search",
+      "receipt": {
+        "stage": "dense_embedding",
+        "provider": "voyage",
+        "model": "voyage-4-large",
+        "execution": "provider_api",
+        "request_count": 1,
+        "retry_count": 0,
+        "provider_attempt_count": 1,
+        "provider_retry_count": 0,
+        "outer_attempt_count": null,
+        "outer_retry_count": null,
+        "rate_limit_event_count": 0,
+        "retry_delays": [],
+        "first_provider_attempt_at": "2026-11-14T11:44:21.098155Z",
+        "final_provider_success_at": "2026-11-14T11:44:21.365833Z",
+        "provider_retry_elapsed_ms": 0,
+        "input_tokens": 25,
+        "cached_input_tokens": null,
+        "output_tokens": null,
+        "latency_ms": 284.04083300119964,
+        "cost_basis": "estimated",
+        "cost_usd": 3e-06,
+        "pricing_snapshot": "voyage-pricing-2026-08-12"
+      },
+      "accounted_usd": 3e-06,
+      "basis": "estimated",
+      "allowance_usd": 0
+    },
+    {
+      "item": "G4",
+      "call": "98bd574c-56d9-4d40-8de8-02679176739f:6",
+      "path": "/api/internal/retrieval/search",
+      "receipt": {
+        "stage": "qdrant_dense_search",
+        "provider": "qdrant",
+        "model": "rag-platform-vectors-v1",
+        "execution": "infrastructure",
+        "request_count": 1,
+        "retry_count": 0,
+        "provider_attempt_count": null,
+        "provider_retry_count": null,
+        "outer_attempt_count": null,
+        "outer_retry_count": null,
+        "rate_limit_event_count": null,
+        "retry_delays": [],
+        "first_provider_attempt_at": null,
+        "final_provider_success_at": null,
+        "provider_retry_elapsed_ms": null,
+        "input_tokens": null,
+        "cached_input_tokens": null,
+        "output_tokens": null,
+        "latency_ms": 29.129041999112815,
+        "cost_basis": "unavailable",
+        "cost_usd": null,
+        "pricing_snapshot": null
+      },
+      "accounted_usd": null,
+      "basis": "unavailable",
+      "allowance_usd": 0
+    },
+    {
+      "item": "G4",
+      "call": "98bd574c-56d9-4d40-8de8-02679176739f:6",
+      "path": "/api/internal/retrieval/search",
+      "receipt": {
+        "stage": "sparse_encoding",
+        "provider": "fastembed",
+        "model": "prithivida/Splade_PP_en_v1",
+        "execution": "local",
+        "request_count": 1,
+        "retry_count": 0,
+        "provider_attempt_count": null,
+        "provider_retry_count": null,
+        "outer_attempt_count": null,
+        "outer_retry_count": null,
+        "rate_limit_event_count": null,
+        "retry_delays": [],
+        "first_provider_attempt_at": null,
+        "final_provider_success_at": null,
+        "provider_retry_elapsed_ms": null,
+        "input_tokens": null,
+        "cached_input_tokens": null,
+        "output_tokens": null,
+        "latency_ms": 1346.5494589981972,
+        "cost_basis": "zero_cost_local",
+        "cost_usd": 0,
+        "pricing_snapshot": null
+      },
+      "accounted_usd": 0,
+      "basis": "zero_cost_local",
+      "allowance_usd": 0
+    },
+    {
+      "item": "G4",
+      "call": "98bd574c-56d9-4d40-8de8-02679176739f:6",
+      "path": "/api/internal/retrieval/search",
+      "receipt": {
+        "stage": "qdrant_sparse_search",
+        "provider": "qdrant",
+        "model": "rag-platform-vectors-v1",
+        "execution": "infrastructure",
+        "request_count": 1,
+        "retry_count": 0,
+        "provider_attempt_count": null,
+        "provider_retry_count": null,
+        "outer_attempt_count": null,
+        "outer_retry_count": null,
+        "rate_limit_event_count": null,
+        "retry_delays": [],
+        "first_provider_attempt_at": null,
+        "final_provider_success_at": null,
+        "provider_retry_elapsed_ms": null,
+        "input_tokens": null,
+        "cached_input_tokens": null,
+        "output_tokens": null,
+        "latency_ms": 53.44212499767309,
+        "cost_basis": "unavailable",
+        "cost_usd": null,
+        "pricing_snapshot": null
+      },
+      "accounted_usd": null,
+      "basis": "unavailable",
+      "allowance_usd": 0
+    },
+    {
+      "item": "G4",
+      "call": "959e4f88-f268-4e35-8829-79c8e9cb8b44:7",
+      "path": "/api/internal/retrieval/rerank",
+      "receipt": {
+        "stage": "reranking",
+        "provider": "voyage",
+        "model": "rerank-2.5",
+        "cost_usd": null,
+        "cost_basis": "unavailable",
+        "input_tokens": 6842,
+        "provider_input_tokens": 6842,
+        "provider_attempt_count": 1,
+        "provider_retry_count": 0,
+        "rate_limit_event_count": 0,
+        "retry_delays": [],
+        "first_provider_attempt_at": "2026-11-14T11:44:23.213537Z",
+        "final_provider_success_at": "2026-11-14T11:44:23.504157Z",
+        "provider_retry_elapsed_seconds": 0
+      },
+      "accounted_usd": null,
+      "basis": "unavailable",
+      "allowance_usd": 0.0003421
+    },
+    {
+      "item": "G4",
+      "call": "ea80dec5-dd3c-47b9-abf2-5c7ce7ed541c:8",
+      "path": "/api/internal/retrieval/compare-family",
+      "receipt": {
+        "stage": "compare_family_selection",
+        "provider": "openai",
+        "model": "gpt-5-mini",
+        "execution": "provider_api",
+        "request_count": 1,
+        "retry_count": 0,
+        "provider_attempt_count": null,
+        "provider_retry_count": null,
+        "outer_attempt_count": null,
+        "outer_retry_count": null,
+        "rate_limit_event_count": null,
+        "retry_delays": [],
+        "first_provider_attempt_at": null,
+        "final_provider_success_at": null,
+        "provider_retry_elapsed_ms": null,
+        "input_tokens": 5285,
+        "cached_input_tokens": null,
+        "output_tokens": 527,
+        "latency_ms": 6766.4860029981355,
+        "cost_basis": "unavailable",
+        "cost_usd": null,
+        "pricing_snapshot": null
+      },
+      "accounted_usd": 0.00237525,
+      "basis": "retained_2026-08-19_rate_estimate",
+      "allowance_usd": 0
+    },
+    {
+      "item": "G4",
+      "call": "d7c5147d-b0be-4ac5-995b-8176f2168b84:9",
+      "path": "/api/internal/retrieval/search",
+      "receipt": {
+        "stage": "dense_embedding",
+        "provider": "voyage",
+        "model": "voyage-4-large",
+        "execution": "provider_api",
+        "request_count": 1,
+        "retry_count": 0,
+        "provider_attempt_count": 1,
+        "provider_retry_count": 0,
+        "outer_attempt_count": null,
+        "outer_retry_count": null,
+        "rate_limit_event_count": 0,
+        "retry_delays": [],
+        "first_provider_attempt_at": "2026-11-14T11:44:30.707587Z",
+        "final_provider_success_at": "2026-11-14T11:44:30.983454Z",
+        "provider_retry_elapsed_ms": 0,
+        "input_tokens": 25,
+        "cached_input_tokens": null,
+        "output_tokens": null,
+        "latency_ms": 281.5589169986197,
+        "cost_basis": "estimated",
+        "cost_usd": 3e-06,
+        "pricing_snapshot": "voyage-pricing-2026-08-12"
+      },
+      "accounted_usd": 3e-06,
+      "basis": "estimated",
+      "allowance_usd": 0
+    },
+    {
+      "item": "G4",
+      "call": "d7c5147d-b0be-4ac5-995b-8176f2168b84:9",
+      "path": "/api/internal/retrieval/search",
+      "receipt": {
+        "stage": "qdrant_dense_search",
+        "provider": "qdrant",
+        "model": "rag-platform-vectors-v1",
+        "execution": "infrastructure",
+        "request_count": 1,
+        "retry_count": 0,
+        "provider_attempt_count": null,
+        "provider_retry_count": null,
+        "outer_attempt_count": null,
+        "outer_retry_count": null,
+        "rate_limit_event_count": null,
+        "retry_delays": [],
+        "first_provider_attempt_at": null,
+        "final_provider_success_at": null,
+        "provider_retry_elapsed_ms": null,
+        "input_tokens": null,
+        "cached_input_tokens": null,
+        "output_tokens": null,
+        "latency_ms": 63.646292001067195,
+        "cost_basis": "unavailable",
+        "cost_usd": null,
+        "pricing_snapshot": null
+      },
+      "accounted_usd": null,
+      "basis": "unavailable",
+      "allowance_usd": 0
+    },
+    {
+      "item": "G4",
+      "call": "d7c5147d-b0be-4ac5-995b-8176f2168b84:9",
+      "path": "/api/internal/retrieval/search",
+      "receipt": {
+        "stage": "sparse_encoding",
+        "provider": "fastembed",
+        "model": "prithivida/Splade_PP_en_v1",
+        "execution": "local",
+        "request_count": 1,
+        "retry_count": 0,
+        "provider_attempt_count": null,
+        "provider_retry_count": null,
+        "outer_attempt_count": null,
+        "outer_retry_count": null,
+        "rate_limit_event_count": null,
+        "retry_delays": [],
+        "first_provider_attempt_at": null,
+        "final_provider_success_at": null,
+        "provider_retry_elapsed_ms": null,
+        "input_tokens": null,
+        "cached_input_tokens": null,
+        "output_tokens": null,
+        "latency_ms": 1262.5243759976001,
+        "cost_basis": "zero_cost_local",
+        "cost_usd": 0,
+        "pricing_snapshot": null
+      },
+      "accounted_usd": 0,
+      "basis": "zero_cost_local",
+      "allowance_usd": 0
+    },
+    {
+      "item": "G4",
+      "call": "d7c5147d-b0be-4ac5-995b-8176f2168b84:9",
+      "path": "/api/internal/retrieval/search",
+      "receipt": {
+        "stage": "qdrant_sparse_search",
+        "provider": "qdrant",
+        "model": "rag-platform-vectors-v1",
+        "execution": "infrastructure",
+        "request_count": 1,
+        "retry_count": 0,
+        "provider_attempt_count": null,
+        "provider_retry_count": null,
+        "outer_attempt_count": null,
+        "outer_retry_count": null,
+        "rate_limit_event_count": null,
+        "retry_delays": [],
+        "first_provider_attempt_at": null,
+        "final_provider_success_at": null,
+        "provider_retry_elapsed_ms": null,
+        "input_tokens": null,
+        "cached_input_tokens": null,
+        "output_tokens": null,
+        "latency_ms": 87.96683300170116,
+        "cost_basis": "unavailable",
+        "cost_usd": null,
+        "pricing_snapshot": null
+      },
+      "accounted_usd": null,
+      "basis": "unavailable",
+      "allowance_usd": 0
+    },
+    {
+      "item": "G4",
+      "call": "81bcecd5-a82a-4c7b-b72c-7d53efa736fb:10",
+      "path": "/api/internal/retrieval/rerank",
+      "receipt": {
+        "stage": "reranking",
+        "provider": "voyage",
+        "model": "rerank-2.5",
+        "cost_usd": null,
+        "cost_basis": "unavailable",
+        "input_tokens": 1414,
+        "provider_input_tokens": 1414,
+        "provider_attempt_count": 1,
+        "provider_retry_count": 0,
+        "rate_limit_event_count": 0,
+        "retry_delays": [],
+        "first_provider_attempt_at": "2026-11-14T11:44:32.484192Z",
+        "final_provider_success_at": "2026-11-14T11:44:32.708980Z",
+        "provider_retry_elapsed_seconds": 0
+      },
+      "accounted_usd": null,
+      "basis": "unavailable",
+      "allowance_usd": 7.07e-05
+    },
+    {
+      "item": "G4",
+      "call": "adebdd70-e927-496b-afe4-5633c361511d:11",
+      "path": "/api/internal/retrieval/generation/answer-needs",
+      "receipt": {
+        "stage": "generation",
+        "provider": "openai",
+        "model": "gpt-5-mini",
+        "execution": "provider_api",
+        "prompt_version": "grounded-generation-temporal-v2",
+        "contract_version": "generation-result-v4",
+        "adapter_version": "openai-responses-temporal-v2",
+        "generation_fingerprint": "63233d5e2d34484c97d787a27ac92d4988fc6bfc0007dd25c5fa5ecfe99c76d9",
+        "reasoning_effort": "low",
+        "max_output_tokens": 4096,
+        "request_count": 2,
+        "retry_count": 0,
+        "measured_input_tokens": 12431,
+        "input_tokens": 21733,
+        "cached_input_tokens": 1792,
+        "output_tokens": 1098,
+        "latency_ms": 10110.82400399755,
+        "cost_usd": 0.00722605,
+        "cost_basis": "estimated",
+        "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+        "entailment_review": {
+          "stage": "generation",
+          "provider": "openai",
+          "model": "gpt-5-mini",
+          "request_count": 1,
+          "retry_count": 0,
+          "input_tokens": 9424,
+          "output_tokens": 306,
+          "cached_input_tokens": 0,
+          "latency_ms": 4683.813251998799,
+          "cost_usd": 0.002968,
+          "cost_basis": "estimated",
+          "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19"
+        }
+      },
+      "accounted_usd": 0.00722605,
+      "basis": "estimated",
+      "allowance_usd": 0
+    },
+    {
+      "item": "G5",
+      "call": "b5eeb848-4ab1-4527-84e2-e154b46728ca:0",
+      "path": "/api/internal/retrieval/plan-needs",
+      "receipt": {
+        "stage": "planner",
+        "provider": "openai",
+        "model": "gpt-5-mini",
+        "execution": "provider_api",
+        "request_count": 2,
+        "retry_count": 0,
+        "provider_attempt_count": null,
+        "provider_retry_count": null,
+        "outer_attempt_count": null,
+        "outer_retry_count": null,
+        "rate_limit_event_count": null,
+        "retry_delays": [],
+        "first_provider_attempt_at": null,
+        "final_provider_success_at": null,
+        "provider_retry_elapsed_ms": null,
+        "input_tokens": 19589,
+        "cached_input_tokens": null,
+        "output_tokens": 692,
+        "latency_ms": 11631.282713999099,
+        "cost_basis": "unavailable",
+        "cost_usd": null,
+        "pricing_snapshot": null,
+        "validation_attempts": [
+          {
+            "attempt": 1,
+            "request_count": 2,
+            "retry_count": 0,
+            "status": "accepted",
+            "category": null,
+            "input_tokens": 19589,
+            "output_tokens": 692,
+            "latency_ms": 11631.282713999099,
+            "cost_usd": null,
+            "cost_basis": "unavailable",
+            "interpretation_check": {
+              "version": "interpretation-check-v2",
+              "code": "accepted",
+              "checker_code": "accepted",
+              "citation": null,
+              "citation_verification": "not_applicable",
+              "verification_reason": null,
+              "provider": "openai",
+              "model": "gpt-5-mini",
+              "request_count": 1,
+              "input_tokens": 986,
+              "output_tokens": 23,
+              "latency_ms": 1525.2002510023885,
+              "cost_basis": "unavailable",
+              "cost_usd": null,
+              "reviewed_plan": {
+                "schema_version": "evidence-needs-plan-v4",
+                "decision": "plan",
+                "clarification": null,
+                "needs": [
+                  {
+                    "need_id": "n1",
+                    "aspect": "How often should a care assistant have a supervision meeting?",
+                    "central": true,
+                    "question_span": {
+                      "turn_id": "user-1",
+                      "quote": "How often should a care assistant have a supervision meeting?"
+                    },
+                    "context_spans": [],
+                    "operation": "retrieve",
+                    "authority": {
+                      "kind": "current",
+                      "value": null,
+                      "precision": "none",
+                      "source": null
+                    },
+                    "fact_reference": null,
+                    "applicability": {
+                      "kind": "generic",
+                      "source": null
+                    },
+                    "claim_under_test": null,
+                    "scope_question": null,
+                    "supports_need_id": null
+                  }
+                ],
+                "bindings": [
+                  {
+                    "need_id": "n1",
+                    "subject_status": "topic",
+                    "family_ids": [],
+                    "ownership": "authorised_workspace",
+                    "ownership_source": null
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "accounted_usd": 0.00628125,
+      "basis": "retained_2026-08-19_rate_estimate",
+      "allowance_usd": 0
+    },
+    {
+      "item": "G5",
+      "call": "8c774227-6122-4af7-908e-dd861977255d:1",
+      "path": "/api/internal/retrieval/search",
+      "receipt": {
+        "stage": "dense_embedding",
+        "provider": "voyage",
+        "model": "voyage-4-large",
+        "execution": "provider_api",
+        "request_count": 1,
+        "retry_count": 0,
+        "provider_attempt_count": 1,
+        "provider_retry_count": 0,
+        "outer_attempt_count": null,
+        "outer_retry_count": null,
+        "rate_limit_event_count": 0,
+        "retry_delays": [],
+        "first_provider_attempt_at": "2026-11-14T11:45:04.258061Z",
+        "final_provider_success_at": "2026-11-14T11:45:04.951179Z",
+        "provider_retry_elapsed_ms": 0,
+        "input_tokens": 10,
+        "cached_input_tokens": null,
+        "output_tokens": null,
+        "latency_ms": 702.3704590028501,
+        "cost_basis": "estimated",
+        "cost_usd": 1.2e-06,
+        "pricing_snapshot": "voyage-pricing-2026-08-12"
+      },
+      "accounted_usd": 1.2e-06,
+      "basis": "estimated",
+      "allowance_usd": 0
+    },
+    {
+      "item": "G5",
+      "call": "8c774227-6122-4af7-908e-dd861977255d:1",
+      "path": "/api/internal/retrieval/search",
+      "receipt": {
+        "stage": "qdrant_dense_search",
+        "provider": "qdrant",
+        "model": "rag-platform-vectors-v1",
+        "execution": "infrastructure",
+        "request_count": 1,
+        "retry_count": 0,
+        "provider_attempt_count": null,
+        "provider_retry_count": null,
+        "outer_attempt_count": null,
+        "outer_retry_count": null,
+        "rate_limit_event_count": null,
+        "retry_delays": [],
+        "first_provider_attempt_at": null,
+        "final_provider_success_at": null,
+        "provider_retry_elapsed_ms": null,
+        "input_tokens": null,
+        "cached_input_tokens": null,
+        "output_tokens": null,
+        "latency_ms": 68.00491600006353,
+        "cost_basis": "unavailable",
+        "cost_usd": null,
+        "pricing_snapshot": null
+      },
+      "accounted_usd": null,
+      "basis": "unavailable",
+      "allowance_usd": 0
+    },
+    {
+      "item": "G5",
+      "call": "8c774227-6122-4af7-908e-dd861977255d:1",
+      "path": "/api/internal/retrieval/search",
+      "receipt": {
+        "stage": "sparse_encoding",
+        "provider": "fastembed",
+        "model": "prithivida/Splade_PP_en_v1",
+        "execution": "local",
+        "request_count": 1,
+        "retry_count": 0,
+        "provider_attempt_count": null,
+        "provider_retry_count": null,
+        "outer_attempt_count": null,
+        "outer_retry_count": null,
+        "rate_limit_event_count": null,
+        "retry_delays": [],
+        "first_provider_attempt_at": null,
+        "final_provider_success_at": null,
+        "provider_retry_elapsed_ms": null,
+        "input_tokens": null,
+        "cached_input_tokens": null,
+        "output_tokens": null,
+        "latency_ms": 2013.769459001196,
+        "cost_basis": "zero_cost_local",
+        "cost_usd": 0,
+        "pricing_snapshot": null
+      },
+      "accounted_usd": 0,
+      "basis": "zero_cost_local",
+      "allowance_usd": 0
+    },
+    {
+      "item": "G5",
+      "call": "8c774227-6122-4af7-908e-dd861977255d:1",
+      "path": "/api/internal/retrieval/search",
+      "receipt": {
+        "stage": "qdrant_sparse_search",
+        "provider": "qdrant",
+        "model": "rag-platform-vectors-v1",
+        "execution": "infrastructure",
+        "request_count": 1,
+        "retry_count": 0,
+        "provider_attempt_count": null,
+        "provider_retry_count": null,
+        "outer_attempt_count": null,
+        "outer_retry_count": null,
+        "rate_limit_event_count": null,
+        "retry_delays": [],
+        "first_provider_attempt_at": null,
+        "final_provider_success_at": null,
+        "provider_retry_elapsed_ms": null,
+        "input_tokens": null,
+        "cached_input_tokens": null,
+        "output_tokens": null,
+        "latency_ms": 56.645374999789055,
+        "cost_basis": "unavailable",
+        "cost_usd": null,
+        "pricing_snapshot": null
+      },
+      "accounted_usd": null,
+      "basis": "unavailable",
+      "allowance_usd": 0
+    },
+    {
+      "item": "G5",
+      "call": "1c8565f3-f64e-4355-b8b2-e62f4cfe1ea8:2",
+      "path": "/api/internal/retrieval/rerank",
+      "receipt": {
+        "stage": "reranking",
+        "provider": "voyage",
+        "model": "rerank-2.5",
+        "cost_usd": null,
+        "cost_basis": "unavailable",
+        "input_tokens": 6537,
+        "provider_input_tokens": 6537,
+        "provider_attempt_count": 1,
+        "provider_retry_count": 0,
+        "rate_limit_event_count": 0,
+        "retry_delays": [],
+        "first_provider_attempt_at": "2026-11-14T11:45:07.715598Z",
+        "final_provider_success_at": "2026-11-14T11:45:08.003453Z",
+        "provider_retry_elapsed_seconds": 0
+      },
+      "accounted_usd": null,
+      "basis": "unavailable",
+      "allowance_usd": 0.00032685
+    },
+    {
+      "item": "G5",
+      "call": "45ff68fb-a140-4a12-95c0-33dc6860c91d:3",
+      "path": "/api/internal/retrieval/generation/answer-needs",
+      "receipt": {
+        "stage": "generation",
+        "provider": "openai",
+        "model": "gpt-5-mini",
+        "execution": "provider_api",
+        "prompt_version": "grounded-generation-needs-v12",
+        "contract_version": "generation-result-v3",
+        "adapter_version": "openai-responses-needs-v4",
+        "generation_fingerprint": "7f1bf6ca0e581fe7a84be0a9b67f61c1f5a106b65267d3cef9ce2cb90e842fab",
+        "reasoning_effort": "low",
+        "max_output_tokens": 4096,
+        "request_count": 2,
+        "retry_count": 0,
+        "measured_input_tokens": 26377,
+        "input_tokens": 41205,
+        "cached_input_tokens": 0,
+        "output_tokens": 746,
+        "latency_ms": 7145.427712006494,
+        "cost_usd": 0.01179325,
+        "cost_basis": "estimated",
+        "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+        "entailment_review": {
+          "stage": "generation",
+          "provider": "openai",
+          "model": "gpt-5-mini",
+          "request_count": 1,
+          "retry_count": 0,
+          "input_tokens": 14905,
+          "output_tokens": 200,
+          "cached_input_tokens": 0,
+          "latency_ms": 2929.7078349991352,
+          "cost_usd": 0.00412625,
+          "cost_basis": "estimated",
+          "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19"
+        }
+      },
+      "accounted_usd": 0.01179325,
+      "basis": "estimated",
+      "allowance_usd": 0
+    },
+    {
+      "item": "R16",
+      "call": "e5121dd3-769c-40ec-be98-d62385bb3328:0",
+      "path": "/api/internal/retrieval/plan-needs",
+      "receipt": {
+        "stage": "planner",
+        "provider": "openai",
+        "model": "gpt-5-mini",
+        "execution": "provider_api",
+        "request_count": 2,
+        "retry_count": 0,
+        "provider_attempt_count": null,
+        "provider_retry_count": null,
+        "outer_attempt_count": null,
+        "outer_retry_count": null,
+        "rate_limit_event_count": null,
+        "retry_delays": [],
+        "first_provider_attempt_at": null,
+        "final_provider_success_at": null,
+        "provider_retry_elapsed_ms": null,
+        "input_tokens": 19755,
+        "cached_input_tokens": null,
+        "output_tokens": 1015,
+        "latency_ms": 12445.087548003357,
+        "cost_basis": "unavailable",
+        "cost_usd": null,
+        "pricing_snapshot": null,
+        "validation_attempts": [
+          {
+            "attempt": 1,
+            "request_count": 2,
+            "retry_count": 0,
+            "status": "accepted",
+            "category": null,
+            "input_tokens": 19755,
+            "output_tokens": 1015,
+            "latency_ms": 12445.087548003357,
+            "cost_usd": null,
+            "cost_basis": "unavailable",
+            "interpretation_check": {
+              "version": "interpretation-check-v2",
+              "code": "accepted",
+              "checker_code": "accepted",
+              "citation": null,
+              "citation_verification": "not_applicable",
+              "verification_reason": null,
+              "provider": "openai",
+              "model": "gpt-5-mini",
+              "request_count": 1,
+              "input_tokens": 1147,
+              "output_tokens": 87,
+              "latency_ms": 1860.6391260036617,
+              "cost_basis": "unavailable",
+              "cost_usd": null,
+              "reviewed_plan": {
+                "schema_version": "evidence-needs-plan-v4",
+                "decision": "plan",
+                "clarification": null,
+                "needs": [
+                  {
+                    "need_id": "n1",
+                    "aspect": "Harbour View daily cleaning 1 February 2026 Who provided the daily cleaning at Harbour View on 1 February 2026?",
+                    "central": true,
+                    "question_span": {
+                      "turn_id": "user-1",
+                      "quote": "Who provided the daily cleaning at Harbour View on 1 February 2026?"
+                    },
+                    "context_spans": [
+                      {
+                        "turn_id": "user-1",
+                        "quote": "Harbour View"
+                      },
+                      {
+                        "turn_id": "user-1",
+                        "quote": "daily cleaning"
+                      },
+                      {
+                        "turn_id": "user-1",
+                        "quote": "1 February 2026"
+                      },
+                      {
+                        "turn_id": "user-1",
+                        "quote": "Who provided the daily cleaning at Harbour View on 1 February 2026?"
+                      }
+                    ],
+                    "operation": "retrieve",
+                    "authority": {
+                      "kind": "current",
+                      "value": null,
+                      "precision": "none",
+                      "source": null
+                    },
+                    "fact_reference": {
+                      "value": "2026-02-01",
+                      "precision": "day",
+                      "source": {
+                        "turn_id": "user-1",
+                        "quote": "1 February 2026"
+                      }
+                    },
+                    "applicability": {
+                      "kind": "named",
+                      "source": {
+                        "turn_id": "user-1",
+                        "quote": "Harbour View"
+                      }
+                    },
+                    "claim_under_test": null,
+                    "scope_question": null,
+                    "supports_need_id": null
+                  }
+                ],
+                "bindings": [
+                  {
+                    "need_id": "n1",
+                    "subject_status": "topic",
+                    "family_ids": [],
+                    "ownership": "authorised_workspace",
+                    "ownership_source": null
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "accounted_usd": 0.00696875,
+      "basis": "retained_2026-08-19_rate_estimate",
+      "allowance_usd": 0
+    },
+    {
+      "item": "R16",
+      "call": "36a88b50-c1d0-4268-b860-4e076d3dc4e4:1",
+      "path": "/api/internal/retrieval/search",
+      "receipt": {
+        "stage": "dense_embedding",
+        "provider": "voyage",
+        "model": "voyage-4-large",
+        "execution": "provider_api",
+        "request_count": 1,
+        "retry_count": 0,
+        "provider_attempt_count": 1,
+        "provider_retry_count": 0,
+        "outer_attempt_count": null,
+        "outer_retry_count": null,
+        "rate_limit_event_count": 0,
+        "retry_delays": [],
+        "first_provider_attempt_at": "2026-11-14T11:45:35.184672Z",
+        "final_provider_success_at": "2026-11-14T11:45:35.464022Z",
+        "provider_retry_elapsed_ms": 0,
+        "input_tokens": 29,
+        "cached_input_tokens": null,
+        "output_tokens": null,
+        "latency_ms": 284.61508399777813,
+        "cost_basis": "estimated",
+        "cost_usd": 3.48e-06,
+        "pricing_snapshot": "voyage-pricing-2026-08-12"
+      },
+      "accounted_usd": 3.48e-06,
+      "basis": "estimated",
+      "allowance_usd": 0
+    },
+    {
+      "item": "R16",
+      "call": "36a88b50-c1d0-4268-b860-4e076d3dc4e4:1",
+      "path": "/api/internal/retrieval/search",
+      "receipt": {
+        "stage": "qdrant_dense_search",
+        "provider": "qdrant",
+        "model": "rag-platform-vectors-v1",
+        "execution": "infrastructure",
+        "request_count": 1,
+        "retry_count": 0,
+        "provider_attempt_count": null,
+        "provider_retry_count": null,
+        "outer_attempt_count": null,
+        "outer_retry_count": null,
+        "rate_limit_event_count": null,
+        "retry_delays": [],
+        "first_provider_attempt_at": null,
+        "final_provider_success_at": null,
+        "provider_retry_elapsed_ms": null,
+        "input_tokens": null,
+        "cached_input_tokens": null,
+        "output_tokens": null,
+        "latency_ms": 62.61570900096558,
+        "cost_basis": "unavailable",
+        "cost_usd": null,
+        "pricing_snapshot": null
+      },
+      "accounted_usd": null,
+      "basis": "unavailable",
+      "allowance_usd": 0
+    },
+    {
+      "item": "R16",
+      "call": "36a88b50-c1d0-4268-b860-4e076d3dc4e4:1",
+      "path": "/api/internal/retrieval/search",
+      "receipt": {
+        "stage": "sparse_encoding",
+        "provider": "fastembed",
+        "model": "prithivida/Splade_PP_en_v1",
+        "execution": "local",
+        "request_count": 1,
+        "retry_count": 0,
+        "provider_attempt_count": null,
+        "provider_retry_count": null,
+        "outer_attempt_count": null,
+        "outer_retry_count": null,
+        "rate_limit_event_count": null,
+        "retry_delays": [],
+        "first_provider_attempt_at": null,
+        "final_provider_success_at": null,
+        "provider_retry_elapsed_ms": null,
+        "input_tokens": null,
+        "cached_input_tokens": null,
+        "output_tokens": null,
+        "latency_ms": 2087.4856249938603,
+        "cost_basis": "zero_cost_local",
+        "cost_usd": 0,
+        "pricing_snapshot": null
+      },
+      "accounted_usd": 0,
+      "basis": "zero_cost_local",
+      "allowance_usd": 0
+    },
+    {
+      "item": "R16",
+      "call": "36a88b50-c1d0-4268-b860-4e076d3dc4e4:1",
+      "path": "/api/internal/retrieval/search",
+      "receipt": {
+        "stage": "qdrant_sparse_search",
+        "provider": "qdrant",
+        "model": "rag-platform-vectors-v1",
+        "execution": "infrastructure",
+        "request_count": 1,
+        "retry_count": 0,
+        "provider_attempt_count": null,
+        "provider_retry_count": null,
+        "outer_attempt_count": null,
+        "outer_retry_count": null,
+        "rate_limit_event_count": null,
+        "retry_delays": [],
+        "first_provider_attempt_at": null,
+        "final_provider_success_at": null,
+        "provider_retry_elapsed_ms": null,
+        "input_tokens": null,
+        "cached_input_tokens": null,
+        "output_tokens": null,
+        "latency_ms": 49.78566700447118,
+        "cost_basis": "unavailable",
+        "cost_usd": null,
+        "pricing_snapshot": null
+      },
+      "accounted_usd": null,
+      "basis": "unavailable",
+      "allowance_usd": 0
+    },
+    {
+      "item": "R16",
+      "call": "b1d7f230-b2ab-478b-94ff-28626792c928:2",
+      "path": "/api/internal/retrieval/rerank",
+      "receipt": {
+        "stage": "reranking",
+        "provider": "voyage",
+        "model": "rerank-2.5",
+        "cost_usd": null,
+        "cost_basis": "unavailable",
+        "input_tokens": 7455,
+        "provider_input_tokens": 7455,
+        "provider_attempt_count": 1,
+        "provider_retry_count": 0,
+        "rate_limit_event_count": 0,
+        "retry_delays": [],
+        "first_provider_attempt_at": "2026-11-14T11:45:38.099481Z",
+        "final_provider_success_at": "2026-11-14T11:45:38.372247Z",
+        "provider_retry_elapsed_seconds": 0
+      },
+      "accounted_usd": null,
+      "basis": "unavailable",
+      "allowance_usd": 0.00037275
+    },
+    {
+      "item": "R16",
+      "call": "2663c54a-353d-42be-ab1f-0c05d2afee76:3",
+      "path": "/api/internal/retrieval/compare-family",
+      "receipt": {
+        "stage": "compare_family_selection",
+        "provider": "openai",
+        "model": "gpt-5-mini",
+        "execution": "provider_api",
+        "request_count": 1,
+        "retry_count": 0,
+        "provider_attempt_count": null,
+        "provider_retry_count": null,
+        "outer_attempt_count": null,
+        "outer_retry_count": null,
+        "rate_limit_event_count": null,
+        "retry_delays": [],
+        "first_provider_attempt_at": null,
+        "final_provider_success_at": null,
+        "provider_retry_elapsed_ms": null,
+        "input_tokens": 5209,
+        "cached_input_tokens": null,
+        "output_tokens": 290,
+        "latency_ms": 4814.48604400066,
+        "cost_basis": "unavailable",
+        "cost_usd": null,
+        "pricing_snapshot": null
+      },
+      "accounted_usd": 0.00188225,
+      "basis": "retained_2026-08-19_rate_estimate",
+      "allowance_usd": 0
+    },
+    {
+      "item": "R16",
+      "call": "0b2a71b3-6555-4050-ba9d-f824c8e1b871:4",
+      "path": "/api/internal/retrieval/search",
+      "receipt": {
+        "stage": "dense_embedding",
+        "provider": "voyage",
+        "model": "voyage-4-large",
+        "execution": "provider_api",
+        "request_count": 1,
+        "retry_count": 0,
+        "provider_attempt_count": 1,
+        "provider_retry_count": 0,
+        "outer_attempt_count": null,
+        "outer_retry_count": null,
+        "rate_limit_event_count": 0,
+        "retry_delays": [],
+        "first_provider_attempt_at": "2026-11-14T11:45:43.657282Z",
+        "final_provider_success_at": "2026-11-14T11:45:43.924744Z",
+        "provider_retry_elapsed_ms": 0,
+        "input_tokens": 29,
+        "cached_input_tokens": null,
+        "output_tokens": null,
+        "latency_ms": 272.7811250006198,
+        "cost_basis": "estimated",
+        "cost_usd": 3.48e-06,
+        "pricing_snapshot": "voyage-pricing-2026-08-12"
+      },
+      "accounted_usd": 3.48e-06,
+      "basis": "estimated",
+      "allowance_usd": 0
+    },
+    {
+      "item": "R16",
+      "call": "0b2a71b3-6555-4050-ba9d-f824c8e1b871:4",
+      "path": "/api/internal/retrieval/search",
+      "receipt": {
+        "stage": "qdrant_dense_search",
+        "provider": "qdrant",
+        "model": "rag-platform-vectors-v1",
+        "execution": "infrastructure",
+        "request_count": 1,
+        "retry_count": 0,
+        "provider_attempt_count": null,
+        "provider_retry_count": null,
+        "outer_attempt_count": null,
+        "outer_retry_count": null,
+        "rate_limit_event_count": null,
+        "retry_delays": [],
+        "first_provider_attempt_at": null,
+        "final_provider_success_at": null,
+        "provider_retry_elapsed_ms": null,
+        "input_tokens": null,
+        "cached_input_tokens": null,
+        "output_tokens": null,
+        "latency_ms": 39.03833300137194,
+        "cost_basis": "unavailable",
+        "cost_usd": null,
+        "pricing_snapshot": null
+      },
+      "accounted_usd": null,
+      "basis": "unavailable",
+      "allowance_usd": 0
+    },
+    {
+      "item": "R16",
+      "call": "0b2a71b3-6555-4050-ba9d-f824c8e1b871:4",
+      "path": "/api/internal/retrieval/search",
+      "receipt": {
+        "stage": "sparse_encoding",
+        "provider": "fastembed",
+        "model": "prithivida/Splade_PP_en_v1",
+        "execution": "local",
+        "request_count": 1,
+        "retry_count": 0,
+        "provider_attempt_count": null,
+        "provider_retry_count": null,
+        "outer_attempt_count": null,
+        "outer_retry_count": null,
+        "rate_limit_event_count": null,
+        "retry_delays": [],
+        "first_provider_attempt_at": null,
+        "final_provider_success_at": null,
+        "provider_retry_elapsed_ms": null,
+        "input_tokens": null,
+        "cached_input_tokens": null,
+        "output_tokens": null,
+        "latency_ms": 1534.0478340003756,
+        "cost_basis": "zero_cost_local",
+        "cost_usd": 0,
+        "pricing_snapshot": null
+      },
+      "accounted_usd": 0,
+      "basis": "zero_cost_local",
+      "allowance_usd": 0
+    },
+    {
+      "item": "R16",
+      "call": "0b2a71b3-6555-4050-ba9d-f824c8e1b871:4",
+      "path": "/api/internal/retrieval/search",
+      "receipt": {
+        "stage": "qdrant_sparse_search",
+        "provider": "qdrant",
+        "model": "rag-platform-vectors-v1",
+        "execution": "infrastructure",
+        "request_count": 1,
+        "retry_count": 0,
+        "provider_attempt_count": null,
+        "provider_retry_count": null,
+        "outer_attempt_count": null,
+        "outer_retry_count": null,
+        "rate_limit_event_count": null,
+        "retry_delays": [],
+        "first_provider_attempt_at": null,
+        "final_provider_success_at": null,
+        "provider_retry_elapsed_ms": null,
+        "input_tokens": null,
+        "cached_input_tokens": null,
+        "output_tokens": null,
+        "latency_ms": 50.24679200141691,
+        "cost_basis": "unavailable",
+        "cost_usd": null,
+        "pricing_snapshot": null
+      },
+      "accounted_usd": null,
+      "basis": "unavailable",
+      "allowance_usd": 0
+    },
+    {
+      "item": "R16",
+      "call": "f6267299-9994-4cdf-879e-928530921d30:5",
+      "path": "/api/internal/retrieval/rerank",
+      "receipt": {
+        "stage": "reranking",
+        "provider": "voyage",
+        "model": "rerank-2.5",
+        "cost_usd": null,
+        "cost_basis": "unavailable",
+        "input_tokens": 128,
+        "provider_input_tokens": 128,
+        "provider_attempt_count": 1,
+        "provider_retry_count": 0,
+        "rate_limit_event_count": 0,
+        "retry_delays": [],
+        "first_provider_attempt_at": "2026-11-14T11:45:45.635543Z",
+        "final_provider_success_at": "2026-11-14T11:45:45.835177Z",
+        "provider_retry_elapsed_seconds": 0
+      },
+      "accounted_usd": null,
+      "basis": "unavailable",
+      "allowance_usd": 6.4000000000000006e-06
+    },
+    {
+      "item": "R16",
+      "call": "fef0d7db-ffdf-40f5-b3db-9a2c40be53d2:6",
+      "path": "/api/internal/retrieval/generation/answer-needs",
+      "receipt": {
+        "stage": "generation",
+        "provider": "openai",
+        "model": "gpt-5-mini",
+        "execution": "provider_api",
+        "prompt_version": "grounded-generation-temporal-v2",
+        "contract_version": "generation-result-v4",
+        "adapter_version": "openai-responses-temporal-v2",
+        "generation_fingerprint": "63233d5e2d34484c97d787a27ac92d4988fc6bfc0007dd25c5fa5ecfe99c76d9",
+        "reasoning_effort": "low",
+        "max_output_tokens": 4096,
+        "request_count": 2,
+        "retry_count": 0,
+        "measured_input_tokens": 4028,
+        "input_tokens": 5008,
+        "cached_input_tokens": 1792,
+        "output_tokens": 888,
+        "latency_ms": 7688.741837002453,
+        "cost_usd": 0.0026248,
+        "cost_basis": "estimated",
+        "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+        "entailment_review": {
+          "stage": "generation",
+          "provider": "openai",
+          "model": "gpt-5-mini",
+          "request_count": 1,
+          "retry_count": 0,
+          "input_tokens": 1102,
+          "output_tokens": 254,
+          "cached_input_tokens": 0,
+          "latency_ms": 3887.6171259980765,
+          "cost_usd": 0.0007835,
+          "cost_basis": "estimated",
+          "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19"
+        }
+      },
+      "accounted_usd": 0.0026248,
+      "basis": "estimated",
+      "allowance_usd": 0
+    }
+  ],
+  "nested_nonadditive_receipts": [
+    {
+      "item": "G1",
+      "path": "persisted_run_usage.planner_validation_attempts[0]",
+      "receipt": {
+        "request_count": 2,
+        "retry_count": 0,
+        "input_tokens": 19658,
+        "output_tokens": 1116,
+        "cached_input_tokens": null,
+        "latency_ms": 19705.208842999127,
+        "cost_usd": null,
+        "pricing_snapshot": null,
+        "cost_basis": "unavailable",
+        "interpretation_check": {
+          "request_count": 1,
+          "retry_count": 0,
+          "input_tokens": 1043,
+          "output_tokens": 87,
+          "cached_input_tokens": null,
+          "latency_ms": 2669.290085003013,
+          "cost_usd": null,
+          "pricing_snapshot": null,
+          "cost_basis": "unavailable",
+          "checker_code": "accepted",
+          "citation": null,
+          "citation_verification": "not_applicable",
+          "verification_reason": null,
+          "reviewed_plan": {
+            "schema_version": "evidence-needs-plan-v4",
+            "decision": "plan",
+            "clarification": null,
+            "needs": [
+              {
+                "need_id": "n1",
+                "aspect": "What was the maximum opening allowed for a window restrictor on an upstairs resident's window in March 2025?",
+                "central": true,
+                "question_span": {
+                  "turn_id": "user-1",
+                  "quote": "What was the maximum opening allowed for a window restrictor on an upstairs resident's window in March 2025?"
+                },
+                "context_spans": [],
+                "operation": "retrieve",
+                "authority": {
+                  "kind": "period",
+                  "value": "2025-03",
+                  "precision": "month",
+                  "source": {
+                    "turn_id": "user-1",
+                    "quote": "March 2025"
+                  }
+                },
+                "fact_reference": null,
+                "applicability": {
+                  "kind": "generic",
+                  "source": null
+                },
+                "claim_under_test": null,
+                "scope_question": null,
+                "supports_need_id": null
+              }
+            ],
+            "bindings": [
+              {
+                "need_id": "n1",
+                "subject_status": "topic",
+                "family_ids": [],
+                "ownership": "authorised_workspace",
+                "ownership_source": null
+              }
+            ]
+          },
+          "version": "interpretation-check-v2",
+          "code": "accepted",
+          "provider": "openai",
+          "model": "gpt-5-mini"
+        },
+        "validation": null,
+        "status": "accepted"
+      },
+      "not_additive": true
+    },
+    {
+      "item": "G1",
+      "path": "persisted_run_usage.planner_validation_attempts[0].interpretation_check",
+      "receipt": {
+        "request_count": 1,
+        "retry_count": 0,
+        "input_tokens": 1043,
+        "output_tokens": 87,
+        "cached_input_tokens": null,
+        "latency_ms": 2669.290085003013,
+        "cost_usd": null,
+        "pricing_snapshot": null,
+        "cost_basis": "unavailable",
+        "checker_code": "accepted",
+        "citation": null,
+        "citation_verification": "not_applicable",
+        "verification_reason": null,
+        "reviewed_plan": {
+          "schema_version": "evidence-needs-plan-v4",
+          "decision": "plan",
+          "clarification": null,
+          "needs": [
+            {
+              "need_id": "n1",
+              "aspect": "What was the maximum opening allowed for a window restrictor on an upstairs resident's window in March 2025?",
+              "central": true,
+              "question_span": {
+                "turn_id": "user-1",
+                "quote": "What was the maximum opening allowed for a window restrictor on an upstairs resident's window in March 2025?"
+              },
+              "context_spans": [],
+              "operation": "retrieve",
+              "authority": {
+                "kind": "period",
+                "value": "2025-03",
+                "precision": "month",
+                "source": {
+                  "turn_id": "user-1",
+                  "quote": "March 2025"
+                }
+              },
+              "fact_reference": null,
+              "applicability": {
+                "kind": "generic",
+                "source": null
+              },
+              "claim_under_test": null,
+              "scope_question": null,
+              "supports_need_id": null
+            }
+          ],
+          "bindings": [
+            {
+              "need_id": "n1",
+              "subject_status": "topic",
+              "family_ids": [],
+              "ownership": "authorised_workspace",
+              "ownership_source": null
+            }
+          ]
+        },
+        "version": "interpretation-check-v2",
+        "code": "accepted",
+        "provider": "openai",
+        "model": "gpt-5-mini"
+      },
+      "not_additive": true
+    },
+    {
+      "item": "G1",
+      "path": "persisted_run_usage.generation",
+      "receipt": {
+        "stage": "generation",
+        "provider": "openai",
+        "model": "gpt-5-mini",
+        "execution": "provider_api",
+        "prompt_version": "grounded-generation-temporal-v2",
+        "contract_version": "generation-result-v4",
+        "adapter_version": "openai-responses-temporal-v2",
+        "generation_fingerprint": "63233d5e2d34484c97d787a27ac92d4988fc6bfc0007dd25c5fa5ecfe99c76d9",
+        "reasoning_effort": "low",
+        "max_output_tokens": 4096,
+        "request_count": 2,
+        "retry_count": 1,
+        "measured_input_tokens": 5790,
+        "input_tokens": 7734,
+        "cached_input_tokens": 0,
+        "output_tokens": 704,
+        "latency_ms": 8564.891586996964,
+        "cost_usd": 0.0033415,
+        "cost_basis": "estimated",
+        "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+        "entailment_review": {
+          "stage": "generation",
+          "provider": "openai",
+          "model": "gpt-5-mini",
+          "request_count": 1,
+          "retry_count": 0,
+          "input_tokens": 2066,
+          "output_tokens": 219,
+          "cached_input_tokens": 0,
+          "latency_ms": 9364.30800400558,
+          "cost_usd": 0.0009545,
+          "cost_basis": "estimated",
+          "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19"
+        },
+        "validation_retry_count": 0,
+        "validation_attempts": [
+          {
+            "request_count": 2,
+            "retry_count": 0,
+            "input_tokens": 7734,
+            "output_tokens": 704,
+            "cached_input_tokens": 0,
+            "latency_ms": 8564.891586996964,
+            "cost_usd": 0.0033415,
+            "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+            "cost_basis": "estimated",
+            "outcome": "accepted",
+            "request_id": "fc99bf50-2cdf-4e12-9133-eb77413dbd3d",
+            "retry_of_request_id": null
+          }
+        ]
+      },
+      "not_additive": true
+    },
+    {
+      "item": "G1",
+      "path": "persisted_run_usage.generation.entailment_review",
+      "receipt": {
+        "stage": "generation",
+        "provider": "openai",
+        "model": "gpt-5-mini",
+        "request_count": 1,
+        "retry_count": 0,
+        "input_tokens": 2066,
+        "output_tokens": 219,
+        "cached_input_tokens": 0,
+        "latency_ms": 9364.30800400558,
+        "cost_usd": 0.0009545,
+        "cost_basis": "estimated",
+        "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19"
+      },
+      "not_additive": true
+    },
+    {
+      "item": "G1",
+      "path": "persisted_run_usage.generation.validation_attempts[0]",
+      "receipt": {
+        "request_count": 2,
+        "retry_count": 0,
+        "input_tokens": 7734,
+        "output_tokens": 704,
+        "cached_input_tokens": 0,
+        "latency_ms": 8564.891586996964,
+        "cost_usd": 0.0033415,
+        "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+        "cost_basis": "estimated",
+        "outcome": "accepted",
+        "request_id": "fc99bf50-2cdf-4e12-9133-eb77413dbd3d",
+        "retry_of_request_id": null
+      },
+      "not_additive": true
+    },
+    {
+      "item": "G1",
+      "path": "persisted_generation_usage",
+      "receipt": {
+        "stage": "generation",
+        "provider": "openai",
+        "model": "gpt-5-mini",
+        "execution": "provider_api",
+        "prompt_version": "grounded-generation-temporal-v2",
+        "contract_version": "generation-result-v4",
+        "adapter_version": "openai-responses-temporal-v2",
+        "generation_fingerprint": "63233d5e2d34484c97d787a27ac92d4988fc6bfc0007dd25c5fa5ecfe99c76d9",
+        "reasoning_effort": "low",
+        "max_output_tokens": 4096,
+        "request_count": 2,
+        "retry_count": 1,
+        "measured_input_tokens": 5790,
+        "input_tokens": 7734,
+        "cached_input_tokens": 0,
+        "output_tokens": 704,
+        "latency_ms": 8564.891586996964,
+        "cost_usd": 0.0033415,
+        "cost_basis": "estimated",
+        "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+        "entailment_review": {
+          "stage": "generation",
+          "provider": "openai",
+          "model": "gpt-5-mini",
+          "request_count": 1,
+          "retry_count": 0,
+          "input_tokens": 2066,
+          "output_tokens": 219,
+          "cached_input_tokens": 0,
+          "latency_ms": 9364.30800400558,
+          "cost_usd": 0.0009545,
+          "cost_basis": "estimated",
+          "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19"
+        },
+        "validation_retry_count": 0,
+        "validation_attempts": [
+          {
+            "request_count": 2,
+            "retry_count": 0,
+            "input_tokens": 7734,
+            "output_tokens": 704,
+            "cached_input_tokens": 0,
+            "latency_ms": 8564.891586996964,
+            "cost_usd": 0.0033415,
+            "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+            "cost_basis": "estimated",
+            "outcome": "accepted",
+            "request_id": "fc99bf50-2cdf-4e12-9133-eb77413dbd3d",
+            "retry_of_request_id": null
+          }
+        ]
+      },
+      "not_additive": true
+    },
+    {
+      "item": "G1",
+      "path": "persisted_generation_usage.entailment_review",
+      "receipt": {
+        "stage": "generation",
+        "provider": "openai",
+        "model": "gpt-5-mini",
+        "request_count": 1,
+        "retry_count": 0,
+        "input_tokens": 2066,
+        "output_tokens": 219,
+        "cached_input_tokens": 0,
+        "latency_ms": 9364.30800400558,
+        "cost_usd": 0.0009545,
+        "cost_basis": "estimated",
+        "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19"
+      },
+      "not_additive": true
+    },
+    {
+      "item": "G1",
+      "path": "persisted_generation_usage.validation_attempts[0]",
+      "receipt": {
+        "request_count": 2,
+        "retry_count": 0,
+        "input_tokens": 7734,
+        "output_tokens": 704,
+        "cached_input_tokens": 0,
+        "latency_ms": 8564.891586996964,
+        "cost_usd": 0.0033415,
+        "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+        "cost_basis": "estimated",
+        "outcome": "accepted",
+        "request_id": "fc99bf50-2cdf-4e12-9133-eb77413dbd3d",
+        "retry_of_request_id": null
+      },
+      "not_additive": true
+    },
+    {
+      "item": "G2",
+      "path": "persisted_run_usage.planner_failure.completion",
+      "receipt": {
+        "finish_reason": "stop",
+        "input_tokens": 18705,
+        "output_tokens": 902,
+        "reasoning_tokens": 448
+      },
+      "not_additive": true
+    },
+    {
+      "item": "G2",
+      "path": "persisted_run_usage.planner_failure.validation_attempts[0]",
+      "receipt": {
+        "request_count": 1,
+        "retry_count": 0,
+        "input_tokens": 18618,
+        "output_tokens": 1070,
+        "cached_input_tokens": null,
+        "latency_ms": 16379.613549004716,
+        "cost_usd": null,
+        "pricing_snapshot": null,
+        "cost_basis": "unavailable",
+        "validation": {
+          "stage": "schema",
+          "field": "needs.0.fact_reference",
+          "code": "fact_date_precision"
+        },
+        "status": "rejected"
+      },
+      "not_additive": true
+    },
+    {
+      "item": "G2",
+      "path": "persisted_run_usage.planner_failure.validation_attempts[1]",
+      "receipt": {
+        "request_count": 1,
+        "retry_count": 0,
+        "input_tokens": 18705,
+        "output_tokens": 902,
+        "cached_input_tokens": null,
+        "latency_ms": 14219.261256002937,
+        "cost_usd": null,
+        "pricing_snapshot": null,
+        "cost_basis": "unavailable",
+        "validation": {
+          "stage": "schema",
+          "field": "needs.0.fact_reference",
+          "code": "fact_date_precision"
+        },
+        "status": "rejected"
+      },
+      "not_additive": true
+    },
+    {
+      "item": "G3",
+      "path": "persisted_run_usage.planner_failure.completion",
+      "receipt": {
+        "finish_reason": "stop",
+        "input_tokens": 18719,
+        "output_tokens": 1035,
+        "reasoning_tokens": 576
+      },
+      "not_additive": true
+    },
+    {
+      "item": "G3",
+      "path": "persisted_run_usage.planner_failure.validation_attempts[0]",
+      "receipt": {
+        "request_count": 1,
+        "retry_count": 0,
+        "input_tokens": 18632,
+        "output_tokens": 1030,
+        "cached_input_tokens": null,
+        "latency_ms": 14550.568172999192,
+        "cost_usd": null,
+        "pricing_snapshot": null,
+        "cost_basis": "unavailable",
+        "validation": {
+          "stage": "schema",
+          "field": "needs.0.fact_reference",
+          "code": "fact_date_precision"
+        },
+        "status": "rejected"
+      },
+      "not_additive": true
+    },
+    {
+      "item": "G3",
+      "path": "persisted_run_usage.planner_failure.validation_attempts[1]",
+      "receipt": {
+        "request_count": 1,
+        "retry_count": 0,
+        "input_tokens": 18719,
+        "output_tokens": 1035,
+        "cached_input_tokens": null,
+        "latency_ms": 14063.006839998707,
+        "cost_usd": null,
+        "pricing_snapshot": null,
+        "cost_basis": "unavailable",
+        "validation": {
+          "stage": "grounding",
+          "field": "root",
+          "code": "temporal_relation_grounding"
+        },
+        "status": "rejected"
+      },
+      "not_additive": true
+    },
+    {
+      "item": "G4",
+      "path": "persisted_run_usage.planner_validation_attempts[0]",
+      "receipt": {
+        "request_count": 2,
+        "retry_count": 0,
+        "input_tokens": 19927,
+        "output_tokens": 1461,
+        "cached_input_tokens": null,
+        "latency_ms": 20508.363885004655,
+        "cost_usd": null,
+        "pricing_snapshot": null,
+        "cost_basis": "unavailable",
+        "interpretation_check": {
+          "request_count": 1,
+          "retry_count": 0,
+          "input_tokens": 1311,
+          "output_tokens": 87,
+          "cached_input_tokens": null,
+          "latency_ms": 2537.92533500382,
+          "cost_usd": null,
+          "pricing_snapshot": null,
+          "cost_basis": "unavailable",
+          "checker_code": "accepted",
+          "citation": null,
+          "citation_verification": "not_applicable",
+          "verification_reason": null,
+          "reviewed_plan": {
+            "schema_version": "evidence-needs-plan-v4",
+            "decision": "plan",
+            "clarification": null,
+            "needs": [
+              {
+                "need_id": "n1",
+                "aspect": "How often did IT have to run a backup test restoration in July 2025, and how often is it now?",
+                "central": true,
+                "question_span": {
+                  "turn_id": "user-1",
+                  "quote": "How often did IT have to run a backup test restoration in July 2025"
+                },
+                "context_spans": [
+                  {
+                    "turn_id": "user-1",
+                    "quote": "How often did IT have to run a backup test restoration in July 2025, and how often is it now?"
+                  }
+                ],
+                "operation": "retrieve",
+                "authority": {
+                  "kind": "period",
+                  "value": "2025-07",
+                  "precision": "month",
+                  "source": {
+                    "turn_id": "user-1",
+                    "quote": "July 2025"
+                  }
+                },
+                "fact_reference": null,
+                "applicability": {
+                  "kind": "generic",
+                  "source": null
+                },
+                "claim_under_test": null,
+                "scope_question": null,
+                "supports_need_id": null
+              },
+              {
+                "need_id": "n2",
+                "aspect": "How often did IT have to run a backup test restoration in July 2025, and how often is it now?",
+                "central": true,
+                "question_span": {
+                  "turn_id": "user-1",
+                  "quote": "and how often is it now?"
+                },
+                "context_spans": [
+                  {
+                    "turn_id": "user-1",
+                    "quote": "How often did IT have to run a backup test restoration in July 2025, and how often is it now?"
+                  },
+                  {
+                    "turn_id": "user-1",
+                    "quote": "run a backup test restoration"
+                  }
+                ],
+                "operation": "retrieve",
+                "authority": {
+                  "kind": "current",
+                  "value": null,
+                  "precision": "none",
+                  "source": null
+                },
+                "fact_reference": null,
+                "applicability": {
+                  "kind": "generic",
+                  "source": null
+                },
+                "claim_under_test": null,
+                "scope_question": null,
+                "supports_need_id": null
+              }
+            ],
+            "bindings": [
+              {
+                "need_id": "n1",
+                "subject_status": "topic",
+                "family_ids": [],
+                "ownership": "authorised_workspace",
+                "ownership_source": null
+              },
+              {
+                "need_id": "n2",
+                "subject_status": "topic",
+                "family_ids": [],
+                "ownership": "authorised_workspace",
+                "ownership_source": null
+              }
+            ]
+          },
+          "version": "interpretation-check-v2",
+          "code": "accepted",
+          "provider": "openai",
+          "model": "gpt-5-mini"
+        },
+        "validation": null,
+        "status": "accepted"
+      },
+      "not_additive": true
+    },
+    {
+      "item": "G4",
+      "path": "persisted_run_usage.planner_validation_attempts[0].interpretation_check",
+      "receipt": {
+        "request_count": 1,
+        "retry_count": 0,
+        "input_tokens": 1311,
+        "output_tokens": 87,
+        "cached_input_tokens": null,
+        "latency_ms": 2537.92533500382,
+        "cost_usd": null,
+        "pricing_snapshot": null,
+        "cost_basis": "unavailable",
+        "checker_code": "accepted",
+        "citation": null,
+        "citation_verification": "not_applicable",
+        "verification_reason": null,
+        "reviewed_plan": {
+          "schema_version": "evidence-needs-plan-v4",
+          "decision": "plan",
+          "clarification": null,
+          "needs": [
+            {
+              "need_id": "n1",
+              "aspect": "How often did IT have to run a backup test restoration in July 2025, and how often is it now?",
+              "central": true,
+              "question_span": {
+                "turn_id": "user-1",
+                "quote": "How often did IT have to run a backup test restoration in July 2025"
+              },
+              "context_spans": [
+                {
+                  "turn_id": "user-1",
+                  "quote": "How often did IT have to run a backup test restoration in July 2025, and how often is it now?"
+                }
+              ],
+              "operation": "retrieve",
+              "authority": {
+                "kind": "period",
+                "value": "2025-07",
+                "precision": "month",
+                "source": {
+                  "turn_id": "user-1",
+                  "quote": "July 2025"
+                }
+              },
+              "fact_reference": null,
+              "applicability": {
+                "kind": "generic",
+                "source": null
+              },
+              "claim_under_test": null,
+              "scope_question": null,
+              "supports_need_id": null
+            },
+            {
+              "need_id": "n2",
+              "aspect": "How often did IT have to run a backup test restoration in July 2025, and how often is it now?",
+              "central": true,
+              "question_span": {
+                "turn_id": "user-1",
+                "quote": "and how often is it now?"
+              },
+              "context_spans": [
+                {
+                  "turn_id": "user-1",
+                  "quote": "How often did IT have to run a backup test restoration in July 2025, and how often is it now?"
+                },
+                {
+                  "turn_id": "user-1",
+                  "quote": "run a backup test restoration"
+                }
+              ],
+              "operation": "retrieve",
+              "authority": {
+                "kind": "current",
+                "value": null,
+                "precision": "none",
+                "source": null
+              },
+              "fact_reference": null,
+              "applicability": {
+                "kind": "generic",
+                "source": null
+              },
+              "claim_under_test": null,
+              "scope_question": null,
+              "supports_need_id": null
+            }
+          ],
+          "bindings": [
+            {
+              "need_id": "n1",
+              "subject_status": "topic",
+              "family_ids": [],
+              "ownership": "authorised_workspace",
+              "ownership_source": null
+            },
+            {
+              "need_id": "n2",
+              "subject_status": "topic",
+              "family_ids": [],
+              "ownership": "authorised_workspace",
+              "ownership_source": null
+            }
+          ]
+        },
+        "version": "interpretation-check-v2",
+        "code": "accepted",
+        "provider": "openai",
+        "model": "gpt-5-mini"
+      },
+      "not_additive": true
+    },
+    {
+      "item": "G4",
+      "path": "persisted_run_usage.generation",
+      "receipt": {
+        "stage": "generation",
+        "provider": "openai",
+        "model": "gpt-5-mini",
+        "execution": "provider_api",
+        "prompt_version": "grounded-generation-temporal-v2",
+        "contract_version": "generation-result-v4",
+        "adapter_version": "openai-responses-temporal-v2",
+        "generation_fingerprint": "63233d5e2d34484c97d787a27ac92d4988fc6bfc0007dd25c5fa5ecfe99c76d9",
+        "reasoning_effort": "low",
+        "max_output_tokens": 4096,
+        "request_count": 2,
+        "retry_count": 1,
+        "measured_input_tokens": 12431,
+        "input_tokens": 21733,
+        "cached_input_tokens": 1792,
+        "output_tokens": 1098,
+        "latency_ms": 10110.82400399755,
+        "cost_usd": 0.00722605,
+        "cost_basis": "estimated",
+        "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+        "entailment_review": {
+          "stage": "generation",
+          "provider": "openai",
+          "model": "gpt-5-mini",
+          "request_count": 1,
+          "retry_count": 0,
+          "input_tokens": 9424,
+          "output_tokens": 306,
+          "cached_input_tokens": 0,
+          "latency_ms": 4683.813251998799,
+          "cost_usd": 0.002968,
+          "cost_basis": "estimated",
+          "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19"
+        },
+        "validation_retry_count": 0,
+        "validation_attempts": [
+          {
+            "request_count": 2,
+            "retry_count": 0,
+            "input_tokens": 21733,
+            "output_tokens": 1098,
+            "cached_input_tokens": 1792,
+            "latency_ms": 10110.82400399755,
+            "cost_usd": 0.00722605,
+            "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+            "cost_basis": "estimated",
+            "outcome": "accepted",
+            "request_id": "adebdd70-e927-496b-afe4-5633c361511d",
+            "retry_of_request_id": null
+          }
+        ]
+      },
+      "not_additive": true
+    },
+    {
+      "item": "G4",
+      "path": "persisted_run_usage.generation.entailment_review",
+      "receipt": {
+        "stage": "generation",
+        "provider": "openai",
+        "model": "gpt-5-mini",
+        "request_count": 1,
+        "retry_count": 0,
+        "input_tokens": 9424,
+        "output_tokens": 306,
+        "cached_input_tokens": 0,
+        "latency_ms": 4683.813251998799,
+        "cost_usd": 0.002968,
+        "cost_basis": "estimated",
+        "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19"
+      },
+      "not_additive": true
+    },
+    {
+      "item": "G4",
+      "path": "persisted_run_usage.generation.validation_attempts[0]",
+      "receipt": {
+        "request_count": 2,
+        "retry_count": 0,
+        "input_tokens": 21733,
+        "output_tokens": 1098,
+        "cached_input_tokens": 1792,
+        "latency_ms": 10110.82400399755,
+        "cost_usd": 0.00722605,
+        "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+        "cost_basis": "estimated",
+        "outcome": "accepted",
+        "request_id": "adebdd70-e927-496b-afe4-5633c361511d",
+        "retry_of_request_id": null
+      },
+      "not_additive": true
+    },
+    {
+      "item": "G4",
+      "path": "persisted_generation_usage",
+      "receipt": {
+        "stage": "generation",
+        "provider": "openai",
+        "model": "gpt-5-mini",
+        "execution": "provider_api",
+        "prompt_version": "grounded-generation-temporal-v2",
+        "contract_version": "generation-result-v4",
+        "adapter_version": "openai-responses-temporal-v2",
+        "generation_fingerprint": "63233d5e2d34484c97d787a27ac92d4988fc6bfc0007dd25c5fa5ecfe99c76d9",
+        "reasoning_effort": "low",
+        "max_output_tokens": 4096,
+        "request_count": 2,
+        "retry_count": 1,
+        "measured_input_tokens": 12431,
+        "input_tokens": 21733,
+        "cached_input_tokens": 1792,
+        "output_tokens": 1098,
+        "latency_ms": 10110.82400399755,
+        "cost_usd": 0.00722605,
+        "cost_basis": "estimated",
+        "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+        "entailment_review": {
+          "stage": "generation",
+          "provider": "openai",
+          "model": "gpt-5-mini",
+          "request_count": 1,
+          "retry_count": 0,
+          "input_tokens": 9424,
+          "output_tokens": 306,
+          "cached_input_tokens": 0,
+          "latency_ms": 4683.813251998799,
+          "cost_usd": 0.002968,
+          "cost_basis": "estimated",
+          "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19"
+        },
+        "validation_retry_count": 0,
+        "validation_attempts": [
+          {
+            "request_count": 2,
+            "retry_count": 0,
+            "input_tokens": 21733,
+            "output_tokens": 1098,
+            "cached_input_tokens": 1792,
+            "latency_ms": 10110.82400399755,
+            "cost_usd": 0.00722605,
+            "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+            "cost_basis": "estimated",
+            "outcome": "accepted",
+            "request_id": "adebdd70-e927-496b-afe4-5633c361511d",
+            "retry_of_request_id": null
+          }
+        ]
+      },
+      "not_additive": true
+    },
+    {
+      "item": "G4",
+      "path": "persisted_generation_usage.entailment_review",
+      "receipt": {
+        "stage": "generation",
+        "provider": "openai",
+        "model": "gpt-5-mini",
+        "request_count": 1,
+        "retry_count": 0,
+        "input_tokens": 9424,
+        "output_tokens": 306,
+        "cached_input_tokens": 0,
+        "latency_ms": 4683.813251998799,
+        "cost_usd": 0.002968,
+        "cost_basis": "estimated",
+        "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19"
+      },
+      "not_additive": true
+    },
+    {
+      "item": "G4",
+      "path": "persisted_generation_usage.validation_attempts[0]",
+      "receipt": {
+        "request_count": 2,
+        "retry_count": 0,
+        "input_tokens": 21733,
+        "output_tokens": 1098,
+        "cached_input_tokens": 1792,
+        "latency_ms": 10110.82400399755,
+        "cost_usd": 0.00722605,
+        "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+        "cost_basis": "estimated",
+        "outcome": "accepted",
+        "request_id": "adebdd70-e927-496b-afe4-5633c361511d",
+        "retry_of_request_id": null
+      },
+      "not_additive": true
+    },
+    {
+      "item": "G5",
+      "path": "persisted_run_usage.planner_validation_attempts[0]",
+      "receipt": {
+        "request_count": 2,
+        "retry_count": 0,
+        "input_tokens": 19589,
+        "output_tokens": 692,
+        "cached_input_tokens": null,
+        "latency_ms": 11631.282713999099,
+        "cost_usd": null,
+        "pricing_snapshot": null,
+        "cost_basis": "unavailable",
+        "interpretation_check": {
+          "request_count": 1,
+          "retry_count": 0,
+          "input_tokens": 986,
+          "output_tokens": 23,
+          "cached_input_tokens": null,
+          "latency_ms": 1525.2002510023885,
+          "cost_usd": null,
+          "pricing_snapshot": null,
+          "cost_basis": "unavailable",
+          "checker_code": "accepted",
+          "citation": null,
+          "citation_verification": "not_applicable",
+          "verification_reason": null,
+          "reviewed_plan": {
+            "schema_version": "evidence-needs-plan-v4",
+            "decision": "plan",
+            "clarification": null,
+            "needs": [
+              {
+                "need_id": "n1",
+                "aspect": "How often should a care assistant have a supervision meeting?",
+                "central": true,
+                "question_span": {
+                  "turn_id": "user-1",
+                  "quote": "How often should a care assistant have a supervision meeting?"
+                },
+                "context_spans": [],
+                "operation": "retrieve",
+                "authority": {
+                  "kind": "current",
+                  "value": null,
+                  "precision": "none",
+                  "source": null
+                },
+                "fact_reference": null,
+                "applicability": {
+                  "kind": "generic",
+                  "source": null
+                },
+                "claim_under_test": null,
+                "scope_question": null,
+                "supports_need_id": null
+              }
+            ],
+            "bindings": [
+              {
+                "need_id": "n1",
+                "subject_status": "topic",
+                "family_ids": [],
+                "ownership": "authorised_workspace",
+                "ownership_source": null
+              }
+            ]
+          },
+          "version": "interpretation-check-v2",
+          "code": "accepted",
+          "provider": "openai",
+          "model": "gpt-5-mini"
+        },
+        "validation": null,
+        "status": "accepted"
+      },
+      "not_additive": true
+    },
+    {
+      "item": "G5",
+      "path": "persisted_run_usage.planner_validation_attempts[0].interpretation_check",
+      "receipt": {
+        "request_count": 1,
+        "retry_count": 0,
+        "input_tokens": 986,
+        "output_tokens": 23,
+        "cached_input_tokens": null,
+        "latency_ms": 1525.2002510023885,
+        "cost_usd": null,
+        "pricing_snapshot": null,
+        "cost_basis": "unavailable",
+        "checker_code": "accepted",
+        "citation": null,
+        "citation_verification": "not_applicable",
+        "verification_reason": null,
+        "reviewed_plan": {
+          "schema_version": "evidence-needs-plan-v4",
+          "decision": "plan",
+          "clarification": null,
+          "needs": [
+            {
+              "need_id": "n1",
+              "aspect": "How often should a care assistant have a supervision meeting?",
+              "central": true,
+              "question_span": {
+                "turn_id": "user-1",
+                "quote": "How often should a care assistant have a supervision meeting?"
+              },
+              "context_spans": [],
+              "operation": "retrieve",
+              "authority": {
+                "kind": "current",
+                "value": null,
+                "precision": "none",
+                "source": null
+              },
+              "fact_reference": null,
+              "applicability": {
+                "kind": "generic",
+                "source": null
+              },
+              "claim_under_test": null,
+              "scope_question": null,
+              "supports_need_id": null
+            }
+          ],
+          "bindings": [
+            {
+              "need_id": "n1",
+              "subject_status": "topic",
+              "family_ids": [],
+              "ownership": "authorised_workspace",
+              "ownership_source": null
+            }
+          ]
+        },
+        "version": "interpretation-check-v2",
+        "code": "accepted",
+        "provider": "openai",
+        "model": "gpt-5-mini"
+      },
+      "not_additive": true
+    },
+    {
+      "item": "G5",
+      "path": "persisted_run_usage.generation",
+      "receipt": {
+        "stage": "generation",
+        "provider": "openai",
+        "model": "gpt-5-mini",
+        "execution": "provider_api",
+        "prompt_version": "grounded-generation-needs-v12",
+        "contract_version": "generation-result-v3",
+        "adapter_version": "openai-responses-needs-v4",
+        "generation_fingerprint": "7f1bf6ca0e581fe7a84be0a9b67f61c1f5a106b65267d3cef9ce2cb90e842fab",
+        "reasoning_effort": "low",
+        "max_output_tokens": 4096,
+        "request_count": 2,
+        "retry_count": 1,
+        "measured_input_tokens": 26377,
+        "input_tokens": 41205,
+        "cached_input_tokens": 0,
+        "output_tokens": 746,
+        "latency_ms": 7145.427712006494,
+        "cost_usd": 0.01179325,
+        "cost_basis": "estimated",
+        "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+        "entailment_review": {
+          "stage": "generation",
+          "provider": "openai",
+          "model": "gpt-5-mini",
+          "request_count": 1,
+          "retry_count": 0,
+          "input_tokens": 14905,
+          "output_tokens": 200,
+          "cached_input_tokens": 0,
+          "latency_ms": 2929.7078349991352,
+          "cost_usd": 0.00412625,
+          "cost_basis": "estimated",
+          "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19"
+        },
+        "validation_retry_count": 0,
+        "validation_attempts": [
+          {
+            "request_count": 2,
+            "retry_count": 0,
+            "input_tokens": 41205,
+            "output_tokens": 746,
+            "cached_input_tokens": 0,
+            "latency_ms": 7145.427712006494,
+            "cost_usd": 0.01179325,
+            "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+            "cost_basis": "estimated",
+            "outcome": "accepted",
+            "request_id": "45ff68fb-a140-4a12-95c0-33dc6860c91d",
+            "retry_of_request_id": null
+          }
+        ]
+      },
+      "not_additive": true
+    },
+    {
+      "item": "G5",
+      "path": "persisted_run_usage.generation.entailment_review",
+      "receipt": {
+        "stage": "generation",
+        "provider": "openai",
+        "model": "gpt-5-mini",
+        "request_count": 1,
+        "retry_count": 0,
+        "input_tokens": 14905,
+        "output_tokens": 200,
+        "cached_input_tokens": 0,
+        "latency_ms": 2929.7078349991352,
+        "cost_usd": 0.00412625,
+        "cost_basis": "estimated",
+        "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19"
+      },
+      "not_additive": true
+    },
+    {
+      "item": "G5",
+      "path": "persisted_run_usage.generation.validation_attempts[0]",
+      "receipt": {
+        "request_count": 2,
+        "retry_count": 0,
+        "input_tokens": 41205,
+        "output_tokens": 746,
+        "cached_input_tokens": 0,
+        "latency_ms": 7145.427712006494,
+        "cost_usd": 0.01179325,
+        "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+        "cost_basis": "estimated",
+        "outcome": "accepted",
+        "request_id": "45ff68fb-a140-4a12-95c0-33dc6860c91d",
+        "retry_of_request_id": null
+      },
+      "not_additive": true
+    },
+    {
+      "item": "G5",
+      "path": "persisted_generation_usage",
+      "receipt": {
+        "stage": "generation",
+        "provider": "openai",
+        "model": "gpt-5-mini",
+        "execution": "provider_api",
+        "prompt_version": "grounded-generation-needs-v12",
+        "contract_version": "generation-result-v3",
+        "adapter_version": "openai-responses-needs-v4",
+        "generation_fingerprint": "7f1bf6ca0e581fe7a84be0a9b67f61c1f5a106b65267d3cef9ce2cb90e842fab",
+        "reasoning_effort": "low",
+        "max_output_tokens": 4096,
+        "request_count": 2,
+        "retry_count": 1,
+        "measured_input_tokens": 26377,
+        "input_tokens": 41205,
+        "cached_input_tokens": 0,
+        "output_tokens": 746,
+        "latency_ms": 7145.427712006494,
+        "cost_usd": 0.01179325,
+        "cost_basis": "estimated",
+        "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+        "entailment_review": {
+          "stage": "generation",
+          "provider": "openai",
+          "model": "gpt-5-mini",
+          "request_count": 1,
+          "retry_count": 0,
+          "input_tokens": 14905,
+          "output_tokens": 200,
+          "cached_input_tokens": 0,
+          "latency_ms": 2929.7078349991352,
+          "cost_usd": 0.00412625,
+          "cost_basis": "estimated",
+          "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19"
+        },
+        "validation_retry_count": 0,
+        "validation_attempts": [
+          {
+            "request_count": 2,
+            "retry_count": 0,
+            "input_tokens": 41205,
+            "output_tokens": 746,
+            "cached_input_tokens": 0,
+            "latency_ms": 7145.427712006494,
+            "cost_usd": 0.01179325,
+            "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+            "cost_basis": "estimated",
+            "outcome": "accepted",
+            "request_id": "45ff68fb-a140-4a12-95c0-33dc6860c91d",
+            "retry_of_request_id": null
+          }
+        ]
+      },
+      "not_additive": true
+    },
+    {
+      "item": "G5",
+      "path": "persisted_generation_usage.entailment_review",
+      "receipt": {
+        "stage": "generation",
+        "provider": "openai",
+        "model": "gpt-5-mini",
+        "request_count": 1,
+        "retry_count": 0,
+        "input_tokens": 14905,
+        "output_tokens": 200,
+        "cached_input_tokens": 0,
+        "latency_ms": 2929.7078349991352,
+        "cost_usd": 0.00412625,
+        "cost_basis": "estimated",
+        "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19"
+      },
+      "not_additive": true
+    },
+    {
+      "item": "G5",
+      "path": "persisted_generation_usage.validation_attempts[0]",
+      "receipt": {
+        "request_count": 2,
+        "retry_count": 0,
+        "input_tokens": 41205,
+        "output_tokens": 746,
+        "cached_input_tokens": 0,
+        "latency_ms": 7145.427712006494,
+        "cost_usd": 0.01179325,
+        "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+        "cost_basis": "estimated",
+        "outcome": "accepted",
+        "request_id": "45ff68fb-a140-4a12-95c0-33dc6860c91d",
+        "retry_of_request_id": null
+      },
+      "not_additive": true
+    },
+    {
+      "item": "R16",
+      "path": "persisted_run_usage.planner_validation_attempts[0]",
+      "receipt": {
+        "request_count": 2,
+        "retry_count": 0,
+        "input_tokens": 19755,
+        "output_tokens": 1015,
+        "cached_input_tokens": null,
+        "latency_ms": 12445.087548003357,
+        "cost_usd": null,
+        "pricing_snapshot": null,
+        "cost_basis": "unavailable",
+        "interpretation_check": {
+          "request_count": 1,
+          "retry_count": 0,
+          "input_tokens": 1147,
+          "output_tokens": 87,
+          "cached_input_tokens": null,
+          "latency_ms": 1860.6391260036617,
+          "cost_usd": null,
+          "pricing_snapshot": null,
+          "cost_basis": "unavailable",
+          "checker_code": "accepted",
+          "citation": null,
+          "citation_verification": "not_applicable",
+          "verification_reason": null,
+          "reviewed_plan": {
+            "schema_version": "evidence-needs-plan-v4",
+            "decision": "plan",
+            "clarification": null,
+            "needs": [
+              {
+                "need_id": "n1",
+                "aspect": "Harbour View daily cleaning 1 February 2026 Who provided the daily cleaning at Harbour View on 1 February 2026?",
+                "central": true,
+                "question_span": {
+                  "turn_id": "user-1",
+                  "quote": "Who provided the daily cleaning at Harbour View on 1 February 2026?"
+                },
+                "context_spans": [
+                  {
+                    "turn_id": "user-1",
+                    "quote": "Harbour View"
+                  },
+                  {
+                    "turn_id": "user-1",
+                    "quote": "daily cleaning"
+                  },
+                  {
+                    "turn_id": "user-1",
+                    "quote": "1 February 2026"
+                  },
+                  {
+                    "turn_id": "user-1",
+                    "quote": "Who provided the daily cleaning at Harbour View on 1 February 2026?"
+                  }
+                ],
+                "operation": "retrieve",
+                "authority": {
+                  "kind": "current",
+                  "value": null,
+                  "precision": "none",
+                  "source": null
+                },
+                "fact_reference": {
+                  "value": "2026-02-01",
+                  "precision": "day",
+                  "source": {
+                    "turn_id": "user-1",
+                    "quote": "1 February 2026"
+                  }
+                },
+                "applicability": {
+                  "kind": "named",
+                  "source": {
+                    "turn_id": "user-1",
+                    "quote": "Harbour View"
+                  }
+                },
+                "claim_under_test": null,
+                "scope_question": null,
+                "supports_need_id": null
+              }
+            ],
+            "bindings": [
+              {
+                "need_id": "n1",
+                "subject_status": "topic",
+                "family_ids": [],
+                "ownership": "authorised_workspace",
+                "ownership_source": null
+              }
+            ]
+          },
+          "version": "interpretation-check-v2",
+          "code": "accepted",
+          "provider": "openai",
+          "model": "gpt-5-mini"
+        },
+        "validation": null,
+        "status": "accepted"
+      },
+      "not_additive": true
+    },
+    {
+      "item": "R16",
+      "path": "persisted_run_usage.planner_validation_attempts[0].interpretation_check",
+      "receipt": {
+        "request_count": 1,
+        "retry_count": 0,
+        "input_tokens": 1147,
+        "output_tokens": 87,
+        "cached_input_tokens": null,
+        "latency_ms": 1860.6391260036617,
+        "cost_usd": null,
+        "pricing_snapshot": null,
+        "cost_basis": "unavailable",
+        "checker_code": "accepted",
+        "citation": null,
+        "citation_verification": "not_applicable",
+        "verification_reason": null,
+        "reviewed_plan": {
+          "schema_version": "evidence-needs-plan-v4",
+          "decision": "plan",
+          "clarification": null,
+          "needs": [
+            {
+              "need_id": "n1",
+              "aspect": "Harbour View daily cleaning 1 February 2026 Who provided the daily cleaning at Harbour View on 1 February 2026?",
+              "central": true,
+              "question_span": {
+                "turn_id": "user-1",
+                "quote": "Who provided the daily cleaning at Harbour View on 1 February 2026?"
+              },
+              "context_spans": [
+                {
+                  "turn_id": "user-1",
+                  "quote": "Harbour View"
+                },
+                {
+                  "turn_id": "user-1",
+                  "quote": "daily cleaning"
+                },
+                {
+                  "turn_id": "user-1",
+                  "quote": "1 February 2026"
+                },
+                {
+                  "turn_id": "user-1",
+                  "quote": "Who provided the daily cleaning at Harbour View on 1 February 2026?"
+                }
+              ],
+              "operation": "retrieve",
+              "authority": {
+                "kind": "current",
+                "value": null,
+                "precision": "none",
+                "source": null
+              },
+              "fact_reference": {
+                "value": "2026-02-01",
+                "precision": "day",
+                "source": {
+                  "turn_id": "user-1",
+                  "quote": "1 February 2026"
+                }
+              },
+              "applicability": {
+                "kind": "named",
+                "source": {
+                  "turn_id": "user-1",
+                  "quote": "Harbour View"
+                }
+              },
+              "claim_under_test": null,
+              "scope_question": null,
+              "supports_need_id": null
+            }
+          ],
+          "bindings": [
+            {
+              "need_id": "n1",
+              "subject_status": "topic",
+              "family_ids": [],
+              "ownership": "authorised_workspace",
+              "ownership_source": null
+            }
+          ]
+        },
+        "version": "interpretation-check-v2",
+        "code": "accepted",
+        "provider": "openai",
+        "model": "gpt-5-mini"
+      },
+      "not_additive": true
+    },
+    {
+      "item": "R16",
+      "path": "persisted_run_usage.generation",
+      "receipt": {
+        "stage": "generation",
+        "provider": "openai",
+        "model": "gpt-5-mini",
+        "execution": "provider_api",
+        "prompt_version": "grounded-generation-temporal-v2",
+        "contract_version": "generation-result-v4",
+        "adapter_version": "openai-responses-temporal-v2",
+        "generation_fingerprint": "63233d5e2d34484c97d787a27ac92d4988fc6bfc0007dd25c5fa5ecfe99c76d9",
+        "reasoning_effort": "low",
+        "max_output_tokens": 4096,
+        "request_count": 2,
+        "retry_count": 1,
+        "measured_input_tokens": 4028,
+        "input_tokens": 5008,
+        "cached_input_tokens": 1792,
+        "output_tokens": 888,
+        "latency_ms": 7688.741837002453,
+        "cost_usd": 0.0026248,
+        "cost_basis": "estimated",
+        "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+        "entailment_review": {
+          "stage": "generation",
+          "provider": "openai",
+          "model": "gpt-5-mini",
+          "request_count": 1,
+          "retry_count": 0,
+          "input_tokens": 1102,
+          "output_tokens": 254,
+          "cached_input_tokens": 0,
+          "latency_ms": 3887.6171259980765,
+          "cost_usd": 0.0007835,
+          "cost_basis": "estimated",
+          "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19"
+        },
+        "validation_retry_count": 0,
+        "validation_attempts": [
+          {
+            "request_count": 2,
+            "retry_count": 0,
+            "input_tokens": 5008,
+            "output_tokens": 888,
+            "cached_input_tokens": 1792,
+            "latency_ms": 7688.741837002453,
+            "cost_usd": 0.0026248,
+            "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+            "cost_basis": "estimated",
+            "outcome": "accepted",
+            "request_id": "fef0d7db-ffdf-40f5-b3db-9a2c40be53d2",
+            "retry_of_request_id": null
+          }
+        ]
+      },
+      "not_additive": true
+    },
+    {
+      "item": "R16",
+      "path": "persisted_run_usage.generation.entailment_review",
+      "receipt": {
+        "stage": "generation",
+        "provider": "openai",
+        "model": "gpt-5-mini",
+        "request_count": 1,
+        "retry_count": 0,
+        "input_tokens": 1102,
+        "output_tokens": 254,
+        "cached_input_tokens": 0,
+        "latency_ms": 3887.6171259980765,
+        "cost_usd": 0.0007835,
+        "cost_basis": "estimated",
+        "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19"
+      },
+      "not_additive": true
+    },
+    {
+      "item": "R16",
+      "path": "persisted_run_usage.generation.validation_attempts[0]",
+      "receipt": {
+        "request_count": 2,
+        "retry_count": 0,
+        "input_tokens": 5008,
+        "output_tokens": 888,
+        "cached_input_tokens": 1792,
+        "latency_ms": 7688.741837002453,
+        "cost_usd": 0.0026248,
+        "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+        "cost_basis": "estimated",
+        "outcome": "accepted",
+        "request_id": "fef0d7db-ffdf-40f5-b3db-9a2c40be53d2",
+        "retry_of_request_id": null
+      },
+      "not_additive": true
+    },
+    {
+      "item": "R16",
+      "path": "persisted_generation_usage",
+      "receipt": {
+        "stage": "generation",
+        "provider": "openai",
+        "model": "gpt-5-mini",
+        "execution": "provider_api",
+        "prompt_version": "grounded-generation-temporal-v2",
+        "contract_version": "generation-result-v4",
+        "adapter_version": "openai-responses-temporal-v2",
+        "generation_fingerprint": "63233d5e2d34484c97d787a27ac92d4988fc6bfc0007dd25c5fa5ecfe99c76d9",
+        "reasoning_effort": "low",
+        "max_output_tokens": 4096,
+        "request_count": 2,
+        "retry_count": 1,
+        "measured_input_tokens": 4028,
+        "input_tokens": 5008,
+        "cached_input_tokens": 1792,
+        "output_tokens": 888,
+        "latency_ms": 7688.741837002453,
+        "cost_usd": 0.0026248,
+        "cost_basis": "estimated",
+        "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+        "entailment_review": {
+          "stage": "generation",
+          "provider": "openai",
+          "model": "gpt-5-mini",
+          "request_count": 1,
+          "retry_count": 0,
+          "input_tokens": 1102,
+          "output_tokens": 254,
+          "cached_input_tokens": 0,
+          "latency_ms": 3887.6171259980765,
+          "cost_usd": 0.0007835,
+          "cost_basis": "estimated",
+          "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19"
+        },
+        "validation_retry_count": 0,
+        "validation_attempts": [
+          {
+            "request_count": 2,
+            "retry_count": 0,
+            "input_tokens": 5008,
+            "output_tokens": 888,
+            "cached_input_tokens": 1792,
+            "latency_ms": 7688.741837002453,
+            "cost_usd": 0.0026248,
+            "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+            "cost_basis": "estimated",
+            "outcome": "accepted",
+            "request_id": "fef0d7db-ffdf-40f5-b3db-9a2c40be53d2",
+            "retry_of_request_id": null
+          }
+        ]
+      },
+      "not_additive": true
+    },
+    {
+      "item": "R16",
+      "path": "persisted_generation_usage.entailment_review",
+      "receipt": {
+        "stage": "generation",
+        "provider": "openai",
+        "model": "gpt-5-mini",
+        "request_count": 1,
+        "retry_count": 0,
+        "input_tokens": 1102,
+        "output_tokens": 254,
+        "cached_input_tokens": 0,
+        "latency_ms": 3887.6171259980765,
+        "cost_usd": 0.0007835,
+        "cost_basis": "estimated",
+        "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19"
+      },
+      "not_additive": true
+    },
+    {
+      "item": "R16",
+      "path": "persisted_generation_usage.validation_attempts[0]",
+      "receipt": {
+        "request_count": 2,
+        "retry_count": 0,
+        "input_tokens": 5008,
+        "output_tokens": 888,
+        "cached_input_tokens": 1792,
+        "latency_ms": 7688.741837002453,
+        "cost_usd": 0.0026248,
+        "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19",
+        "cost_basis": "estimated",
+        "outcome": "accepted",
+        "request_id": "fef0d7db-ffdf-40f5-b3db-9a2c40be53d2",
+        "retry_of_request_id": null
+      },
+      "not_additive": true
+    }
+  ]
+}

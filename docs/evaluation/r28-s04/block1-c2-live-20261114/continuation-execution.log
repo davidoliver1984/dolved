@@ -1,0 +1,43 @@
+ Container dolved-r28-s03-ai-run-cdb0921e4799 Creating 
+ Container dolved-r28-s03-ai-run-cdb0921e4799 Created 
+{"item": "G2", "action": "continue", "reason": "recorded_production_outcome_not_graded", "status": "retrieval_no_answer", "grading": false}
+ Container dolved-r28-s03-ai-run-44fffbf5ceee Creating 
+ Container dolved-r28-s03-ai-run-44fffbf5ceee Created 
+ Container dolved-r28-s03-ai-run-3652350e5ceb Creating 
+ Container dolved-r28-s03-ai-run-3652350e5ceb Created 
+Runtime/schema/corpus snapshot unchanged
+ Container dolved-r28-s03-ai-run-eb298744dec4 Creating 
+ Container dolved-r28-s03-ai-run-eb298744dec4 Created 
+{"item": "G3", "action": "continue", "reason": "recorded_production_outcome_not_graded", "status": "retrieval_no_answer", "grading": false}
+G3 completed; ungraded
+ Container dolved-r28-s03-ai-run-8be4fadb55f6 Creating 
+ Container dolved-r28-s03-ai-run-8be4fadb55f6 Created 
+ Container dolved-r28-s03-ai-run-860903558c9d Creating 
+ Container dolved-r28-s03-ai-run-860903558c9d Created 
+Runtime/schema/corpus snapshot unchanged
+ Container dolved-r28-s03-ai-run-e2855ef0da39 Creating 
+ Container dolved-r28-s03-ai-run-e2855ef0da39 Created 
+{"item": "G4", "action": "continue", "reason": "recorded_production_outcome_not_graded", "status": "completed", "grading": false}
+G4 completed; ungraded
+ Container dolved-r28-s03-ai-run-56bcde5c1f31 Creating 
+ Container dolved-r28-s03-ai-run-56bcde5c1f31 Created 
+ Container dolved-r28-s03-ai-run-b9835bee62c0 Creating 
+ Container dolved-r28-s03-ai-run-b9835bee62c0 Created 
+Runtime/schema/corpus snapshot unchanged
+ Container dolved-r28-s03-ai-run-1c7c40d556ca Creating 
+ Container dolved-r28-s03-ai-run-1c7c40d556ca Created 
+{"item": "G5", "action": "continue", "reason": "recorded_production_outcome_not_graded", "status": "completed", "grading": false}
+G5 completed; ungraded
+ Container dolved-r28-s03-ai-run-09316c38bd74 Creating 
+ Container dolved-r28-s03-ai-run-09316c38bd74 Created 
+ Container dolved-r28-s03-ai-run-f1512757cdb9 Creating 
+ Container dolved-r28-s03-ai-run-f1512757cdb9 Created 
+Runtime/schema/corpus snapshot unchanged
+ Container dolved-r28-s03-ai-run-39f5206384dd Creating 
+ Container dolved-r28-s03-ai-run-39f5206384dd Created 
+{"item": "R16", "action": "continue", "reason": "recorded_production_outcome_not_graded", "status": "completed", "grading": false}
+R16 completed; ungraded
+ Container dolved-r28-s03-ai-run-d542118011ee Creating 
+ Container dolved-r28-s03-ai-run-d542118011ee Created 
+{"cap_usd": 1.5, "known_and_retained_rate_subtotal_usd": 0.08847327, "reranking_conservative_allowance_usd": 0.0021876, "unpriced_uncertainty_reserve_usd": 0.5, "next_item_headroom_required_usd": 0.5, "conservative_committed_usd": 0.59066087, "available_after_reserve_usd": 0.90933913, "next_dispatch_budget_gate": true, "complete_invoice_total_available": false, "receipt_accounting_unit": "API-to-AI service call; provider attempts nested in receipts, not independently reconstructed"}
+COMPLETED_UNGRADED six once-only items

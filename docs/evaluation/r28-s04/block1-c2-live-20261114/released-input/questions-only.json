@@ -1,0 +1,16 @@
+{
+  "schema_version": "c2-confirmation-questions-v1",
+  "package_id": "C2-CONFIRMATION-20261114",
+  "note": "Question-only execution input. Single user turn each, one new conversation per item. No document is named. Contains no expectations.",
+  "evaluated_at_assumption": "Dispatched in November 2026 or later (Europe/London).",
+  "fresh_items": [
+    {"id": "G1", "utterance": "What was the maximum opening allowed for a window restrictor on an upstairs resident's window in March 2025?"},
+    {"id": "G2", "utterance": "My mother moved into the home in March 2025. What temperature does her soiled bedding have to be washed at now?"},
+    {"id": "G3", "utterance": "Facilities agreed a new pest control schedule on 20 May 2025, and it started on 1 July 2025. How often did the kitchen area have to be inspected once it started?"},
+    {"id": "G4", "utterance": "How often did IT have to run a backup test restoration in July 2025, and how often is it now?"},
+    {"id": "G5", "utterance": "How often should a care assistant have a supervision meeting?"}
+  ],
+  "known_regression_items": [
+    {"id": "R16", "utterance": "Who provided the daily cleaning at Harbour View on 1 February 2026?"}
+  ]
+}

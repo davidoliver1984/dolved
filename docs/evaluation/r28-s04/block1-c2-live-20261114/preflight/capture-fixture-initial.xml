@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="Tests\Feature\C1CaptureFixtureTest" file="/workspace/docs/evaluation/r28-s04/block1-c2-live-20261114/harness/C1CaptureFixtureTest.php" tests="5" assertions="281" errors="0" failures="1" skipped="0" time="1.668811">
+    <testsuite name="Tests\Feature\C1CaptureFixtureTest::test_c1_wrong_current_plan_preserves_dated_alternative_and_persisted_answer_use" tests="5" assertions="281" errors="0" failures="1" skipped="0" time="1.668811">
+      <testcase name="test_c1_wrong_current_plan_preserves_dated_alternative_and_persisted_answer_use with data set #0" file="/workspace/docs/evaluation/r28-s04/block1-c2-live-20261114/harness/C1CaptureFixtureTest.php" line="225" class="Tests\Feature\C1CaptureFixtureTest" classname="Tests.Feature.C1CaptureFixtureTest" assertions="59" time="1.026409"/>
+      <testcase name="test_c1_wrong_current_plan_preserves_dated_alternative_and_persisted_answer_use with data set #1" file="/workspace/docs/evaluation/r28-s04/block1-c2-live-20261114/harness/C1CaptureFixtureTest.php" line="225" class="Tests\Feature\C1CaptureFixtureTest" classname="Tests.Feature.C1CaptureFixtureTest" assertions="59" time="0.182704"/>
+      <testcase name="test_c1_wrong_current_plan_preserves_dated_alternative_and_persisted_answer_use with data set #2" file="/workspace/docs/evaluation/r28-s04/block1-c2-live-20261114/harness/C1CaptureFixtureTest.php" line="225" class="Tests\Feature\C1CaptureFixtureTest" classname="Tests.Feature.C1CaptureFixtureTest" assertions="61" time="0.135954"/>
+      <testcase name="test_c1_wrong_current_plan_preserves_dated_alternative_and_persisted_answer_use with data set #3" file="/workspace/docs/evaluation/r28-s04/block1-c2-live-20261114/harness/C1CaptureFixtureTest.php" line="225" class="Tests\Feature\C1CaptureFixtureTest" classname="Tests.Feature.C1CaptureFixtureTest" assertions="61" time="0.140123"/>
+      <testcase name="test_c1_wrong_current_plan_preserves_dated_alternative_and_persisted_answer_use with data set #4" file="/workspace/docs/evaluation/r28-s04/block1-c2-live-20261114/harness/C1CaptureFixtureTest.php" line="225" class="Tests\Feature\C1CaptureFixtureTest" classname="Tests.Feature.C1CaptureFixtureTest" assertions="41" time="0.183621">
+        <failure type="PHPUnit\Framework\ExpectationFailedException">Tests\Feature\C1CaptureFixtureTest::test_c1_wrong_current_plan_preserves_dated_alternative_and_persisted_answer_use with data set #4
+Failed asserting that actual size 1 matches expected size 2.
+
+/workspace/docs/evaluation/r28-s04/block1-c2-live-20261114/harness/C1CaptureFixtureTest.php:375</failure>
+      </testcase>
+    </testsuite>
+  </testsuite>
+</testsuites>

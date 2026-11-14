@@ -1,0 +1,12 @@
+{"item":"G1","event":"dispatch_started","at":"2026-11-14T11:39:13Z"}
+{"item":"G1","event":"recorded","at":"2026-11-14T11:40:13Z","sha256":"734ac7e5096f6c98d274033632533312553c41900c1bcf3e70a02462c5394a8f"}
+{"item":"G2","event":"dispatch_started","at":"2026-11-14T11:40:16Z"}
+{"item":"G2","event":"recorded","reason":"typed model rejection; initial harness outer-503 pause corrected","sha256":"cd9f74d14a108d523e54b8ed6bca88538835621abc3abdb4f4136062b4e7041e"}
+{"item":"G3","event":"dispatch_started","at":"2026-11-14T11:43:12Z"}
+{"item":"G3","event":"recorded","at":"2026-11-14T11:43:42Z","sha256":"e59c7f8218d8e5c902f3ce25f557d281af310d000fecac39a1abb27d3f07dd73"}
+{"item":"G4","event":"dispatch_started","at":"2026-11-14T11:43:44Z"}
+{"item":"G4","event":"recorded","at":"2026-11-14T11:44:48Z","sha256":"23416ac8ba5df1ff3c03f929bb31ceb7a698bbe0ed832bfde03fa3d5692fa94c"}
+{"item":"G5","event":"dispatch_started","at":"2026-11-14T11:44:51Z"}
+{"item":"G5","event":"recorded","at":"2026-11-14T11:45:19Z","sha256":"4aa0deb7e407a8014ed5ec56133768c5a385e1385e55d8656a6a6ada62db4e0e"}
+{"item":"R16","event":"dispatch_started","at":"2026-11-14T11:45:21Z"}
+{"item":"R16","event":"recorded","at":"2026-11-14T11:45:58Z","sha256":"2ade903758d1e3d3460a02f0d154528c7a9e0a3d0c070e6a5cec2a3ba6c65c8d"}

@@ -1,0 +1,23 @@
+{
+  "authorization_id": "R28-C2-AUTH-20261114-01",
+  "run_id": "R28-C2-LIVE-20261114-01",
+  "head": "829bbf132429ab8d4b408e4df2654e1b76fd2070",
+  "implementation": "84f22f862e5001be998e6a8fe027f56a17db6941",
+  "runtime_aggregate": "7f20f123cb9e4af9567e0ea0240ebf715d54755ae2611dc66ecd6719756773af",
+  "items": [
+    "G1",
+    "G2",
+    "G3",
+    "G4",
+    "G5",
+    "R16"
+  ],
+  "cap_usd": 1.5,
+  "uncertainty_reserve_usd": 0.5,
+  "minimum_next_item_headroom_usd": 0.5,
+  "initial_conservative_reservation_usd": 1.0,
+  "once_only": true,
+  "grading_authorised": false,
+  "main": "348f09e053c8ad73676921c5c616cced812111d7",
+  "block_1": "HOLD"
+}

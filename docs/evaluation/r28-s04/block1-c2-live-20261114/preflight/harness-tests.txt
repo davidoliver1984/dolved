@@ -1,0 +1,17 @@
+ Container dolved-r28-s03-ai-run-c9a4be4a1052 Creating 
+ Container dolved-r28-s03-ai-run-c9a4be4a1052 Created 
+test_planner_rejection_requires_successful_provider_and_not_systemic (test_stop_logic.StopLogic.test_planner_rejection_requires_successful_provider_and_not_systemic) ... ok
+test_safe_outcomes_and_unknown_failure (test_stop_logic.StopLogic.test_safe_outcomes_and_unknown_failure) ... ok
+test_typed_invalid_review_is_recorded_not_infrastructure (test_stop_logic.StopLogic.test_typed_invalid_review_is_recorded_not_infrastructure) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.000s
+
+OK
+test_retained_g2_is_safe_item_rejection (test_gate.RecordedPlannerRejection.test_retained_g2_is_safe_item_rejection) ... ok
+test_shape_without_reviewer_data (test_gate.RecordedPlannerRejection.test_shape_without_reviewer_data) ... ok
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.001s
+
+OK

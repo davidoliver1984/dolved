@@ -1,0 +1,135 @@
+{
+    "input": {
+        "id": "G2",
+        "utterance": "My mother moved into the home in March 2025. What temperature does her soiled bedding have to be washed at now?"
+    },
+    "started_at_london": "2026-11-14T11:40:17+00:00",
+    "finished_at_london": "2026-11-14T11:40:47+00:00",
+    "elapsed_ms": 30772.956132888794,
+    "run_id": "0b18a268-2af5-4471-b390-ecac01a80154",
+    "conversation_id": 1633,
+    "workspace_id": 1,
+    "status": "retrieval_no_answer",
+    "failure_code": null,
+    "evaluated_at": "2026-11-14T11:40:17.000000Z",
+    "displayed_text": "I couldn't interpret this question reliably, so I haven't used a guessed interpretation to search or answer it. Please try rephrasing your question.",
+    "production_trace": {
+        "contextualisation": {
+            "status": "resolved",
+            "resolved_query": "My mother moved into the home in March 2025. What temperature does her soiled bedding have to be washed at now?",
+            "clarification_question": null,
+            "used_prior_context": false,
+            "contextualiser_version": "authorised-user-turns-needs-v1",
+            "usage": null
+        }
+    },
+    "inventoried_references": [],
+    "observed_temporal_targets": [],
+    "routes_by_need": null,
+    "availability": {
+        "accepted_plan": false,
+        "temporal_inventory": "unavailable_no_accepted_plan",
+        "generation_request": "unavailable_not_reached",
+        "validated_temporal_use": "unavailable_no_answer_record",
+        "empty_derived_arrays": "No observation is not proof of an executed negative result; consult availability and raw trace."
+    },
+    "generation_request": null,
+    "entailment_checks": null,
+    "aspect_results": null,
+    "unsupported_aspects": null,
+    "lane_events": [],
+    "base_logical_lanes": 0,
+    "additional_search_lanes": 0,
+    "final_allocated_evidence": [],
+    "precautionary_target_admitted": false,
+    "admitted_precautionary_target_ids": [],
+    "answer_used_precautionary_target": false,
+    "validated_used_target_ids": [],
+    "answer_used_requested_target": false,
+    "temporal_context": [],
+    "reloaded_temporal_context": null,
+    "reloaded_rendered_text": null,
+    "parts": null,
+    "retrieval": {
+        "outcome": "interpretation_failed",
+        "clarification_source": null,
+        "clarification_reason": "planner_validation_failed",
+        "lineage": [],
+        "resolved_temporal_authority": []
+    },
+    "usage": {
+        "contextualisation": null,
+        "planner_failure": {
+            "category": "invalid_grounded_needs_plan",
+            "provider_status": 200,
+            "attempt_count": 2,
+            "systemic": false,
+            "validation": {
+                "stage": "schema",
+                "field": "needs.0.fact_reference",
+                "code": "fact_date_precision"
+            },
+            "completion": {
+                "finish_reason": "stop",
+                "input_tokens": 18705,
+                "output_tokens": 902,
+                "reasoning_tokens": 448
+            },
+            "validation_attempts": [
+                {
+                    "request_count": 1,
+                    "retry_count": 0,
+                    "input_tokens": 18618,
+                    "output_tokens": 1070,
+                    "cached_input_tokens": null,
+                    "latency_ms": 16379.613549004716,
+                    "cost_usd": null,
+                    "pricing_snapshot": null,
+                    "cost_basis": "unavailable",
+                    "validation": {
+                        "stage": "schema",
+                        "field": "needs.0.fact_reference",
+                        "code": "fact_date_precision"
+                    },
+                    "status": "rejected"
+                },
+                {
+                    "request_count": 1,
+                    "retry_count": 0,
+                    "input_tokens": 18705,
+                    "output_tokens": 902,
+                    "cached_input_tokens": null,
+                    "latency_ms": 14219.261256002937,
+                    "cost_usd": null,
+                    "pricing_snapshot": null,
+                    "cost_basis": "unavailable",
+                    "validation": {
+                        "stage": "schema",
+                        "field": "needs.0.fact_reference",
+                        "code": "fact_date_precision"
+                    },
+                    "status": "rejected"
+                }
+            ]
+        }
+    },
+    "generation_usage": null,
+    "service_calls": [
+        {
+            "key": "90b0fcc0-2580-4c03-944f-22d141ef6f4d:0",
+            "request_id": "90b0fcc0-2580-4c03-944f-22d141ef6f4d",
+            "path": "/api/internal/retrieval/plan-needs",
+            "status": "received",
+            "http_status": 503,
+            "latency_ms": 30644.20199394226,
+            "usage": null,
+            "service_status": null,
+            "error_category": null,
+            "comparison_review_failure": null,
+            "error": null,
+            "review_metadata": [],
+            "provider_receipt": []
+        }
+    ],
+    "workspace_usage": []
+}

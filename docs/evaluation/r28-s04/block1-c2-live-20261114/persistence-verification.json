@@ -1,0 +1,349 @@
+{
+    "items": [
+        {
+            "item": "G1",
+            "run_id": "9e3b3b47-1483-46c9-b950-8f0fed9aa5e5",
+            "conversation_id": "84f2df84-8e16-41f0-9a2c-4596f2c02692",
+            "workspace_id": "5323cd6b-8b7a-40f9-98b0-9413c75f643e",
+            "actor_id": "ae454ce6-4d91-4c7e-9a40-b4750b696a6b",
+            "user_turns": 1,
+            "generation_runs": 1,
+            "status": "completed",
+            "question": "What was the maximum opening allowed for a window restrictor on an upstairs resident's window in March 2025?",
+            "temporal_context": {
+                "uses": [
+                    {
+                        "target": {
+                            "at": null,
+                            "mode": "dated",
+                            "reason": null,
+                            "status": "searched",
+                            "need_id": "n1",
+                            "purpose": "precautionary",
+                            "versions": [
+                                {
+                                    "end": "2025-06-01T00:00:00+00:00",
+                                    "start": "2024-06-01T00:00:00+00:00",
+                                    "version_id": "0d580e2e-1fbb-4a4f-9e37-8137db286a4b"
+                                }
+                            ],
+                            "family_id": "1e952110-90be-46ef-baf0-b2e0c03e495b",
+                            "reference": {
+                                "at": null,
+                                "quote": "March 2025",
+                                "value": "2025-03",
+                                "turn_id": "user-1",
+                                "precision": "month",
+                                "period_end": "2025-04-01T00:00:00+00:00",
+                                "period_start": "2025-03-01T00:00:00+00:00"
+                            },
+                            "target_id": "n1:date:1"
+                        },
+                        "need_id": "n1",
+                        "target_id": "n1:date:1",
+                        "part_index": 0,
+                        "question_quote": "What was the maximum opening allowed for a window restrictor on an upstairs resident's window in March 2025?",
+                        "planner_disagreement": false
+                    }
+                ],
+                "targets": [
+                    {
+                        "at": null,
+                        "mode": "provisional",
+                        "reason": null,
+                        "status": "searched",
+                        "need_id": "n1",
+                        "purpose": "requested",
+                        "versions": [
+                            {
+                                "end": "2025-06-01T00:00:00+00:00",
+                                "start": "2024-06-01T00:00:00+00:00",
+                                "version_id": "0d580e2e-1fbb-4a4f-9e37-8137db286a4b"
+                            }
+                        ],
+                        "family_id": "1e952110-90be-46ef-baf0-b2e0c03e495b",
+                        "reference": null,
+                        "target_id": "n1:requested"
+                    },
+                    {
+                        "at": null,
+                        "mode": "dated",
+                        "reason": null,
+                        "status": "searched",
+                        "need_id": "n1",
+                        "purpose": "precautionary",
+                        "versions": [
+                            {
+                                "end": "2025-06-01T00:00:00+00:00",
+                                "start": "2024-06-01T00:00:00+00:00",
+                                "version_id": "0d580e2e-1fbb-4a4f-9e37-8137db286a4b"
+                            }
+                        ],
+                        "family_id": "1e952110-90be-46ef-baf0-b2e0c03e495b",
+                        "reference": {
+                            "at": null,
+                            "quote": "March 2025",
+                            "value": "2025-03",
+                            "turn_id": "user-1",
+                            "precision": "month",
+                            "period_end": "2025-04-01T00:00:00+00:00",
+                            "period_start": "2025-03-01T00:00:00+00:00"
+                        },
+                        "target_id": "n1:date:1"
+                    },
+                    {
+                        "at": "2026-11-14T11:39:14+00:00",
+                        "mode": "current",
+                        "reason": null,
+                        "status": "searched",
+                        "need_id": "n1",
+                        "purpose": "precautionary",
+                        "versions": [
+                            {
+                                "end": null,
+                                "start": "2026-06-01T00:00:00+00:00",
+                                "version_id": "aef65ab6-e0af-4ecf-bf3b-bf1812eef549"
+                            }
+                        ],
+                        "family_id": "1e952110-90be-46ef-baf0-b2e0c03e495b",
+                        "reference": null,
+                        "target_id": "n1:current"
+                    }
+                ],
+                "version": "temporal-answer-use-v1"
+            },
+            "reloaded_rendered_text": "In March 2025, the policy in force required a restrictor limiting an upstairs (resident-accessible above ground floor) window opening to 100 mm.\nTemporal basis: March 2025; whole month 2025-03-01T00:00:00+00:00 to 2025-04-01T00:00:00+00:00 (end exclusive); version 0d580e2e-1fbb-4a4f-9e37-8137db286a4b; effective 2024-06-01T00:00:00+00:00 to 2025-06-01T00:00:00+00:00 (end exclusive).",
+            "assistant_display_text": "In March 2025, the policy in force required a restrictor limiting an upstairs (resident-accessible above ground floor) window opening to 100 mm.\nTemporal basis: March 2025; whole month 2025-03-01T00:00:00+00:00 to 2025-04-01T00:00:00+00:00 (end exclusive); version 0d580e2e-1fbb-4a4f-9e37-8137db286a4b; effective 2024-06-01T00:00:00+00:00 to 2025-06-01T00:00:00+00:00 (end exclusive)."
+        },
+        {
+            "item": "G2",
+            "run_id": "0b18a268-2af5-4471-b390-ecac01a80154",
+            "conversation_id": "8d74643b-f6a8-41a9-acca-b4e15e94a335",
+            "workspace_id": "5323cd6b-8b7a-40f9-98b0-9413c75f643e",
+            "actor_id": "ae454ce6-4d91-4c7e-9a40-b4750b696a6b",
+            "user_turns": 1,
+            "generation_runs": 1,
+            "status": "retrieval_no_answer",
+            "question": "My mother moved into the home in March 2025. What temperature does her soiled bedding have to be washed at now?",
+            "temporal_context": null,
+            "reloaded_rendered_text": null,
+            "assistant_display_text": "I couldn't interpret this question reliably, so I haven't used a guessed interpretation to search or answer it. Please try rephrasing your question."
+        },
+        {
+            "item": "G3",
+            "run_id": "b3fe510a-0bd8-41de-a27b-071e71464366",
+            "conversation_id": "f3605ace-b798-4f00-b9f0-11f8171840bb",
+            "workspace_id": "5323cd6b-8b7a-40f9-98b0-9413c75f643e",
+            "actor_id": "ae454ce6-4d91-4c7e-9a40-b4750b696a6b",
+            "user_turns": 1,
+            "generation_runs": 1,
+            "status": "retrieval_no_answer",
+            "question": "Facilities agreed a new pest control schedule on 20 May 2025, and it started on 1 July 2025. How often did the kitchen area have to be inspected once it started?",
+            "temporal_context": null,
+            "reloaded_rendered_text": null,
+            "assistant_display_text": "I couldn't interpret this question reliably, so I haven't used a guessed interpretation to search or answer it. Please try rephrasing your question."
+        },
+        {
+            "item": "G4",
+            "run_id": "da7b99a1-53cd-4eb5-ac20-2968b3d3eb4e",
+            "conversation_id": "9b92f37d-ab1f-4102-af8c-1eed3561dff9",
+            "workspace_id": "5323cd6b-8b7a-40f9-98b0-9413c75f643e",
+            "actor_id": "ae454ce6-4d91-4c7e-9a40-b4750b696a6b",
+            "user_turns": 1,
+            "generation_runs": 1,
+            "status": "completed",
+            "question": "How often did IT have to run a backup test restoration in July 2025, and how often is it now?",
+            "temporal_context": {
+                "uses": [
+                    {
+                        "target": {
+                            "at": "2026-11-14T11:43:44+00:00",
+                            "mode": "current",
+                            "reason": null,
+                            "status": "searched",
+                            "need_id": "n2",
+                            "purpose": "requested",
+                            "versions": [
+                                {
+                                    "end": null,
+                                    "start": "2026-09-01T00:00:00+00:00",
+                                    "version_id": "cb29e902-d33e-4fc7-b6c0-139f88eeba54"
+                                }
+                            ],
+                            "family_id": "192365a5-0207-491f-8269-f50406efa18b",
+                            "reference": null,
+                            "target_id": "n2:requested"
+                        },
+                        "need_id": "n2",
+                        "target_id": "n2:requested",
+                        "part_index": 1,
+                        "question_quote": "and how often is it now?",
+                        "planner_disagreement": false
+                    }
+                ],
+                "targets": [
+                    {
+                        "at": "2026-11-14T11:43:44+00:00",
+                        "mode": "current",
+                        "reason": null,
+                        "status": "searched",
+                        "need_id": "n2",
+                        "purpose": "requested",
+                        "versions": [
+                            {
+                                "end": null,
+                                "start": "2026-09-01T00:00:00+00:00",
+                                "version_id": "cb29e902-d33e-4fc7-b6c0-139f88eeba54"
+                            }
+                        ],
+                        "family_id": "192365a5-0207-491f-8269-f50406efa18b",
+                        "reference": null,
+                        "target_id": "n2:requested"
+                    },
+                    {
+                        "at": null,
+                        "mode": "dated",
+                        "reason": null,
+                        "status": "searched",
+                        "need_id": "n2",
+                        "purpose": "precautionary",
+                        "versions": [
+                            {
+                                "end": "2025-09-01T00:00:00+00:00",
+                                "start": "2024-09-01T00:00:00+00:00",
+                                "version_id": "d129608b-b638-45c1-9dfe-2fb9056c0421"
+                            }
+                        ],
+                        "family_id": "192365a5-0207-491f-8269-f50406efa18b",
+                        "reference": {
+                            "at": null,
+                            "quote": "July 2025",
+                            "value": "2025-07",
+                            "turn_id": "user-1",
+                            "precision": "month",
+                            "period_end": "2025-08-01T00:00:00+00:00",
+                            "period_start": "2025-07-01T00:00:00+00:00"
+                        },
+                        "target_id": "n2:date:1"
+                    }
+                ],
+                "version": "temporal-answer-use-v1"
+            },
+            "reloaded_rendered_text": "In July 2025, IT was required to complete a test restoration quarterly (a quarterly test restoration).\n\nUnder the current policy, IT must complete a test restoration monthly, including periodic restoration tests specifically from the immutable (air-gapped) copy.\nTemporal basis: 2026-11-14T11:43:44+00:00; version cb29e902-d33e-4fc7-b6c0-139f88eeba54; effective 2026-09-01T00:00:00+00:00 to open end (end exclusive).",
+            "assistant_display_text": "In July 2025, IT was required to complete a test restoration quarterly (a quarterly test restoration).\n\nUnder the current policy, IT must complete a test restoration monthly, including periodic restoration tests specifically from the immutable (air-gapped) copy.\nTemporal basis: 2026-11-14T11:43:44+00:00; version cb29e902-d33e-4fc7-b6c0-139f88eeba54; effective 2026-09-01T00:00:00+00:00 to open end (end exclusive)."
+        },
+        {
+            "item": "G5",
+            "run_id": "86f3bbec-ff64-4b4a-8c89-ea5abfe22291",
+            "conversation_id": "0b53c937-4209-4012-95e2-8c97bcb00953",
+            "workspace_id": "5323cd6b-8b7a-40f9-98b0-9413c75f643e",
+            "actor_id": "ae454ce6-4d91-4c7e-9a40-b4750b696a6b",
+            "user_turns": 1,
+            "generation_runs": 1,
+            "status": "completed",
+            "question": "How often should a care assistant have a supervision meeting?",
+            "temporal_context": null,
+            "reloaded_rendered_text": "The Appraisal and Supervision Schedule (2026) specifies that care staff should have supervision every 8 weeks.\n\nThe Staff Supervision and Appraisal Policy text also states that line managers must conduct supervision with every direct report at least monthly and record it briefly, and repeats that supervision is a regular one-to-one meeting focused on current practice and immediate support needs.\n\nUnconfirmed requested aspects\n\n- Which documented frequency (monthly vs 8-weekly) definitively applies to a care assistant when the two supplied primary documents state different supervision intervals.",
+            "assistant_display_text": "The Appraisal and Supervision Schedule (2026) specifies that care staff should have supervision every 8 weeks.\n\nThe Staff Supervision and Appraisal Policy text also states that line managers must conduct supervision with every direct report at least monthly and record it briefly, and repeats that supervision is a regular one-to-one meeting focused on current practice and immediate support needs.\n\nUnconfirmed requested aspects\n\n- Which documented frequency (monthly vs 8-weekly) definitively applies to a care assistant when the two supplied primary documents state different supervision intervals."
+        },
+        {
+            "item": "R16",
+            "run_id": "538566b3-a22d-4db6-83ee-8daeaa0dd7a4",
+            "conversation_id": "ca994a3b-0355-4f0f-9987-d8bc473db7b8",
+            "workspace_id": "5323cd6b-8b7a-40f9-98b0-9413c75f643e",
+            "actor_id": "ae454ce6-4d91-4c7e-9a40-b4750b696a6b",
+            "user_turns": 1,
+            "generation_runs": 1,
+            "status": "completed",
+            "question": "Who provided the daily cleaning at Harbour View on 1 February 2026?",
+            "temporal_context": {
+                "uses": [
+                    {
+                        "target": {
+                            "at": "2026-02-01T00:00:00+00:00",
+                            "mode": "dated",
+                            "reason": null,
+                            "status": "searched",
+                            "need_id": "n1",
+                            "purpose": "precautionary",
+                            "versions": [
+                                {
+                                    "end": "2026-06-01T00:00:00+00:00",
+                                    "start": "2025-06-01T00:00:00+00:00",
+                                    "version_id": "95327181-051d-4dc9-bae4-2a9bdc06e626"
+                                }
+                            ],
+                            "family_id": "34cacf6a-c7f2-4dcf-a2a0-05ef542175a9",
+                            "reference": {
+                                "at": "2026-02-01T00:00:00+00:00",
+                                "quote": "1 February 2026",
+                                "value": "2026-02-01",
+                                "turn_id": "user-1",
+                                "precision": "day",
+                                "period_end": null,
+                                "period_start": null
+                            },
+                            "target_id": "n1:date:1"
+                        },
+                        "need_id": "n1",
+                        "target_id": "n1:date:1",
+                        "part_index": 0,
+                        "question_quote": "1 February 2026",
+                        "planner_disagreement": true
+                    }
+                ],
+                "targets": [
+                    {
+                        "at": "2026-11-14T11:45:22+00:00",
+                        "mode": "current",
+                        "reason": null,
+                        "status": "searched",
+                        "need_id": "n1",
+                        "purpose": "requested",
+                        "versions": [
+                            {
+                                "end": null,
+                                "start": "2026-06-01T00:00:00+00:00",
+                                "version_id": "b8e7b8df-cbd5-482b-a294-be5022b06d54"
+                            }
+                        ],
+                        "family_id": "34cacf6a-c7f2-4dcf-a2a0-05ef542175a9",
+                        "reference": null,
+                        "target_id": "n1:requested"
+                    },
+                    {
+                        "at": "2026-02-01T00:00:00+00:00",
+                        "mode": "dated",
+                        "reason": null,
+                        "status": "searched",
+                        "need_id": "n1",
+                        "purpose": "precautionary",
+                        "versions": [
+                            {
+                                "end": "2026-06-01T00:00:00+00:00",
+                                "start": "2025-06-01T00:00:00+00:00",
+                                "version_id": "95327181-051d-4dc9-bae4-2a9bdc06e626"
+                            }
+                        ],
+                        "family_id": "34cacf6a-c7f2-4dcf-a2a0-05ef542175a9",
+                        "reference": {
+                            "at": "2026-02-01T00:00:00+00:00",
+                            "quote": "1 February 2026",
+                            "value": "2026-02-01",
+                            "turn_id": "user-1",
+                            "precision": "day",
+                            "period_end": null,
+                            "period_start": null
+                        },
+                        "target_id": "n1:date:1"
+                    }
+                ],
+                "version": "temporal-answer-use-v1"
+            },
+            "reloaded_rendered_text": "CleanCo South West Ltd provided the daily cleaning at Harbour View on 1 February 2026.\nTemporal basis: 1 February 2026; version 95327181-051d-4dc9-bae4-2a9bdc06e626; effective 2025-06-01T00:00:00+00:00 to 2026-06-01T00:00:00+00:00 (end exclusive) (differs from the provisional planner target).",
+            "assistant_display_text": "CleanCo South West Ltd provided the daily cleaning at Harbour View on 1 February 2026.\nTemporal basis: 1 February 2026; version 95327181-051d-4dc9-bae4-2a9bdc06e626; effective 2025-06-01T00:00:00+00:00 to 2026-06-01T00:00:00+00:00 (end exclusive) (differs from the provisional planner target)."
+        }
+    ],
+    "verified_at": "2026-11-14T11:46:41+00:00",
+    "grading": false
+}

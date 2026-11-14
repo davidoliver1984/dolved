@@ -1,0 +1,1755 @@
+{
+    "run_id": "67489fb3-bc87-4e7f-bab5-f40da01b0858",
+    "conversation_id": 1,
+    "workspace_id": 1,
+    "status": "completed",
+    "failure_code": null,
+    "evaluated_at": "2026-11-14T00:00:00.000000Z",
+    "displayed_text": "The regional contractor performed daily inspections; trained staff accompanied them in hazardous areas.\nTemporal basis: February 2026; whole month 2026-02-01T00:00:00+00:00 to 2026-03-01T00:00:00+00:00 (end exclusive); version fc14d3fa-3243-35a5-badf-569e51aa067e; effective 2025-01-01T00:00:00+00:00 to 2026-06-01T00:00:00+00:00 (end exclusive) (differs from the provisional planner target).",
+    "production_trace": {
+        "contextualisation": {
+            "status": "resolved",
+            "resolved_query": "Under the Inspection Schedule, who performed daily inspections during February 2026?",
+            "clarification_question": null,
+            "used_prior_context": false,
+            "contextualiser_version": "authorised-user-turns-needs-v1",
+            "usage": null
+        },
+        "needs_plan": {
+            "schema_version": "evidence-needs-plan-v4",
+            "decision": "plan",
+            "clarification": null,
+            "needs": [
+                {
+                    "need_id": "n1",
+                    "aspect": "Under the Inspection Schedule, who performed daily inspections during February 2026?",
+                    "central": true,
+                    "question_span": {
+                        "turn_id": "user-1",
+                        "quote": "Under the Inspection Schedule, who performed daily inspections during February 2026?"
+                    },
+                    "operation": "retrieve",
+                    "authority": {
+                        "kind": "current",
+                        "value": null,
+                        "precision": "none",
+                        "source": null
+                    },
+                    "fact_reference": null,
+                    "applicability": {
+                        "kind": "generic",
+                        "source": null
+                    },
+                    "supports_need_id": null,
+                    "claim_under_test": null,
+                    "scope_question": null,
+                    "context_spans": []
+                }
+            ],
+            "bindings": [
+                {
+                    "need_id": "n1",
+                    "subject_status": "matched",
+                    "family_ids": [
+                        "1e4931bb-c3c8-3c10-8ee8-730420788d5e"
+                    ],
+                    "ownership": "authorised_workspace",
+                    "ownership_source": null
+                }
+            ]
+        },
+        "need.n1.plan": {
+            "query": "Under the Inspection Schedule, who performed daily inspections during February 2026?",
+            "temporal_mode": "current",
+            "explicit_date": null,
+            "temporal_reference": null,
+            "version_transition_boundary": null,
+            "fact_date": null,
+            "requested_evidence_type": "policy_or_procedural_requirements",
+            "location_references": [],
+            "clarification_reason": null,
+            "classifier_lineage": {
+                "provider": "openai",
+                "model": "gpt-5-mini",
+                "contract_schema_version": "evidence-needs-plan-v4",
+                "prompt_version": "bounded-evidence-needs-v26",
+                "adapter_version": "structured-chat-needs-v10",
+                "fingerprint": "f0ce332063576a68ddc4c06cd3c0a4a8e8c51eee5a411cfc6cc4b8851ab946dd"
+            },
+            "usage": []
+        },
+        "need.n1.eligibility": {
+            "outcome": "evidence_found",
+            "document_public_ids_by_side": {
+                "primary": [
+                    "b260efe1-aeca-30fa-b07a-c0cc30a3f4b3"
+                ]
+            },
+            "reason": null,
+            "resolved_location_public_id": null,
+            "clarification_question": null,
+            "reference_classifications": []
+        },
+        "need.n1.search": {
+            "candidates": [
+                {
+                    "chunk_id": "9f3ef0fe-ddb2-3738-93ab-29f31efd4044",
+                    "document_id": "b260efe1-aeca-30fa-b07a-c0cc30a3f4b3",
+                    "workspace_corpus_generation_id": "04469114-3426-339b-937d-ad22dfb83936",
+                    "embedding_space_generation_id": "1443f61c-cc5a-30e0-87a0-f5952484c5eb",
+                    "score": 0.9,
+                    "rank": 1,
+                    "retrieval_method": "dense",
+                    "side": "primary"
+                }
+            ],
+            "lineage": [],
+            "diagnostics": [],
+            "usage": []
+        },
+        "need.n1.hydrated": [
+            {
+                "chunk_id": "9f3ef0fe-ddb2-3738-93ab-29f31efd4044",
+                "document_id": "b260efe1-aeca-30fa-b07a-c0cc30a3f4b3",
+                "document_family_id": "1e4931bb-c3c8-3c10-8ee8-730420788d5e",
+                "version_position": 2,
+                "source_filename": "vel.pdf",
+                "document_title": "vel.pdf",
+                "document_family_title": "ut eum enim",
+                "section_heading": null,
+                "chunk_text": "The national contractor performs the daily inspection.",
+                "provenance": [
+                    {
+                        "normalised_element_id": "74754c21-df0f-3e8c-830f-461c281b773b",
+                        "source_element_ids": [
+                            "8591b758-8f31-34e1-be84-a045c0e8873a"
+                        ],
+                        "source_locations": [
+                            {
+                                "type": "text",
+                                "start_character": 0,
+                                "end_character": 20,
+                                "start_line": 1,
+                                "end_line": 1
+                            }
+                        ],
+                        "element_start_character": 0,
+                        "element_end_character": 20,
+                        "chunk_start_character": 0,
+                        "chunk_end_character": 20,
+                        "role": "primary"
+                    }
+                ],
+                "score": 0.9,
+                "rank": 1,
+                "retrieval_method": "dense",
+                "side": "primary",
+                "workspace_corpus_generation_id": "04469114-3426-339b-937d-ad22dfb83936",
+                "embedding_space_generation_id": "1443f61c-cc5a-30e0-87a0-f5952484c5eb",
+                "sparse_space_generation_id": null,
+                "dense_score": null,
+                "dense_rank": null,
+                "sparse_score": null,
+                "sparse_rank": null
+            }
+        ],
+        "need.n1.n1:date:1.plan": {
+            "query": "Under the Inspection Schedule, who performed daily inspections during February 2026?",
+            "temporal_mode": "valid_at_date",
+            "explicit_date": null,
+            "temporal_reference": {
+                "kind": "calendar_period",
+                "value": "2026-02"
+            },
+            "version_transition_boundary": null,
+            "fact_date": null,
+            "requested_evidence_type": "policy_or_procedural_requirements",
+            "location_references": [],
+            "clarification_reason": null,
+            "classifier_lineage": {
+                "provider": "openai",
+                "model": "gpt-5-mini",
+                "contract_schema_version": "evidence-needs-plan-v4",
+                "prompt_version": "bounded-evidence-needs-v26",
+                "adapter_version": "structured-chat-needs-v10",
+                "fingerprint": "f0ce332063576a68ddc4c06cd3c0a4a8e8c51eee5a411cfc6cc4b8851ab946dd"
+            },
+            "usage": []
+        },
+        "need.n1.n1:date:1.eligibility": {
+            "outcome": "evidence_found",
+            "document_public_ids_by_side": {
+                "primary": [
+                    "fc14d3fa-3243-35a5-badf-569e51aa067e"
+                ]
+            },
+            "reason": null,
+            "resolved_location_public_id": null,
+            "clarification_question": null,
+            "reference_classifications": []
+        },
+        "need.n1.n1:date:1.search": {
+            "candidates": [
+                {
+                    "chunk_id": "8dfe3e7c-2a25-373e-91b0-1dd351df240e",
+                    "document_id": "fc14d3fa-3243-35a5-badf-569e51aa067e",
+                    "workspace_corpus_generation_id": "04469114-3426-339b-937d-ad22dfb83936",
+                    "embedding_space_generation_id": "1443f61c-cc5a-30e0-87a0-f5952484c5eb",
+                    "score": 0.9,
+                    "rank": 1,
+                    "retrieval_method": "dense",
+                    "side": "primary"
+                },
+                {
+                    "chunk_id": "8bce5bd9-4250-31f4-8bd0-0f4365e78457",
+                    "document_id": "fc14d3fa-3243-35a5-badf-569e51aa067e",
+                    "workspace_corpus_generation_id": "04469114-3426-339b-937d-ad22dfb83936",
+                    "embedding_space_generation_id": "1443f61c-cc5a-30e0-87a0-f5952484c5eb",
+                    "score": 0.9,
+                    "rank": 1,
+                    "retrieval_method": "dense",
+                    "side": "primary"
+                }
+            ],
+            "lineage": [],
+            "diagnostics": [],
+            "usage": []
+        },
+        "need.n1.n1:date:1.hydrated": [
+            {
+                "chunk_id": "8dfe3e7c-2a25-373e-91b0-1dd351df240e",
+                "document_id": "fc14d3fa-3243-35a5-badf-569e51aa067e",
+                "document_family_id": "1e4931bb-c3c8-3c10-8ee8-730420788d5e",
+                "version_position": 1,
+                "source_filename": "sunt.pdf",
+                "document_title": "sunt.pdf",
+                "document_family_title": "ut eum enim",
+                "section_heading": null,
+                "chunk_text": "The regional contractor performs the daily inspection.",
+                "provenance": [
+                    {
+                        "normalised_element_id": "e67c57c9-8fd5-3a2c-8238-15ccb77b4efb",
+                        "source_element_ids": [
+                            "90d3c39d-84c7-3117-add8-369b0fdcc0d5"
+                        ],
+                        "source_locations": [
+                            {
+                                "type": "text",
+                                "start_character": 0,
+                                "end_character": 20,
+                                "start_line": 1,
+                                "end_line": 1
+                            }
+                        ],
+                        "element_start_character": 0,
+                        "element_end_character": 20,
+                        "chunk_start_character": 0,
+                        "chunk_end_character": 20,
+                        "role": "primary"
+                    }
+                ],
+                "score": 0.9,
+                "rank": 1,
+                "retrieval_method": "dense",
+                "side": "primary",
+                "workspace_corpus_generation_id": "04469114-3426-339b-937d-ad22dfb83936",
+                "embedding_space_generation_id": "1443f61c-cc5a-30e0-87a0-f5952484c5eb",
+                "sparse_space_generation_id": null,
+                "dense_score": null,
+                "dense_rank": null,
+                "sparse_score": null,
+                "sparse_rank": null
+            },
+            {
+                "chunk_id": "8bce5bd9-4250-31f4-8bd0-0f4365e78457",
+                "document_id": "fc14d3fa-3243-35a5-badf-569e51aa067e",
+                "document_family_id": "1e4931bb-c3c8-3c10-8ee8-730420788d5e",
+                "version_position": 1,
+                "source_filename": "sunt.pdf",
+                "document_title": "sunt.pdf",
+                "document_family_title": "ut eum enim",
+                "section_heading": null,
+                "chunk_text": "During the daily inspection in hazardous areas, trained staff must accompany the contractor.",
+                "provenance": [
+                    {
+                        "normalised_element_id": "ee41e4d9-7567-393b-8f2c-d84374ee6751",
+                        "source_element_ids": [
+                            "27bbd496-ccbb-32c6-96e7-fdce4d9140e0"
+                        ],
+                        "source_locations": [
+                            {
+                                "type": "text",
+                                "start_character": 0,
+                                "end_character": 20,
+                                "start_line": 1,
+                                "end_line": 1
+                            }
+                        ],
+                        "element_start_character": 0,
+                        "element_end_character": 20,
+                        "chunk_start_character": 0,
+                        "chunk_end_character": 20,
+                        "role": "primary"
+                    }
+                ],
+                "score": 0.9,
+                "rank": 1,
+                "retrieval_method": "dense",
+                "side": "primary",
+                "workspace_corpus_generation_id": "04469114-3426-339b-937d-ad22dfb83936",
+                "embedding_space_generation_id": "1443f61c-cc5a-30e0-87a0-f5952484c5eb",
+                "sparse_space_generation_id": null,
+                "dense_score": null,
+                "dense_rank": null,
+                "sparse_score": null,
+                "sparse_rank": null
+            }
+        ],
+        "need.n1.temporal_targets": [
+            {
+                "target_id": "n1:requested",
+                "need_id": "n1",
+                "family_id": "1e4931bb-c3c8-3c10-8ee8-730420788d5e",
+                "purpose": "requested",
+                "mode": "current",
+                "at": "2026-11-14T00:00:00+00:00",
+                "reference": null,
+                "versions": [
+                    {
+                        "version_id": "b260efe1-aeca-30fa-b07a-c0cc30a3f4b3",
+                        "start": "2026-06-01T00:00:00+00:00",
+                        "end": null
+                    }
+                ],
+                "status": "searched",
+                "reason": null
+            },
+            {
+                "target_id": "n1:date:1",
+                "need_id": "n1",
+                "family_id": "1e4931bb-c3c8-3c10-8ee8-730420788d5e",
+                "purpose": "precautionary",
+                "mode": "dated",
+                "at": null,
+                "reference": {
+                    "turn_id": "user-1",
+                    "quote": "February 2026",
+                    "at": null,
+                    "precision": "month",
+                    "value": "2026-02",
+                    "period_start": "2026-02-01T00:00:00+00:00",
+                    "period_end": "2026-03-01T00:00:00+00:00"
+                },
+                "versions": [
+                    {
+                        "version_id": "fc14d3fa-3243-35a5-badf-569e51aa067e",
+                        "start": "2025-01-01T00:00:00+00:00",
+                        "end": "2026-06-01T00:00:00+00:00"
+                    }
+                ],
+                "status": "searched",
+                "reason": null
+            }
+        ],
+        "needs_final_evidence": [
+            {
+                "chunk_id": "9f3ef0fe-ddb2-3738-93ab-29f31efd4044",
+                "document_id": "b260efe1-aeca-30fa-b07a-c0cc30a3f4b3",
+                "document_family_id": "1e4931bb-c3c8-3c10-8ee8-730420788d5e",
+                "version_position": 2,
+                "source_filename": "vel.pdf",
+                "document_title": "vel.pdf",
+                "document_family_title": "ut eum enim",
+                "section_heading": null,
+                "chunk_text": "The national contractor performs the daily inspection.",
+                "provenance": [
+                    {
+                        "normalised_element_id": "74754c21-df0f-3e8c-830f-461c281b773b",
+                        "source_element_ids": [
+                            "8591b758-8f31-34e1-be84-a045c0e8873a"
+                        ],
+                        "source_locations": [
+                            {
+                                "type": "text",
+                                "start_character": 0,
+                                "end_character": 20,
+                                "start_line": 1,
+                                "end_line": 1
+                            }
+                        ],
+                        "element_start_character": 0,
+                        "element_end_character": 20,
+                        "chunk_start_character": 0,
+                        "chunk_end_character": 20,
+                        "role": "primary"
+                    }
+                ],
+                "score": 0.9,
+                "rank": 1,
+                "retrieval_method": "dense",
+                "side": "primary",
+                "workspace_corpus_generation_id": "04469114-3426-339b-937d-ad22dfb83936",
+                "embedding_space_generation_id": "1443f61c-cc5a-30e0-87a0-f5952484c5eb",
+                "sparse_space_generation_id": null,
+                "dense_score": null,
+                "dense_rank": null,
+                "sparse_score": null,
+                "sparse_rank": null,
+                "temporal_target_ids": [
+                    "n1:requested"
+                ],
+                "need_id": "n1"
+            },
+            {
+                "chunk_id": "8bce5bd9-4250-31f4-8bd0-0f4365e78457",
+                "document_id": "fc14d3fa-3243-35a5-badf-569e51aa067e",
+                "document_family_id": "1e4931bb-c3c8-3c10-8ee8-730420788d5e",
+                "version_position": 1,
+                "source_filename": "sunt.pdf",
+                "document_title": "sunt.pdf",
+                "document_family_title": "ut eum enim",
+                "section_heading": null,
+                "chunk_text": "During the daily inspection in hazardous areas, trained staff must accompany the contractor.",
+                "provenance": [
+                    {
+                        "normalised_element_id": "ee41e4d9-7567-393b-8f2c-d84374ee6751",
+                        "source_element_ids": [
+                            "27bbd496-ccbb-32c6-96e7-fdce4d9140e0"
+                        ],
+                        "source_locations": [
+                            {
+                                "type": "text",
+                                "start_character": 0,
+                                "end_character": 20,
+                                "start_line": 1,
+                                "end_line": 1
+                            }
+                        ],
+                        "element_start_character": 0,
+                        "element_end_character": 20,
+                        "chunk_start_character": 0,
+                        "chunk_end_character": 20,
+                        "role": "primary"
+                    }
+                ],
+                "score": 0.9,
+                "rank": 1,
+                "retrieval_method": "dense",
+                "side": "primary",
+                "workspace_corpus_generation_id": "04469114-3426-339b-937d-ad22dfb83936",
+                "embedding_space_generation_id": "1443f61c-cc5a-30e0-87a0-f5952484c5eb",
+                "sparse_space_generation_id": null,
+                "dense_score": null,
+                "dense_rank": null,
+                "sparse_score": null,
+                "sparse_rank": null,
+                "temporal_target_ids": [
+                    "n1:date:1"
+                ],
+                "need_id": "n1"
+            },
+            {
+                "chunk_id": "8dfe3e7c-2a25-373e-91b0-1dd351df240e",
+                "document_id": "fc14d3fa-3243-35a5-badf-569e51aa067e",
+                "document_family_id": "1e4931bb-c3c8-3c10-8ee8-730420788d5e",
+                "version_position": 1,
+                "source_filename": "sunt.pdf",
+                "document_title": "sunt.pdf",
+                "document_family_title": "ut eum enim",
+                "section_heading": null,
+                "chunk_text": "The regional contractor performs the daily inspection.",
+                "provenance": [
+                    {
+                        "normalised_element_id": "e67c57c9-8fd5-3a2c-8238-15ccb77b4efb",
+                        "source_element_ids": [
+                            "90d3c39d-84c7-3117-add8-369b0fdcc0d5"
+                        ],
+                        "source_locations": [
+                            {
+                                "type": "text",
+                                "start_character": 0,
+                                "end_character": 20,
+                                "start_line": 1,
+                                "end_line": 1
+                            }
+                        ],
+                        "element_start_character": 0,
+                        "element_end_character": 20,
+                        "chunk_start_character": 0,
+                        "chunk_end_character": 20,
+                        "role": "primary"
+                    }
+                ],
+                "score": 0.9,
+                "rank": 1,
+                "retrieval_method": "dense",
+                "side": "primary",
+                "workspace_corpus_generation_id": "04469114-3426-339b-937d-ad22dfb83936",
+                "embedding_space_generation_id": "1443f61c-cc5a-30e0-87a0-f5952484c5eb",
+                "sparse_space_generation_id": null,
+                "dense_score": null,
+                "dense_rank": null,
+                "sparse_score": null,
+                "sparse_rank": null,
+                "temporal_target_ids": [
+                    "n1:date:1"
+                ],
+                "need_id": "n1"
+            }
+        ],
+        "needs_selection_coverage": {
+            "n1": {
+                "eligible_unit_count": 3,
+                "selected_unit_count": 3,
+                "budget_cut_unit_count": 0
+            }
+        },
+        "generation_input": {
+            "question": "Under the Inspection Schedule, who performed daily inspections during February 2026?",
+            "evidence": [
+                {
+                    "chunk_id": "9f3ef0fe-ddb2-3738-93ab-29f31efd4044",
+                    "document_id": "b260efe1-aeca-30fa-b07a-c0cc30a3f4b3",
+                    "side": "primary"
+                },
+                {
+                    "chunk_id": "8bce5bd9-4250-31f4-8bd0-0f4365e78457",
+                    "document_id": "fc14d3fa-3243-35a5-badf-569e51aa067e",
+                    "side": "primary"
+                },
+                {
+                    "chunk_id": "8dfe3e7c-2a25-373e-91b0-1dd351df240e",
+                    "document_id": "fc14d3fa-3243-35a5-badf-569e51aa067e",
+                    "side": "primary"
+                }
+            ]
+        },
+        "assembled_generation_request": {
+            "contract_version": 4,
+            "request_id": "2841e9ad-409f-4359-ba9d-19fcb82aa45b",
+            "workspace_id": "5777001c-b0bd-32b3-b36d-11acf7cd0089",
+            "question": "Under the Inspection Schedule, who performed daily inspections during February 2026?",
+            "evidence": [
+                {
+                    "evidence_id": "ev-01",
+                    "text": "The national contractor performs the daily inspection.",
+                    "document_chunk_id": 2,
+                    "document_id": 2,
+                    "ingestion_event_claim_id": 2,
+                    "source_provenance": [
+                        {
+                            "normalised_element_id": "74754c21-df0f-3e8c-830f-461c281b773b",
+                            "source_element_ids": [
+                                "8591b758-8f31-34e1-be84-a045c0e8873a"
+                            ],
+                            "source_locations": [
+                                {
+                                    "type": "text",
+                                    "start_character": 0,
+                                    "end_character": 20,
+                                    "start_line": 1,
+                                    "end_line": 1
+                                }
+                            ],
+                            "element_start_character": 0,
+                            "element_end_character": 20,
+                            "chunk_start_character": 0,
+                            "chunk_end_character": 20,
+                            "role": "primary"
+                        }
+                    ],
+                    "temporal_authority": {
+                        "evaluated_at": "2026-11-14T00:00:00+00:00",
+                        "need_id": "n1",
+                        "document_family_id": "1e4931bb-c3c8-3c10-8ee8-730420788d5e",
+                        "document_version_id": "b260efe1-aeca-30fa-b07a-c0cc30a3f4b3",
+                        "document_title": "vel.pdf",
+                        "document_family_title": "ut eum enim",
+                        "temporal_target_ids": [
+                            "n1:requested"
+                        ],
+                        "temporal_basis": "application-labelled-targets-v1",
+                        "authority_start": "2026-06-01T00:00:00+00:00",
+                        "authoritative_at_evaluated_at": true
+                    },
+                    "applicability_context": {
+                        "resolved_location_public_id": null
+                    },
+                    "side": "primary"
+                },
+                {
+                    "evidence_id": "ev-02",
+                    "text": "During the daily inspection in hazardous areas, trained staff must accompany the contractor.",
+                    "document_chunk_id": 3,
+                    "document_id": 1,
+                    "ingestion_event_claim_id": 1,
+                    "source_provenance": [
+                        {
+                            "normalised_element_id": "ee41e4d9-7567-393b-8f2c-d84374ee6751",
+                            "source_element_ids": [
+                                "27bbd496-ccbb-32c6-96e7-fdce4d9140e0"
+                            ],
+                            "source_locations": [
+                                {
+                                    "type": "text",
+                                    "start_character": 0,
+                                    "end_character": 20,
+                                    "start_line": 1,
+                                    "end_line": 1
+                                }
+                            ],
+                            "element_start_character": 0,
+                            "element_end_character": 20,
+                            "chunk_start_character": 0,
+                            "chunk_end_character": 20,
+                            "role": "primary"
+                        }
+                    ],
+                    "temporal_authority": {
+                        "evaluated_at": "2026-11-14T00:00:00+00:00",
+                        "need_id": "n1",
+                        "document_family_id": "1e4931bb-c3c8-3c10-8ee8-730420788d5e",
+                        "document_version_id": "fc14d3fa-3243-35a5-badf-569e51aa067e",
+                        "document_title": "sunt.pdf",
+                        "document_family_title": "ut eum enim",
+                        "temporal_target_ids": [
+                            "n1:date:1"
+                        ],
+                        "temporal_basis": "application-labelled-targets-v1",
+                        "authority_start": "2025-01-01T00:00:00+00:00",
+                        "authoritative_at_evaluated_at": false
+                    },
+                    "applicability_context": {
+                        "resolved_location_public_id": null
+                    },
+                    "side": "primary"
+                },
+                {
+                    "evidence_id": "ev-03",
+                    "text": "The regional contractor performs the daily inspection.",
+                    "document_chunk_id": 1,
+                    "document_id": 1,
+                    "ingestion_event_claim_id": 1,
+                    "source_provenance": [
+                        {
+                            "normalised_element_id": "e67c57c9-8fd5-3a2c-8238-15ccb77b4efb",
+                            "source_element_ids": [
+                                "90d3c39d-84c7-3117-add8-369b0fdcc0d5"
+                            ],
+                            "source_locations": [
+                                {
+                                    "type": "text",
+                                    "start_character": 0,
+                                    "end_character": 20,
+                                    "start_line": 1,
+                                    "end_line": 1
+                                }
+                            ],
+                            "element_start_character": 0,
+                            "element_end_character": 20,
+                            "chunk_start_character": 0,
+                            "chunk_end_character": 20,
+                            "role": "primary"
+                        }
+                    ],
+                    "temporal_authority": {
+                        "evaluated_at": "2026-11-14T00:00:00+00:00",
+                        "need_id": "n1",
+                        "document_family_id": "1e4931bb-c3c8-3c10-8ee8-730420788d5e",
+                        "document_version_id": "fc14d3fa-3243-35a5-badf-569e51aa067e",
+                        "document_title": "sunt.pdf",
+                        "document_family_title": "ut eum enim",
+                        "temporal_target_ids": [
+                            "n1:date:1"
+                        ],
+                        "temporal_basis": "application-labelled-targets-v1",
+                        "authority_start": "2025-01-01T00:00:00+00:00",
+                        "authoritative_at_evaluated_at": false
+                    },
+                    "applicability_context": {
+                        "resolved_location_public_id": null
+                    },
+                    "side": "primary"
+                }
+            ],
+            "constraints": {
+                "context_policy_version": "whole-needs-evidence-v1",
+                "max_context_characters": 60000,
+                "required_sides": [
+                    "primary"
+                ],
+                "requested_evidence_type": "policy_or_procedural_requirements"
+            },
+            "evidence_needs": [
+                {
+                    "need_id": "n1",
+                    "aspect": "Under the Inspection Schedule, who performed daily inspections during February 2026?",
+                    "central": true,
+                    "question_span": {
+                        "turn_id": "user-1",
+                        "quote": "Under the Inspection Schedule, who performed daily inspections during February 2026?"
+                    },
+                    "operation": "retrieve",
+                    "authority": {
+                        "kind": "current",
+                        "value": null,
+                        "precision": "none",
+                        "source": null
+                    },
+                    "fact_reference": null,
+                    "applicability": {
+                        "kind": "generic",
+                        "source": null
+                    },
+                    "claim_under_test": null,
+                    "context_spans": [],
+                    "temporal_targets": [
+                        {
+                            "target_id": "n1:requested",
+                            "need_id": "n1",
+                            "family_id": "1e4931bb-c3c8-3c10-8ee8-730420788d5e",
+                            "purpose": "requested",
+                            "mode": "current",
+                            "at": "2026-11-14T00:00:00+00:00",
+                            "reference": null,
+                            "versions": [
+                                {
+                                    "version_id": "b260efe1-aeca-30fa-b07a-c0cc30a3f4b3",
+                                    "start": "2026-06-01T00:00:00+00:00",
+                                    "end": null
+                                }
+                            ],
+                            "status": "searched",
+                            "reason": null
+                        },
+                        {
+                            "target_id": "n1:date:1",
+                            "need_id": "n1",
+                            "family_id": "1e4931bb-c3c8-3c10-8ee8-730420788d5e",
+                            "purpose": "precautionary",
+                            "mode": "dated",
+                            "at": null,
+                            "reference": {
+                                "turn_id": "user-1",
+                                "quote": "February 2026",
+                                "at": null,
+                                "precision": "month",
+                                "value": "2026-02",
+                                "period_start": "2026-02-01T00:00:00+00:00",
+                                "period_end": "2026-03-01T00:00:00+00:00"
+                            },
+                            "versions": [
+                                {
+                                    "version_id": "fc14d3fa-3243-35a5-badf-569e51aa067e",
+                                    "start": "2025-01-01T00:00:00+00:00",
+                                    "end": "2026-06-01T00:00:00+00:00"
+                                }
+                            ],
+                            "status": "searched",
+                            "reason": null
+                        }
+                    ],
+                    "retrieval_outcome": "evidence_found",
+                    "request_text_version": "extractive-request-v1",
+                    "retrieval_reason": null,
+                    "evidence_ids": [
+                        "ev-01",
+                        "ev-02",
+                        "ev-03"
+                    ]
+                }
+            ]
+        },
+        "generation_response": {
+            "contract_version": 4,
+            "request_id": "2841e9ad-409f-4359-ba9d-19fcb82aa45b",
+            "status": "completed",
+            "result": {
+                "contract_version": 4,
+                "outcome": "answered",
+                "answer_parts": [
+                    {
+                        "text": "The regional contractor performed daily inspections; trained staff accompanied them in hazardous areas.",
+                        "evidence_ids": [
+                            "ev-02",
+                            "ev-03"
+                        ]
+                    }
+                ],
+                "unsupported_aspects": [],
+                "insufficiency_reason": null,
+                "usage": null,
+                "aspect_links": [
+                    {
+                        "need_id": "n1",
+                        "answer_part_indices": [
+                            0
+                        ],
+                        "unsupported_aspect_indices": []
+                    }
+                ],
+                "entailment_checks": [
+                    {
+                        "part_index": 0,
+                        "verdict": "supported",
+                        "missing_condition": null
+                    }
+                ],
+                "temporal_uses": [
+                    {
+                        "part_index": 0,
+                        "need_id": "n1",
+                        "target_id": "n1:date:1",
+                        "question_quote": "February 2026"
+                    }
+                ]
+            }
+        }
+    },
+    "inventoried_references": {
+        "n1": [
+            {
+                "turn_id": "user-1",
+                "quote": "February 2026",
+                "at": null,
+                "precision": "month",
+                "value": "2026-02",
+                "period_start": "2026-02-01T00:00:00+00:00",
+                "period_end": "2026-03-01T00:00:00+00:00"
+            }
+        ]
+    },
+    "observed_temporal_targets": {
+        "need.n1.temporal_targets": [
+            {
+                "target_id": "n1:requested",
+                "need_id": "n1",
+                "family_id": "1e4931bb-c3c8-3c10-8ee8-730420788d5e",
+                "purpose": "requested",
+                "mode": "current",
+                "at": "2026-11-14T00:00:00+00:00",
+                "reference": null,
+                "versions": [
+                    {
+                        "version_id": "b260efe1-aeca-30fa-b07a-c0cc30a3f4b3",
+                        "start": "2026-06-01T00:00:00+00:00",
+                        "end": null
+                    }
+                ],
+                "status": "searched",
+                "reason": null
+            },
+            {
+                "target_id": "n1:date:1",
+                "need_id": "n1",
+                "family_id": "1e4931bb-c3c8-3c10-8ee8-730420788d5e",
+                "purpose": "precautionary",
+                "mode": "dated",
+                "at": null,
+                "reference": {
+                    "turn_id": "user-1",
+                    "quote": "February 2026",
+                    "at": null,
+                    "precision": "month",
+                    "value": "2026-02",
+                    "period_start": "2026-02-01T00:00:00+00:00",
+                    "period_end": "2026-03-01T00:00:00+00:00"
+                },
+                "versions": [
+                    {
+                        "version_id": "fc14d3fa-3243-35a5-badf-569e51aa067e",
+                        "start": "2025-01-01T00:00:00+00:00",
+                        "end": "2026-06-01T00:00:00+00:00"
+                    }
+                ],
+                "status": "searched",
+                "reason": null
+            }
+        ]
+    },
+    "routes_by_need": {
+        "n1": {
+            "route": "planner-bound\/C1",
+            "c2_discovery_ran": false,
+            "selection": null,
+            "temporal_guard": null,
+            "discovery_work": null
+        }
+    },
+    "availability": {
+        "accepted_plan": true,
+        "temporal_inventory": "recorded",
+        "generation_request": "recorded",
+        "validated_temporal_use": "recorded",
+        "empty_derived_arrays": "No observation is not proof of an executed negative result; consult availability and raw trace."
+    },
+    "generation_request": {
+        "contract_version": 4,
+        "request_id": "2841e9ad-409f-4359-ba9d-19fcb82aa45b",
+        "workspace_id": "5777001c-b0bd-32b3-b36d-11acf7cd0089",
+        "question": "Under the Inspection Schedule, who performed daily inspections during February 2026?",
+        "evidence": [
+            {
+                "evidence_id": "ev-01",
+                "text": "The national contractor performs the daily inspection.",
+                "document_chunk_id": 2,
+                "document_id": 2,
+                "ingestion_event_claim_id": 2,
+                "source_provenance": [
+                    {
+                        "normalised_element_id": "74754c21-df0f-3e8c-830f-461c281b773b",
+                        "source_element_ids": [
+                            "8591b758-8f31-34e1-be84-a045c0e8873a"
+                        ],
+                        "source_locations": [
+                            {
+                                "type": "text",
+                                "start_character": 0,
+                                "end_character": 20,
+                                "start_line": 1,
+                                "end_line": 1
+                            }
+                        ],
+                        "element_start_character": 0,
+                        "element_end_character": 20,
+                        "chunk_start_character": 0,
+                        "chunk_end_character": 20,
+                        "role": "primary"
+                    }
+                ],
+                "temporal_authority": {
+                    "evaluated_at": "2026-11-14T00:00:00+00:00",
+                    "need_id": "n1",
+                    "document_family_id": "1e4931bb-c3c8-3c10-8ee8-730420788d5e",
+                    "document_version_id": "b260efe1-aeca-30fa-b07a-c0cc30a3f4b3",
+                    "document_title": "vel.pdf",
+                    "document_family_title": "ut eum enim",
+                    "temporal_target_ids": [
+                        "n1:requested"
+                    ],
+                    "temporal_basis": "application-labelled-targets-v1",
+                    "authority_start": "2026-06-01T00:00:00+00:00",
+                    "authoritative_at_evaluated_at": true
+                },
+                "applicability_context": {
+                    "resolved_location_public_id": null
+                },
+                "side": "primary"
+            },
+            {
+                "evidence_id": "ev-02",
+                "text": "During the daily inspection in hazardous areas, trained staff must accompany the contractor.",
+                "document_chunk_id": 3,
+                "document_id": 1,
+                "ingestion_event_claim_id": 1,
+                "source_provenance": [
+                    {
+                        "normalised_element_id": "ee41e4d9-7567-393b-8f2c-d84374ee6751",
+                        "source_element_ids": [
+                            "27bbd496-ccbb-32c6-96e7-fdce4d9140e0"
+                        ],
+                        "source_locations": [
+                            {
+                                "type": "text",
+                                "start_character": 0,
+                                "end_character": 20,
+                                "start_line": 1,
+                                "end_line": 1
+                            }
+                        ],
+                        "element_start_character": 0,
+                        "element_end_character": 20,
+                        "chunk_start_character": 0,
+                        "chunk_end_character": 20,
+                        "role": "primary"
+                    }
+                ],
+                "temporal_authority": {
+                    "evaluated_at": "2026-11-14T00:00:00+00:00",
+                    "need_id": "n1",
+                    "document_family_id": "1e4931bb-c3c8-3c10-8ee8-730420788d5e",
+                    "document_version_id": "fc14d3fa-3243-35a5-badf-569e51aa067e",
+                    "document_title": "sunt.pdf",
+                    "document_family_title": "ut eum enim",
+                    "temporal_target_ids": [
+                        "n1:date:1"
+                    ],
+                    "temporal_basis": "application-labelled-targets-v1",
+                    "authority_start": "2025-01-01T00:00:00+00:00",
+                    "authoritative_at_evaluated_at": false
+                },
+                "applicability_context": {
+                    "resolved_location_public_id": null
+                },
+                "side": "primary"
+            },
+            {
+                "evidence_id": "ev-03",
+                "text": "The regional contractor performs the daily inspection.",
+                "document_chunk_id": 1,
+                "document_id": 1,
+                "ingestion_event_claim_id": 1,
+                "source_provenance": [
+                    {
+                        "normalised_element_id": "e67c57c9-8fd5-3a2c-8238-15ccb77b4efb",
+                        "source_element_ids": [
+                            "90d3c39d-84c7-3117-add8-369b0fdcc0d5"
+                        ],
+                        "source_locations": [
+                            {
+                                "type": "text",
+                                "start_character": 0,
+                                "end_character": 20,
+                                "start_line": 1,
+                                "end_line": 1
+                            }
+                        ],
+                        "element_start_character": 0,
+                        "element_end_character": 20,
+                        "chunk_start_character": 0,
+                        "chunk_end_character": 20,
+                        "role": "primary"
+                    }
+                ],
+                "temporal_authority": {
+                    "evaluated_at": "2026-11-14T00:00:00+00:00",
+                    "need_id": "n1",
+                    "document_family_id": "1e4931bb-c3c8-3c10-8ee8-730420788d5e",
+                    "document_version_id": "fc14d3fa-3243-35a5-badf-569e51aa067e",
+                    "document_title": "sunt.pdf",
+                    "document_family_title": "ut eum enim",
+                    "temporal_target_ids": [
+                        "n1:date:1"
+                    ],
+                    "temporal_basis": "application-labelled-targets-v1",
+                    "authority_start": "2025-01-01T00:00:00+00:00",
+                    "authoritative_at_evaluated_at": false
+                },
+                "applicability_context": {
+                    "resolved_location_public_id": null
+                },
+                "side": "primary"
+            }
+        ],
+        "constraints": {
+            "context_policy_version": "whole-needs-evidence-v1",
+            "max_context_characters": 60000,
+            "required_sides": [
+                "primary"
+            ],
+            "requested_evidence_type": "policy_or_procedural_requirements"
+        },
+        "evidence_needs": [
+            {
+                "need_id": "n1",
+                "aspect": "Under the Inspection Schedule, who performed daily inspections during February 2026?",
+                "central": true,
+                "question_span": {
+                    "turn_id": "user-1",
+                    "quote": "Under the Inspection Schedule, who performed daily inspections during February 2026?"
+                },
+                "operation": "retrieve",
+                "authority": {
+                    "kind": "current",
+                    "value": null,
+                    "precision": "none",
+                    "source": null
+                },
+                "fact_reference": null,
+                "applicability": {
+                    "kind": "generic",
+                    "source": null
+                },
+                "claim_under_test": null,
+                "context_spans": [],
+                "temporal_targets": [
+                    {
+                        "target_id": "n1:requested",
+                        "need_id": "n1",
+                        "family_id": "1e4931bb-c3c8-3c10-8ee8-730420788d5e",
+                        "purpose": "requested",
+                        "mode": "current",
+                        "at": "2026-11-14T00:00:00+00:00",
+                        "reference": null,
+                        "versions": [
+                            {
+                                "version_id": "b260efe1-aeca-30fa-b07a-c0cc30a3f4b3",
+                                "start": "2026-06-01T00:00:00+00:00",
+                                "end": null
+                            }
+                        ],
+                        "status": "searched",
+                        "reason": null
+                    },
+                    {
+                        "target_id": "n1:date:1",
+                        "need_id": "n1",
+                        "family_id": "1e4931bb-c3c8-3c10-8ee8-730420788d5e",
+                        "purpose": "precautionary",
+                        "mode": "dated",
+                        "at": null,
+                        "reference": {
+                            "turn_id": "user-1",
+                            "quote": "February 2026",
+                            "at": null,
+                            "precision": "month",
+                            "value": "2026-02",
+                            "period_start": "2026-02-01T00:00:00+00:00",
+                            "period_end": "2026-03-01T00:00:00+00:00"
+                        },
+                        "versions": [
+                            {
+                                "version_id": "fc14d3fa-3243-35a5-badf-569e51aa067e",
+                                "start": "2025-01-01T00:00:00+00:00",
+                                "end": "2026-06-01T00:00:00+00:00"
+                            }
+                        ],
+                        "status": "searched",
+                        "reason": null
+                    }
+                ],
+                "retrieval_outcome": "evidence_found",
+                "request_text_version": "extractive-request-v1",
+                "retrieval_reason": null,
+                "evidence_ids": [
+                    "ev-01",
+                    "ev-02",
+                    "ev-03"
+                ]
+            }
+        ]
+    },
+    "entailment_checks": [
+        {
+            "part_index": 0,
+            "verdict": "supported",
+            "missing_condition": null
+        }
+    ],
+    "aspect_results": {
+        "n1": "supported"
+    },
+    "unsupported_aspects": [],
+    "lane_events": [
+        {
+            "stage": "need.n1.search",
+            "lineage": [],
+            "usage": []
+        },
+        {
+            "stage": "need.n1.n1:date:1.search",
+            "lineage": [],
+            "usage": []
+        }
+    ],
+    "base_logical_lanes": 1,
+    "additional_search_lanes": 1,
+    "final_allocated_evidence": [
+        {
+            "chunk_id": "9f3ef0fe-ddb2-3738-93ab-29f31efd4044",
+            "document_id": "b260efe1-aeca-30fa-b07a-c0cc30a3f4b3",
+            "document_family_id": "1e4931bb-c3c8-3c10-8ee8-730420788d5e",
+            "version_position": 2,
+            "source_filename": "vel.pdf",
+            "document_title": "vel.pdf",
+            "document_family_title": "ut eum enim",
+            "section_heading": null,
+            "chunk_text": "The national contractor performs the daily inspection.",
+            "provenance": [
+                {
+                    "normalised_element_id": "74754c21-df0f-3e8c-830f-461c281b773b",
+                    "source_element_ids": [
+                        "8591b758-8f31-34e1-be84-a045c0e8873a"
+                    ],
+                    "source_locations": [
+                        {
+                            "type": "text",
+                            "start_character": 0,
+                            "end_character": 20,
+                            "start_line": 1,
+                            "end_line": 1
+                        }
+                    ],
+                    "element_start_character": 0,
+                    "element_end_character": 20,
+                    "chunk_start_character": 0,
+                    "chunk_end_character": 20,
+                    "role": "primary"
+                }
+            ],
+            "score": 0.9,
+            "rank": 1,
+            "retrieval_method": "dense",
+            "side": "primary",
+            "workspace_corpus_generation_id": "04469114-3426-339b-937d-ad22dfb83936",
+            "embedding_space_generation_id": "1443f61c-cc5a-30e0-87a0-f5952484c5eb",
+            "sparse_space_generation_id": null,
+            "dense_score": null,
+            "dense_rank": null,
+            "sparse_score": null,
+            "sparse_rank": null,
+            "temporal_target_ids": [
+                "n1:requested"
+            ],
+            "need_id": "n1"
+        },
+        {
+            "chunk_id": "8bce5bd9-4250-31f4-8bd0-0f4365e78457",
+            "document_id": "fc14d3fa-3243-35a5-badf-569e51aa067e",
+            "document_family_id": "1e4931bb-c3c8-3c10-8ee8-730420788d5e",
+            "version_position": 1,
+            "source_filename": "sunt.pdf",
+            "document_title": "sunt.pdf",
+            "document_family_title": "ut eum enim",
+            "section_heading": null,
+            "chunk_text": "During the daily inspection in hazardous areas, trained staff must accompany the contractor.",
+            "provenance": [
+                {
+                    "normalised_element_id": "ee41e4d9-7567-393b-8f2c-d84374ee6751",
+                    "source_element_ids": [
+                        "27bbd496-ccbb-32c6-96e7-fdce4d9140e0"
+                    ],
+                    "source_locations": [
+                        {
+                            "type": "text",
+                            "start_character": 0,
+                            "end_character": 20,
+                            "start_line": 1,
+                            "end_line": 1
+                        }
+                    ],
+                    "element_start_character": 0,
+                    "element_end_character": 20,
+                    "chunk_start_character": 0,
+                    "chunk_end_character": 20,
+                    "role": "primary"
+                }
+            ],
+            "score": 0.9,
+            "rank": 1,
+            "retrieval_method": "dense",
+            "side": "primary",
+            "workspace_corpus_generation_id": "04469114-3426-339b-937d-ad22dfb83936",
+            "embedding_space_generation_id": "1443f61c-cc5a-30e0-87a0-f5952484c5eb",
+            "sparse_space_generation_id": null,
+            "dense_score": null,
+            "dense_rank": null,
+            "sparse_score": null,
+            "sparse_rank": null,
+            "temporal_target_ids": [
+                "n1:date:1"
+            ],
+            "need_id": "n1"
+        },
+        {
+            "chunk_id": "8dfe3e7c-2a25-373e-91b0-1dd351df240e",
+            "document_id": "fc14d3fa-3243-35a5-badf-569e51aa067e",
+            "document_family_id": "1e4931bb-c3c8-3c10-8ee8-730420788d5e",
+            "version_position": 1,
+            "source_filename": "sunt.pdf",
+            "document_title": "sunt.pdf",
+            "document_family_title": "ut eum enim",
+            "section_heading": null,
+            "chunk_text": "The regional contractor performs the daily inspection.",
+            "provenance": [
+                {
+                    "normalised_element_id": "e67c57c9-8fd5-3a2c-8238-15ccb77b4efb",
+                    "source_element_ids": [
+                        "90d3c39d-84c7-3117-add8-369b0fdcc0d5"
+                    ],
+                    "source_locations": [
+                        {
+                            "type": "text",
+                            "start_character": 0,
+                            "end_character": 20,
+                            "start_line": 1,
+                            "end_line": 1
+                        }
+                    ],
+                    "element_start_character": 0,
+                    "element_end_character": 20,
+                    "chunk_start_character": 0,
+                    "chunk_end_character": 20,
+                    "role": "primary"
+                }
+            ],
+            "score": 0.9,
+            "rank": 1,
+            "retrieval_method": "dense",
+            "side": "primary",
+            "workspace_corpus_generation_id": "04469114-3426-339b-937d-ad22dfb83936",
+            "embedding_space_generation_id": "1443f61c-cc5a-30e0-87a0-f5952484c5eb",
+            "sparse_space_generation_id": null,
+            "dense_score": null,
+            "dense_rank": null,
+            "sparse_score": null,
+            "sparse_rank": null,
+            "temporal_target_ids": [
+                "n1:date:1"
+            ],
+            "need_id": "n1"
+        }
+    ],
+    "precautionary_target_admitted": true,
+    "admitted_precautionary_target_ids": [
+        "n1:date:1"
+    ],
+    "answer_used_precautionary_target": true,
+    "validated_used_target_ids": [
+        "n1:date:1"
+    ],
+    "answer_used_requested_target": false,
+    "temporal_context": {
+        "version": "temporal-answer-use-v1",
+        "uses": [
+            {
+                "part_index": 0,
+                "need_id": "n1",
+                "target_id": "n1:date:1",
+                "question_quote": "February 2026",
+                "target": {
+                    "target_id": "n1:date:1",
+                    "need_id": "n1",
+                    "family_id": "1e4931bb-c3c8-3c10-8ee8-730420788d5e",
+                    "purpose": "precautionary",
+                    "mode": "dated",
+                    "at": null,
+                    "reference": {
+                        "turn_id": "user-1",
+                        "quote": "February 2026",
+                        "at": null,
+                        "precision": "month",
+                        "value": "2026-02",
+                        "period_start": "2026-02-01T00:00:00+00:00",
+                        "period_end": "2026-03-01T00:00:00+00:00"
+                    },
+                    "versions": [
+                        {
+                            "version_id": "fc14d3fa-3243-35a5-badf-569e51aa067e",
+                            "start": "2025-01-01T00:00:00+00:00",
+                            "end": "2026-06-01T00:00:00+00:00"
+                        }
+                    ],
+                    "status": "searched",
+                    "reason": null
+                },
+                "planner_disagreement": true
+            }
+        ],
+        "targets": [
+            {
+                "target_id": "n1:requested",
+                "need_id": "n1",
+                "family_id": "1e4931bb-c3c8-3c10-8ee8-730420788d5e",
+                "purpose": "requested",
+                "mode": "current",
+                "at": "2026-11-14T00:00:00+00:00",
+                "reference": null,
+                "versions": [
+                    {
+                        "version_id": "b260efe1-aeca-30fa-b07a-c0cc30a3f4b3",
+                        "start": "2026-06-01T00:00:00+00:00",
+                        "end": null
+                    }
+                ],
+                "status": "searched",
+                "reason": null
+            },
+            {
+                "target_id": "n1:date:1",
+                "need_id": "n1",
+                "family_id": "1e4931bb-c3c8-3c10-8ee8-730420788d5e",
+                "purpose": "precautionary",
+                "mode": "dated",
+                "at": null,
+                "reference": {
+                    "turn_id": "user-1",
+                    "quote": "February 2026",
+                    "at": null,
+                    "precision": "month",
+                    "value": "2026-02",
+                    "period_start": "2026-02-01T00:00:00+00:00",
+                    "period_end": "2026-03-01T00:00:00+00:00"
+                },
+                "versions": [
+                    {
+                        "version_id": "fc14d3fa-3243-35a5-badf-569e51aa067e",
+                        "start": "2025-01-01T00:00:00+00:00",
+                        "end": "2026-06-01T00:00:00+00:00"
+                    }
+                ],
+                "status": "searched",
+                "reason": null
+            }
+        ]
+    },
+    "reloaded_temporal_context": {
+        "version": "temporal-answer-use-v1",
+        "uses": [
+            {
+                "part_index": 0,
+                "need_id": "n1",
+                "target_id": "n1:date:1",
+                "question_quote": "February 2026",
+                "target": {
+                    "target_id": "n1:date:1",
+                    "need_id": "n1",
+                    "family_id": "1e4931bb-c3c8-3c10-8ee8-730420788d5e",
+                    "purpose": "precautionary",
+                    "mode": "dated",
+                    "at": null,
+                    "reference": {
+                        "turn_id": "user-1",
+                        "quote": "February 2026",
+                        "at": null,
+                        "precision": "month",
+                        "value": "2026-02",
+                        "period_start": "2026-02-01T00:00:00+00:00",
+                        "period_end": "2026-03-01T00:00:00+00:00"
+                    },
+                    "versions": [
+                        {
+                            "version_id": "fc14d3fa-3243-35a5-badf-569e51aa067e",
+                            "start": "2025-01-01T00:00:00+00:00",
+                            "end": "2026-06-01T00:00:00+00:00"
+                        }
+                    ],
+                    "status": "searched",
+                    "reason": null
+                },
+                "planner_disagreement": true
+            }
+        ],
+        "targets": [
+            {
+                "target_id": "n1:requested",
+                "need_id": "n1",
+                "family_id": "1e4931bb-c3c8-3c10-8ee8-730420788d5e",
+                "purpose": "requested",
+                "mode": "current",
+                "at": "2026-11-14T00:00:00+00:00",
+                "reference": null,
+                "versions": [
+                    {
+                        "version_id": "b260efe1-aeca-30fa-b07a-c0cc30a3f4b3",
+                        "start": "2026-06-01T00:00:00+00:00",
+                        "end": null
+                    }
+                ],
+                "status": "searched",
+                "reason": null
+            },
+            {
+                "target_id": "n1:date:1",
+                "need_id": "n1",
+                "family_id": "1e4931bb-c3c8-3c10-8ee8-730420788d5e",
+                "purpose": "precautionary",
+                "mode": "dated",
+                "at": null,
+                "reference": {
+                    "turn_id": "user-1",
+                    "quote": "February 2026",
+                    "at": null,
+                    "precision": "month",
+                    "value": "2026-02",
+                    "period_start": "2026-02-01T00:00:00+00:00",
+                    "period_end": "2026-03-01T00:00:00+00:00"
+                },
+                "versions": [
+                    {
+                        "version_id": "fc14d3fa-3243-35a5-badf-569e51aa067e",
+                        "start": "2025-01-01T00:00:00+00:00",
+                        "end": "2026-06-01T00:00:00+00:00"
+                    }
+                ],
+                "status": "searched",
+                "reason": null
+            }
+        ]
+    },
+    "reloaded_rendered_text": "The regional contractor performed daily inspections; trained staff accompanied them in hazardous areas.\nTemporal basis: February 2026; whole month 2026-02-01T00:00:00+00:00 to 2026-03-01T00:00:00+00:00 (end exclusive); version fc14d3fa-3243-35a5-badf-569e51aa067e; effective 2025-01-01T00:00:00+00:00 to 2026-06-01T00:00:00+00:00 (end exclusive) (differs from the provisional planner target).",
+    "parts": [
+        {
+            "text": "The regional contractor performed daily inspections; trained staff accompanied them in hazardous areas.",
+            "evidence": [
+                {
+                    "evidence_handle": "ev-02",
+                    "document_chunk_id": 3,
+                    "document_id": 1,
+                    "side": null,
+                    "temporal_authority": null
+                },
+                {
+                    "evidence_handle": "ev-03",
+                    "document_chunk_id": 1,
+                    "document_id": 1,
+                    "side": null,
+                    "temporal_authority": null
+                }
+            ]
+        }
+    ],
+    "retrieval": {
+        "outcome": "evidence_found",
+        "clarification_source": null,
+        "clarification_reason": null,
+        "lineage": {
+            "planner": {
+                "provider": "openai",
+                "model": "gpt-5-mini",
+                "contract_schema_version": "evidence-needs-plan-v4",
+                "prompt_version": "bounded-evidence-needs-v26",
+                "adapter_version": "structured-chat-needs-v10",
+                "fingerprint": "f0ce332063576a68ddc4c06cd3c0a4a8e8c51eee5a411cfc6cc4b8851ab946dd"
+            },
+            "evidence_selection": "bounded-needs-k5-v3",
+            "temporal_alternatives": {
+                "version": "bounded-temporal-targets-v1",
+                "additional_search_lanes": 1
+            },
+            "topical_discovery_work": [],
+            "selection_coverage": {
+                "n1": {
+                    "eligible_unit_count": 3,
+                    "selected_unit_count": 3,
+                    "budget_cut_unit_count": 0
+                }
+            },
+            "needs": {
+                "n1": {
+                    "planner": {
+                        "provider": "openai",
+                        "model": "gpt-5-mini",
+                        "contract_schema_version": "evidence-needs-plan-v4",
+                        "prompt_version": "bounded-evidence-needs-v26",
+                        "adapter_version": "structured-chat-needs-v10",
+                        "fingerprint": "f0ce332063576a68ddc4c06cd3c0a4a8e8c51eee5a411cfc6cc4b8851ab946dd"
+                    },
+                    "retrieval": []
+                }
+            },
+            "evidence_needs_plan": {
+                "schema_version": "evidence-needs-plan-v4",
+                "decision": "plan",
+                "clarification": null,
+                "needs": [
+                    {
+                        "need_id": "n1",
+                        "aspect": "Under the Inspection Schedule, who performed daily inspections during February 2026?",
+                        "central": true,
+                        "question_span": {
+                            "turn_id": "user-1",
+                            "quote": "Under the Inspection Schedule, who performed daily inspections during February 2026?"
+                        },
+                        "operation": "retrieve",
+                        "authority": {
+                            "kind": "current",
+                            "value": null,
+                            "precision": "none",
+                            "source": null
+                        },
+                        "fact_reference": null,
+                        "applicability": {
+                            "kind": "generic",
+                            "source": null
+                        },
+                        "supports_need_id": null,
+                        "claim_under_test": null,
+                        "scope_question": null,
+                        "context_spans": []
+                    }
+                ],
+                "bindings": [
+                    {
+                        "need_id": "n1",
+                        "subject_status": "matched",
+                        "family_ids": [
+                            "1e4931bb-c3c8-3c10-8ee8-730420788d5e"
+                        ],
+                        "ownership": "authorised_workspace",
+                        "ownership_source": null
+                    }
+                ]
+            }
+        },
+        "resolved_temporal_authority": []
+    },
+    "usage": {
+        "contextualisation": null,
+        "generation": {
+            "request_count": 1,
+            "input_tokens": null,
+            "output_tokens": null,
+            "cached_input_tokens": null,
+            "latency_ms": null,
+            "cost_usd": null,
+            "retry_count": 0,
+            "validation_retry_count": 0,
+            "pricing_snapshot": null,
+            "cost_basis": "unavailable",
+            "validation_attempts": [
+                {
+                    "request_count": 1,
+                    "retry_count": 0,
+                    "input_tokens": null,
+                    "output_tokens": null,
+                    "cached_input_tokens": null,
+                    "latency_ms": null,
+                    "cost_usd": null,
+                    "pricing_snapshot": null,
+                    "cost_basis": "unavailable",
+                    "outcome": "accepted",
+                    "request_id": "2841e9ad-409f-4359-ba9d-19fcb82aa45b",
+                    "retry_of_request_id": null
+                }
+            ]
+        }
+    },
+    "generation_usage": {
+        "request_count": 1,
+        "input_tokens": null,
+        "output_tokens": null,
+        "cached_input_tokens": null,
+        "latency_ms": null,
+        "cost_usd": null,
+        "retry_count": 0,
+        "validation_retry_count": 0,
+        "pricing_snapshot": null,
+        "cost_basis": "unavailable",
+        "validation_attempts": [
+            {
+                "request_count": 1,
+                "retry_count": 0,
+                "input_tokens": null,
+                "output_tokens": null,
+                "cached_input_tokens": null,
+                "latency_ms": null,
+                "cost_usd": null,
+                "pricing_snapshot": null,
+                "cost_basis": "unavailable",
+                "outcome": "accepted",
+                "request_id": "2841e9ad-409f-4359-ba9d-19fcb82aa45b",
+                "retry_of_request_id": null
+            }
+        ]
+    },
+    "service_calls": [
+        {
+            "key": "4b679655-e49a-4f7f-b377-a08571bc66f0:0",
+            "request_id": "4b679655-e49a-4f7f-b377-a08571bc66f0",
+            "path": "\/api\/internal\/retrieval\/plan-needs",
+            "status": "received",
+            "http_status": 200,
+            "latency_ms": 0.39887428283691406,
+            "usage": {
+                "stage": "planner",
+                "provider": "openai",
+                "model": "gpt-5-mini",
+                "execution": "provider_api",
+                "request_count": 1,
+                "retry_count": 0,
+                "latency_ms": 1,
+                "cost_basis": "unavailable"
+            },
+            "service_status": null,
+            "error_category": null,
+            "comparison_review_failure": null,
+            "error": null,
+            "review_metadata": [],
+            "provider_receipt": []
+        },
+        {
+            "key": "d16de608-f362-4ad7-ab0f-04de9bfb1307:1",
+            "request_id": "d16de608-f362-4ad7-ab0f-04de9bfb1307",
+            "path": "\/api\/internal\/retrieval\/search",
+            "status": "received",
+            "http_status": 200,
+            "latency_ms": 0.8909702301025391,
+            "usage": null,
+            "service_status": null,
+            "error_category": null,
+            "comparison_review_failure": null,
+            "error": null,
+            "review_metadata": [],
+            "provider_receipt": []
+        },
+        {
+            "key": "682b5fcd-22d8-482f-a648-006d92f779fb:2",
+            "request_id": "682b5fcd-22d8-482f-a648-006d92f779fb",
+            "path": "\/api\/internal\/retrieval\/search",
+            "status": "received",
+            "http_status": 200,
+            "latency_ms": 0.9179115295410156,
+            "usage": null,
+            "service_status": null,
+            "error_category": null,
+            "comparison_review_failure": null,
+            "error": null,
+            "review_metadata": [],
+            "provider_receipt": []
+        },
+        {
+            "key": "2841e9ad-409f-4359-ba9d-19fcb82aa45b:3",
+            "request_id": "2841e9ad-409f-4359-ba9d-19fcb82aa45b",
+            "path": "\/api\/internal\/retrieval\/generation\/answer-needs",
+            "status": "received",
+            "http_status": 200,
+            "latency_ms": 1.1951923370361328,
+            "usage": null,
+            "service_status": "completed",
+            "error_category": null,
+            "comparison_review_failure": null,
+            "error": null,
+            "review_metadata": [],
+            "provider_receipt": []
+        }
+    ],
+    "workspace_usage": [
+        {
+            "id": 1,
+            "workspace_id": 1,
+            "scope_type": "generation_run",
+            "scope_public_id": "67489fb3-bc87-4e7f-bab5-f40da01b0858",
+            "operation_kind": "planner",
+            "ordinal": 0,
+            "provider": "openai",
+            "model": "gpt-5-mini",
+            "execution": "provider_api",
+            "request_count": 1,
+            "retry_count": 0,
+            "input_tokens": null,
+            "cached_input_tokens": null,
+            "output_tokens": null,
+            "latency_ms": "1.000",
+            "cost_usd": null,
+            "cost_basis": "unavailable",
+            "pricing_snapshot": null,
+            "occurred_at": "2026-11-14T00:00:00.000000Z",
+            "created_at": "2026-11-14T00:00:00.000000Z",
+            "updated_at": "2026-11-14T00:00:00.000000Z"
+        },
+        {
+            "id": 2,
+            "workspace_id": 1,
+            "scope_type": "generation_run",
+            "scope_public_id": "67489fb3-bc87-4e7f-bab5-f40da01b0858",
+            "operation_kind": "generation",
+            "ordinal": 0,
+            "provider": "deterministic",
+            "model": "catalogue-grounded-generator",
+            "execution": "provider_api",
+            "request_count": 1,
+            "retry_count": 0,
+            "input_tokens": null,
+            "cached_input_tokens": null,
+            "output_tokens": null,
+            "latency_ms": "0.000",
+            "cost_usd": null,
+            "cost_basis": "unavailable",
+            "pricing_snapshot": null,
+            "occurred_at": "2026-11-14T00:00:00.000000Z",
+            "created_at": "2026-11-14T00:00:00.000000Z",
+            "updated_at": "2026-11-14T00:00:00.000000Z"
+        }
+    ]
+}
