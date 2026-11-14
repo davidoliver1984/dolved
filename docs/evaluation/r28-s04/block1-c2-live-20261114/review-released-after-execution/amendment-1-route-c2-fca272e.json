@@ -1,0 +1,19 @@
+{
+  "schema_version": "c2-confirmation-amendment-v1",
+  "package_id": "C2-CONFIRMATION-20261114",
+  "amends": {"questions-only.json": "7603fc82fc2f95f9852f584f28cc6a3d4949a2a30e17b8ab3b56a52ce4d2899f", "expectations.json": "8ab2dc0212ae235e4b58f226656c95e87ff5f64b02b0bd0addb25aaed37f0bed"},
+  "authored_by": "reviewer (Claude)", "authored_on": "2026-11-14",
+  "questions_and_expectations_changed": false,
+  "verified_against": {"implementation": "fca272e96b083c9849a1591f6dfe5d8efd6bb092", "evidence_tip": "c0006be7aece93de733dc72f6a6df24274e98c08", "runtime_aggregate_reported": "fb81a4cafa619b4a4e3c89daadab33a277a92a922d164d1e1a67bfb0b47c29ac", "method": "Code reading of RetrieveWorkspaceEvidence::handleNeeds at fca272e versus 3c38973. Live discovery outcomes cannot be predicted provider-free."},
+  "c2_trigger": "Discovery runs only for a RETRIEVE need with subject_status topic AND at least one inventoried explicit day/month/year in its grounded spans (compare needs already used discovery). A planner-bound (matched) need goes through C1 only.",
+  "route_classification": {
+    "G1": "Month inventoried. C2 discovery if the planner leaves it topic-only and emits retrieve.",
+    "G2": "Month inventoried (background). C2 discovery plus C1 current-answer protection, as for G1.",
+    "G3": "Two days inventoried. C2 discovery, as for G1.",
+    "G4": "Compare. Existing topic-only comparison discovery; comparison control; never C2 evidence.",
+    "G5": "No date. C2 is NOT triggered; existing unbound retrieval. It tests cross-family conflict disclosure on the existing route, not C2 family ambiguity. Reclassified as an existing-route control.",
+    "R16": "Day inventoried. C2 discovery, as for G1. Known regression item."
+  },
+  "material_finding": "Before C2, a topic-only retrieve need went straight to the existing unbound search. At fca272e, a topic-only retrieve need containing a date now requires discovery to resolve one family. An ambiguous, no-match, rejected or unavailable discovery returns InsufficientEvidence (topic_family_unresolved / topic_family_unavailable) without running the previous unbound search. The approved design (d51ba5a section 2B) said 'report alternative-family unresolved and retain the existing route/disclosure'. Dated topic-only questions that discovery cannot resolve to one family can therefore change from answered to no-answer. This is a regression risk for Block 1 inputs 17-32 and the full population, not limited to this set.",
+  "dispatch_status": "Seal intact. Not released pending David's decision on the finding."
+}

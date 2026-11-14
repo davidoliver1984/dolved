@@ -1,0 +1,30 @@
+{
+  "schema_version": "c2-confirmation-assessment-v1",
+  "run_id": "R28-C2-LIVE-20261114-01",
+  "evidence": "docs/evaluation/r28-s04/block1-c2-live-20261114 (published 7455686; execution HEAD 829bbf1, runtime 7f20f123...73af)",
+  "assessed_by": "reviewer (Claude), 2026-11-14, against expectations.json (8ab2dc02...0bed) and amendments 1-2; expectations unchanged after outputs",
+  "items": {
+    "G1": {"group": "fresh", "route": "n1 C2-resolved. Planner authority period 2025-03 (correct historical reading); dated target n1:date:1 equals the requested version; current v3 present as precautionary.",
+      "verdict": "CORRECT", "basis": "100mm for resident-accessible windows above ground floor, March 2025 (v1); time basis rendered.",
+      "c2_evidence": "Discovery resolved the family for a topic-only question and the dated version reached generation. NOT a rescue: the planner's own authority was already historical."},
+    "G2": {"group": "fresh", "route": "No accepted plan: two planner attempts rejected (schema needs.0.fact_reference fact_date_precision). Interpretation-failure no-answer.",
+      "verdict": "NO-ANSWER", "stage": "Block 1 (planner output / validation). C2 was never reached. The rejected plan bodies were not retained, so the exact defect cannot be shown; per the rule message, a fact_reference value did not match its declared precision. The same question shape succeeded in C1 F2, so this is variable model output on a month-precision background date, not a deterministic block.",
+      "c2_evidence": "none"},
+    "G3": {"group": "fresh", "route": "No accepted plan: attempt 1 fact_date_precision; attempt 2 temporal_relation_grounding. Interpretation-failure no-answer.",
+      "verdict": "NO-ANSWER", "stage": "Block 1 (planner output / validation), as for G2. Rejected plans not retained.",
+      "c2_evidence": "none"},
+    "G4": {"group": "fresh", "route": "Two retrieve needs, not compare. n1 (July 2025, period authority): discovery no_match -> C2-fallback, guard not run, original unbound search found v1. n2 (current): C2-resolved; precautionary v1 (n2:date:1) reached generation; validated use n2:requested (current v3).",
+      "verdict": "CORRECT", "basis": "July 2025 quarterly (v1); now monthly, including periodic restoration from the immutable copy (v3).",
+      "c2_evidence": "n2 shows current-answer protection with historical evidence present, after topic-only discovery. n1 is existing-route via fallback; before the fallback fix, n1 would have been a no-answer."},
+    "G5": {"group": "partly exposed; existing-route control", "route": "Ordinary unbound retrieve; no C2. Evidence from both families plus one unrelated wellbeing chunk (no claim drawn from it).",
+      "verdict": "CORRECT (acceptable answer (b))", "basis": "States the Schedule's 8-weekly care-staff interval and the Policy's at-least-monthly requirement, and explicitly flags as unconfirmed which applies, because the documents differ. The disagreement is made explicit. The phrasing as an 'unconfirmed requested aspect' is clumsier than a direct statement, but it is not wrong.",
+      "c2_evidence": "none"},
+    "R16": {"group": "known regression (original input 16)", "route": "Planner repeated the original confident error: authority current, fact_reference 2026-02-01, topic-only. C2 discovery resolved Cleaning Contract Summary; C1 admitted v1 as precautionary n1:date:1; generation selected it; planner_disagreement true; time basis shows it differs from the provisional planner target.",
+      "verdict": "CORRECT", "basis": "CleanCo South West Ltd, under the version in force on 1 February 2026 (v1).",
+      "c2_evidence": "LIVE RESCUE from a confident planner error that would have excluded the required version, through production routing with no injection. One instance, on a known development regression item, not fresh evidence."}
+  },
+  "totals": {"fresh G1-G4": "2 correct, 2 no-answer (interpretation failure)", "G5 control": "1 correct", "R16 regression": "1 correct (live rescue)", "wrong": 0},
+  "c1_c2_hold_conditions": "None triggered: no wrong-version answer, no historical evidence used for a current claim, no unsafe promotion, no silent target loss, no integrity violation in the records reviewed.",
+  "process_note": "The harness paused after G2 by misclassifying the planner endpoint's outer 503 as infrastructure. Codex fixed the checkpoint classification and dispatched G3-R16 once each under the same authorisation, with exclusivity, freeze rechecks and no redispatch. The typed cause (non-systemic model rejection) was not a stop condition under the authorised rule. Acceptable, but it was a judgement made during the run, and it is recorded here.",
+  "carried_forward": ["G2/G3 interpretation failures on clear dated questions -> Block 1 (planner date-reference robustness). Diagnosing it needs the rejected plan bodies, which production does not retain.", "G4 n1 discovery no_match although the unbound search found the right family -> discovery recall is a C2 limitation; the fallback preserved the answer."]
+}

@@ -1,0 +1,14 @@
+{
+  "schema_version": "c2-confirmation-amendment-v1",
+  "package_id": "C2-CONFIRMATION-20261114",
+  "amends": {"questions-only.json": "7603fc82fc2f95f9852f584f28cc6a3d4949a2a30e17b8ab3b56a52ce4d2899f", "expectations.json": "8ab2dc0212ae235e4b58f226656c95e87ff5f64b02b0bd0addb25aaed37f0bed", "amendment-1-route-c2-fca272e.json": "d3df7537fda7f5e986d063d098d99a793bfd05aa1767c0996a091bfdc01e4061"},
+  "authored_by": "reviewer (Claude)", "authored_on": "2026-11-14",
+  "questions_and_expectations_changed": false,
+  "verified_against": {"implementation": "84f22f862e5001be998e6a8fe027f56a17db6941", "evidence_tip": "829bbf132429ab8d4b408e4df2654e1b76fd2070", "runtime_aggregate_reported": "7f20f123cb9e4af9567e0ea0240ebf715d54755ae2611dc66ecd6719756773af", "method": "Code reading of the RetrieveWorkspaceEvidence and RetrievalClient diffs c0006be..84f22f8 and the provider-free report."},
+  "finding_status": "amendment-1 material_finding RESOLVED. Ambiguous, no_match, empty and consumer-rejected discovery, and typed timeout/connection/service-unavailable failures of the optional review, now execute the original unbound plan, with temporal_guard {status: not_run, reason: discovery_unresolved|discovery_unavailable, fallback: original_unbound}. Auth, integrity, quota/budget, deadline and unknown failures stay fail-closed.",
+  "residual_noted": "A reviewer response classified invalid_output (malformed model output from the optional review) remains fail-closed (retrieval failed), although pre-C2 these needs made no review call. This is a small availability regression, not a correctness risk. Not blocking; record any occurrence live.",
+  "route_classification": "Unchanged from amendment 1, except that unresolved or unavailable discovery for G1/G2/G3/R16 now yields the existing-route answer with the guard recorded as not run. Such an outcome is an existing-route result, NOT C2 evidence, whatever the answer.",
+  "scoring_rule_added": "C2 evidence requires all of: discovery ran; one family was resolved; temporal targets were computed for that family; and the validated temporal use is recorded. Planner-bound items count as C1. Fallback items count as existing-route.",
+  "deployment_note": "The AI producer (X-Comparison-Review-Failure header) and the API consumer must deploy together; an older AI fails closed on reviewer 503.",
+  "verdict": "PASS. Release questions-only.json unchanged."
+}

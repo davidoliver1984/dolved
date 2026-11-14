@@ -1,0 +1,81 @@
+{
+  "schema_version": "c2-confirmation-expectations-v1",
+  "package_id": "C2-CONFIRMATION-20261114",
+  "authored_by": "reviewer (Claude), 2026-11-14, before any C2 implementation output was seen",
+  "status": "FROZEN",
+  "standing": "Independently prepared fresh confirmation for C2 (topic-only questions, no document named). Engineering corpus dolved-care-v4 checkpoint-19, primary scope. Not held-out; not a statistically independent reliability estimate. R16 is the original input 16 and is a known regression item, reported separately.",
+  "exposure": {
+    "method": "Exact family-ID and artefact-stem search of docs/evaluation, tests/evaluation/engineering-populations and tests/evaluation/benchmarks, excluding held-out/calibration/protected paths (not opened) and r28-s03 materialisation listings.",
+    "G1 window-restrictor, G2 laundry-management, G3 pest-control, G4 data-backup-recovery": "No case, question or expected evidence. They appear only in the whole-corpus author-declaration views and as incidental ranked chunks in the r07 snapshot.",
+    "G5": "PARTIALLY EXPOSED. Staff Supervision and Appraisal Policy: no prior case. Appraisal and Supervision Schedule: used in population case v4.case.corrected-b06-01 (section reordering between its own versions). The cross-family frequency conflict tested here has not been used. Report G5 separately from G1-G4.",
+    "R16": "Known regression (Block 1 input 16; development case b03-07/v1)."
+  },
+  "excluded_at_authoring": "Allegations Against Staff Procedure: other families state their own LADO windows ('within one working day'; 'normally within 24 hours and always within 3 working days'), so a correct-looking answer could come from the wrong family. Families used in the T-package, the F set, input 16 and the checkpoint inputs were not considered.",
+  "verification_done_at_authoring": "Read-only, on the dolved-r28-s03 stack (database dolved_e2e_r28_s03, active corpus b24a79c2-875e-4f7c-8fa9-3681db92ae73, established primary actor). Every version is indexed and in the active corpus. Older versions have governance_status withdrawn with withdrawn_at equal to the successor's start; DocumentAuthorityTimeline treats them as attained history. Production timeline and TemporalPeriodResolver results: G1 2025-03 -> v1, current v3. G2 2025-03 -> v1, current v3. G3 2025-05-20 -> v1, 2025-07-01 -> v2, current v3. G4 2025-07 -> v1, current v3. G5 both families current v2. Every source_support sentence below is verbatim in the ingested chunks. Script and raw output: verification-check.php, verification-result.json. No other family states a conflicting rule for G1-G4 (corpus-wide search).",
+  "verdict_rules": {
+    "answer": "Existing stage-specific rule: correct / qualified-correct / wrong / no-answer / clarification. Wrong = misstates source, wrong version or period, omits an explicitly requested part, drops a gating source condition, or asserts more than the source supports.",
+    "route": "Record per item: whether family discovery ran for a topic-only need, which family or families it resolved, whether the planner bound a family itself (if so the item exercised C1, not C2 discovery), every temporal target and its status, and the validated answer target. A correct answer via a route that bypasses C2 is not C2 evidence. No reruns to obtain a route."
+  },
+  "fresh_items": [
+    {
+      "id": "G1", "shape": "historical_rule_month_topic_only",
+      "family": "v4d.facilities.window-restrictor-policy (Window Restrictor Policy)",
+      "intended_roles": {"March 2025": "authority valid-at period"},
+      "versions": "v1 2024-06-01 to 2025-06-01 (100mm; selected); v2 2025-06-01 to 2026-06-01 (65mm); v3 from 2026-06-01 (65mm plus emergency override key; current).",
+      "expected_answer": "100mm, for resident-accessible windows above ground floor (the version in force in March 2025). Mentioning that the limit is now 65mm is acceptable if labelled as the later rule.",
+      "source_support": "v1: 'Fit a window restrictor to every resident-accessible window above ground floor, limiting opening to 100mm.' v2: 'limiting opening to 65mm, tightened from the previous 100mm'.",
+      "wrong": "65mm presented as the March 2025 limit; or no-answer when v1 is eligible.",
+      "c2_relevance": "Discovery must resolve the family before a dated alternative can exist. A planner reading the date as background (current authority) would exclude v1; C1/C2 should preserve it."
+    },
+    {
+      "id": "G2", "shape": "current_question_with_old_event_topic_only",
+      "family": "v4d.facilities.laundry-management-procedure (Laundry Management Procedure)",
+      "intended_roles": {"March 2025": "event/fact context only (move-in)", "now": "current authority"},
+      "versions": "v1 2024-05-01 to 2025-05-01 (60 degrees Celsius; in force March 2025); v2 2025-05-01 to 2026-05-01 (65); v3 from 2026-05-01 (65; current, selected).",
+      "expected_answer": "65 degrees Celsius, within the barrier laundry system (current version). Noting it was previously 60 is acceptable if clearly historical.",
+      "source_support": "v3: 'Wash soiled linen at 65 degrees Celsius within the barrier system.' v1: 'Wash soiled linen at 60 degrees Celsius'.",
+      "wrong": "60 degrees presented as the current requirement; historical evidence used as direct support for the current claim.",
+      "c2_relevance": "Current-answer protection with a historical alternative present, after topic-only discovery."
+    },
+    {
+      "id": "G3", "shape": "two_dates_distinct_roles_topic_only",
+      "family": "v4d.facilities.pest-control-procedure (Pest Control Procedure)",
+      "intended_roles": {"20 May 2025": "event/fact context only (agreement date)", "1 July 2025": "authority valid-at date (schedule in operation)"},
+      "versions": "v1 2024-06-01 to 2025-06-01 (monthly site inspection; in force 20 May 2025); v2 2025-06-01 to 2026-06-01 (kitchen fortnightly; selected); v3 from 2026-06-01 (kitchen fortnightly; current).",
+      "expected_answer": "Fortnightly for the kitchen area (with monthly inspection elsewhere), under the version in force from 1 June 2025.",
+      "source_support": "v2: 'providing fortnightly kitchen area inspection, tightened from the previous monthly frequency, and monthly inspection elsewhere.' v1: 'providing at least a monthly site inspection.'",
+      "wrong": "Monthly (agreement date used as authority, selecting v1).",
+      "limit": "v3 (current) also says fortnightly, so a current-only plan reaches the same figure. G3 discriminates only against the agreement-date reading, not against a current reading; record which version the answer used."
+    },
+    {
+      "id": "G4", "shape": "historical_current_comparison_topic_only",
+      "family": "v4d.it.data-backup-recovery-policy (Data Backup and Recovery Policy)",
+      "intended_roles": {"July 2025": "authority valid-at period, first part", "now": "current authority, second part"},
+      "versions": "v1 2024-09-01 to 2025-09-01 (quarterly); v2 2025-09-01 to 2026-09-01 (monthly); v3 from 2026-09-01 (monthly; current).",
+      "expected_answer": "July 2025: quarterly. Now: monthly (under the current version, which also periodically tests restoration from the immutable copy; mentioning this is optional).",
+      "source_support": "v1: 'Complete a test restoration of a sample backup quarterly'. v3: 'Complete a test restoration monthly'.",
+      "wrong": "The same frequency for both; either part omitted; monthly presented as the July 2025 rule.",
+      "c2_relevance": "Comparison control for topic-only discovery. The C1/C2 temporal-alternative mechanism is retrieve-only and is not expected to apply."
+    },
+    {
+      "id": "G5", "shape": "cross_family_conflict_topic_only",
+      "families": "v4b.hr.staff-supervision-appraisal-policy (Staff Supervision and Appraisal Policy, v2 current from 2026-01-01) and v4b.hr.appraisal-and-supervision-schedule (Appraisal and Supervision Schedule 2026, v2 current from 2026-06-01)",
+      "intended_roles": {"none": "current; no date"},
+      "expected_answer": "ACCEPTABLE: (a) a clarification; OR (b) an answer that states both and makes the disagreement explicit: the Staff Supervision and Appraisal Policy requires supervision at least monthly for every direct report, while the Appraisal and Supervision Schedule lists care staff as 8-weekly. A family-discovery 'ambiguous' outcome that leads to clarification is acceptable.",
+      "source_support": "Policy v2: 'Conduct supervision with every direct report at least monthly'. Schedule v2: 'Care staff' / '8-weekly supervision, annual appraisal.'",
+      "wrong": "Either figure alone presented as the rule without noting the other document; any merged or invented figure.",
+      "c2_relevance": "Family ambiguity: discovery must not silently pick one family."
+    }
+  ],
+  "known_regression_items": [
+    {
+      "id": "R16", "shape": "historical_rule_day_topic_only (original input 16)",
+      "family": "Cleaning Contract Summary",
+      "versions": "v1 effective 2025-06-01 (selected for 1 February 2026); v2 effective 2026-06-01 (current).",
+      "expected_answer": "CleanCo South West Ltd (daily cleaning at Harbour View under the version in force on 1 February 2026).",
+      "source_support": "v1 table row 'Harbour View\\tCleanCo South West Ltd\\tDaily' (retained in block1-extractive-final-20261113/authority-source-snapshot.json).",
+      "wrong": "CleanCo National (v2) presented as the February 2026 provider; or no-answer when v1 is eligible.",
+      "note": "Report separately from fresh items. A correct answer via a planner that happens to choose historical authority is not evidence of rescue; record the plan's authority and whether a precautionary target supplied the evidence."
+    }
+  ]
+}
