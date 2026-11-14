@@ -24,6 +24,7 @@ use App\Support\Retrieval\ApplicabilityScopeFact;
 use App\Support\Retrieval\AuthorisedKnowledgeScope;
 use App\Support\Retrieval\EligibleRetrievalScope;
 use App\Support\Retrieval\EvidenceNeedsPlan;
+use App\Support\Retrieval\ExplicitTemporalReferences;
 use App\Support\Retrieval\NeedsEvidenceSelection;
 use App\Support\Retrieval\RetrievalPlan;
 use App\Support\Retrieval\RetrievalResult;
@@ -82,6 +83,8 @@ final readonly class RetrieveWorkspaceEvidence
         $results = [];
         $plans = [];
         $scopeFacts = [];
+        $topicalCurrent = [];
+        $discoveryWork = [];
         foreach ($needs as $need) {
             $id = $need['need_id'];
             $plans[$id] = $plan->retrievalPlan($id);
@@ -107,11 +110,13 @@ final readonly class RetrieveWorkspaceEvidence
 
                 continue;
             }
-            if ($need['operation'] === 'compare'
+            $c2 = $need['operation'] === 'retrieve' && ExplicitTemporalReferences::forNeed($need) !== [];
+            if (($need['operation'] === 'compare' || $c2)
                 && ($plans[$id]->evidenceNeed['subject_binding']['subject_status'] ?? null) === 'topic') {
+                $discovery = [];
                 try {
                     $topical = $this->selectTopicalComparisonFamily($authorised, $plans[$id],
-                        $candidateK, $evaluatedAt);
+                        $candidateK, $evaluatedAt, $discovery);
                 } catch (RetrievalException $exception) {
                     $failure = $exception instanceof RetrievalExecutionException
                         ? $exception->observation->toArray()
@@ -122,12 +127,22 @@ final readonly class RetrieveWorkspaceEvidence
                         'failure' => $failure,
                     ]);
 
+                    if ($c2) {
+                        $usage = [...$usage, ...($discovery['completed_usage'] ?? []), ...(is_array($failure['usage'] ?? null) ? $failure['usage'] : [])];
+                        $results[$id] = new RetrievalResult(RetrievalOutcome::InsufficientEvidence,
+                            reason: 'topic_family_unavailable', lineage: ['failure' => $failure]);
+                        $discoveryWork[$id] = [...$discovery, 'status' => 'unavailable', 'failure' => $failure];
+
+                        continue;
+                    }
+
                     return new RetrievalResult(RetrievalOutcome::RetrievalFailed,
                         reason: 'topical_family_review_failed',
                         lineage: ['failure' => $failure],
                         usage: [...$usage, ...(is_array($failure['usage'] ?? null) ? $failure['usage'] : [])]);
                 }
                 $usage = [...$usage, ...$topical['usage']];
+                $discoveryWork[$id] = $topical['diagnostics'];
                 $observe?->__invoke('need.'.$id.'.topical_family_selection', [
                     'decision' => $topical['decision'],
                     'original_decision' => $topical['original_decision'] ?? null,
@@ -139,12 +154,22 @@ final readonly class RetrieveWorkspaceEvidence
                     'diagnostics' => $topical['diagnostics'],
                 ]);
                 if ($topical['family_id'] === null) {
-                    $results[$id] = new RetrievalResult(RetrievalOutcome::ComparisonScopeIncomplete,
+                    $results[$id] = new RetrievalResult($c2 ? RetrievalOutcome::InsufficientEvidence : RetrievalOutcome::ComparisonScopeIncomplete,
                         reason: 'topic_family_unresolved');
 
                     continue;
                 }
                 $plans[$id] = $this->comparisonPlanForFamily($plans[$id], $topical['family_id']);
+                if ($c2) {
+                    $topicalCurrent[$id] = $this->reuseTopicalCurrent($authorised, $plans[$id], $topical, $evaluatedAt);
+                    $discoveryWork[$id]['current_reuse'] = $topicalCurrent[$id]->reason ?? 'equivalent';
+                    $observe?->__invoke('need.'.$id.'.topical_current_reuse', $topicalCurrent[$id]->toArray());
+                    if ($plans[$id]->temporalMode === RetrievalTemporalMode::Current) {
+                        $results[$id] = $topicalCurrent[$id];
+
+                        continue;
+                    }
+                }
             }
             $results[$id] = $this->execute($authorised, $need['aspect'], $candidateK, $evaluatedAt,
                 observe: $observe === null ? null : fn ($stage, $value) => $observe('need.'.$id.'.'.$stage, $value),
@@ -160,14 +185,26 @@ final readonly class RetrieveWorkspaceEvidence
             }
         }
         $temporal = app(TemporalEvidenceAlternatives::class)->augment($authorised, $needs, $plans, $results,
-            $evaluatedAt, fn ($dated, $id, $target) => $this->execute($authorised, $dated->query, $candidateK, $evaluatedAt,
-                observe: $observe === null ? null : fn ($stage, $value) => $observe('need.'.$id.'.'.$target.'.'.$stage, $value),
-                planOverride: $dated, recordPlannerUsage: false), $observe);
+            $evaluatedAt, fn ($dated, $id, $target) => $dated->temporalMode === RetrievalTemporalMode::Current && isset($topicalCurrent[$id])
+                ? $topicalCurrent[$id]
+                : $this->execute($authorised, $dated->query, $candidateK, $evaluatedAt,
+                    observe: $observe === null ? null : fn ($stage, $value) => $observe('need.'.$id.'.'.$target.'.'.$stage, $value),
+                    planOverride: $dated, recordPlannerUsage: false), $observe);
         $usage = [...$usage, ...$temporal['usage']];
         if (isset($temporal['failure'])) {
             return new RetrievalResult(RetrievalOutcome::RetrievalFailed, reason: $temporal['failure']->reason, usage: $usage);
         }
         $needs = $temporal['needs'];
+        foreach ($needs as &$need) {
+            if (($topicalCurrent[$need['need_id']]->reason ?? null) === 'topical_current_reuse_capacity') {
+                foreach ($need['temporal_targets'] ?? [] as $index => $target) {
+                    if ($target['mode'] === 'current') {
+                        $need['temporal_targets'][$index]['status'] = 'capacity_limited';
+                    }
+                }
+            }
+        }
+        unset($need);
         $results = $temporal['results'];
         $needsById = collect($needs)->keyBy('need_id');
         // A corpus cutover during multi-need execution must not mix generations.
@@ -246,6 +283,7 @@ final readonly class RetrieveWorkspaceEvidence
             lineage: ['planner' => $plan->lineage->toArray(), 'evidence_selection' => 'bounded-needs-k5-v3',
                 'temporal_alternatives' => ['version' => 'bounded-temporal-targets-v1',
                     'additional_search_lanes' => $temporal['additional_search_lanes']],
+                'topical_discovery_work' => $discoveryWork,
                 'selection_coverage' => $selection['coverage'],
                 'needs' => array_map(fn ($r) => $r->lineage, $results)], usage: $usage, evidenceNeeds: $coverage);
     }
@@ -261,12 +299,15 @@ final readonly class RetrieveWorkspaceEvidence
         RetrievalPlan $plan,
         int $candidateK,
         CarbonImmutable $evaluatedAt,
+        array &$diagnostics = [],
     ): array {
         $currentPlan = new RetrievalPlan($plan->query, RetrievalTemporalMode::Current,
             null, null, $plan->locationReferences, null, $plan->classifierLineage,
             $plan->classifierUsage, evidenceNeed: $plan->evidenceNeed);
         $eligible = $this->eligibility->handle($authorised, $currentPlan, $evaluatedAt);
         $diagnostics = ['stop_stage' => 'discovery_eligibility',
+            'search_requests' => 0, 'reranker_requests' => 0, 'reviewer_requests' => 0,
+            'charged_to_logical_lane_limit' => false,
             'eligibility_outcome' => $eligible->outcome->value, 'eligibility_reason' => $eligible->reason,
             'active_corpus_present' => $authorised->activeCorpusGeneration !== null,
             'search_candidate_count' => null, 'hydrated_candidate_count' => null,
@@ -277,9 +318,11 @@ final readonly class RetrieveWorkspaceEvidence
         }
         $corpus = $authorised->activeCorpusGeneration;
         $policy = $corpus->sparse_space_generation_id === null ? null : $this->policies->handle($corpus);
+        $diagnostics['search_requests'] = 1;
         $search = $this->client->search($authorised->workspace, $corpus, $eligible,
             $plan->query, $candidateK, $policy);
         $usage = $search->usage;
+        $diagnostics['completed_usage'] = $usage;
         $diagnostics['search_candidate_count'] = count($search->candidates);
         $fresh = $this->eligibility->handle($authorised, $currentPlan, $evaluatedAt);
         $hydrated = $this->hydrateAndRecheck($search->candidates,
@@ -289,16 +332,20 @@ final readonly class RetrieveWorkspaceEvidence
         if ($hydrated === []) {
             return ['decision' => 'no_match', 'family_id' => null, 'chunk_id' => null, 'usage' => $usage, 'diagnostics' => $diagnostics];
         }
+        $ranked = [];
         if ($policy !== null) {
             $this->policies->assertSearchLineage($policy, $search->lineage);
             if (($search->lineage['sparse_space_generation_id'] ?? null)
                 !== $corpus->sparseSpaceGeneration?->public_id) {
                 throw new RetrievalException('Sparse generation lineage does not match the active corpus.');
             }
+            $diagnostics['reranker_requests'] = 1;
             $reranked = $this->client->rerank($authorised->workspace, $plan->query, $hydrated, $policy);
+            $ranked = $reranked['candidates'];
             $diagnostics['reranked_candidate_count'] = count($reranked['candidates']);
             $this->policies->assertRerankerLineage($policy, $reranked['profile']);
             $usage = [...$usage, ...$reranked['usage']];
+            $diagnostics['completed_usage'] = $usage;
             $byChunk = collect($hydrated)->keyBy('chunk_id');
             $hydrated = collect($reranked['candidates'])->map(
                 fn (array $item) => $byChunk->get($item['chunk_id'])
@@ -312,12 +359,55 @@ final readonly class RetrieveWorkspaceEvidence
         if ($candidates === []) {
             return ['decision' => 'no_match', 'family_id' => null, 'chunk_id' => null, 'usage' => $usage, 'diagnostics' => $diagnostics];
         }
+        $diagnostics['reviewer_invoked'] = true;
+        $diagnostics['reviewer_requests'] = 1;
         $selection = $this->client->selectTopicalCompareFamily($authorised->workspace,
             $plan->query, $candidates);
-        $diagnostics['reviewer_invoked'] = true;
         $diagnostics['stop_stage'] = 'reviewer_result';
 
-        return [...$selection, 'usage' => [...$usage, $selection['usage']], 'diagnostics' => $diagnostics];
+        return [...$selection, 'usage' => [...$usage, $selection['usage']], 'diagnostics' => $diagnostics,
+            'current_candidates' => $hydrated, 'current_document_ids' => $fresh->documentPublicIdsBySide['primary'] ?? [],
+            'ranked' => $ranked, 'policy' => $policy];
+    }
+
+    /** Reuse only the same eligible current version(s); never issue a replacement search. */
+    private function reuseTopicalCurrent(AuthorisedKnowledgeScope $scope, RetrievalPlan $bound, array $discovery, CarbonImmutable $at): RetrievalResult
+    {
+        $current = new RetrievalPlan($bound->query, RetrievalTemporalMode::Current, null, null,
+            $bound->locationReferences, null, $bound->classifierLineage, $bound->classifierUsage, evidenceNeed: $bound->evidenceNeed);
+        $eligible = $this->eligibility->handle($scope, $current, $at);
+        $ids = $eligible->documentPublicIdsBySide['primary'] ?? [];
+        if (! $eligible->canSearch() || $ids === [] || array_diff($ids, $discovery['current_document_ids']) !== []) {
+            return new RetrievalResult(RetrievalOutcome::InsufficientEvidence, reason: 'topical_current_reuse_capacity',
+                lineage: ['selection_stop_stage' => 'capacity_limited']);
+        }
+        $candidates = $this->hydrateAndRecheck($discovery['current_candidates'], ['primary' => $ids], $scope);
+        $policy = $discovery['policy'];
+        if ($policy !== null) {
+            $ranked = collect($discovery['ranked'])->keyBy(fn ($row) => $row['side'].':'.$row['chunk_id']);
+            $candidates = collect($candidates)->map(fn ($candidate) => $this->thresholdCandidate($candidate, $ranked, $policy))
+                ->filter()->sortBy('rank')->take($policy->final_evidence_k)->values()->all();
+        }
+
+        return new RetrievalResult($candidates === [] ? RetrievalOutcome::InsufficientEvidence : RetrievalOutcome::EvidenceFound,
+            $candidates, reason: $candidates === [] ? 'topical_current_evidence_unavailable' : null,
+            resolvedTemporalAuthority: $this->resolvedTemporalAuthority($current, $eligible, $at),
+            resolvedApplicabilityLocation: ['resolved_location_public_id' => $eligible->resolvedLocationPublicId],
+            lineage: ['selection_stop_stage' => $candidates === [] ? 'threshold_filtered' : null, 'topical_current_reused' => true]);
+    }
+
+    private function thresholdCandidate(array $candidate, Collection $ranked, EvidenceThresholdPolicy $policy): ?array
+    {
+        $row = $ranked->get($candidate['side'].':'.$candidate['chunk_id']);
+        if (! is_array($row) || (float) $row['score'] < $policy->evidence_threshold) {
+            return null;
+        }
+
+        return [...$candidate, 'fused_score' => $candidate['score'], 'fused_rank' => $candidate['rank'],
+            'score' => (float) $row['score'], 'rank' => $row['rank'],
+            'evidence_threshold_policy_version' => $policy->version, 'evidence_threshold_policy_fingerprint' => $policy->fingerprint,
+            'reranker_provider' => $policy->reranker_provider, 'reranker_model' => $policy->reranker_model,
+            'reranker_adapter_version' => $policy->reranker_adapter_version];
     }
 
     private function comparisonPlanForFamily(RetrievalPlan $plan, string $familyId): RetrievalPlan

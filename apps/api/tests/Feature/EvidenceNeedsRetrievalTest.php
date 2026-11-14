@@ -44,8 +44,10 @@ use App\Support\Retrieval\RetrievalPlan;
 use App\Support\Retrieval\RetrievalResult;
 use Carbon\CarbonImmutable;
 use GuzzleHttp\Client;
+use GuzzleHttp\Promise\PromiseInterface;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Client\Request;
+use Illuminate\Http\Client\Response;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
@@ -65,7 +67,7 @@ final class EvidenceNeedsRetrievalTest extends TestCase
 
     public static function c1ReplayCases(): array
     {
-        return [['varied_development'], ['modified_input16'], ['month_replay'], ['year_replay']];
+        return [['varied_development'], ['modified_input16'], ['month_replay'], ['year_replay'], ['c2_original_input16']];
     }
 
     public static function c1AdmissionCases(): array
@@ -146,6 +148,9 @@ final class EvidenceNeedsRetrievalTest extends TestCase
         });
         $searches = [];
         Http::fake(function (Request $request) use ($generation, $case, &$searches) {
+            if ($case === 'topic_only' && str_ends_with($request->url(), '/compare-family')) {
+                return $this->familyReviewResponse($request, 'no_match');
+            }
             $this->assertStringEndsWith('/search', $request->url());
             $body = $request->data();
             $searches[] = $body['scopes'];
@@ -221,7 +226,9 @@ final class EvidenceNeedsRetrievalTest extends TestCase
         [$workspace, $generation, $scope] = $this->scope();
         $old = $this->document($workspace, $generation, '2025-01-01', text: 'The regional contractor performs the daily inspection.');
         $current = $this->document($workspace, $generation, '2026-06-01', $old, 'The national contractor performs the daily inspection.');
-        if ($case !== 'modified_input16') {
+        $c2 = $case === 'c2_original_input16';
+        $input16 = in_array($case, ['modified_input16', 'c2_original_input16'], true);
+        if (! $input16) {
             $qualifier = DocumentChunk::factory()->create(['workspace_id' => $workspace->id, 'document_id' => $old->id,
                 'ingestion_event_claim_id' => $old->chunks()->firstOrFail()->ingestion_event_claim_id,
                 'ordinal' => 2, 'text' => 'During the daily inspection in hazardous areas, trained staff must accompany the contractor.']);
@@ -249,7 +256,7 @@ final class EvidenceNeedsRetrievalTest extends TestCase
             return $data;
         });
         $answerText = 'The regional contractor performed daily inspections; trained staff accompanied them in hazardous areas.';
-        if ($case === 'modified_input16') {
+        if ($input16) {
             $fixture = json_decode(file_get_contents(base_path('tests/Fixtures/temporal-c1-input16.json')), true, flags: JSON_THROW_ON_ERROR);
             $question = $fixture['question'];
             $dateQuote = '1 February 2026';
@@ -257,10 +264,10 @@ final class EvidenceNeedsRetrievalTest extends TestCase
             $old = $this->document($workspace, $generation, '2025-06-01', text: "Cleaning Contract Summary\n\nSite\tContractor\tFrequency\nHarbour View\tCleanCo South West Ltd\tDaily\nMeadow Court\tCleanCo South West Ltd\tDaily");
             $current = $this->document($workspace, $generation, '2026-06-01', $old,
                 "Cleaning Contract Summary\n\nSupersedes the South-West-only version effective 1 June 2025. The same contractor's national framework agreement now covers all regions.\n\nSite\tContractor\tFrequency\nAll sites, all regions\tCleanCo National Ltd (successor to CleanCo South West Ltd's framework)\tDaily");
-            $plan = $this->plan(4, function ($data) use ($fixture, $old, $question) {
+            $plan = $this->plan(4, function ($data) use ($fixture, $old, $question, $c2) {
                 $data['turns'] = [['turn_id' => 'user-1', 'text' => $question]];
                 $data['plan'] = [...$fixture['plan'], 'schema_version' => 'evidence-needs-plan-v4',
-                    'bindings' => [['need_id' => 'n1', 'subject_status' => 'matched', 'family_ids' => [$old->family->public_id],
+                    'bindings' => [['need_id' => 'n1', 'subject_status' => $c2 ? 'topic' : 'matched', 'family_ids' => $c2 ? [] : [$old->family->public_id],
                         'ownership' => 'authorised_workspace', 'ownership_source' => null]]];
 
                 return $data;
@@ -268,8 +275,15 @@ final class EvidenceNeedsRetrievalTest extends TestCase
         }
         $generationRequest = null;
         $rejectTargets = false;
-        Http::fake(function (Request $request) use ($generation, $old, $dateQuote, $answerText, $case, $plan, &$generationRequest, &$rejectTargets) {
+        Http::fake(function (Request $request) use ($generation, $old, $dateQuote, $answerText, $input16, $c2, $plan, &$generationRequest, &$rejectTargets) {
             $body = $request->data();
+            if (str_ends_with($request->url(), '/compare-family')) {
+                $this->assertTrue($c2);
+                $candidate = collect($body['candidates'])->firstWhere('family_id', $old->family->public_id);
+                $this->assertNotNull($candidate);
+
+                return $this->familyReviewResponse($request, 'selected', $candidate);
+            }
             if (str_ends_with($request->url(), '/plan-needs')) {
                 return Http::response(['contract_version' => 2, 'request_id' => $body['request_id'],
                     'plan' => $plan->value, 'classifier_lineage' => $plan->lineage->toArray(),
@@ -283,8 +297,8 @@ final class EvidenceNeedsRetrievalTest extends TestCase
                 $historicalItems = collect($body['evidence'])->where('document_id', $old->id);
                 $historical = $historicalItems->first();
                 $this->assertNotNull($historical);
-                $this->assertStringContainsString($case === 'modified_input16' ? 'CleanCo South West Ltd' : 'trained staff must accompany', $historicalItems->pluck('text')->implode(' '));
-                $this->assertCount($case === 'modified_input16' ? 1 : 2, $historicalItems);
+                $this->assertStringContainsString($input16 ? 'CleanCo South West Ltd' : 'trained staff must accompany', $historicalItems->pluck('text')->implode(' '));
+                $this->assertCount($input16 ? 1 : 2, $historicalItems);
                 $this->assertSame(['n1:date:1'], $historical['temporal_authority']['temporal_target_ids']);
 
                 return Http::response(['contract_version' => 4, 'request_id' => $body['request_id'], 'status' => 'completed',
@@ -314,6 +328,14 @@ final class EvidenceNeedsRetrievalTest extends TestCase
         $retrieval = app(RetrieveWorkspaceEvidence::class)->handleNeeds($scope, $plan, 10, CarbonImmutable::parse('2026-11-14'));
         $this->assertEqualsCanonicalizing([$old->public_id, $current->public_id], array_values(array_unique(array_column($retrieval->candidates, 'document_id'))));
         $this->assertSame('searched', $retrieval->evidenceNeeds[0]['temporal_targets'][1]['status']);
+        if ($c2) {
+            $this->assertSame('topic', $plan->value['bindings'][0]['subject_status']);
+            $this->assertSame([], $plan->value['bindings'][0]['family_ids']);
+            $this->assertSame('current', $plan->value['needs'][0]['authority']['kind']);
+            $this->assertSame('2026-02-01', $plan->value['needs'][0]['fact_reference']['value']);
+            $this->assertSame(1, $retrieval->lineage['topical_discovery_work']['n1']['search_requests']);
+            $this->assertSame('equivalent', $retrieval->lineage['topical_discovery_work']['n1']['current_reuse']);
+        }
         $answer = app(GenerateGroundedAnswer::class)->handle(new GenerationAssemblyInput($question, $retrieval, [], [], $scope, []),
             app(GenerationProfileFactory::class)->configuredNeeds())->fresh();
         $this->assertTrue($answer->temporal_context['uses'][0]['planner_disagreement']);
@@ -325,7 +347,7 @@ final class EvidenceNeedsRetrievalTest extends TestCase
         }
         $this->assertSame([$old->id], $answer->evidenceSnapshots->pluck('document_id')->unique()->values()->all());
         $this->assertNotNull($generationRequest);
-        Http::assertSentCount(3);
+        Http::assertSentCount($c2 ? 4 : 3);
         $maximum = config('generation.max_context_characters');
         config(['generation.max_context_characters' => 1]);
         $limited = app(GenerateGroundedAnswer::class)->handle(new GenerationAssemblyInput($question, $retrieval, [], [], $scope, []),
@@ -333,7 +355,7 @@ final class EvidenceNeedsRetrievalTest extends TestCase
         $this->assertSame('insufficient_evidence', $limited->outcome->value);
         $this->assertStringContainsString('context budget', $limited->renderedText());
         $this->assertSame('capacity_limited', $limited->temporal_context['targets'][0]['status']);
-        Http::assertSentCount(3);
+        Http::assertSentCount($c2 ? 4 : 3);
         config(['generation.max_context_characters' => $maximum, 'conversation.needs_workspace_ids' => [$workspace->public_id]]);
         Queue::fake();
         $this->travelTo(CarbonImmutable::parse('2026-11-14'));
@@ -345,17 +367,18 @@ final class EvidenceNeedsRetrievalTest extends TestCase
         $this->assertStringContainsString($answerText, $run->assistantMessage->display_text);
         $this->assertStringContainsString($old->public_id, $run->assistantMessage->display_text);
         $this->assertTrue($run->generatedAnswer->temporal_context['uses'][0]['planner_disagreement']);
-        Http::assertSentCount(7);
+        Http::assertSentCount($c2 ? 9 : 7);
         $rejectTargets = true;
         $rejected = app(GenerateGroundedAnswer::class)->handle(new GenerationAssemblyInput($question, $retrieval, [], [], $scope, []),
             app(GenerationProfileFactory::class)->configuredNeeds())->fresh();
         $this->assertSame('insufficient_evidence', $rejected->outcome->value);
         $this->assertStringNotContainsString('which date', strtolower($rejected->renderedText()));
-        Http::assertSentCount(9);
+        Http::assertSentCount($c2 ? 11 : 9);
         $evidenceRoot = getenv('C1_EVIDENCE_ROOT');
         if (is_string($evidenceRoot) && $evidenceRoot !== '') {
             file_put_contents($evidenceRoot.'/'.$case.'.json', json_encode([
-                'label' => $case === 'modified_input16' ? 'MODIFIED DIAGNOSTIC FIXTURE; injected local family binding, not original production routing' : 'Separate development fixture',
+                'label' => $c2 ? 'ORIGINAL topic-only input16 plan; production family review, controlled external responses' : ($case === 'modified_input16' ? 'MODIFIED DIAGNOSTIC FIXTURE; injected local family binding, not original production routing' : 'Separate development fixture'),
+                'retrieval_lineage' => $retrieval->lineage,
                 'substituted_boundaries' => ['planner HTTP', 'dense search HTTP', 'generation/entailment HTTP'],
                 'plan' => $plan->value, 'generation_request' => $generationRequest,
                 'temporal_context' => $run->generatedAnswer->temporal_context,
@@ -369,6 +392,180 @@ final class EvidenceNeedsRetrievalTest extends TestCase
                 'token_budget_text' => $limited->renderedText(),
                 'exhausted_target_rejection' => ['outcome' => $rejected->outcome->value, 'usage' => $rejected->usage, 'text' => $rejected->renderedText()],
             ], JSON_PRETTY_PRINT | JSON_THROW_ON_ERROR)."\n");
+        }
+    }
+
+    private function familyReviewResponse(Request $request, string $decision, ?array $candidate = null): Response|PromiseInterface
+    {
+        return Http::response(['contract_version' => 1, 'request_id' => $request['request_id'],
+            'original_decision' => $decision, 'validation_rejection_code' => null,
+            'selection' => ['decision' => $decision, 'family_id' => $candidate['family_id'] ?? null,
+                'chunk_id' => $candidate['chunk_id'] ?? null, 'quote' => $candidate === null ? null : mb_substr($candidate['text'], 0, 20)],
+            'usage' => ['stage' => 'compare_family_selection', 'provider' => 'openai', 'model' => 'test-model',
+                'execution' => 'provider_api', 'request_count' => 1, 'retry_count' => 0, 'latency_ms' => 1, 'cost_basis' => 'unavailable']]);
+    }
+
+    public static function c2DiscoveryCases(): array
+    {
+        return array_map(fn ($case) => [$case], ['selected', 'ambiguous', 'no_match', 'wrong_identity', 'wrong_quote',
+            'unavailable', 'empty', 'no_history', 'capacity', 'eligibility_changed', 'historical', 'hybrid', 'threshold']);
+    }
+
+    #[DataProvider('c2DiscoveryCases')]
+    public function test_c2_discovery_is_single_family_fail_closed_and_bounded(string $case): void
+    {
+        Http::preventStrayRequests();
+        [$workspace, $generation, $scope, $policy] = $this->scope(in_array($case, ['hybrid', 'threshold'], true));
+        $old = $case === 'no_history' ? null : $this->document($workspace, $generation, '2024-01-01', text: 'The laboratory inspection is weekly.');
+        $current = $this->document($workspace, $generation, '2026-01-01', $old, 'The laboratory inspection is daily.');
+        $otherOld = $this->document($workspace, $generation, '2024-01-01');
+        $other = $this->document($workspace, $generation, '2026-01-01', $otherOld);
+        $question = 'What is the laboratory inspection interval now, after the review in March 2025?';
+        $plan = $this->plan(4, function ($data) use ($question, $case) {
+            $data['turns'] = [['turn_id' => 'user-1', 'text' => $question]];
+            $need = $data['plan']['needs'][0];
+            $need = [...$need, 'operation' => 'retrieve', 'scope_question' => null,
+                'question_span' => ['turn_id' => 'user-1', 'quote' => $question], 'context_spans' => [], 'aspect' => $question,
+                'authority' => ['kind' => 'current', 'precision' => 'none', 'value' => null, 'source' => null],
+                'fact_reference' => null, 'applicability' => ['kind' => 'generic', 'source' => null]];
+            if ($case === 'historical') {
+                $need['authority'] = ['kind' => 'period', 'precision' => 'month', 'value' => '2025-03',
+                    'source' => ['turn_id' => 'user-1', 'quote' => 'March 2025']];
+            }
+            $data['plan']['needs'] = [];
+            $data['plan']['bindings'] = [];
+            foreach ($case === 'capacity' ? ['n1', 'n2', 'n3'] : ['n1'] as $id) {
+                $data['plan']['needs'][] = [...$need, 'need_id' => $id];
+                $data['plan']['bindings'][] = ['need_id' => $id, 'subject_status' => 'topic', 'family_ids' => [],
+                    'ownership' => 'authorised_workspace', 'ownership_source' => null];
+            }
+
+            return $data;
+        });
+        $searches = [];
+        $reviews = 0;
+        $reranks = 0;
+        $generationResponse = null;
+        Http::fake(function (Request $request) use ($case, $generation, $policy, $current, &$searches, &$reviews, &$reranks, &$generationResponse) {
+            if ($generationResponse !== null) {
+                return $generationResponse($request);
+            }
+            if (str_ends_with($request->url(), '/rerank')) {
+                $reranks++;
+
+                return Http::response(['request_id' => $request['request_id'], 'profile' => $request['profile'],
+                    'provider_input_tokens' => 17, 'provider_attempt_count' => 1, 'provider_retry_count' => 0,
+                    'rate_limit_event_count' => 0, 'retry_delays' => [], 'first_provider_attempt_at' => '2026-11-14T12:00:00Z',
+                    'final_provider_success_at' => '2026-11-14T12:00:01Z', 'provider_retry_elapsed_seconds' => 0,
+                    'candidates' => array_map(fn ($candidate, $index) => ['chunk_id' => $candidate['chunk_id'], 'side' => $candidate['side'],
+                        'score' => $case === 'threshold' ? 0.01 : 0.95, 'rank' => $index + 1], $request['candidates'], array_keys($request['candidates']))]);
+            }
+            if (str_ends_with($request->url(), '/compare-family')) {
+                $reviews++;
+                if ($case === 'unavailable') {
+                    return Http::response([], 503);
+                }
+                $candidate = collect($request['candidates'])->firstWhere('family_id', $current->family->public_id);
+                $this->assertNotNull($candidate);
+                if ($case === 'wrong_identity') {
+                    $candidate['family_id'] = (string) Str::uuid();
+                } elseif ($case === 'wrong_quote') {
+                    $candidate['text'] = 'Invented quotation not in the candidate.';
+                } elseif ($case === 'eligibility_changed') {
+                    $current->status = DocumentStatus::Deleting;
+                    $current->save();
+                }
+                $decision = in_array($case, ['ambiguous', 'no_match'], true) ? $case : 'selected';
+
+                return $this->familyReviewResponse($request, $decision, $decision === 'selected' ? $candidate : null);
+            }
+            $this->assertStringEndsWith('/search', $request->url());
+            $body = $request->data();
+            $searches[] = $body['scopes'];
+            $candidates = [];
+            foreach ($body['scopes'] as $lane) {
+                foreach ($lane['eligible_document_ids'] as $id) {
+                    $document = Document::where('public_id', $id)->firstOrFail();
+                    $candidates[] = ['chunk_id' => $document->chunks()->firstOrFail()->public_id, 'document_id' => $id,
+                        'workspace_corpus_generation_id' => $generation->public_id,
+                        'embedding_space_generation_id' => $generation->embeddingSpaceGeneration->public_id,
+                        ...($policy ? ['sparse_space_generation_id' => $generation->sparseSpaceGeneration->public_id] : []),
+                        'score' => 0.9, 'rank' => count($candidates) + 1, 'retrieval_method' => $policy ? 'hybrid' : 'dense', 'side' => $lane['side']];
+                }
+            }
+
+            return Http::response(['request_id' => $body['request_id'], 'candidates' => $case === 'empty' ? [] : $candidates,
+                'lineage' => $policy ? ['embedding_profile_fingerprint' => $policy->embedding_profile_fingerprint,
+                    'sparse_profile_fingerprint' => $policy->sparse_profile_fingerprint,
+                    'sparse_space_generation_id' => $generation->sparseSpaceGeneration->public_id,
+                    'fusion_strategy' => $policy->fusion_strategy, 'fusion_version' => $policy->fusion_version,
+                    'rrf_k' => $policy->rrf_k, 'configuration_version' => $policy->version] : [], 'diagnostics' => []]);
+        });
+        $trace = [];
+        $result = app(RetrieveWorkspaceEvidence::class)->handleNeeds($scope, $plan, 15, CarbonImmutable::parse('2026-11-14'),
+            observe: function ($stage, $value) use (&$trace) {
+                $trace[$stage] = $value;
+            });
+        $this->assertLessThanOrEqual(5, count($result->candidates));
+        $this->assertNotContains($otherOld->public_id, array_column($result->candidates, 'document_id'));
+        $this->assertNotContains($other->public_id, array_column($result->candidates, 'document_id'));
+        if (in_array($case, ['selected', 'capacity', 'eligibility_changed', 'historical', 'hybrid'], true)) {
+            $this->assertCount($case === 'capacity' ? 4 : 2, $searches, json_encode($result->lineage));
+            $this->assertContains($old->public_id, array_column($result->candidates, 'document_id'));
+            if ($case === 'capacity') {
+                $this->assertSame(['searched', 'capacity_limited', 'capacity_limited'], array_map(fn ($need) => $need['temporal_targets'][1]['status'], $result->evidenceNeeds));
+            } elseif ($case === 'eligibility_changed') {
+                $this->assertSame('capacity_limited', $result->evidenceNeeds[0]['temporal_targets'][0]['status']);
+            } else {
+                $this->assertContains($current->public_id, array_column($result->candidates, 'document_id'));
+                $this->assertSame($case === 'historical' ? 'provisional' : 'current', $result->evidenceNeeds[0]['temporal_targets'][0]['mode']);
+            }
+        } elseif ($case === 'threshold') {
+            $this->assertCount(2, $searches, json_encode($result->lineage));
+            $this->assertSame([], $result->candidates);
+            $this->assertSame('filtered', $result->evidenceNeeds[0]['temporal_targets'][1]['status']);
+        } else {
+            $this->assertCount(1, $searches);
+            if ($case === 'no_history') {
+                $this->assertSame('ineligible', $result->evidenceNeeds[0]['temporal_targets'][1]['status']);
+                $this->assertSame([$current->public_id], array_column($result->candidates, 'document_id'));
+            } else {
+                $this->assertSame([], $result->candidates);
+                $this->assertContains($result->evidenceNeeds[0]['retrieval_reason'], ['topic_family_unresolved', 'topic_family_unavailable']);
+            }
+        }
+        $this->assertSame($case === 'empty' ? 0 : ($case === 'capacity' ? 3 : 1), $reviews);
+        $this->assertSame($policy ? 2 : 0, $reranks);
+        $work = $result->lineage['topical_discovery_work']['n1'];
+        $this->assertSame(1, $work['search_requests']);
+        $this->assertSame($case === 'empty' ? 0 : 1, $work['reviewer_requests']);
+        $this->assertFalse($work['charged_to_logical_lane_limit']);
+        if ($case === 'selected') {
+            // Old dates in the question do not force the answer to use history.
+            $generationResponse = function (Request $request) use ($current) {
+                $this->assertStringEndsWith('/answer-needs', $request->url());
+                $evidence = collect($request['evidence'])->firstWhere('document_id', $current->id);
+                $this->assertNotNull($evidence);
+
+                return Http::response(['contract_version' => 4, 'request_id' => $request['request_id'], 'status' => 'completed',
+                    'result' => ['contract_version' => 4, 'outcome' => 'answered',
+                        'answer_parts' => [['text' => 'The laboratory inspection is daily now.', 'evidence_ids' => [$evidence['evidence_id']]]],
+                        'unsupported_aspects' => [], 'insufficiency_reason' => null, 'usage' => null,
+                        'aspect_links' => [['need_id' => 'n1', 'answer_part_indices' => [0], 'unsupported_aspect_indices' => []]],
+                        'entailment_checks' => [['part_index' => 0, 'verdict' => 'supported', 'missing_condition' => null]],
+                        'temporal_uses' => [['part_index' => 0, 'need_id' => 'n1', 'target_id' => 'n1:requested', 'question_quote' => 'now']]]]);
+            };
+            $answer = app(GenerateGroundedAnswer::class)->handle(new GenerationAssemblyInput($question, $result, [], [], $scope, []),
+                app(GenerationProfileFactory::class)->configuredNeeds())->fresh();
+            $this->assertSame(GenerationOutcome::Answered, $answer->outcome);
+            $this->assertFalse($answer->temporal_context['uses'][0]['planner_disagreement']);
+            $this->assertSame([$current->id], $answer->evidenceSnapshots->pluck('document_id')->unique()->values()->all());
+            $this->assertStringContainsString('daily now', $answer->renderedText());
+        }
+        if ($root = getenv('C1_EVIDENCE_ROOT')) {
+            file_put_contents($root.'/c2-discovery-'.$case.'.json', json_encode(['fixture' => $case,
+                'controlled_external_boundaries' => true, 'search_calls' => count($searches), 'reranker_calls' => $reranks,
+                'reviewer_calls' => $reviews, 'result' => $result->toArray(), 'trace' => $trace], JSON_PRETTY_PRINT | JSON_THROW_ON_ERROR)."\n");
         }
     }
 
