@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="/app/phpunit.xml" tests="40" assertions="642" errors="0" failures="1" skipped="0" time="2.883058">
+    <testsuite name="Unit" tests="1" assertions="6" errors="0" failures="0" skipped="0" time="0.002096">
+      <testsuite name="Tests\Unit\NeedsEvidenceSelectionTest" file="/app/tests/Unit/NeedsEvidenceSelectionTest.php" tests="1" assertions="6" errors="0" failures="0" skipped="0" time="0.002096">
+        <testcase name="test_c1_guard_slot_is_reserved_before_stronger_spare_passages" file="/app/tests/Unit/NeedsEvidenceSelectionTest.php" line="15" class="Tests\Unit\NeedsEvidenceSelectionTest" classname="Tests.Unit.NeedsEvidenceSelectionTest" assertions="6" time="0.002096"/>
+      </testsuite>
+    </testsuite>
+    <testsuite name="Feature" tests="39" assertions="636" errors="0" failures="1" skipped="0" time="2.880963">
+      <testsuite name="Tests\Feature\EvidenceNeedsRetrievalTest" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" tests="39" assertions="636" errors="0" failures="1" skipped="0" time="2.880963">
+        <testsuite name="Tests\Feature\EvidenceNeedsRetrievalTest::test_c1_admission_respects_existing_eligibility_and_four_lane_cap" tests="16" assertions="120" errors="0" failures="0" skipped="0" time="1.196349">
+          <testcase name="test_c1_admission_respects_existing_eligibility_and_four_lane_cap with data set #0" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="80" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="9" time="0.607584"/>
+          <testcase name="test_c1_admission_respects_existing_eligibility_and_four_lane_cap with data set #1" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="80" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="5" time="0.032962"/>
+          <testcase name="test_c1_admission_respects_existing_eligibility_and_four_lane_cap with data set #2" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="80" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="6" time="0.049402"/>
+          <testcase name="test_c1_admission_respects_existing_eligibility_and_four_lane_cap with data set #3" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="80" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="6" time="0.054338"/>
+          <testcase name="test_c1_admission_respects_existing_eligibility_and_four_lane_cap with data set #4" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="80" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="5" time="0.035381"/>
+          <testcase name="test_c1_admission_respects_existing_eligibility_and_four_lane_cap with data set #5" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="80" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="5" time="0.033175"/>
+          <testcase name="test_c1_admission_respects_existing_eligibility_and_four_lane_cap with data set #6" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="80" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="7" time="0.042563"/>
+          <testcase name="test_c1_admission_respects_existing_eligibility_and_four_lane_cap with data set #7" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="80" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="8" time="0.038872"/>
+          <testcase name="test_c1_admission_respects_existing_eligibility_and_four_lane_cap with data set #8" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="80" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="7" time="0.047557"/>
+          <testcase name="test_c1_admission_respects_existing_eligibility_and_four_lane_cap with data set #9" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="80" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="9" time="0.051159"/>
+          <testcase name="test_c1_admission_respects_existing_eligibility_and_four_lane_cap with data set #10" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="80" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="9" time="0.036320"/>
+          <testcase name="test_c1_admission_respects_existing_eligibility_and_four_lane_cap with data set #11" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="80" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="9" time="0.029119"/>
+          <testcase name="test_c1_admission_respects_existing_eligibility_and_four_lane_cap with data set #12" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="80" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="9" time="0.026776"/>
+          <testcase name="test_c1_admission_respects_existing_eligibility_and_four_lane_cap with data set #13" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="80" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="9" time="0.028119"/>
+          <testcase name="test_c1_admission_respects_existing_eligibility_and_four_lane_cap with data set #14" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="80" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="8" time="0.025713"/>
+          <testcase name="test_c1_admission_respects_existing_eligibility_and_four_lane_cap with data set #15" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="80" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="9" time="0.057310"/>
+        </testsuite>
+        <testsuite name="Tests\Feature\EvidenceNeedsRetrievalTest::test_c1_wrong_current_plan_preserves_dated_alternative_and_persisted_answer_use" tests="5" assertions="234" errors="0" failures="0" skipped="0" time="0.643923">
+          <testcase name="test_c1_wrong_current_plan_preserves_dated_alternative_and_persisted_answer_use with data set #0" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="223" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="44" time="0.115898"/>
+          <testcase name="test_c1_wrong_current_plan_preserves_dated_alternative_and_persisted_answer_use with data set #1" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="223" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="44" time="0.128854"/>
+          <testcase name="test_c1_wrong_current_plan_preserves_dated_alternative_and_persisted_answer_use with data set #2" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="223" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="46" time="0.128882"/>
+          <testcase name="test_c1_wrong_current_plan_preserves_dated_alternative_and_persisted_answer_use with data set #3" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="223" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="46" time="0.115964"/>
+          <testcase name="test_c1_wrong_current_plan_preserves_dated_alternative_and_persisted_answer_use with data set #4" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="223" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="54" time="0.154324"/>
+        </testsuite>
+        <testsuite name="Tests\Feature\EvidenceNeedsRetrievalTest::test_c2_discovery_is_single_family_fail_closed_and_bounded" tests="13" assertions="194" errors="0" failures="1" skipped="0" time="0.691103">
+          <testcase name="test_c2_discovery_is_single_family_fail_closed_and_bounded with data set #0" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="415" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="17" time="0.081366">
+            <failure type="PHPUnit\Framework\ExpectationFailedException">Tests\Feature\EvidenceNeedsRetrievalTest::test_c2_discovery_is_single_family_fail_closed_and_bounded with data set #0
+Failed asserting that 'http://ai:8001/api/internal/retrieval/generation/answer-needs' ends with "/search".
+
+/app/tests/Feature/EvidenceNeedsRetrievalTest.php:478
+/app/vendor/laravel/framework/src/Illuminate/Http/Client/Factory.php:334
+/app/vendor/laravel/framework/src/Illuminate/Collections/HigherOrderCollectionProxy.php:66
+/app/vendor/laravel/framework/src/Illuminate/Collections/HigherOrderCollectionProxy.php:66
+/app/vendor/laravel/framework/src/Illuminate/Collections/Arr.php:830
+/app/vendor/laravel/framework/src/Illuminate/Collections/Collection.php:827
+/app/vendor/laravel/framework/src/Illuminate/Collections/HigherOrderCollectionProxy.php:63
+/app/vendor/laravel/framework/src/Illuminate/Http/Client/PendingRequest.php:1765
+/app/vendor/laravel/framework/src/Illuminate/Http/Client/PendingRequest.php:1736
+/app/vendor/laravel/framework/src/Illuminate/Http/Client/PendingRequest.php:1722
+/app/vendor/guzzlehttp/guzzle/src/PrepareBodyMiddleware.php:64
+/app/vendor/guzzlehttp/guzzle/src/Middleware.php:38
+/app/vendor/guzzlehttp/guzzle/src/RedirectMiddleware.php:72
+/app/vendor/guzzlehttp/guzzle/src/Middleware.php:63
+/app/vendor/guzzlehttp/guzzle/src/HandlerStack.php:75
+/app/vendor/guzzlehttp/guzzle/src/Client.php:1085
+/app/vendor/guzzlehttp/guzzle/src/Client.php:243
+/app/vendor/guzzlehttp/guzzle/src/Client.php:273
+/app/vendor/laravel/framework/src/Illuminate/Http/Client/PendingRequest.php:1352
+/app/vendor/laravel/framework/src/Illuminate/Http/Client/PendingRequest.php:1072
+/app/vendor/laravel/framework/src/Illuminate/Support/helpers.php:328
+/app/vendor/laravel/framework/src/Illuminate/Http/Client/PendingRequest.php:1070
+/app/vendor/laravel/framework/src/Illuminate/Http/Client/PendingRequest.php:914
+/app/app/Services/Generation/GenerationClient.php:41
+/app/app/Actions/Generation/GenerateGroundedAnswer.php:97
+/app/app/Actions/Generation/GenerateGroundedAnswer.php:44
+/app/tests/Feature/EvidenceNeedsRetrievalTest.php:554</failure>
+          </testcase>
+          <testcase name="test_c2_discovery_is_single_family_fail_closed_and_bounded with data set #1" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="415" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="14" time="0.047182"/>
+          <testcase name="test_c2_discovery_is_single_family_fail_closed_and_bounded with data set #2" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="415" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="14" time="0.036088"/>
+          <testcase name="test_c2_discovery_is_single_family_fail_closed_and_bounded with data set #3" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="415" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="14" time="0.037405"/>
+          <testcase name="test_c2_discovery_is_single_family_fail_closed_and_bounded with data set #4" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="415" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="14" time="0.042357"/>
+          <testcase name="test_c2_discovery_is_single_family_fail_closed_and_bounded with data set #5" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="415" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="13" time="0.039051"/>
+          <testcase name="test_c2_discovery_is_single_family_fail_closed_and_bounded with data set #6" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="415" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="13" time="0.033341"/>
+          <testcase name="test_c2_discovery_is_single_family_fail_closed_and_bounded with data set #7" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="415" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="14" time="0.035277"/>
+          <testcase name="test_c2_discovery_is_single_family_fail_closed_and_bounded with data set #8" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="415" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="19" time="0.085995"/>
+          <testcase name="test_c2_discovery_is_single_family_fail_closed_and_bounded with data set #9" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="415" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="15" time="0.042187"/>
+          <testcase name="test_c2_discovery_is_single_family_fail_closed_and_bounded with data set #10" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="415" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="16" time="0.067291"/>
+          <testcase name="test_c2_discovery_is_single_family_fail_closed_and_bounded with data set #11" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="415" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="16" time="0.072216"/>
+          <testcase name="test_c2_discovery_is_single_family_fail_closed_and_bounded with data set #12" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="415" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="15" time="0.071346"/>
+        </testsuite>
+        <testsuite name="Tests\Feature\EvidenceNeedsRetrievalTest::test_topic_only_compare_selects_an_authorised_current_family_before_historical_search" tests="5" assertions="88" errors="0" failures="0" skipped="0" time="0.349587">
+          <testcase name="test_topic_only_compare_selects_an_authorised_current_family_before_historical_search with data set #0" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="1697" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="22" time="0.066629"/>
+          <testcase name="test_topic_only_compare_selects_an_authorised_current_family_before_historical_search with data set #1" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="1697" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="17" time="0.064407"/>
+          <testcase name="test_topic_only_compare_selects_an_authorised_current_family_before_historical_search with data set #2" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="1697" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="17" time="0.058575"/>
+          <testcase name="test_topic_only_compare_selects_an_authorised_current_family_before_historical_search with data set #3" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="1697" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="17" time="0.091711"/>
+          <testcase name="test_topic_only_compare_selects_an_authorised_current_family_before_historical_search with data set #4" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="1697" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="15" time="0.068265"/>
+        </testsuite>
+      </testsuite>
+    </testsuite>
+  </testsuite>
+</testsuites>

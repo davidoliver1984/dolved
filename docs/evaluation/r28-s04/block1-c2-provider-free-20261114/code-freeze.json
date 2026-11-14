@@ -1,0 +1,23 @@
+{
+  "date": "2026-11-14",
+  "branch": "codex/block1-extractive-hold-20261112",
+  "parent_commit": "3c389738f275cab4a57a8be72732c72b963768e8",
+  "implementation_commit": "fca272e96b083c9849a1591f6dfe5d8efd6bb092",
+  "main_unchanged": "348f09e053c8ad73676921c5c616cced812111d7",
+  "parent_runtime_aggregate": "4dde6707235e66ac707ed1cba90be8845738240dff9e4e6f2a37cc309989b338",
+  "tested_runtime_aggregate": "fb81a4cafa619b4a4e3c89daadab33a277a92a922d164d1e1a67bfb0b47c29ac",
+  "post_commit_runtime_aggregate": "fb81a4cafa619b4a4e3c89daadab33a277a92a922d164d1e1a67bfb0b47c29ac",
+  "aggregate_command": "git ls-files -z -- apps/api/app apps/api/config apps/api/routes apps/ai/app contracts | gsort -z | xargs -0 sha256sum | sha256sum",
+  "runtime_files_changed": ["apps/api/app/Actions/Retrieval/RetrieveWorkspaceEvidence.php"],
+  "provider_calls": 0,
+  "provider_spend_usd": 0,
+  "independent_confirmation_material_accessed": false,
+  "block_1": "HOLD",
+  "preserved_unrelated_tracked_edits": [
+    "docs/adr/0039-define-authorised-applicability-scope-facts.md",
+    "scripts/evaluation/run_r28_r06_governed.py",
+    "scripts/evaluation/test_run_r28_r06_governed.py"
+  ],
+  "journey": "Updated locally; ignored file not added to Git",
+  "live_authorisation_created_or_consumed": false
+}

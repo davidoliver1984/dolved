@@ -1,0 +1,122 @@
+{
+  "ai": {
+    "baseline": {
+      "path": "block1-extractive-20261112/verification/migrated-ready-ai.xml",
+      "sha256": "603622f9ad8a28aa23d36a31b3b3a243276ae62371c9f1a1766336b416e27710",
+      "tests": 1355,
+      "failures": 38,
+      "failure_names": [
+        "tests.test_generation_live_safety::test_live_policy_binds_population_profile_and_attempt_ceiling",
+        "tests.test_generation_live_safety::test_live_policy_fails_closed_for_population_or_budget_drift",
+        "tests.test_generation_live_safety::test_live_wrapper_requires_opt_in_and_honestly_skips_without_credentials",
+        "tests.test_generation_live_safety::test_r28_policy_binds_input_cost_and_single_attempt_ceilings",
+        "tests.test_generation_live_safety::test_r28_policy_fails_closed_for_pricing_or_budget_drift",
+        "tests.test_generation_validation_diagnostics::test_real_adapter_reports_static_rejected_rule[framing-answer_parts.text-detached_polarity]",
+        "tests.test_ingestion_sqs::test_malformed_sqs_entry_is_not_returned_and_is_logged",
+        "tests.test_polarity_structure::test_new_structural_polarity_matrix[bare_no]",
+        "tests.test_polarity_structure::test_new_structural_polarity_matrix[bare_yes]",
+        "tests.test_polarity_structure::test_new_structural_polarity_matrix[colon_consistent]",
+        "tests.test_polarity_structure::test_new_structural_polarity_matrix[comma_contradictory]",
+        "tests.test_polarity_structure::test_new_structural_polarity_matrix[comma_yes]",
+        "tests.test_polarity_structure::test_new_structural_polarity_matrix[contradictory_no]",
+        "tests.test_polarity_structure::test_new_structural_polarity_matrix[contradictory_yes]",
+        "tests.test_polarity_structure::test_new_structural_polarity_matrix[dash_no]",
+        "tests.test_polarity_structure::test_new_structural_polarity_matrix[emphasis_detached]",
+        "tests.test_polarity_structure::test_new_structural_polarity_matrix[emphasis_joined]",
+        "tests.test_polarity_structure::test_new_structural_polarity_matrix[empty_colon]",
+        "tests.test_polarity_structure::test_new_structural_polarity_matrix[empty_comma]",
+        "tests.test_polarity_structure::test_new_structural_polarity_matrix[empty_dash]",
+        "tests.test_polarity_structure::test_new_structural_polarity_matrix[exclamation_consistent]",
+        "tests.test_polarity_structure::test_new_structural_polarity_matrix[hyphen]",
+        "tests.test_polarity_structure::test_new_structural_polarity_matrix[lowercase_whitespace]",
+        "tests.test_polarity_structure::test_new_structural_polarity_matrix[markdown_detached]",
+        "tests.test_polarity_structure::test_new_structural_polarity_matrix[newline_consistent]",
+        "tests.test_polarity_structure::test_new_structural_polarity_matrix[no_space_detached]",
+        "tests.test_polarity_structure::test_new_structural_polarity_matrix[ordinary_no_word]",
+        "tests.test_polarity_structure::test_new_structural_polarity_matrix[period_no_consistent]",
+        "tests.test_polarity_structure::test_new_structural_polarity_matrix[period_yes_consistent]",
+        "tests.test_polarity_structure::test_new_structural_polarity_matrix[question_mark]",
+        "tests.test_polarity_structure::test_new_structural_polarity_matrix[semicolon]",
+        "tests.test_polarity_structure::test_new_structural_polarity_matrix[subject_first]",
+        "tests.test_polarity_structure::test_new_structural_polarity_matrix[unrelated]",
+        "tests.test_r28_authoring_output_validator::test_rejects_check_open_inode_substitution",
+        "tests.test_r28_s04_live_preflight::test_complete_148_utterance_execution_uses_gateway_only",
+        "tests.test_r28_s04_live_preflight::test_execution_completes_when_expectations_are_unavailable",
+        "tests.test_r28_s04_live_preflight::test_expected_label_mutations_do_not_change_execution",
+        "tests.test_r28_s04_live_preflight::test_no_selected_evidence_is_preserved_without_generation_or_judging"
+      ]
+    },
+    "changed": {
+      "path": "block1-c2-provider-free-20261114/changed-ai.xml",
+      "sha256": "f50f336d8a73c0f0892c108161e814e5bedbcd7cb847d20c86707f8293f6f289",
+      "tests": 1382,
+      "failures": 38,
+      "failure_names": [
+        "tests.test_generation_live_safety::test_live_policy_binds_population_profile_and_attempt_ceiling",
+        "tests.test_generation_live_safety::test_live_policy_fails_closed_for_population_or_budget_drift",
+        "tests.test_generation_live_safety::test_live_wrapper_requires_opt_in_and_honestly_skips_without_credentials",
+        "tests.test_generation_live_safety::test_r28_policy_binds_input_cost_and_single_attempt_ceilings",
+        "tests.test_generation_live_safety::test_r28_policy_fails_closed_for_pricing_or_budget_drift",
+        "tests.test_generation_validation_diagnostics::test_real_adapter_reports_static_rejected_rule[framing-answer_parts.text-detached_polarity]",
+        "tests.test_ingestion_sqs::test_malformed_sqs_entry_is_not_returned_and_is_logged",
+        "tests.test_polarity_structure::test_new_structural_polarity_matrix[bare_no]",
+        "tests.test_polarity_structure::test_new_structural_polarity_matrix[bare_yes]",
+        "tests.test_polarity_structure::test_new_structural_polarity_matrix[colon_consistent]",
+        "tests.test_polarity_structure::test_new_structural_polarity_matrix[comma_contradictory]",
+        "tests.test_polarity_structure::test_new_structural_polarity_matrix[comma_yes]",
+        "tests.test_polarity_structure::test_new_structural_polarity_matrix[contradictory_no]",
+        "tests.test_polarity_structure::test_new_structural_polarity_matrix[contradictory_yes]",
+        "tests.test_polarity_structure::test_new_structural_polarity_matrix[dash_no]",
+        "tests.test_polarity_structure::test_new_structural_polarity_matrix[emphasis_detached]",
+        "tests.test_polarity_structure::test_new_structural_polarity_matrix[emphasis_joined]",
+        "tests.test_polarity_structure::test_new_structural_polarity_matrix[empty_colon]",
+        "tests.test_polarity_structure::test_new_structural_polarity_matrix[empty_comma]",
+        "tests.test_polarity_structure::test_new_structural_polarity_matrix[empty_dash]",
+        "tests.test_polarity_structure::test_new_structural_polarity_matrix[exclamation_consistent]",
+        "tests.test_polarity_structure::test_new_structural_polarity_matrix[hyphen]",
+        "tests.test_polarity_structure::test_new_structural_polarity_matrix[lowercase_whitespace]",
+        "tests.test_polarity_structure::test_new_structural_polarity_matrix[markdown_detached]",
+        "tests.test_polarity_structure::test_new_structural_polarity_matrix[newline_consistent]",
+        "tests.test_polarity_structure::test_new_structural_polarity_matrix[no_space_detached]",
+        "tests.test_polarity_structure::test_new_structural_polarity_matrix[ordinary_no_word]",
+        "tests.test_polarity_structure::test_new_structural_polarity_matrix[period_no_consistent]",
+        "tests.test_polarity_structure::test_new_structural_polarity_matrix[period_yes_consistent]",
+        "tests.test_polarity_structure::test_new_structural_polarity_matrix[question_mark]",
+        "tests.test_polarity_structure::test_new_structural_polarity_matrix[semicolon]",
+        "tests.test_polarity_structure::test_new_structural_polarity_matrix[subject_first]",
+        "tests.test_polarity_structure::test_new_structural_polarity_matrix[unrelated]",
+        "tests.test_r28_authoring_output_validator::test_rejects_check_open_inode_substitution",
+        "tests.test_r28_s04_live_preflight::test_complete_148_utterance_execution_uses_gateway_only",
+        "tests.test_r28_s04_live_preflight::test_execution_completes_when_expectations_are_unavailable",
+        "tests.test_r28_s04_live_preflight::test_expected_label_mutations_do_not_change_execution",
+        "tests.test_r28_s04_live_preflight::test_no_selected_evidence_is_preserved_without_generation_or_judging"
+      ]
+    },
+    "new": [],
+    "resolved": []
+  },
+  "api": {
+    "baseline": {
+      "path": "block1-extractive-20261112/verification/migrated-ready-api.xml",
+      "sha256": "e91063992240f4cdc5545013b5b04d1034784d01fa2da336dc82a069a317e5e2",
+      "tests": 864,
+      "failures": 2,
+      "failure_names": [
+        "Tests.Feature.R28FullPopulationPlumbingTest::test_all_frozen_question_shapes_persist_without_provider_transport",
+        "Tests.Unit.PlannerConfigurationTest::test_current_planner_lineage_matches_adr_0022_v5"
+      ]
+    },
+    "changed": {
+      "path": "block1-c2-provider-free-20261114/changed-api.xml",
+      "sha256": "f606aa0c54c1ded51acb443bdf267c1f71da61e14e601c4e42c8575a544f4382",
+      "tests": 903,
+      "failures": 2,
+      "failure_names": [
+        "Tests.Feature.R28FullPopulationPlumbingTest::test_all_frozen_question_shapes_persist_without_provider_transport",
+        "Tests.Unit.PlannerConfigurationTest::test_current_planner_lineage_matches_adr_0022_v5"
+      ]
+    },
+    "new": [],
+    "resolved": []
+  }
+}
