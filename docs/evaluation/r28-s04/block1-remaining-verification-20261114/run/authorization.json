@@ -1,0 +1,35 @@
+{
+  "authorization_id": "R28-REMAINING-AUTH-20261114-01",
+  "run_id": "R28-BLOCK1-REMAINING-20261114-01",
+  "head": "c28e69c15a1ae03f900fdb60ca579aafab8cb34f",
+  "runtime": "cbff39c23c64c7226ca3592248816884f2af8a5dcf7d5672f125d524078ba238",
+  "harness_and_inputs_manifest_sha256": "0f23fbff24783ef22a87c8c60af7c6c5765eabeea94ed7bc3b8b8034aa0330d0",
+  "items": [
+    "17",
+    "18",
+    "19",
+    "20",
+    "21",
+    "22",
+    "23",
+    "24",
+    "25",
+    "26",
+    "27",
+    "28",
+    "29",
+    "30",
+    "31",
+    "32",
+    "G2",
+    "G3"
+  ],
+  "one_use": true,
+  "cap_usd": 50,
+  "reservation_usd": 47,
+  "grading": "after execution only; G2/G3 ungraded",
+  "unavailable": [
+    "rejected_planner_output",
+    "calendar_normalisation_count"
+  ]
+}

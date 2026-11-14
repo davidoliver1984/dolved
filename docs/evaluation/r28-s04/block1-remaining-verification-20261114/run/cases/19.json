@@ -1,0 +1,509 @@
+{
+    "input": {
+        "id": "19",
+        "utterance": "What moved between Week 1 and Week 2 of the registered-manager induction in the February 2026 update?"
+    },
+    "started_at_london": "2026-11-14T17:58:01+00:00",
+    "finished_at_london": "2026-11-14T17:58:15+00:00",
+    "elapsed_ms": 13595.396995544434,
+    "run_id": "f73a3fd6-df83-460c-9d36-7c02cbbb29e4",
+    "conversation_id": 1640,
+    "workspace_id": 1,
+    "status": "clarification_required",
+    "failure_code": null,
+    "evaluated_at": "2026-11-14T17:58:01.000000Z",
+    "displayed_text": "Which date within that period should I use?",
+    "production_trace": {
+        "contextualisation": {
+            "status": "resolved",
+            "resolved_query": "What moved between Week 1 and Week 2 of the registered-manager induction in the February 2026 update?",
+            "clarification_question": null,
+            "used_prior_context": false,
+            "contextualiser_version": "authorised-user-turns-needs-v1",
+            "usage": null
+        },
+        "needs_plan": {
+            "schema_version": "evidence-needs-plan-v4",
+            "decision": "plan",
+            "clarification": null,
+            "needs": [
+                {
+                    "need_id": "n1",
+                    "aspect": "Compare the 'New Registered Manager Induction Outline' document and identify what content was moved between Week 1 and Week 2 in the February 2026 update.",
+                    "central": true,
+                    "question_span": {
+                        "turn_id": "user-1",
+                        "quote": "What moved between Week 1 and Week 2 of the registered-manager induction in the February 2026 update?"
+                    },
+                    "context_spans": [
+                        {
+                            "turn_id": "user-1",
+                            "quote": "registered-manager induction"
+                        },
+                        {
+                            "turn_id": "user-1",
+                            "quote": "Week 1"
+                        },
+                        {
+                            "turn_id": "user-1",
+                            "quote": "Week 2"
+                        },
+                        {
+                            "turn_id": "user-1",
+                            "quote": "February 2026 update"
+                        }
+                    ],
+                    "operation": "compare",
+                    "authority": {
+                        "kind": "historical_reference",
+                        "value": "February 2026 update",
+                        "precision": "named",
+                        "source": {
+                            "turn_id": "user-1",
+                            "quote": "February 2026 update"
+                        }
+                    },
+                    "fact_reference": null,
+                    "applicability": {
+                        "kind": "generic",
+                        "source": null
+                    },
+                    "claim_under_test": null,
+                    "scope_question": null,
+                    "supports_need_id": null
+                }
+            ],
+            "bindings": [
+                {
+                    "need_id": "n1",
+                    "subject_status": "matched",
+                    "family_ids": [
+                        "dda5bd01-a3f1-438f-b18e-b7ed2d4f733b"
+                    ],
+                    "ownership": "authorised_workspace",
+                    "ownership_source": null
+                }
+            ]
+        },
+        "need.n1.plan": {
+            "query": "registered-manager induction Week 1 Week 2 February 2026 update What moved between Week 1 and Week 2 of the registered-manager induction in the February 2026 update?",
+            "temporal_mode": "compare",
+            "explicit_date": null,
+            "temporal_reference": {
+                "kind": "historical_reference",
+                "value": "February 2026 update"
+            },
+            "version_transition_boundary": null,
+            "fact_date": null,
+            "requested_evidence_type": "current_versus_historical_comparison",
+            "location_references": [],
+            "clarification_reason": null,
+            "classifier_lineage": {
+                "provider": "openai",
+                "model": "gpt-5-mini",
+                "contract_schema_version": "evidence-needs-plan-v4",
+                "prompt_version": "bounded-evidence-needs-v26",
+                "adapter_version": "structured-chat-needs-v11",
+                "fingerprint": "51c472a815e93e6037ec6213249ef3b08ee12d2fe07f281ddf8080be88e05fe9"
+            },
+            "usage": []
+        },
+        "need.n1.eligibility": {
+            "outcome": "clarification_required",
+            "document_public_ids_by_side": [],
+            "reason": "ambiguous_authority_window_for_period",
+            "resolved_location_public_id": null,
+            "clarification_question": null,
+            "reference_classifications": []
+        }
+    },
+    "inventoried_references": {
+        "n1": [
+            {
+                "turn_id": "user-1",
+                "quote": "February 2026",
+                "at": null,
+                "precision": "month",
+                "value": "2026-02",
+                "period_start": "2026-02-01T00:00:00+00:00",
+                "period_end": "2026-03-01T00:00:00+00:00"
+            }
+        ]
+    },
+    "observed_temporal_targets": [],
+    "routes_by_need": {
+        "n1": {
+            "route": "compare",
+            "c2_discovery_ran": false,
+            "selection": null,
+            "temporal_guard": null,
+            "discovery_work": null
+        }
+    },
+    "availability": {
+        "rejected_planner_output": "unavailable",
+        "calendar_normalisation_count": "unavailable",
+        "accepted_plan": true,
+        "temporal_inventory": "recorded",
+        "generation_request": "unavailable_not_reached",
+        "validated_temporal_use": "unavailable_no_answer_record",
+        "empty_derived_arrays": "No observation is not proof of an executed negative result; consult availability and raw trace."
+    },
+    "generation_request": null,
+    "entailment_checks": null,
+    "aspect_results": null,
+    "unsupported_aspects": null,
+    "lane_events": [],
+    "base_logical_lanes": 2,
+    "additional_search_lanes": 0,
+    "final_allocated_evidence": [],
+    "precautionary_target_admitted": false,
+    "admitted_precautionary_target_ids": [],
+    "answer_used_precautionary_target": false,
+    "validated_used_target_ids": [],
+    "answer_used_requested_target": false,
+    "temporal_context": [],
+    "reloaded_temporal_context": null,
+    "reloaded_rendered_text": null,
+    "parts": null,
+    "retrieval": {
+        "outcome": "clarification_required",
+        "clarification_source": "eligibility_resolver",
+        "clarification_reason": "ambiguous_authority_window_for_period",
+        "lineage": {
+            "planner": {
+                "provider": "openai",
+                "model": "gpt-5-mini",
+                "contract_schema_version": "evidence-needs-plan-v4",
+                "prompt_version": "bounded-evidence-needs-v26",
+                "adapter_version": "structured-chat-needs-v11",
+                "fingerprint": "51c472a815e93e6037ec6213249ef3b08ee12d2fe07f281ddf8080be88e05fe9"
+            },
+            "topical_discovery_work": [],
+            "evidence_needs_plan": {
+                "schema_version": "evidence-needs-plan-v4",
+                "decision": "plan",
+                "clarification": null,
+                "needs": [
+                    {
+                        "need_id": "n1",
+                        "aspect": "Compare the 'New Registered Manager Induction Outline' document and identify what content was moved between Week 1 and Week 2 in the February 2026 update.",
+                        "central": true,
+                        "question_span": {
+                            "turn_id": "user-1",
+                            "quote": "What moved between Week 1 and Week 2 of the registered-manager induction in the February 2026 update?"
+                        },
+                        "context_spans": [
+                            {
+                                "turn_id": "user-1",
+                                "quote": "registered-manager induction"
+                            },
+                            {
+                                "turn_id": "user-1",
+                                "quote": "Week 1"
+                            },
+                            {
+                                "turn_id": "user-1",
+                                "quote": "Week 2"
+                            },
+                            {
+                                "turn_id": "user-1",
+                                "quote": "February 2026 update"
+                            }
+                        ],
+                        "operation": "compare",
+                        "authority": {
+                            "kind": "historical_reference",
+                            "value": "February 2026 update",
+                            "precision": "named",
+                            "source": {
+                                "turn_id": "user-1",
+                                "quote": "February 2026 update"
+                            }
+                        },
+                        "fact_reference": null,
+                        "applicability": {
+                            "kind": "generic",
+                            "source": null
+                        },
+                        "claim_under_test": null,
+                        "scope_question": null,
+                        "supports_need_id": null
+                    }
+                ],
+                "bindings": [
+                    {
+                        "need_id": "n1",
+                        "subject_status": "matched",
+                        "family_ids": [
+                            "dda5bd01-a3f1-438f-b18e-b7ed2d4f733b"
+                        ],
+                        "ownership": "authorised_workspace",
+                        "ownership_source": null
+                    }
+                ]
+            }
+        },
+        "resolved_temporal_authority": []
+    },
+    "usage": {
+        "contextualisation": null,
+        "planner_validation_attempts": [
+            {
+                "request_count": 2,
+                "retry_count": 0,
+                "input_tokens": 19770,
+                "output_tokens": 1185,
+                "cached_input_tokens": null,
+                "latency_ms": 13329.750090000744,
+                "cost_usd": null,
+                "pricing_snapshot": null,
+                "cost_basis": "unavailable",
+                "interpretation_check": {
+                    "request_count": 1,
+                    "retry_count": 0,
+                    "input_tokens": 1155,
+                    "output_tokens": 87,
+                    "cached_input_tokens": null,
+                    "latency_ms": 1738.0587090010522,
+                    "cost_usd": null,
+                    "pricing_snapshot": null,
+                    "cost_basis": "unavailable",
+                    "checker_code": "accepted",
+                    "citation": null,
+                    "citation_verification": "not_applicable",
+                    "verification_reason": null,
+                    "reviewed_plan": {
+                        "schema_version": "evidence-needs-plan-v4",
+                        "decision": "plan",
+                        "clarification": null,
+                        "needs": [
+                            {
+                                "need_id": "n1",
+                                "aspect": "registered-manager induction Week 1 Week 2 February 2026 update What moved between Week 1 and Week 2 of the registered-manager induction in the February 2026 update?",
+                                "central": true,
+                                "question_span": {
+                                    "turn_id": "user-1",
+                                    "quote": "What moved between Week 1 and Week 2 of the registered-manager induction in the February 2026 update?"
+                                },
+                                "context_spans": [
+                                    {
+                                        "turn_id": "user-1",
+                                        "quote": "registered-manager induction"
+                                    },
+                                    {
+                                        "turn_id": "user-1",
+                                        "quote": "Week 1"
+                                    },
+                                    {
+                                        "turn_id": "user-1",
+                                        "quote": "Week 2"
+                                    },
+                                    {
+                                        "turn_id": "user-1",
+                                        "quote": "February 2026 update"
+                                    }
+                                ],
+                                "operation": "compare",
+                                "authority": {
+                                    "kind": "historical_reference",
+                                    "value": "February 2026 update",
+                                    "precision": "named",
+                                    "source": {
+                                        "turn_id": "user-1",
+                                        "quote": "February 2026 update"
+                                    }
+                                },
+                                "fact_reference": null,
+                                "applicability": {
+                                    "kind": "generic",
+                                    "source": null
+                                },
+                                "claim_under_test": null,
+                                "scope_question": null,
+                                "supports_need_id": null
+                            }
+                        ],
+                        "bindings": [
+                            {
+                                "need_id": "n1",
+                                "subject_status": "matched",
+                                "family_ids": [
+                                    "dda5bd01-a3f1-438f-b18e-b7ed2d4f733b"
+                                ],
+                                "ownership": "authorised_workspace",
+                                "ownership_source": null
+                            }
+                        ]
+                    },
+                    "version": "interpretation-check-v2",
+                    "code": "accepted",
+                    "provider": "openai",
+                    "model": "gpt-5-mini"
+                },
+                "validation": null,
+                "status": "accepted"
+            }
+        ]
+    },
+    "generation_usage": null,
+    "service_calls": [
+        {
+            "key": "a6c70789-6e0e-4d0b-b539-84ad6a0cbe7e:0",
+            "request_id": "a6c70789-6e0e-4d0b-b539-84ad6a0cbe7e",
+            "path": "/api/internal/retrieval/plan-needs",
+            "status": "received",
+            "http_status": 200,
+            "latency_ms": 13385.699033737183,
+            "usage": {
+                "stage": "planner",
+                "provider": "openai",
+                "model": "gpt-5-mini",
+                "execution": "provider_api",
+                "request_count": 2,
+                "retry_count": 0,
+                "provider_attempt_count": null,
+                "provider_retry_count": null,
+                "outer_attempt_count": null,
+                "outer_retry_count": null,
+                "rate_limit_event_count": null,
+                "retry_delays": [],
+                "first_provider_attempt_at": null,
+                "final_provider_success_at": null,
+                "provider_retry_elapsed_ms": null,
+                "input_tokens": 19770,
+                "cached_input_tokens": null,
+                "output_tokens": 1185,
+                "latency_ms": 13329.750090000744,
+                "cost_basis": "unavailable",
+                "cost_usd": null,
+                "pricing_snapshot": null,
+                "validation_attempts": [
+                    {
+                        "attempt": 1,
+                        "request_count": 2,
+                        "retry_count": 0,
+                        "status": "accepted",
+                        "category": null,
+                        "input_tokens": 19770,
+                        "output_tokens": 1185,
+                        "latency_ms": 13329.750090000744,
+                        "cost_usd": null,
+                        "cost_basis": "unavailable",
+                        "interpretation_check": {
+                            "version": "interpretation-check-v2",
+                            "code": "accepted",
+                            "checker_code": "accepted",
+                            "citation": null,
+                            "citation_verification": "not_applicable",
+                            "verification_reason": null,
+                            "provider": "openai",
+                            "model": "gpt-5-mini",
+                            "request_count": 1,
+                            "input_tokens": 1155,
+                            "output_tokens": 87,
+                            "latency_ms": 1738.0587090010522,
+                            "cost_basis": "unavailable",
+                            "cost_usd": null,
+                            "reviewed_plan": {
+                                "schema_version": "evidence-needs-plan-v4",
+                                "decision": "plan",
+                                "clarification": null,
+                                "needs": [
+                                    {
+                                        "need_id": "n1",
+                                        "aspect": "registered-manager induction Week 1 Week 2 February 2026 update What moved between Week 1 and Week 2 of the registered-manager induction in the February 2026 update?",
+                                        "central": true,
+                                        "question_span": {
+                                            "turn_id": "user-1",
+                                            "quote": "What moved between Week 1 and Week 2 of the registered-manager induction in the February 2026 update?"
+                                        },
+                                        "context_spans": [
+                                            {
+                                                "turn_id": "user-1",
+                                                "quote": "registered-manager induction"
+                                            },
+                                            {
+                                                "turn_id": "user-1",
+                                                "quote": "Week 1"
+                                            },
+                                            {
+                                                "turn_id": "user-1",
+                                                "quote": "Week 2"
+                                            },
+                                            {
+                                                "turn_id": "user-1",
+                                                "quote": "February 2026 update"
+                                            }
+                                        ],
+                                        "operation": "compare",
+                                        "authority": {
+                                            "kind": "historical_reference",
+                                            "value": "February 2026 update",
+                                            "precision": "named",
+                                            "source": {
+                                                "turn_id": "user-1",
+                                                "quote": "February 2026 update"
+                                            }
+                                        },
+                                        "fact_reference": null,
+                                        "applicability": {
+                                            "kind": "generic",
+                                            "source": null
+                                        },
+                                        "claim_under_test": null,
+                                        "scope_question": null,
+                                        "supports_need_id": null
+                                    }
+                                ],
+                                "bindings": [
+                                    {
+                                        "need_id": "n1",
+                                        "subject_status": "matched",
+                                        "family_ids": [
+                                            "dda5bd01-a3f1-438f-b18e-b7ed2d4f733b"
+                                        ],
+                                        "ownership": "authorised_workspace",
+                                        "ownership_source": null
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                ]
+            },
+            "service_status": null,
+            "error_category": null,
+            "comparison_review_failure": null,
+            "error": null,
+            "planner_detail": null,
+            "review_metadata": [],
+            "provider_receipt": []
+        }
+    ],
+    "workspace_usage": [
+        {
+            "id": 11815,
+            "workspace_id": 1,
+            "scope_type": "generation_run",
+            "scope_public_id": "f73a3fd6-df83-460c-9d36-7c02cbbb29e4",
+            "operation_kind": "planner",
+            "ordinal": 0,
+            "provider": "openai",
+            "model": "gpt-5-mini",
+            "execution": "provider_api",
+            "request_count": 2,
+            "retry_count": 0,
+            "input_tokens": 19770,
+            "cached_input_tokens": null,
+            "output_tokens": 1185,
+            "latency_ms": "13329.750",
+            "cost_usd": null,
+            "cost_basis": "unavailable",
+            "pricing_snapshot": null,
+            "occurred_at": "2026-11-14T17:58:15.000000Z",
+            "created_at": "2026-11-14T17:58:15.000000Z",
+            "updated_at": "2026-11-14T17:58:15.000000Z"
+        }
+    ]
+}

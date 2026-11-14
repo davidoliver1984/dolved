@@ -1,0 +1,4 @@
+ Container dolved-r28-s03-api-1 Restarting 
+ Container dolved-r28-s03-ai-1 Restarting 
+ Container dolved-r28-s03-api-1 Started 
+ Container dolved-r28-s03-ai-1 Started 

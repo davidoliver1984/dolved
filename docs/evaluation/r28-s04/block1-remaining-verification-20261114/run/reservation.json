@@ -1,0 +1,82 @@
+{
+  "cap_usd": 50,
+  "reservation_usd": 47,
+  "stage_subtotal_usd": 41.741388,
+  "unpriced_uncertainty_allowance_usd": 5,
+  "stages": [
+    {
+      "stage": "planner",
+      "calls_per_item": 4,
+      "input_allowance": 101024,
+      "output_ceiling": 25000,
+      "input_rate_per_million": 0.25,
+      "output_rate_per_million": 2,
+      "all_18_usd": 5.418432
+    },
+    {
+      "stage": "interpretation",
+      "calls_per_item": 4,
+      "input_allowance": 101024,
+      "output_ceiling": 4096,
+      "input_rate_per_million": 0.25,
+      "output_rate_per_million": 2,
+      "all_18_usd": 2.408256
+    },
+    {
+      "stage": "family_review",
+      "calls_per_item": 6,
+      "input_allowance": 101024,
+      "output_ceiling": 4096,
+      "input_rate_per_million": 0.25,
+      "output_rate_per_million": 2,
+      "all_18_usd": 3.612384
+    },
+    {
+      "stage": "generation",
+      "calls_per_item": 6,
+      "input_allowance": 400000,
+      "output_ceiling": 4096,
+      "input_rate_per_million": 0.25,
+      "output_rate_per_million": 2,
+      "all_18_usd": 11.684736
+    },
+    {
+      "stage": "entailment",
+      "calls_per_item": 6,
+      "input_allowance": 400000,
+      "output_ceiling": 1024,
+      "input_rate_per_million": 0.25,
+      "output_rate_per_million": 2,
+      "all_18_usd": 11.021184
+    },
+    {
+      "stage": "embedding",
+      "calls_per_item": 80,
+      "input_allowance": 1970,
+      "output_ceiling": 0,
+      "input_rate_per_million": 0.12,
+      "output_rate_per_million": 0,
+      "all_18_usd": 0.34041599999999994
+    },
+    {
+      "stage": "reranking",
+      "calls_per_item": 60,
+      "input_allowance": 134370,
+      "output_ceiling": 0,
+      "input_rate_per_million": 0.05,
+      "output_rate_per_million": 0,
+      "all_18_usd": 7.25598
+    }
+  ],
+  "max_compiled_query_utf8_bytes": 1970,
+  "basis": [
+    "Retained application rates, not invoice or new price quotation.",
+    "Planner request guard 100000 bytes plus 1024 framing. Interpretation/family 101024 allowance exceeds fixed single-turn grounded payload and bounded candidate snippets.",
+    "Generation and entailment reserve full 400000 input tokens plus output (more conservative than subtracting output). Two PHP validation requests times three provider attempts; SDK retries zero.",
+    "Four ordinary side lanes plus three discovery lanes plus three temporal alternatives = ten; double outer retrieval attempts. Four embedding attempts and three reranker attempts per side. Lane count already counts sides; no extra factor two.",
+    "Three family reviews doubled for outer retries. Planner/checker doubled outer envelope even though validation failures suppress it.",
+    "Reranker corpus maximum text bytes 2798 plus 512 metadata allowance per candidate, forty candidates per side; byte counts used as conservative token allowance.",
+    "No production limits, thresholds or retry policy modified."
+  ],
+  "fits": true
+}

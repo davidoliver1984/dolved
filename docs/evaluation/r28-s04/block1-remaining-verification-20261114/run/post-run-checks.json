@@ -1,0 +1,460 @@
+{
+  "records": [
+    {
+      "item": "17",
+      "persistence": "matched",
+      "extractive_consumers": [
+        {
+          "need_id": "n1",
+          "compiled_request": "Did the Birmingham home need an asbestos-register check before January 2026, and does it now?",
+          "observed_query": null,
+          "generation_coverage_label": null
+        }
+      ],
+      "status": "retrieval_no_answer",
+      "literal_no_answer": true,
+      "planner_validation_attempts": 2,
+      "generation_rejections": []
+    },
+    {
+      "item": "18",
+      "persistence": "matched",
+      "extractive_consumers": [
+        {
+          "need_id": "n1",
+          "compiled_request": "For a borderline meds error on 3 September 2026, which severity tier should I record and how must that classification be kept? For a borderline meds error on 3 September 2026, which severity tier should I record and how must that classification be kept?",
+          "observed_query": "For a borderline meds error on 3 September 2026, which severity tier should I record and how must that classification be kept? For a borderline meds error on 3 September 2026, which severity tier should I record and how must that classification be kept?",
+          "generation_coverage_label": "For a borderline meds error on 3 September 2026, which severity tier should I record and how must that classification be kept? For a borderline meds error on 3 September 2026, which severity tier should I record and how must that classification be kept?"
+        }
+      ],
+      "status": "completed",
+      "literal_no_answer": false,
+      "planner_validation_attempts": 1,
+      "generation_rejections": []
+    },
+    {
+      "item": "19",
+      "persistence": "matched",
+      "extractive_consumers": [
+        {
+          "need_id": "n1",
+          "compiled_request": "registered-manager induction Week 1 Week 2 February 2026 update What moved between Week 1 and Week 2 of the registered-manager induction in the February 2026 update?",
+          "observed_query": "registered-manager induction Week 1 Week 2 February 2026 update What moved between Week 1 and Week 2 of the registered-manager induction in the February 2026 update?",
+          "generation_coverage_label": null
+        }
+      ],
+      "status": "clarification_required",
+      "literal_no_answer": false,
+      "planner_validation_attempts": 1,
+      "generation_rejections": []
+    },
+    {
+      "item": "20",
+      "persistence": "matched",
+      "extractive_consumers": [
+        {
+          "need_id": "n1",
+          "compiled_request": "the site's What is the site's safeguarding lead called now, and did the first-contact role itself change?",
+          "observed_query": "the site's What is the site's safeguarding lead called now, and did the first-contact role itself change?",
+          "generation_coverage_label": "the site's What is the site's safeguarding lead called now, and did the first-contact role itself change?"
+        },
+        {
+          "need_id": "n2",
+          "compiled_request": "first-contact role What is the site's safeguarding lead called now, and did the first-contact role itself change?",
+          "observed_query": "first-contact role What is the site's safeguarding lead called now, and did the first-contact role itself change?",
+          "generation_coverage_label": "first-contact role What is the site's safeguarding lead called now, and did the first-contact role itself change?"
+        }
+      ],
+      "status": "completed",
+      "literal_no_answer": false,
+      "planner_validation_attempts": 1,
+      "generation_rejections": []
+    },
+    {
+      "item": "21",
+      "persistence": "matched",
+      "extractive_consumers": [
+        {
+          "need_id": "n1",
+          "compiled_request": "Who do I go to now if I'm locked out of e-learnng or a course is missing, and who handled it before July 2026?",
+          "observed_query": null,
+          "generation_coverage_label": "Who do I go to now if I'm locked out of e-learnng or a course is missing, and who handled it before July 2026?"
+        },
+        {
+          "need_id": "n2",
+          "compiled_request": "Who do I go to now if I'm locked out of e-learnng or a course is missing, who handled it before July 2026?",
+          "observed_query": "Who do I go to now if I'm locked out of e-learnng or a course is missing, who handled it before July 2026?",
+          "generation_coverage_label": "Who do I go to now if I'm locked out of e-learnng or a course is missing, who handled it before July 2026?"
+        }
+      ],
+      "status": "completed",
+      "literal_no_answer": false,
+      "planner_validation_attempts": 1,
+      "generation_rejections": []
+    },
+    {
+      "item": "22",
+      "persistence": "matched",
+      "extractive_consumers": [
+        {
+          "need_id": "n1",
+          "compiled_request": "Riverside House 15 December 2025 North West key-holder pilot At Riverside House on 15 December 2025, which team monitored the North West key-holder pilot and how often?",
+          "observed_query": "Riverside House 15 December 2025 North West key-holder pilot At Riverside House on 15 December 2025, which team monitored the North West key-holder pilot and how often?",
+          "generation_coverage_label": "Riverside House 15 December 2025 North West key-holder pilot At Riverside House on 15 December 2025, which team monitored the North West key-holder pilot and how often?"
+        }
+      ],
+      "status": "completed",
+      "literal_no_answer": false,
+      "planner_validation_attempts": 1,
+      "generation_rejections": []
+    },
+    {
+      "item": "23",
+      "persistence": "matched",
+      "extractive_consumers": [
+        {
+          "need_id": "n1",
+          "compiled_request": "For a hard-to-fill role, who can approve extending the recruitment timescale now, and who held that decision before February 2026?",
+          "observed_query": "For a hard-to-fill role, who can approve extending the recruitment timescale now, and who held that decision before February 2026?",
+          "generation_coverage_label": "For a hard-to-fill role, who can approve extending the recruitment timescale now, and who held that decision before February 2026?"
+        },
+        {
+          "need_id": "n2",
+          "compiled_request": "For a hard-to-fill role, who can approve extending the recruitment timescale now, and who held that decision before February 2026?",
+          "observed_query": null,
+          "generation_coverage_label": "For a hard-to-fill role, who can approve extending the recruitment timescale now, and who held that decision before February 2026?"
+        }
+      ],
+      "status": "completed",
+      "literal_no_answer": false,
+      "planner_validation_attempts": 1,
+      "generation_rejections": []
+    },
+    {
+      "item": "24",
+      "persistence": "matched",
+      "extractive_consumers": [
+        {
+          "need_id": "n1",
+          "compiled_request": "The meds fridge has packed up who must I call now",
+          "observed_query": "The meds fridge has packed up who must I call now",
+          "generation_coverage_label": "The meds fridge has packed up who must I call now"
+        },
+        {
+          "need_id": "n2",
+          "compiled_request": "The meds fridge has packed up what extra call was added in April 2026?",
+          "observed_query": "The meds fridge has packed up what extra call was added in April 2026?",
+          "generation_coverage_label": "The meds fridge has packed up what extra call was added in April 2026?"
+        }
+      ],
+      "status": "completed",
+      "literal_no_answer": false,
+      "planner_validation_attempts": 1,
+      "generation_rejections": []
+    },
+    {
+      "item": "25",
+      "persistence": "matched",
+      "extractive_consumers": [
+        {
+          "need_id": "n1",
+          "compiled_request": "DoLS expiry before January 2026 How many weeks before a DoLS expiry should I flag the renewal now, compared with the rule before January 2026?",
+          "observed_query": "DoLS expiry before January 2026 How many weeks before a DoLS expiry should I flag the renewal now, compared with the rule before January 2026?",
+          "generation_coverage_label": "DoLS expiry before January 2026 How many weeks before a DoLS expiry should I flag the renewal now, compared with the rule before January 2026?"
+        }
+      ],
+      "status": "completed",
+      "literal_no_answer": false,
+      "planner_validation_attempts": 2,
+      "generation_rejections": []
+    },
+    {
+      "item": "26",
+      "persistence": "matched",
+      "extractive_consumers": [
+        {
+          "need_id": "n1",
+          "compiled_request": "I'm updating our response card for a lost encrypted work device. What is the control called now, and who classifies the incident,",
+          "observed_query": "I'm updating our response card for a lost encrypted work device. What is the control called now, and who classifies the incident,",
+          "generation_coverage_label": "I'm updating our response card for a lost encrypted work device. What is the control called now, and who classifies the incident,"
+        },
+        {
+          "need_id": "n2",
+          "compiled_request": "I'm updating our response card for a lost encrypted work device. how quickly must the DPO assess it,",
+          "observed_query": "I'm updating our response card for a lost encrypted work device. how quickly must the DPO assess it,",
+          "generation_coverage_label": "I'm updating our response card for a lost encrypted work device. how quickly must the DPO assess it,"
+        },
+        {
+          "need_id": "n3",
+          "compiled_request": "I'm updating our response card for a lost encrypted work device. which out-of-hours route was added?",
+          "observed_query": "I'm updating our response card for a lost encrypted work device. which out-of-hours route was added?",
+          "generation_coverage_label": "I'm updating our response card for a lost encrypted work device. which out-of-hours route was added?"
+        }
+      ],
+      "status": "completed",
+      "literal_no_answer": false,
+      "planner_validation_attempts": 1,
+      "generation_rejections": []
+    },
+    {
+      "item": "27",
+      "persistence": "matched",
+      "extractive_consumers": [
+        {
+          "need_id": "n1",
+          "compiled_request": "I'm updating the ROPA for employee records. What did the old Legal basis field become",
+          "observed_query": "I'm updating the ROPA for employee records. What did the old Legal basis field become",
+          "generation_coverage_label": "I'm updating the ROPA for employee records. What did the old Legal basis field become"
+        },
+        {
+          "need_id": "n2",
+          "compiled_request": "I'm updating the ROPA for employee records. what should I record there for employment data?",
+          "observed_query": "I'm updating the ROPA for employee records. what should I record there for employment data?",
+          "generation_coverage_label": "I'm updating the ROPA for employee records. what should I record there for employment data?"
+        }
+      ],
+      "status": "completed",
+      "literal_no_answer": false,
+      "planner_validation_attempts": 1,
+      "generation_rejections": []
+    },
+    {
+      "item": "28",
+      "persistence": "matched",
+      "extractive_consumers": [
+        {
+          "need_id": "n1",
+          "compiled_request": "I'm updating our safeguarding card for a resident-money discrepancy. Who receives the first escalation now",
+          "observed_query": "I'm updating our safeguarding card for a resident-money discrepancy. Who receives the first escalation now",
+          "generation_coverage_label": "I'm updating our safeguarding card for a resident-money discrepancy. Who receives the first escalation now"
+        },
+        {
+          "need_id": "n2",
+          "compiled_request": "I'm updating our safeguarding card for a resident-money discrepancy. what part does Finance keep",
+          "observed_query": "I'm updating our safeguarding card for a resident-money discrepancy. what part does Finance keep",
+          "generation_coverage_label": "I'm updating our safeguarding card for a resident-money discrepancy. what part does Finance keep"
+        },
+        {
+          "need_id": "n3",
+          "compiled_request": "I'm updating our safeguarding card for a resident-money discrepancy. which current role name and outside-agency sharing route should the card use?",
+          "observed_query": "I'm updating our safeguarding card for a resident-money discrepancy. which current role name and outside-agency sharing route should the card use?",
+          "generation_coverage_label": "I'm updating our safeguarding card for a resident-money discrepancy. which current role name and outside-agency sharing route should the card use?"
+        }
+      ],
+      "status": "completed",
+      "literal_no_answer": false,
+      "planner_validation_attempts": 1,
+      "generation_rejections": []
+    },
+    {
+      "item": "29",
+      "persistence": "matched",
+      "extractive_consumers": [
+        {
+          "need_id": "n1",
+          "compiled_request": "At Oakfield outreach 1 July 2026 when did a key safe need reviewing",
+          "observed_query": "At Oakfield outreach 1 July 2026 when did a key safe need reviewing",
+          "generation_coverage_label": "At Oakfield outreach 1 July 2026 when did a key safe need reviewing"
+        },
+        {
+          "need_id": "n2",
+          "compiled_request": "At Oakfield outreach 1 July 2026 what had to happen when it was no longer needed?",
+          "observed_query": "At Oakfield outreach 1 July 2026 what had to happen when it was no longer needed?",
+          "generation_coverage_label": "At Oakfield outreach 1 July 2026 what had to happen when it was no longer needed?"
+        }
+      ],
+      "status": "completed",
+      "literal_no_answer": true,
+      "planner_validation_attempts": 1,
+      "generation_rejections": [
+        {
+          "category": "contract_validation_failure",
+          "http_status": null,
+          "layer": "python_generation_adapter",
+          "field": "result",
+          "code": "temporal_target_invalid"
+        },
+        {
+          "category": "contract_validation_failure",
+          "http_status": null,
+          "layer": "python_generation_adapter",
+          "field": "result",
+          "code": "temporal_target_invalid"
+        }
+      ]
+    },
+    {
+      "item": "30",
+      "persistence": "matched",
+      "extractive_consumers": [
+        {
+          "need_id": "n1",
+          "compiled_request": "At Riverside House in September 2025 key-holder call-out At Riverside House in September 2025, when did I have to report a key-holder call-out and what details belonged in the report?",
+          "observed_query": "At Riverside House in September 2025 key-holder call-out At Riverside House in September 2025, when did I have to report a key-holder call-out and what details belonged in the report?",
+          "generation_coverage_label": "At Riverside House in September 2025 key-holder call-out At Riverside House in September 2025, when did I have to report a key-holder call-out and what details belonged in the report?"
+        }
+      ],
+      "status": "completed",
+      "literal_no_answer": false,
+      "planner_validation_attempts": 1,
+      "generation_rejections": []
+    },
+    {
+      "item": "31",
+      "persistence": "matched",
+      "extractive_consumers": [
+        {
+          "need_id": "n1",
+          "compiled_request": "As a new starter, which wellbeing services should I know about, and how will my induction check that I know how to access them?",
+          "observed_query": "As a new starter, which wellbeing services should I know about, and how will my induction check that I know how to access them?",
+          "generation_coverage_label": "As a new starter, which wellbeing services should I know about, and how will my induction check that I know how to access them?"
+        },
+        {
+          "need_id": "n2",
+          "compiled_request": "As a new starter, which wellbeing services should I know about, and how will my induction check that I know how to access them?",
+          "observed_query": "As a new starter, which wellbeing services should I know about, and how will my induction check that I know how to access them?",
+          "generation_coverage_label": "As a new starter, which wellbeing services should I know about, and how will my induction check that I know how to access them?"
+        }
+      ],
+      "status": "completed",
+      "literal_no_answer": true,
+      "planner_validation_attempts": 1,
+      "generation_rejections": [
+        {
+          "category": "contract_validation_failure",
+          "http_status": null,
+          "layer": "python_generation_adapter",
+          "field": "answer_parts.evidence_ids",
+          "code": "citation_ownership",
+          "ownership": {
+            "need_id": "n2",
+            "answer_part_index": 1,
+            "cited_ids": [
+              "ev-02",
+              "ev-03"
+            ],
+            "allowed_ids": [
+              "ev-02"
+            ]
+          }
+        },
+        {
+          "category": "contract_validation_failure",
+          "http_status": null,
+          "layer": "python_generation_adapter",
+          "field": "answer_parts.evidence_ids",
+          "code": "citation_ownership",
+          "ownership": {
+            "need_id": "n2",
+            "answer_part_index": 1,
+            "cited_ids": [
+              "ev-02",
+              "ev-03",
+              "ev-05"
+            ],
+            "allowed_ids": [
+              "ev-02"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "item": "32",
+      "persistence": "matched",
+      "extractive_consumers": [
+        {
+          "need_id": "n1",
+          "compiled_request": "I'm resigning after three years. How much notice do I give",
+          "observed_query": "I'm resigning after three years. How much notice do I give",
+          "generation_coverage_label": "I'm resigning after three years. How much notice do I give"
+        },
+        {
+          "need_id": "n2",
+          "compiled_request": "I'm resigning after three years. what else do I need to do before I leave?",
+          "observed_query": "I'm resigning after three years. what else do I need to do before I leave?",
+          "generation_coverage_label": "I'm resigning after three years. what else do I need to do before I leave?"
+        }
+      ],
+      "status": "completed",
+      "literal_no_answer": false,
+      "planner_validation_attempts": 1,
+      "generation_rejections": []
+    },
+    {
+      "item": "G2",
+      "persistence": "matched",
+      "extractive_consumers": [
+        {
+          "need_id": "n1",
+          "compiled_request": "My mother moved into the home in March 2025. What temperature does her soiled bedding have to be washed at now?",
+          "observed_query": null,
+          "generation_coverage_label": "My mother moved into the home in March 2025. What temperature does her soiled bedding have to be washed at now?"
+        }
+      ],
+      "status": "completed",
+      "literal_no_answer": false,
+      "planner_validation_attempts": 1,
+      "generation_rejections": []
+    },
+    {
+      "item": "G3",
+      "persistence": "matched",
+      "extractive_consumers": [],
+      "status": "retrieval_no_answer",
+      "literal_no_answer": false,
+      "planner_validation_attempts": 0,
+      "generation_rejections": []
+    }
+  ],
+  "interpretation_totals": {
+    "request_count": 17,
+    "input_tokens": 21510,
+    "output_tokens": 1927,
+    "latency_ms": 36411.67147298984
+  },
+  "flags": [],
+  "planner_rejections": [
+    {
+      "item": "17",
+      "validation": {
+        "stage": "schema",
+        "field": "needs.0.authority",
+        "code": "temporal_relation_grounding"
+      },
+      "rejected_plan": "unavailable"
+    },
+    {
+      "item": "25",
+      "validation": {
+        "stage": "schema",
+        "field": "needs.0.authority",
+        "code": "temporal_relation_grounding"
+      },
+      "rejected_plan": "unavailable"
+    },
+    {
+      "item": "G3",
+      "validation": {
+        "stage": "grounding",
+        "field": "root",
+        "code": "temporal_relation_grounding"
+      },
+      "rejected_plan": "unavailable"
+    },
+    {
+      "item": "G3",
+      "validation": {
+        "stage": "grounding",
+        "field": "root",
+        "code": "temporal_relation_grounding"
+      },
+      "rejected_plan": "unavailable"
+    }
+  ],
+  "status_counts_all18": {
+    "retrieval_no_answer": 2,
+    "completed": 15,
+    "clarification_required": 1
+  }
+}

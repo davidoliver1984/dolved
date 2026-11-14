@@ -1,0 +1,124 @@
+[
+  {
+    "id": "17",
+    "utterance": "Did the Birmingham home need an asbestos-register check before January 2026, and does it now?",
+    "case_id": "v4.case.corrected-b03-10",
+    "variant_id": "v1",
+    "cohort": "remaining_new_runtime"
+  },
+  {
+    "id": "18",
+    "utterance": "For a borderline meds error on 3 September 2026, which severity tier should I record and how must that classification be kept?",
+    "case_id": "v4.case.corrected-b04-05",
+    "variant_id": "v1",
+    "cohort": "remaining_new_runtime"
+  },
+  {
+    "id": "19",
+    "utterance": "What moved between Week 1 and Week 2 of the registered-manager induction in the February 2026 update?",
+    "case_id": "v4.case.corrected-b04-07",
+    "variant_id": "v1",
+    "cohort": "remaining_new_runtime"
+  },
+  {
+    "id": "20",
+    "utterance": "What is the site's safeguarding lead called now, and did the first-contact role itself change?",
+    "case_id": "v4.case.corrected-b04-09",
+    "variant_id": "v1",
+    "cohort": "remaining_new_runtime"
+  },
+  {
+    "id": "21",
+    "utterance": "Who do I go to now if I'm locked out of e-learnng or a course is missing, and who handled it before July 2026?",
+    "case_id": "v4.case.corrected-b05-01",
+    "variant_id": "v1",
+    "cohort": "remaining_new_runtime"
+  },
+  {
+    "id": "22",
+    "utterance": "At Riverside House on 15 December 2025, which team monitored the North West key-holder pilot and how often?",
+    "case_id": "v4.case.corrected-b05-03",
+    "variant_id": "v1",
+    "cohort": "remaining_new_runtime"
+  },
+  {
+    "id": "23",
+    "utterance": "For a hard-to-fill role, who can approve extending the recruitment timescale now, and who held that decision before February 2026?",
+    "case_id": "v4.case.corrected-b05-05",
+    "variant_id": "v1",
+    "cohort": "remaining_new_runtime"
+  },
+  {
+    "id": "24",
+    "utterance": "The meds fridge has packed up\u2014who must I call now, and what extra call was added in April 2026?",
+    "case_id": "v4.case.corrected-b05-07",
+    "variant_id": "v1",
+    "cohort": "remaining_new_runtime"
+  },
+  {
+    "id": "25",
+    "utterance": "How many weeks before a DoLS expiry should I flag the renewal now, compared with the rule before January 2026?",
+    "case_id": "v4.case.corrected-b05-09",
+    "variant_id": "v1",
+    "cohort": "remaining_new_runtime"
+  },
+  {
+    "id": "26",
+    "utterance": "I'm updating our response card for a lost encrypted work device. What is the control called now, and who classifies the incident, how quickly must the DPO assess it, and which out-of-hours route was added?",
+    "case_id": "v4.case.corrected-b06-04",
+    "variant_id": "v1",
+    "cohort": "remaining_new_runtime"
+  },
+  {
+    "id": "27",
+    "utterance": "I'm updating the ROPA for employee records. What did the old Legal basis field become, and what should I record there for employment data?",
+    "case_id": "v4.case.corrected-b06-05",
+    "variant_id": "v1",
+    "cohort": "remaining_new_runtime"
+  },
+  {
+    "id": "28",
+    "utterance": "I'm updating our safeguarding card for a resident-money discrepancy. Who receives the first escalation now, what part does Finance keep, and which current role name and outside-agency sharing route should the card use?",
+    "case_id": "v4.case.corrected-b06-06",
+    "variant_id": "v1",
+    "cohort": "remaining_new_runtime"
+  },
+  {
+    "id": "29",
+    "utterance": "At Oakfield outreach on 1 July 2026, when did a key safe need reviewing and what had to happen when it was no longer needed?",
+    "case_id": "v4.case.corrected-b06-11",
+    "variant_id": "v1",
+    "cohort": "remaining_new_runtime"
+  },
+  {
+    "id": "30",
+    "utterance": "At Riverside House in September 2025, when did I have to report a key-holder call-out and what details belonged in the report?",
+    "case_id": "v4.case.corrected-b06-12",
+    "variant_id": "v1",
+    "cohort": "remaining_new_runtime"
+  },
+  {
+    "id": "31",
+    "utterance": "As a new starter, which wellbeing services should I know about, and how will my induction check that I know how to access them?",
+    "case_id": "v4.case.corrected-b01-01",
+    "variant_id": "v1",
+    "cohort": "remaining_new_runtime"
+  },
+  {
+    "id": "32",
+    "utterance": "I'm resigning after three years. How much notice do I give, and what else do I need to do before I leave?",
+    "case_id": "v4.case.corrected-b03-05",
+    "variant_id": "v1",
+    "cohort": "remaining_new_runtime"
+  },
+  {
+    "id": "G2",
+    "utterance": "My mother moved into the home in March 2025. What temperature does her soiled bedding have to be washed at now?",
+    "cohort": "known_regression_ungraded"
+  },
+  {
+    "id": "G3",
+    "utterance": "Facilities agreed a new pest control schedule on 20 May 2025, and it started on 1 July 2025. How often did the kitchen area have to be inspected once it started?",
+    "cohort": "known_regression_ungraded"
+  }
+]

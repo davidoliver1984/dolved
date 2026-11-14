@@ -1,0 +1,537 @@
+{
+    "items": [
+        {
+            "item": "17",
+            "run_id": "741a3af1-9654-4792-9f18-064e6a81ca39",
+            "conversation_id": "d178c5c2-4fc8-49d9-810c-6092ad69eaa3",
+            "workspace_id": "5323cd6b-8b7a-40f9-98b0-9413c75f643e",
+            "actor_id": "ae454ce6-4d91-4c7e-9a40-b4750b696a6b",
+            "user_turns": 1,
+            "generation_runs": 1,
+            "status": "retrieval_no_answer",
+            "question": "Did the Birmingham home need an asbestos-register check before January 2026, and does it now?",
+            "temporal_context": null,
+            "reloaded_rendered_text": null,
+            "assistant_display_text": "I couldn't find enough available evidence to answer that question."
+        },
+        {
+            "item": "18",
+            "run_id": "957629f2-13f7-41ff-aa07-1faa426107ae",
+            "conversation_id": "9801af6a-7de9-4187-91fd-4f09e2471089",
+            "workspace_id": "5323cd6b-8b7a-40f9-98b0-9413c75f643e",
+            "actor_id": "ae454ce6-4d91-4c7e-9a40-b4750b696a6b",
+            "user_turns": 1,
+            "generation_runs": 1,
+            "status": "completed",
+            "question": "For a borderline meds error on 3 September 2026, which severity tier should I record and how must that classification be kept?",
+            "temporal_context": null,
+            "reloaded_rendered_text": "If the severity is genuinely borderline, classify it at the higher of the two tiers immediately (i.e., record the incident as the higher severity rather than the lower), and the reviewing registered nurse or the Quality Lead may downgrade it later on fuller review.\n\nRecord that classification through the normal incident reporting route (escalate via the Incident Reporting Policy) and retain the incident record and its severity classification according to the activity's record-keeping rules and the Records Retention Schedule.",
+            "assistant_display_text": "If the severity is genuinely borderline, classify it at the higher of the two tiers immediately (i.e., record the incident as the higher severity rather than the lower), and the reviewing registered nurse or the Quality Lead may downgrade it later on fuller review.\n\nRecord that classification through the normal incident reporting route (escalate via the Incident Reporting Policy) and retain the incident record and its severity classification according to the activity's record-keeping rules and the Records Retention Schedule."
+        },
+        {
+            "item": "19",
+            "run_id": "f73a3fd6-df83-460c-9d36-7c02cbbb29e4",
+            "conversation_id": "a7dccbc1-b5d4-4c3d-a5d8-7772f8eabca5",
+            "workspace_id": "5323cd6b-8b7a-40f9-98b0-9413c75f643e",
+            "actor_id": "ae454ce6-4d91-4c7e-9a40-b4750b696a6b",
+            "user_turns": 1,
+            "generation_runs": 1,
+            "status": "clarification_required",
+            "question": "What moved between Week 1 and Week 2 of the registered-manager induction in the February 2026 update?",
+            "temporal_context": null,
+            "reloaded_rendered_text": null,
+            "assistant_display_text": "Which date within that period should I use?"
+        },
+        {
+            "item": "20",
+            "run_id": "521bb0ad-2e89-45e9-ab7e-510e8849b731",
+            "conversation_id": "28f3efae-3f53-4527-80e7-a57414ba73ef",
+            "workspace_id": "5323cd6b-8b7a-40f9-98b0-9413c75f643e",
+            "actor_id": "ae454ce6-4d91-4c7e-9a40-b4750b696a6b",
+            "user_turns": 1,
+            "generation_runs": 1,
+            "status": "completed",
+            "question": "What is the site's safeguarding lead called now, and did the first-contact role itself change?",
+            "temporal_context": null,
+            "reloaded_rendered_text": "The site\u2019s safeguarding lead has been renamed to \u201csafeguarding champion.\u201d\n\nThe first-point-of-contact role itself did not change\u2014the responsibilities remain the same under the new title.",
+            "assistant_display_text": "The site\u2019s safeguarding lead has been renamed to \u201csafeguarding champion.\u201d\n\nThe first-point-of-contact role itself did not change\u2014the responsibilities remain the same under the new title."
+        },
+        {
+            "item": "21",
+            "run_id": "f2e7cae5-ca51-4295-b825-83574dd9b982",
+            "conversation_id": "d10afa8a-78a5-4f8f-8c07-8728721ab2f9",
+            "workspace_id": "5323cd6b-8b7a-40f9-98b0-9413c75f643e",
+            "actor_id": "ae454ce6-4d91-4c7e-9a40-b4750b696a6b",
+            "user_turns": 1,
+            "generation_runs": 1,
+            "status": "completed",
+            "question": "Who do I go to now if I'm locked out of e-learnng or a course is missing, and who handled it before July 2026?",
+            "temporal_context": {
+                "uses": [
+                    {
+                        "target": {
+                            "at": "2026-11-14T17:58:55+00:00",
+                            "mode": "current",
+                            "reason": null,
+                            "status": "searched",
+                            "need_id": "n1",
+                            "purpose": "requested",
+                            "versions": [
+                                {
+                                    "end": null,
+                                    "start": "2026-07-01T00:00:00+00:00",
+                                    "version_id": "6cf50cb0-0cdb-484d-9841-899c5e3b84f3"
+                                }
+                            ],
+                            "family_id": "17278f8a-fa84-4a14-a98e-261d19682c66",
+                            "reference": null,
+                            "target_id": "n1:requested"
+                        },
+                        "need_id": "n1",
+                        "target_id": "n1:requested",
+                        "part_index": 0,
+                        "question_quote": "Who do I go to now if I'm locked out of e-learnng or a course is missing,",
+                        "planner_disagreement": false
+                    }
+                ],
+                "targets": [
+                    {
+                        "at": "2026-11-14T17:58:55+00:00",
+                        "mode": "current",
+                        "reason": null,
+                        "status": "searched",
+                        "need_id": "n1",
+                        "purpose": "requested",
+                        "versions": [
+                            {
+                                "end": null,
+                                "start": "2026-07-01T00:00:00+00:00",
+                                "version_id": "6cf50cb0-0cdb-484d-9841-899c5e3b84f3"
+                            }
+                        ],
+                        "family_id": "17278f8a-fa84-4a14-a98e-261d19682c66",
+                        "reference": null,
+                        "target_id": "n1:requested"
+                    },
+                    {
+                        "at": null,
+                        "mode": "dated",
+                        "reason": null,
+                        "status": "searched",
+                        "need_id": "n1",
+                        "purpose": "precautionary",
+                        "versions": [
+                            {
+                                "end": null,
+                                "start": "2026-07-01T00:00:00+00:00",
+                                "version_id": "6cf50cb0-0cdb-484d-9841-899c5e3b84f3"
+                            }
+                        ],
+                        "family_id": "17278f8a-fa84-4a14-a98e-261d19682c66",
+                        "reference": {
+                            "at": null,
+                            "quote": "July 2026",
+                            "value": "2026-07",
+                            "turn_id": "user-1",
+                            "precision": "month",
+                            "period_end": "2026-08-01T00:00:00+00:00",
+                            "period_start": "2026-07-01T00:00:00+00:00"
+                        },
+                        "target_id": "n1:date:1"
+                    }
+                ],
+                "version": "temporal-answer-use-v1"
+            },
+            "reloaded_rendered_text": "For current access problems (locked out or a course missing), contact the IT service desk; the Training Team no longer handles platform access issues after the platform migration and support moved to IT.\nTemporal basis: 2026-11-14T17:58:55+00:00; version 6cf50cb0-0cdb-484d-9841-899c5e3b84f3; effective 2026-07-01T00:00:00+00:00 to open end (end exclusive).\n\nBefore July 2026, access issues were handled by the Training Team\u2014guidance indicated contacting the Training Team by email (internal address shown as training@) for access problems.",
+            "assistant_display_text": "For current access problems (locked out or a course missing), contact the IT service desk; the Training Team no longer handles platform access issues after the platform migration and support moved to IT.\nTemporal basis: 2026-11-14T17:58:55+00:00; version 6cf50cb0-0cdb-484d-9841-899c5e3b84f3; effective 2026-07-01T00:00:00+00:00 to open end (end exclusive).\n\nBefore July 2026, access issues were handled by the Training Team\u2014guidance indicated contacting the Training Team by email (internal address shown as training@) for access problems."
+        },
+        {
+            "item": "22",
+            "run_id": "da68b2b8-a1ed-4b66-8819-90051ab9c5e1",
+            "conversation_id": "1b3c6409-3485-4cca-9127-a8f0b1cdcee5",
+            "workspace_id": "5323cd6b-8b7a-40f9-98b0-9413c75f643e",
+            "actor_id": "ae454ce6-4d91-4c7e-9a40-b4750b696a6b",
+            "user_turns": 1,
+            "generation_runs": 1,
+            "status": "completed",
+            "question": "At Riverside House on 15 December 2025, which team monitored the North West key-holder pilot and how often?",
+            "temporal_context": null,
+            "reloaded_rendered_text": "Facilities monitored the North West key-holder pilot and reviewed call-out frequency and outcomes quarterly.",
+            "assistant_display_text": "Facilities monitored the North West key-holder pilot and reviewed call-out frequency and outcomes quarterly."
+        },
+        {
+            "item": "23",
+            "run_id": "192de855-cc50-4ea3-9c8d-0abfb3447ecf",
+            "conversation_id": "701b467a-6e67-4190-a774-b2190dd2fa09",
+            "workspace_id": "5323cd6b-8b7a-40f9-98b0-9413c75f643e",
+            "actor_id": "ae454ce6-4d91-4c7e-9a40-b4750b696a6b",
+            "user_turns": 1,
+            "generation_runs": 1,
+            "status": "completed",
+            "question": "For a hard-to-fill role, who can approve extending the recruitment timescale now, and who held that decision before February 2026?",
+            "temporal_context": null,
+            "reloaded_rendered_text": "The HR Director is the person who now approves or declines requests to extend a recruitment timescale for a genuinely hard-to-fill role; the current Recruitment and Selection Policy requires HR Director sign-off before any extension is made.\n\nUnconfirmed requested aspects\n\n- Who held the decision to extend a recruitment timescale before February 2026 (no evidence_ids were provided for that temporal lane in the package)",
+            "assistant_display_text": "The HR Director is the person who now approves or declines requests to extend a recruitment timescale for a genuinely hard-to-fill role; the current Recruitment and Selection Policy requires HR Director sign-off before any extension is made.\n\nUnconfirmed requested aspects\n\n- Who held the decision to extend a recruitment timescale before February 2026 (no evidence_ids were provided for that temporal lane in the package)"
+        },
+        {
+            "item": "24",
+            "run_id": "9faf90b2-29d2-426d-80d6-a0e2fecf8e7e",
+            "conversation_id": "b688abaa-e989-4d71-99a0-e4e3506cd349",
+            "workspace_id": "5323cd6b-8b7a-40f9-98b0-9413c75f643e",
+            "actor_id": "ae454ce6-4d91-4c7e-9a40-b4750b696a6b",
+            "user_turns": 1,
+            "generation_runs": 1,
+            "status": "completed",
+            "question": "The meds fridge has packed up\u2014who must I call now, and what extra call was added in April 2026?",
+            "temporal_context": null,
+            "reloaded_rendered_text": "If the medicines fridge has failed, staff must keep the fridge closed and contact the on-call manager (or on-call registered manager \/ senior carer as the first escalation contact) and also call the supplying pharmacy for advice about whether stock remains usable; do not move stock on assumption and follow the Immediate containment steps (note current\/minimum\/maximum readings, label unit not for use, inform the responsible nurse\/manager and prepare a validated alternative storage location where authorised).\n\nThe change introduced in April 2026 was the explicit addition of a requirement to call the supplying pharmacy as well as the on-call manager\u2014the earlier version required calling only the on-call manager.",
+            "assistant_display_text": "If the medicines fridge has failed, staff must keep the fridge closed and contact the on-call manager (or on-call registered manager \/ senior carer as the first escalation contact) and also call the supplying pharmacy for advice about whether stock remains usable; do not move stock on assumption and follow the Immediate containment steps (note current\/minimum\/maximum readings, label unit not for use, inform the responsible nurse\/manager and prepare a validated alternative storage location where authorised).\n\nThe change introduced in April 2026 was the explicit addition of a requirement to call the supplying pharmacy as well as the on-call manager\u2014the earlier version required calling only the on-call manager."
+        },
+        {
+            "item": "25",
+            "run_id": "a0e3535b-d355-4bf1-9173-d7564f73e030",
+            "conversation_id": "e7efe85b-b5ff-414e-9887-b21d2d3705a5",
+            "workspace_id": "5323cd6b-8b7a-40f9-98b0-9413c75f643e",
+            "actor_id": "ae454ce6-4d91-4c7e-9a40-b4750b696a6b",
+            "user_turns": 1,
+            "generation_runs": 1,
+            "status": "completed",
+            "question": "How many weeks before a DoLS expiry should I flag the renewal now, compared with the rule before January 2026?",
+            "temporal_context": null,
+            "reloaded_rendered_text": "Now (current procedure), flag any authorisation expiring within 10 weeks to the local authority.\n\nBefore January 2026 (earlier version), flag any authorisation expiring within 6 weeks to the local authority.",
+            "assistant_display_text": "Now (current procedure), flag any authorisation expiring within 10 weeks to the local authority.\n\nBefore January 2026 (earlier version), flag any authorisation expiring within 6 weeks to the local authority."
+        },
+        {
+            "item": "26",
+            "run_id": "ceef83c0-ab9f-40c2-b21f-835ff3a7dba3",
+            "conversation_id": "86bbc7fe-d22b-4ecd-b26c-198893eebae7",
+            "workspace_id": "5323cd6b-8b7a-40f9-98b0-9413c75f643e",
+            "actor_id": "ae454ce6-4d91-4c7e-9a40-b4750b696a6b",
+            "user_turns": 1,
+            "generation_runs": 1,
+            "status": "completed",
+            "question": "I'm updating our response card for a lost encrypted work device. What is the control called now, and who classifies the incident, how quickly must the DPO assess it, and which out-of-hours route was added?",
+            "temporal_context": null,
+            "reloaded_rendered_text": "The device-control is implemented via the organisation's mobile device management \u2014 devices must be enrolled in the mobile device management system \u2014 and IT is responsible for classifying incidents against the four-tier severity model.\n\nThe Data Protection Officer (DPO) must assess whether the incident is a personal data breach within 12 hours.\n\nThe out-of-hours route now uses regional on-call mobile numbers (one per region) so staff call their region's on-call mobile number outside normal hours; additionally, the procedures reference contacting the regional IT emergency contact for out-of-hours support at Tier 2 or higher.",
+            "assistant_display_text": "The device-control is implemented via the organisation's mobile device management \u2014 devices must be enrolled in the mobile device management system \u2014 and IT is responsible for classifying incidents against the four-tier severity model.\n\nThe Data Protection Officer (DPO) must assess whether the incident is a personal data breach within 12 hours.\n\nThe out-of-hours route now uses regional on-call mobile numbers (one per region) so staff call their region's on-call mobile number outside normal hours; additionally, the procedures reference contacting the regional IT emergency contact for out-of-hours support at Tier 2 or higher."
+        },
+        {
+            "item": "27",
+            "run_id": "bdb8f9ab-3e6e-463d-acdd-d2a9de73f14d",
+            "conversation_id": "fe2df285-e104-41a2-937e-0d53bad52453",
+            "workspace_id": "5323cd6b-8b7a-40f9-98b0-9413c75f643e",
+            "actor_id": "ae454ce6-4d91-4c7e-9a40-b4750b696a6b",
+            "user_turns": 1,
+            "generation_runs": 1,
+            "status": "completed",
+            "question": "I'm updating the ROPA for employee records. What did the old Legal basis field become, and what should I record there for employment data?",
+            "temporal_context": null,
+            "reloaded_rendered_text": "The ROPA field previously labelled \"Legal basis\" was renamed to \"Lawful basis (UK GDPR Article 6)\".\n\nFor employment-related processing, record the relevant processing activity and the category of employment data being processed and link it to operational practices shown in the policies: employee personnel files are a named record type with a retention period of 6 years after employment ends (basis: statute of limitations), recruitment records for unsuccessful candidates are listed (6 months), HR issues factual references confirming dates of employment and job title within a 5-working-day timeframe, and right-to-work document checks are completed, dated\/annotated and retained per the Records Retention Schedule. The supplied evidence does not state which specific Article 6 lawful basis value (for example, contract, legal obligation, legitimate interests, etc.) to enter in the ROPA field.\n\nUnconfirmed requested aspects\n\n- Not established from the selected evidence: I'm updating the ROPA for employee records. what should I record there for employment data?. Additional eligible evidence was omitted because the answer evidence budget was reached. This does not establish that the source documents lack the requested information.",
+            "assistant_display_text": "The ROPA field previously labelled \"Legal basis\" was renamed to \"Lawful basis (UK GDPR Article 6)\".\n\nFor employment-related processing, record the relevant processing activity and the category of employment data being processed and link it to operational practices shown in the policies: employee personnel files are a named record type with a retention period of 6 years after employment ends (basis: statute of limitations), recruitment records for unsuccessful candidates are listed (6 months), HR issues factual references confirming dates of employment and job title within a 5-working-day timeframe, and right-to-work document checks are completed, dated\/annotated and retained per the Records Retention Schedule. The supplied evidence does not state which specific Article 6 lawful basis value (for example, contract, legal obligation, legitimate interests, etc.) to enter in the ROPA field.\n\nUnconfirmed requested aspects\n\n- Not established from the selected evidence: I'm updating the ROPA for employee records. what should I record there for employment data?. Additional eligible evidence was omitted because the answer evidence budget was reached. This does not establish that the source documents lack the requested information."
+        },
+        {
+            "item": "28",
+            "run_id": "bfff99c8-f683-42b2-81dc-e07e8f560a1f",
+            "conversation_id": "0c7539f4-5eda-41ef-8651-04ca0d46c471",
+            "workspace_id": "5323cd6b-8b7a-40f9-98b0-9413c75f643e",
+            "actor_id": "ae454ce6-4d91-4c7e-9a40-b4750b696a6b",
+            "user_turns": 1,
+            "generation_runs": 1,
+            "status": "completed",
+            "question": "I'm updating our safeguarding card for a resident-money discrepancy. Who receives the first escalation now, what part does Finance keep, and which current role name and outside-agency sharing route should the card use?",
+            "temporal_context": null,
+            "reloaded_rendered_text": "Escalate the discrepancy to the Alderbridge Safeguarding Lead as the first contact \u2014 the policy replaces the previous Finance Manager-first route and requires immediate escalation to the Safeguarding Lead for a financial concern.\n\nFinance retains responsibility for the financial-record and audit aspects: the Finance Manager is brought in to support the financial record review once the Safeguarding Lead has taken the concern forward, and resident fund transaction records, appointeeship files and audit findings are kept per the Records Retention Schedule; the Finance Manager also audits resident fund records quarterly.\n\nUse the organisation-level Safeguarding Lead as the role name on the card for internal escalation, and include the external agency sharing routes now specified for financial abuse concerns \u2014 namely referral routes to the Office of the Public Guardian (where an attorney or deputy may be acting outside their authority) and to Action Fraud (for suspected fraud or scam); also retain the local authority safeguarding team referral route where the local threshold is met.",
+            "assistant_display_text": "Escalate the discrepancy to the Alderbridge Safeguarding Lead as the first contact \u2014 the policy replaces the previous Finance Manager-first route and requires immediate escalation to the Safeguarding Lead for a financial concern.\n\nFinance retains responsibility for the financial-record and audit aspects: the Finance Manager is brought in to support the financial record review once the Safeguarding Lead has taken the concern forward, and resident fund transaction records, appointeeship files and audit findings are kept per the Records Retention Schedule; the Finance Manager also audits resident fund records quarterly.\n\nUse the organisation-level Safeguarding Lead as the role name on the card for internal escalation, and include the external agency sharing routes now specified for financial abuse concerns \u2014 namely referral routes to the Office of the Public Guardian (where an attorney or deputy may be acting outside their authority) and to Action Fraud (for suspected fraud or scam); also retain the local authority safeguarding team referral route where the local threshold is met."
+        },
+        {
+            "item": "29",
+            "run_id": "7f243d15-e46a-4fc3-bde8-c31d9589bf47",
+            "conversation_id": "68018a28-c605-4379-843e-90c9bb43612b",
+            "workspace_id": "5323cd6b-8b7a-40f9-98b0-9413c75f643e",
+            "actor_id": "ae454ce6-4d91-4c7e-9a40-b4750b696a6b",
+            "user_turns": 1,
+            "generation_runs": 1,
+            "status": "completed",
+            "question": "At Oakfield outreach on 1 July 2026, when did a key safe need reviewing and what had to happen when it was no longer needed?",
+            "temporal_context": {
+                "uses": [],
+                "targets": [
+                    {
+                        "at": "2026-07-01T00:00:00+00:00",
+                        "mode": "provisional",
+                        "reason": null,
+                        "status": "searched",
+                        "need_id": "n1",
+                        "purpose": "requested",
+                        "versions": [
+                            {
+                                "end": null,
+                                "start": "2026-02-01T00:00:00+00:00",
+                                "version_id": "b49c2f29-a68d-4625-a385-45c60bdb3eab"
+                            }
+                        ],
+                        "family_id": "df1c71ef-a996-475d-90e5-c5b595ad7e88",
+                        "reference": null,
+                        "target_id": "n1:requested"
+                    },
+                    {
+                        "at": "2026-07-01T00:00:00+00:00",
+                        "mode": "dated",
+                        "reason": null,
+                        "status": "searched",
+                        "need_id": "n1",
+                        "purpose": "precautionary",
+                        "versions": [
+                            {
+                                "end": null,
+                                "start": "2026-02-01T00:00:00+00:00",
+                                "version_id": "b49c2f29-a68d-4625-a385-45c60bdb3eab"
+                            }
+                        ],
+                        "family_id": "df1c71ef-a996-475d-90e5-c5b595ad7e88",
+                        "reference": {
+                            "at": "2026-07-01T00:00:00+00:00",
+                            "quote": "1 July 2026",
+                            "value": "2026-07-01",
+                            "turn_id": "user-1",
+                            "precision": "day",
+                            "period_end": null,
+                            "period_start": null
+                        },
+                        "target_id": "n1:date:1"
+                    },
+                    {
+                        "at": "2026-11-14T18:05:28+00:00",
+                        "mode": "current",
+                        "reason": null,
+                        "status": "searched",
+                        "need_id": "n1",
+                        "purpose": "precautionary",
+                        "versions": [
+                            {
+                                "end": null,
+                                "start": "2026-02-01T00:00:00+00:00",
+                                "version_id": "b49c2f29-a68d-4625-a385-45c60bdb3eab"
+                            }
+                        ],
+                        "family_id": "df1c71ef-a996-475d-90e5-c5b595ad7e88",
+                        "reference": null,
+                        "target_id": "n1:current"
+                    },
+                    {
+                        "at": "2026-07-01T00:00:00+00:00",
+                        "mode": "provisional",
+                        "reason": null,
+                        "status": "searched",
+                        "need_id": "n2",
+                        "purpose": "requested",
+                        "versions": [
+                            {
+                                "end": null,
+                                "start": "2026-02-01T00:00:00+00:00",
+                                "version_id": "b49c2f29-a68d-4625-a385-45c60bdb3eab"
+                            }
+                        ],
+                        "family_id": "df1c71ef-a996-475d-90e5-c5b595ad7e88",
+                        "reference": null,
+                        "target_id": "n2:requested"
+                    },
+                    {
+                        "at": "2026-07-01T00:00:00+00:00",
+                        "mode": "dated",
+                        "reason": null,
+                        "status": "searched",
+                        "need_id": "n2",
+                        "purpose": "precautionary",
+                        "versions": [
+                            {
+                                "end": null,
+                                "start": "2026-02-01T00:00:00+00:00",
+                                "version_id": "b49c2f29-a68d-4625-a385-45c60bdb3eab"
+                            }
+                        ],
+                        "family_id": "df1c71ef-a996-475d-90e5-c5b595ad7e88",
+                        "reference": {
+                            "at": "2026-07-01T00:00:00+00:00",
+                            "quote": "1 July 2026",
+                            "value": "2026-07-01",
+                            "turn_id": "user-1",
+                            "precision": "day",
+                            "period_end": null,
+                            "period_start": null
+                        },
+                        "target_id": "n2:date:1"
+                    },
+                    {
+                        "at": "2026-11-14T18:05:28+00:00",
+                        "mode": "current",
+                        "reason": null,
+                        "status": "searched",
+                        "need_id": "n2",
+                        "purpose": "precautionary",
+                        "versions": [
+                            {
+                                "end": null,
+                                "start": "2026-02-01T00:00:00+00:00",
+                                "version_id": "b49c2f29-a68d-4625-a385-45c60bdb3eab"
+                            }
+                        ],
+                        "family_id": "df1c71ef-a996-475d-90e5-c5b595ad7e88",
+                        "reference": null,
+                        "target_id": "n2:current"
+                    }
+                ],
+                "version": "temporal-answer-use-v1"
+            },
+            "reloaded_rendered_text": "I couldn't find enough available evidence to answer that question.",
+            "assistant_display_text": "I couldn't find enough available evidence to answer that question."
+        },
+        {
+            "item": "30",
+            "run_id": "b4821352-9b15-4734-a67e-bb2c90d78019",
+            "conversation_id": "7625678f-d66a-4e14-adf3-f880b6b2ea42",
+            "workspace_id": "5323cd6b-8b7a-40f9-98b0-9413c75f643e",
+            "actor_id": "ae454ce6-4d91-4c7e-9a40-b4750b696a6b",
+            "user_turns": 1,
+            "generation_runs": 1,
+            "status": "completed",
+            "question": "At Riverside House in September 2025, when did I have to report a key-holder call-out and what details belonged in the report?",
+            "temporal_context": null,
+            "reloaded_rendered_text": "Report every key-holder call-out to the registered manager the same day, and include the cause of the activation and any action taken.",
+            "assistant_display_text": "Report every key-holder call-out to the registered manager the same day, and include the cause of the activation and any action taken."
+        },
+        {
+            "item": "31",
+            "run_id": "12140fa6-88ce-4dae-a6f8-e6a7cd0865eb",
+            "conversation_id": "da79ccc9-8647-4396-9015-6b616725eab5",
+            "workspace_id": "5323cd6b-8b7a-40f9-98b0-9413c75f643e",
+            "actor_id": "ae454ce6-4d91-4c7e-9a40-b4750b696a6b",
+            "user_turns": 1,
+            "generation_runs": 1,
+            "status": "completed",
+            "question": "As a new starter, which wellbeing services should I know about, and how will my induction check that I know how to access them?",
+            "temporal_context": null,
+            "reloaded_rendered_text": "I couldn't find enough available evidence to answer that question.",
+            "assistant_display_text": "I couldn't find enough available evidence to answer that question."
+        },
+        {
+            "item": "32",
+            "run_id": "893d2a9c-113d-4667-be24-d394a1936341",
+            "conversation_id": "cb10c637-e306-461c-bd6d-3f98739aaf36",
+            "workspace_id": "5323cd6b-8b7a-40f9-98b0-9413c75f643e",
+            "actor_id": "ae454ce6-4d91-4c7e-9a40-b4750b696a6b",
+            "user_turns": 1,
+            "generation_runs": 1,
+            "status": "completed",
+            "question": "I'm resigning after three years. How much notice do I give, and what else do I need to do before I leave?",
+            "temporal_context": null,
+            "reloaded_rendered_text": "For three years' service the handbook's notice table applies: for 2 years or more the required notice is one week per completed year, so after three years you give three weeks' notice.\n\nWhen you resign you should give notice as above, and complete the usual leaving steps: return any issued equipment, keys or access cards; HR will run the exit process including a final pay calculation and (where you agree) an exit interview; and you will receive a final payslip that reflects any outstanding holiday pay.",
+            "assistant_display_text": "For three years' service the handbook's notice table applies: for 2 years or more the required notice is one week per completed year, so after three years you give three weeks' notice.\n\nWhen you resign you should give notice as above, and complete the usual leaving steps: return any issued equipment, keys or access cards; HR will run the exit process including a final pay calculation and (where you agree) an exit interview; and you will receive a final payslip that reflects any outstanding holiday pay."
+        },
+        {
+            "item": "G2",
+            "run_id": "631d2ba2-cf06-4a3c-9d86-7e837faf056c",
+            "conversation_id": "4fe59370-6b62-4105-9bf8-b2aa0b0e6d14",
+            "workspace_id": "5323cd6b-8b7a-40f9-98b0-9413c75f643e",
+            "actor_id": "ae454ce6-4d91-4c7e-9a40-b4750b696a6b",
+            "user_turns": 1,
+            "generation_runs": 1,
+            "status": "completed",
+            "question": "My mother moved into the home in March 2025. What temperature does her soiled bedding have to be washed at now?",
+            "temporal_context": {
+                "uses": [
+                    {
+                        "target": {
+                            "at": "2026-11-14T18:08:03+00:00",
+                            "mode": "current",
+                            "reason": null,
+                            "status": "searched",
+                            "need_id": "n1",
+                            "purpose": "requested",
+                            "versions": [
+                                {
+                                    "end": null,
+                                    "start": "2026-05-01T00:00:00+00:00",
+                                    "version_id": "8393e791-8177-4568-8660-bfdd4efcfab3"
+                                }
+                            ],
+                            "family_id": "0883c3ed-06e2-43e9-9cec-f30800e6064c",
+                            "reference": null,
+                            "target_id": "n1:requested"
+                        },
+                        "need_id": "n1",
+                        "target_id": "n1:requested",
+                        "part_index": 0,
+                        "question_quote": "What temperature does her soiled bedding have to be washed at now?",
+                        "planner_disagreement": false
+                    }
+                ],
+                "targets": [
+                    {
+                        "at": "2026-11-14T18:08:03+00:00",
+                        "mode": "current",
+                        "reason": null,
+                        "status": "searched",
+                        "need_id": "n1",
+                        "purpose": "requested",
+                        "versions": [
+                            {
+                                "end": null,
+                                "start": "2026-05-01T00:00:00+00:00",
+                                "version_id": "8393e791-8177-4568-8660-bfdd4efcfab3"
+                            }
+                        ],
+                        "family_id": "0883c3ed-06e2-43e9-9cec-f30800e6064c",
+                        "reference": null,
+                        "target_id": "n1:requested"
+                    },
+                    {
+                        "at": null,
+                        "mode": "dated",
+                        "reason": null,
+                        "status": "searched",
+                        "need_id": "n1",
+                        "purpose": "precautionary",
+                        "versions": [
+                            {
+                                "end": "2025-05-01T00:00:00+00:00",
+                                "start": "2024-05-01T00:00:00+00:00",
+                                "version_id": "ea5a19a4-49e9-4815-bb07-cf72b9fe9fea"
+                            }
+                        ],
+                        "family_id": "0883c3ed-06e2-43e9-9cec-f30800e6064c",
+                        "reference": {
+                            "at": null,
+                            "quote": "March 2025",
+                            "value": "2025-03",
+                            "turn_id": "user-1",
+                            "precision": "month",
+                            "period_end": "2025-04-01T00:00:00+00:00",
+                            "period_start": "2025-03-01T00:00:00+00:00"
+                        },
+                        "target_id": "n1:date:1"
+                    }
+                ],
+                "version": "temporal-answer-use-v1"
+            },
+            "reloaded_rendered_text": "The current Alderbridge procedure requires soiled linen to be washed at 65 degrees Celsius.\nTemporal basis: 2026-11-14T18:08:03+00:00; version 8393e791-8177-4568-8660-bfdd4efcfab3; effective 2026-05-01T00:00:00+00:00 to open end (end exclusive).",
+            "assistant_display_text": "The current Alderbridge procedure requires soiled linen to be washed at 65 degrees Celsius.\nTemporal basis: 2026-11-14T18:08:03+00:00; version 8393e791-8177-4568-8660-bfdd4efcfab3; effective 2026-05-01T00:00:00+00:00 to open end (end exclusive)."
+        },
+        {
+            "item": "G3",
+            "run_id": "b69af005-eb64-4bd8-a75e-032ee474104e",
+            "conversation_id": "9a09b2a9-641c-482e-9337-ef1ab491d197",
+            "workspace_id": "5323cd6b-8b7a-40f9-98b0-9413c75f643e",
+            "actor_id": "ae454ce6-4d91-4c7e-9a40-b4750b696a6b",
+            "user_turns": 1,
+            "generation_runs": 1,
+            "status": "retrieval_no_answer",
+            "question": "Facilities agreed a new pest control schedule on 20 May 2025, and it started on 1 July 2025. How often did the kitchen area have to be inspected once it started?",
+            "temporal_context": null,
+            "reloaded_rendered_text": null,
+            "assistant_display_text": "I couldn't interpret this question reliably, so I haven't used a guessed interpretation to search or answer it. Please try rephrasing your question."
+        }
+    ],
+    "verified_at": "2026-11-14T18:09:36+00:00",
+    "grading": false
+}

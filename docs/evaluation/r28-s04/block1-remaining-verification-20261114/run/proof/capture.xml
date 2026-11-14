@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="Tests\Feature\C1CaptureFixtureTest" file="/workspace/docs/evaluation/r28-s04/block1-remaining-verification-20261114/run/harness/C1CaptureFixtureTest.php" tests="5" assertions="313" errors="0" failures="0" skipped="0" time="1.291022">
+    <testsuite name="Tests\Feature\C1CaptureFixtureTest::test_c1_wrong_current_plan_preserves_dated_alternative_and_persisted_answer_use" tests="5" assertions="313" errors="0" failures="0" skipped="0" time="1.291022">
+      <testcase name="test_c1_wrong_current_plan_preserves_dated_alternative_and_persisted_answer_use with data set #0" file="/workspace/docs/evaluation/r28-s04/block1-remaining-verification-20261114/run/harness/C1CaptureFixtureTest.php" line="225" class="Tests\Feature\C1CaptureFixtureTest" classname="Tests.Feature.C1CaptureFixtureTest" assertions="59" time="0.740807"/>
+      <testcase name="test_c1_wrong_current_plan_preserves_dated_alternative_and_persisted_answer_use with data set #1" file="/workspace/docs/evaluation/r28-s04/block1-remaining-verification-20261114/run/harness/C1CaptureFixtureTest.php" line="225" class="Tests\Feature\C1CaptureFixtureTest" classname="Tests.Feature.C1CaptureFixtureTest" assertions="59" time="0.154796"/>
+      <testcase name="test_c1_wrong_current_plan_preserves_dated_alternative_and_persisted_answer_use with data set #2" file="/workspace/docs/evaluation/r28-s04/block1-remaining-verification-20261114/run/harness/C1CaptureFixtureTest.php" line="225" class="Tests\Feature\C1CaptureFixtureTest" classname="Tests.Feature.C1CaptureFixtureTest" assertions="61" time="0.120327"/>
+      <testcase name="test_c1_wrong_current_plan_preserves_dated_alternative_and_persisted_answer_use with data set #3" file="/workspace/docs/evaluation/r28-s04/block1-remaining-verification-20261114/run/harness/C1CaptureFixtureTest.php" line="225" class="Tests\Feature\C1CaptureFixtureTest" classname="Tests.Feature.C1CaptureFixtureTest" assertions="61" time="0.120630"/>
+      <testcase name="test_c1_wrong_current_plan_preserves_dated_alternative_and_persisted_answer_use with data set #4" file="/workspace/docs/evaluation/r28-s04/block1-remaining-verification-20261114/run/harness/C1CaptureFixtureTest.php" line="225" class="Tests\Feature\C1CaptureFixtureTest" classname="Tests.Feature.C1CaptureFixtureTest" assertions="73" time="0.154463"/>
+    </testsuite>
+  </testsuite>
+</testsuites>

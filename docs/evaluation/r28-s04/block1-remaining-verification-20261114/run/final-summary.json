@@ -1,0 +1,1090 @@
+{
+  "all18_service_calls": {
+    "/api/internal/retrieval/plan-needs": 18,
+    "/api/internal/retrieval/search": 37,
+    "/api/internal/retrieval/rerank": 37,
+    "/api/internal/retrieval/compare-family": 12,
+    "/api/internal/retrieval/generation/answer-needs": 17
+  },
+  "items": [
+    {
+      "item": "17",
+      "development": false,
+      "graded": true,
+      "status": "retrieval_no_answer",
+      "elapsed_ms": 46265.15698432922,
+      "service_calls": {
+        "/api/internal/retrieval/plan-needs": 1,
+        "/api/internal/retrieval/search": 1,
+        "/api/internal/retrieval/rerank": 1,
+        "/api/internal/retrieval/compare-family": 1
+      },
+      "base_logical_lanes": 2,
+      "additional_search_lanes": 0,
+      "final_evidence_count": 0,
+      "discovery": [
+        {
+          "need_id": "n1",
+          "route": "compare",
+          "original_decision": "no_match",
+          "effective_decision": "no_match",
+          "validation_rejection_code": null,
+          "guard": null,
+          "work": {
+            "stop_stage": "reviewer_result",
+            "search_requests": 1,
+            "reranker_requests": 1,
+            "reviewer_requests": 1,
+            "charged_to_logical_lane_limit": false,
+            "eligibility_outcome": "evidence_found",
+            "eligibility_reason": null,
+            "active_corpus_present": true,
+            "search_candidate_count": 15,
+            "hydrated_candidate_count": 15,
+            "reranked_candidate_count": 15,
+            "reviewer_candidate_count": 12,
+            "reviewer_invoked": true
+          }
+        }
+      ],
+      "targets": [],
+      "validated_used_target_ids": [],
+      "displayed_text": "I couldn't find enough available evidence to answer that question."
+    },
+    {
+      "item": "18",
+      "development": false,
+      "graded": true,
+      "status": "completed",
+      "elapsed_ms": 38154.58798408508,
+      "service_calls": {
+        "/api/internal/retrieval/plan-needs": 1,
+        "/api/internal/retrieval/search": 2,
+        "/api/internal/retrieval/rerank": 2,
+        "/api/internal/retrieval/compare-family": 1,
+        "/api/internal/retrieval/generation/answer-needs": 1
+      },
+      "base_logical_lanes": 1,
+      "additional_search_lanes": 0,
+      "final_evidence_count": 5,
+      "discovery": [
+        {
+          "need_id": "n1",
+          "route": "C2-fallback (guard not run)",
+          "original_decision": "ambiguous",
+          "effective_decision": "ambiguous",
+          "validation_rejection_code": null,
+          "guard": {
+            "status": "not_run",
+            "reason": "discovery_unresolved",
+            "fallback": "original_unbound"
+          },
+          "work": {
+            "stop_stage": "reviewer_result",
+            "search_requests": 1,
+            "reranker_requests": 1,
+            "reviewer_requests": 1,
+            "charged_to_logical_lane_limit": false,
+            "eligibility_outcome": "evidence_found",
+            "eligibility_reason": null,
+            "active_corpus_present": true,
+            "search_candidate_count": 15,
+            "hydrated_candidate_count": 15,
+            "reranked_candidate_count": 15,
+            "reviewer_candidate_count": 12,
+            "reviewer_invoked": true
+          }
+        }
+      ],
+      "targets": [],
+      "validated_used_target_ids": [],
+      "displayed_text": "If the severity is genuinely borderline, classify it at the higher of the two tiers immediately (i.e., record the incident as the higher severity rather than the lower), and the reviewing registered nurse or the Quality Lead may downgrade it later on fuller review.\n\nRecord that classification through the normal incident reporting route (escalate via the Incident Reporting Policy) and retain the incident record and its severity classification according to the activity's record-keeping rules and the Records Retention Schedule."
+    },
+    {
+      "item": "19",
+      "development": false,
+      "graded": true,
+      "status": "clarification_required",
+      "elapsed_ms": 13595.396995544434,
+      "service_calls": {
+        "/api/internal/retrieval/plan-needs": 1
+      },
+      "base_logical_lanes": 2,
+      "additional_search_lanes": 0,
+      "final_evidence_count": 0,
+      "discovery": [
+        {
+          "need_id": "n1",
+          "route": "compare",
+          "original_decision": null,
+          "effective_decision": null,
+          "validation_rejection_code": null,
+          "guard": null,
+          "work": {}
+        }
+      ],
+      "targets": [],
+      "validated_used_target_ids": [],
+      "displayed_text": "Which date within that period should I use?"
+    },
+    {
+      "item": "20",
+      "development": false,
+      "graded": true,
+      "status": "completed",
+      "elapsed_ms": 33246.55890464783,
+      "service_calls": {
+        "/api/internal/retrieval/plan-needs": 1,
+        "/api/internal/retrieval/search": 2,
+        "/api/internal/retrieval/rerank": 2,
+        "/api/internal/retrieval/generation/answer-needs": 1
+      },
+      "base_logical_lanes": 2,
+      "additional_search_lanes": 0,
+      "final_evidence_count": 5,
+      "discovery": [
+        {
+          "need_id": "n1",
+          "route": "other",
+          "original_decision": null,
+          "effective_decision": null,
+          "validation_rejection_code": null,
+          "guard": null,
+          "work": {}
+        },
+        {
+          "need_id": "n2",
+          "route": "other",
+          "original_decision": null,
+          "effective_decision": null,
+          "validation_rejection_code": null,
+          "guard": null,
+          "work": {}
+        }
+      ],
+      "targets": [],
+      "validated_used_target_ids": [],
+      "displayed_text": "The site\u2019s safeguarding lead has been renamed to \u201csafeguarding champion.\u201d\n\nThe first-point-of-contact role itself did not change\u2014the responsibilities remain the same under the new title."
+    },
+    {
+      "item": "21",
+      "development": false,
+      "graded": true,
+      "status": "completed",
+      "elapsed_ms": 46630.14221191406,
+      "service_calls": {
+        "/api/internal/retrieval/plan-needs": 1,
+        "/api/internal/retrieval/search": 3,
+        "/api/internal/retrieval/rerank": 3,
+        "/api/internal/retrieval/compare-family": 2,
+        "/api/internal/retrieval/generation/answer-needs": 1
+      },
+      "base_logical_lanes": 3,
+      "additional_search_lanes": 0,
+      "final_evidence_count": 3,
+      "discovery": [
+        {
+          "need_id": "n1",
+          "route": "C2-resolved",
+          "original_decision": "selected",
+          "effective_decision": "selected",
+          "validation_rejection_code": null,
+          "guard": null,
+          "work": {
+            "stop_stage": "reviewer_result",
+            "search_requests": 1,
+            "reranker_requests": 1,
+            "reviewer_requests": 1,
+            "charged_to_logical_lane_limit": false,
+            "eligibility_outcome": "evidence_found",
+            "eligibility_reason": null,
+            "active_corpus_present": true,
+            "search_candidate_count": 15,
+            "hydrated_candidate_count": 15,
+            "reranked_candidate_count": 15,
+            "reviewer_candidate_count": 12,
+            "reviewer_invoked": true
+          }
+        },
+        {
+          "need_id": "n2",
+          "route": "compare",
+          "original_decision": "selected",
+          "effective_decision": "selected",
+          "validation_rejection_code": null,
+          "guard": null,
+          "work": {
+            "stop_stage": "reviewer_result",
+            "search_requests": 1,
+            "reranker_requests": 1,
+            "reviewer_requests": 1,
+            "charged_to_logical_lane_limit": false,
+            "eligibility_outcome": "evidence_found",
+            "eligibility_reason": null,
+            "active_corpus_present": true,
+            "search_candidate_count": 15,
+            "hydrated_candidate_count": 15,
+            "reranked_candidate_count": 15,
+            "reviewer_candidate_count": 12,
+            "reviewer_invoked": true
+          }
+        }
+      ],
+      "targets": {
+        "need.n1.temporal_targets": [
+          {
+            "target_id": "n1:requested",
+            "need_id": "n1",
+            "family_id": "17278f8a-fa84-4a14-a98e-261d19682c66",
+            "purpose": "requested",
+            "mode": "current",
+            "at": "2026-11-14T17:58:55+00:00",
+            "reference": null,
+            "versions": [
+              {
+                "version_id": "6cf50cb0-0cdb-484d-9841-899c5e3b84f3",
+                "start": "2026-07-01T00:00:00+00:00",
+                "end": null
+              }
+            ],
+            "status": "searched",
+            "reason": null
+          },
+          {
+            "target_id": "n1:date:1",
+            "need_id": "n1",
+            "family_id": "17278f8a-fa84-4a14-a98e-261d19682c66",
+            "purpose": "precautionary",
+            "mode": "dated",
+            "at": null,
+            "reference": {
+              "turn_id": "user-1",
+              "quote": "July 2026",
+              "at": null,
+              "precision": "month",
+              "value": "2026-07",
+              "period_start": "2026-07-01T00:00:00+00:00",
+              "period_end": "2026-08-01T00:00:00+00:00"
+            },
+            "versions": [
+              {
+                "version_id": "6cf50cb0-0cdb-484d-9841-899c5e3b84f3",
+                "start": "2026-07-01T00:00:00+00:00",
+                "end": null
+              }
+            ],
+            "status": "searched",
+            "reason": null
+          }
+        ]
+      },
+      "validated_used_target_ids": [
+        "n1:requested"
+      ],
+      "displayed_text": "For current access problems (locked out or a course missing), contact the IT service desk; the Training Team no longer handles platform access issues after the platform migration and support moved to IT.\nTemporal basis: 2026-11-14T17:58:55+00:00; version 6cf50cb0-0cdb-484d-9841-899c5e3b84f3; effective 2026-07-01T00:00:00+00:00 to open end (end exclusive).\n\nBefore July 2026, access issues were handled by the Training Team\u2014guidance indicated contacting the Training Team by email (internal address shown as training@) for access problems."
+    },
+    {
+      "item": "22",
+      "development": false,
+      "graded": true,
+      "status": "completed",
+      "elapsed_ms": 33996.201038360596,
+      "service_calls": {
+        "/api/internal/retrieval/plan-needs": 1,
+        "/api/internal/retrieval/search": 2,
+        "/api/internal/retrieval/rerank": 2,
+        "/api/internal/retrieval/compare-family": 1,
+        "/api/internal/retrieval/generation/answer-needs": 1
+      },
+      "base_logical_lanes": 1,
+      "additional_search_lanes": 0,
+      "final_evidence_count": 4,
+      "discovery": [
+        {
+          "need_id": "n1",
+          "route": "C2-fallback (guard not run)",
+          "original_decision": "selected",
+          "effective_decision": "no_match",
+          "validation_rejection_code": "quote_not_in_candidate",
+          "guard": {
+            "status": "not_run",
+            "reason": "discovery_unresolved",
+            "fallback": "original_unbound"
+          },
+          "work": {
+            "stop_stage": "reviewer_result",
+            "search_requests": 1,
+            "reranker_requests": 1,
+            "reviewer_requests": 1,
+            "charged_to_logical_lane_limit": false,
+            "eligibility_outcome": "evidence_found",
+            "eligibility_reason": null,
+            "active_corpus_present": true,
+            "search_candidate_count": 15,
+            "hydrated_candidate_count": 15,
+            "reranked_candidate_count": 15,
+            "reviewer_candidate_count": 12,
+            "reviewer_invoked": true
+          }
+        }
+      ],
+      "targets": [],
+      "validated_used_target_ids": [],
+      "displayed_text": "Facilities monitored the North West key-holder pilot and reviewed call-out frequency and outcomes quarterly."
+    },
+    {
+      "item": "23",
+      "development": false,
+      "graded": true,
+      "status": "completed",
+      "elapsed_ms": 50961.63511276245,
+      "service_calls": {
+        "/api/internal/retrieval/plan-needs": 1,
+        "/api/internal/retrieval/search": 3,
+        "/api/internal/retrieval/rerank": 3,
+        "/api/internal/retrieval/compare-family": 2,
+        "/api/internal/retrieval/generation/answer-needs": 1
+      },
+      "base_logical_lanes": 3,
+      "additional_search_lanes": 0,
+      "final_evidence_count": 5,
+      "discovery": [
+        {
+          "need_id": "n1",
+          "route": "C2-fallback (guard not run)",
+          "original_decision": "selected",
+          "effective_decision": "no_match",
+          "validation_rejection_code": "quote_not_in_candidate",
+          "guard": {
+            "status": "not_run",
+            "reason": "discovery_unresolved",
+            "fallback": "original_unbound"
+          },
+          "work": {
+            "stop_stage": "reviewer_result",
+            "search_requests": 1,
+            "reranker_requests": 1,
+            "reviewer_requests": 1,
+            "charged_to_logical_lane_limit": false,
+            "eligibility_outcome": "evidence_found",
+            "eligibility_reason": null,
+            "active_corpus_present": true,
+            "search_candidate_count": 15,
+            "hydrated_candidate_count": 15,
+            "reranked_candidate_count": 15,
+            "reviewer_candidate_count": 12,
+            "reviewer_invoked": true
+          }
+        },
+        {
+          "need_id": "n2",
+          "route": "compare",
+          "original_decision": "selected",
+          "effective_decision": "no_match",
+          "validation_rejection_code": "quote_not_in_candidate",
+          "guard": null,
+          "work": {
+            "stop_stage": "reviewer_result",
+            "search_requests": 1,
+            "reranker_requests": 1,
+            "reviewer_requests": 1,
+            "charged_to_logical_lane_limit": false,
+            "eligibility_outcome": "evidence_found",
+            "eligibility_reason": null,
+            "active_corpus_present": true,
+            "search_candidate_count": 15,
+            "hydrated_candidate_count": 15,
+            "reranked_candidate_count": 15,
+            "reviewer_candidate_count": 12,
+            "reviewer_invoked": true
+          }
+        }
+      ],
+      "targets": [],
+      "validated_used_target_ids": [],
+      "displayed_text": "The HR Director is the person who now approves or declines requests to extend a recruitment timescale for a genuinely hard-to-fill role; the current Recruitment and Selection Policy requires HR Director sign-off before any extension is made.\n\nUnconfirmed requested aspects\n\n- Who held the decision to extend a recruitment timescale before February 2026 (no evidence_ids were provided for that temporal lane in the package)"
+    },
+    {
+      "item": "24",
+      "development": false,
+      "graded": true,
+      "status": "completed",
+      "elapsed_ms": 43892.767906188965,
+      "service_calls": {
+        "/api/internal/retrieval/plan-needs": 1,
+        "/api/internal/retrieval/search": 3,
+        "/api/internal/retrieval/rerank": 3,
+        "/api/internal/retrieval/compare-family": 1,
+        "/api/internal/retrieval/generation/answer-needs": 1
+      },
+      "base_logical_lanes": 3,
+      "additional_search_lanes": 0,
+      "final_evidence_count": 5,
+      "discovery": [
+        {
+          "need_id": "n1",
+          "route": "other",
+          "original_decision": null,
+          "effective_decision": null,
+          "validation_rejection_code": null,
+          "guard": null,
+          "work": {}
+        },
+        {
+          "need_id": "n2",
+          "route": "compare",
+          "original_decision": "selected",
+          "effective_decision": "selected",
+          "validation_rejection_code": null,
+          "guard": null,
+          "work": {
+            "stop_stage": "reviewer_result",
+            "search_requests": 1,
+            "reranker_requests": 1,
+            "reviewer_requests": 1,
+            "charged_to_logical_lane_limit": false,
+            "eligibility_outcome": "evidence_found",
+            "eligibility_reason": null,
+            "active_corpus_present": true,
+            "search_candidate_count": 15,
+            "hydrated_candidate_count": 15,
+            "reranked_candidate_count": 15,
+            "reviewer_candidate_count": 12,
+            "reviewer_invoked": true
+          }
+        }
+      ],
+      "targets": [],
+      "validated_used_target_ids": [],
+      "displayed_text": "If the medicines fridge has failed, staff must keep the fridge closed and contact the on-call manager (or on-call registered manager / senior carer as the first escalation contact) and also call the supplying pharmacy for advice about whether stock remains usable; do not move stock on assumption and follow the Immediate containment steps (note current/minimum/maximum readings, label unit not for use, inform the responsible nurse/manager and prepare a validated alternative storage location where authorised).\n\nThe change introduced in April 2026 was the explicit addition of a requirement to call the supplying pharmacy as well as the on-call manager\u2014the earlier version required calling only the on-call manager."
+    },
+    {
+      "item": "25",
+      "development": false,
+      "graded": true,
+      "status": "completed",
+      "elapsed_ms": 44442.57593154907,
+      "service_calls": {
+        "/api/internal/retrieval/plan-needs": 1,
+        "/api/internal/retrieval/search": 2,
+        "/api/internal/retrieval/rerank": 2,
+        "/api/internal/retrieval/compare-family": 1,
+        "/api/internal/retrieval/generation/answer-needs": 1
+      },
+      "base_logical_lanes": 2,
+      "additional_search_lanes": 0,
+      "final_evidence_count": 2,
+      "discovery": [
+        {
+          "need_id": "n1",
+          "route": "compare",
+          "original_decision": "selected",
+          "effective_decision": "selected",
+          "validation_rejection_code": null,
+          "guard": null,
+          "work": {
+            "stop_stage": "reviewer_result",
+            "search_requests": 1,
+            "reranker_requests": 1,
+            "reviewer_requests": 1,
+            "charged_to_logical_lane_limit": false,
+            "eligibility_outcome": "evidence_found",
+            "eligibility_reason": null,
+            "active_corpus_present": true,
+            "search_candidate_count": 15,
+            "hydrated_candidate_count": 15,
+            "reranked_candidate_count": 15,
+            "reviewer_candidate_count": 12,
+            "reviewer_invoked": true
+          }
+        }
+      ],
+      "targets": [],
+      "validated_used_target_ids": [],
+      "displayed_text": "Now (current procedure), flag any authorisation expiring within 10 weeks to the local authority.\n\nBefore January 2026 (earlier version), flag any authorisation expiring within 6 weeks to the local authority."
+    },
+    {
+      "item": "26",
+      "development": false,
+      "graded": true,
+      "status": "completed",
+      "elapsed_ms": 49595.53098678589,
+      "service_calls": {
+        "/api/internal/retrieval/plan-needs": 1,
+        "/api/internal/retrieval/search": 3,
+        "/api/internal/retrieval/rerank": 3,
+        "/api/internal/retrieval/generation/answer-needs": 1
+      },
+      "base_logical_lanes": 3,
+      "additional_search_lanes": 0,
+      "final_evidence_count": 5,
+      "discovery": [
+        {
+          "need_id": "n1",
+          "route": "other",
+          "original_decision": null,
+          "effective_decision": null,
+          "validation_rejection_code": null,
+          "guard": null,
+          "work": {}
+        },
+        {
+          "need_id": "n2",
+          "route": "other",
+          "original_decision": null,
+          "effective_decision": null,
+          "validation_rejection_code": null,
+          "guard": null,
+          "work": {}
+        },
+        {
+          "need_id": "n3",
+          "route": "other",
+          "original_decision": null,
+          "effective_decision": null,
+          "validation_rejection_code": null,
+          "guard": null,
+          "work": {}
+        }
+      ],
+      "targets": [],
+      "validated_used_target_ids": [],
+      "displayed_text": "The device-control is implemented via the organisation's mobile device management \u2014 devices must be enrolled in the mobile device management system \u2014 and IT is responsible for classifying incidents against the four-tier severity model.\n\nThe Data Protection Officer (DPO) must assess whether the incident is a personal data breach within 12 hours.\n\nThe out-of-hours route now uses regional on-call mobile numbers (one per region) so staff call their region's on-call mobile number outside normal hours; additionally, the procedures reference contacting the regional IT emergency contact for out-of-hours support at Tier 2 or higher."
+    },
+    {
+      "item": "27",
+      "development": false,
+      "graded": true,
+      "status": "completed",
+      "elapsed_ms": 58928.77292633057,
+      "service_calls": {
+        "/api/internal/retrieval/plan-needs": 1,
+        "/api/internal/retrieval/search": 3,
+        "/api/internal/retrieval/rerank": 3,
+        "/api/internal/retrieval/compare-family": 1,
+        "/api/internal/retrieval/generation/answer-needs": 1
+      },
+      "base_logical_lanes": 3,
+      "additional_search_lanes": 0,
+      "final_evidence_count": 5,
+      "discovery": [
+        {
+          "need_id": "n1",
+          "route": "compare",
+          "original_decision": "selected",
+          "effective_decision": "selected",
+          "validation_rejection_code": null,
+          "guard": null,
+          "work": {
+            "stop_stage": "reviewer_result",
+            "search_requests": 1,
+            "reranker_requests": 1,
+            "reviewer_requests": 1,
+            "charged_to_logical_lane_limit": false,
+            "eligibility_outcome": "evidence_found",
+            "eligibility_reason": null,
+            "active_corpus_present": true,
+            "search_candidate_count": 15,
+            "hydrated_candidate_count": 15,
+            "reranked_candidate_count": 15,
+            "reviewer_candidate_count": 12,
+            "reviewer_invoked": true
+          }
+        },
+        {
+          "need_id": "n2",
+          "route": "other",
+          "original_decision": null,
+          "effective_decision": null,
+          "validation_rejection_code": null,
+          "guard": null,
+          "work": {}
+        }
+      ],
+      "targets": [],
+      "validated_used_target_ids": [],
+      "displayed_text": "The ROPA field previously labelled \"Legal basis\" was renamed to \"Lawful basis (UK GDPR Article 6)\".\n\nFor employment-related processing, record the relevant processing activity and the category of employment data being processed and link it to operational practices shown in the policies: employee personnel files are a named record type with a retention period of 6 years after employment ends (basis: statute of limitations), recruitment records for unsuccessful candidates are listed (6 months), HR issues factual references confirming dates of employment and job title within a 5-working-day timeframe, and right-to-work document checks are completed, dated/annotated and retained per the Records Retention Schedule. The supplied evidence does not state which specific Article 6 lawful basis value (for example, contract, legal obligation, legitimate interests, etc.) to enter in the ROPA field.\n\nUnconfirmed requested aspects\n\n- Not established from the selected evidence: I'm updating the ROPA for employee records. what should I record there for employment data?. Additional eligible evidence was omitted because the answer evidence budget was reached. This does not establish that the source documents lack the requested information."
+    },
+    {
+      "item": "28",
+      "development": false,
+      "graded": true,
+      "status": "completed",
+      "elapsed_ms": 37603.12294960022,
+      "service_calls": {
+        "/api/internal/retrieval/plan-needs": 1,
+        "/api/internal/retrieval/search": 3,
+        "/api/internal/retrieval/rerank": 3,
+        "/api/internal/retrieval/generation/answer-needs": 1
+      },
+      "base_logical_lanes": 3,
+      "additional_search_lanes": 0,
+      "final_evidence_count": 5,
+      "discovery": [
+        {
+          "need_id": "n1",
+          "route": "other",
+          "original_decision": null,
+          "effective_decision": null,
+          "validation_rejection_code": null,
+          "guard": null,
+          "work": {}
+        },
+        {
+          "need_id": "n2",
+          "route": "other",
+          "original_decision": null,
+          "effective_decision": null,
+          "validation_rejection_code": null,
+          "guard": null,
+          "work": {}
+        },
+        {
+          "need_id": "n3",
+          "route": "other",
+          "original_decision": null,
+          "effective_decision": null,
+          "validation_rejection_code": null,
+          "guard": null,
+          "work": {}
+        }
+      ],
+      "targets": [],
+      "validated_used_target_ids": [],
+      "displayed_text": "Escalate the discrepancy to the Alderbridge Safeguarding Lead as the first contact \u2014 the policy replaces the previous Finance Manager-first route and requires immediate escalation to the Safeguarding Lead for a financial concern.\n\nFinance retains responsibility for the financial-record and audit aspects: the Finance Manager is brought in to support the financial record review once the Safeguarding Lead has taken the concern forward, and resident fund transaction records, appointeeship files and audit findings are kept per the Records Retention Schedule; the Finance Manager also audits resident fund records quarterly.\n\nUse the organisation-level Safeguarding Lead as the role name on the card for internal escalation, and include the external agency sharing routes now specified for financial abuse concerns \u2014 namely referral routes to the Office of the Public Guardian (where an attorney or deputy may be acting outside their authority) and to Action Fraud (for suspected fraud or scam); also retain the local authority safeguarding team referral route where the local threshold is met."
+    },
+    {
+      "item": "29",
+      "development": false,
+      "graded": true,
+      "status": "completed",
+      "elapsed_ms": 38961.966037750244,
+      "service_calls": {
+        "/api/internal/retrieval/plan-needs": 1,
+        "/api/internal/retrieval/search": 2,
+        "/api/internal/retrieval/rerank": 2,
+        "/api/internal/retrieval/generation/answer-needs": 2
+      },
+      "base_logical_lanes": 2,
+      "additional_search_lanes": 0,
+      "final_evidence_count": 2,
+      "discovery": [
+        {
+          "need_id": "n1",
+          "route": "planner-bound/C1",
+          "original_decision": null,
+          "effective_decision": null,
+          "validation_rejection_code": null,
+          "guard": null,
+          "work": {}
+        },
+        {
+          "need_id": "n2",
+          "route": "planner-bound/C1",
+          "original_decision": null,
+          "effective_decision": null,
+          "validation_rejection_code": null,
+          "guard": null,
+          "work": {}
+        }
+      ],
+      "targets": {
+        "need.n1.temporal_targets": [
+          {
+            "target_id": "n1:requested",
+            "need_id": "n1",
+            "family_id": "df1c71ef-a996-475d-90e5-c5b595ad7e88",
+            "purpose": "requested",
+            "mode": "provisional",
+            "at": "2026-07-01T00:00:00+00:00",
+            "reference": null,
+            "versions": [
+              {
+                "version_id": "b49c2f29-a68d-4625-a385-45c60bdb3eab",
+                "start": "2026-02-01T00:00:00+00:00",
+                "end": null
+              }
+            ],
+            "status": "searched",
+            "reason": null
+          },
+          {
+            "target_id": "n1:date:1",
+            "need_id": "n1",
+            "family_id": "df1c71ef-a996-475d-90e5-c5b595ad7e88",
+            "purpose": "precautionary",
+            "mode": "dated",
+            "at": "2026-07-01T00:00:00+00:00",
+            "reference": {
+              "turn_id": "user-1",
+              "quote": "1 July 2026",
+              "at": "2026-07-01T00:00:00+00:00",
+              "precision": "day",
+              "value": "2026-07-01",
+              "period_start": null,
+              "period_end": null
+            },
+            "versions": [
+              {
+                "version_id": "b49c2f29-a68d-4625-a385-45c60bdb3eab",
+                "start": "2026-02-01T00:00:00+00:00",
+                "end": null
+              }
+            ],
+            "status": "searched",
+            "reason": null
+          },
+          {
+            "target_id": "n1:current",
+            "need_id": "n1",
+            "family_id": "df1c71ef-a996-475d-90e5-c5b595ad7e88",
+            "purpose": "precautionary",
+            "mode": "current",
+            "at": "2026-11-14T18:05:28+00:00",
+            "reference": null,
+            "versions": [
+              {
+                "version_id": "b49c2f29-a68d-4625-a385-45c60bdb3eab",
+                "start": "2026-02-01T00:00:00+00:00",
+                "end": null
+              }
+            ],
+            "status": "searched",
+            "reason": null
+          }
+        ],
+        "need.n2.temporal_targets": [
+          {
+            "target_id": "n2:requested",
+            "need_id": "n2",
+            "family_id": "df1c71ef-a996-475d-90e5-c5b595ad7e88",
+            "purpose": "requested",
+            "mode": "provisional",
+            "at": "2026-07-01T00:00:00+00:00",
+            "reference": null,
+            "versions": [
+              {
+                "version_id": "b49c2f29-a68d-4625-a385-45c60bdb3eab",
+                "start": "2026-02-01T00:00:00+00:00",
+                "end": null
+              }
+            ],
+            "status": "searched",
+            "reason": null
+          },
+          {
+            "target_id": "n2:date:1",
+            "need_id": "n2",
+            "family_id": "df1c71ef-a996-475d-90e5-c5b595ad7e88",
+            "purpose": "precautionary",
+            "mode": "dated",
+            "at": "2026-07-01T00:00:00+00:00",
+            "reference": {
+              "turn_id": "user-1",
+              "quote": "1 July 2026",
+              "at": "2026-07-01T00:00:00+00:00",
+              "precision": "day",
+              "value": "2026-07-01",
+              "period_start": null,
+              "period_end": null
+            },
+            "versions": [
+              {
+                "version_id": "b49c2f29-a68d-4625-a385-45c60bdb3eab",
+                "start": "2026-02-01T00:00:00+00:00",
+                "end": null
+              }
+            ],
+            "status": "searched",
+            "reason": null
+          },
+          {
+            "target_id": "n2:current",
+            "need_id": "n2",
+            "family_id": "df1c71ef-a996-475d-90e5-c5b595ad7e88",
+            "purpose": "precautionary",
+            "mode": "current",
+            "at": "2026-11-14T18:05:28+00:00",
+            "reference": null,
+            "versions": [
+              {
+                "version_id": "b49c2f29-a68d-4625-a385-45c60bdb3eab",
+                "start": "2026-02-01T00:00:00+00:00",
+                "end": null
+              }
+            ],
+            "status": "searched",
+            "reason": null
+          }
+        ]
+      },
+      "validated_used_target_ids": [],
+      "displayed_text": "I couldn't find enough available evidence to answer that question."
+    },
+    {
+      "item": "30",
+      "development": false,
+      "graded": true,
+      "status": "completed",
+      "elapsed_ms": 34233.06894302368,
+      "service_calls": {
+        "/api/internal/retrieval/plan-needs": 1,
+        "/api/internal/retrieval/search": 2,
+        "/api/internal/retrieval/rerank": 2,
+        "/api/internal/retrieval/compare-family": 1,
+        "/api/internal/retrieval/generation/answer-needs": 1
+      },
+      "base_logical_lanes": 1,
+      "additional_search_lanes": 0,
+      "final_evidence_count": 5,
+      "discovery": [
+        {
+          "need_id": "n1",
+          "route": "C2-fallback (guard not run)",
+          "original_decision": "selected",
+          "effective_decision": "no_match",
+          "validation_rejection_code": "quote_not_in_candidate",
+          "guard": {
+            "status": "not_run",
+            "reason": "discovery_unresolved",
+            "fallback": "original_unbound"
+          },
+          "work": {
+            "stop_stage": "reviewer_result",
+            "search_requests": 1,
+            "reranker_requests": 1,
+            "reviewer_requests": 1,
+            "charged_to_logical_lane_limit": false,
+            "eligibility_outcome": "evidence_found",
+            "eligibility_reason": null,
+            "active_corpus_present": true,
+            "search_candidate_count": 15,
+            "hydrated_candidate_count": 15,
+            "reranked_candidate_count": 15,
+            "reviewer_candidate_count": 12,
+            "reviewer_invoked": true
+          }
+        }
+      ],
+      "targets": [],
+      "validated_used_target_ids": [],
+      "displayed_text": "Report every key-holder call-out to the registered manager the same day, and include the cause of the activation and any action taken."
+    },
+    {
+      "item": "31",
+      "development": true,
+      "graded": true,
+      "status": "completed",
+      "elapsed_ms": 38566.176891326904,
+      "service_calls": {
+        "/api/internal/retrieval/plan-needs": 1,
+        "/api/internal/retrieval/search": 2,
+        "/api/internal/retrieval/rerank": 2,
+        "/api/internal/retrieval/generation/answer-needs": 2
+      },
+      "base_logical_lanes": 2,
+      "additional_search_lanes": 0,
+      "final_evidence_count": 5,
+      "discovery": [
+        {
+          "need_id": "n1",
+          "route": "planner-bound/C1",
+          "original_decision": null,
+          "effective_decision": null,
+          "validation_rejection_code": null,
+          "guard": null,
+          "work": {}
+        },
+        {
+          "need_id": "n2",
+          "route": "planner-bound/C1",
+          "original_decision": null,
+          "effective_decision": null,
+          "validation_rejection_code": null,
+          "guard": null,
+          "work": {}
+        }
+      ],
+      "targets": [],
+      "validated_used_target_ids": [],
+      "displayed_text": "I couldn't find enough available evidence to answer that question."
+    },
+    {
+      "item": "32",
+      "development": true,
+      "graded": true,
+      "status": "completed",
+      "elapsed_ms": 31051.970958709717,
+      "service_calls": {
+        "/api/internal/retrieval/plan-needs": 1,
+        "/api/internal/retrieval/search": 2,
+        "/api/internal/retrieval/rerank": 2,
+        "/api/internal/retrieval/generation/answer-needs": 1
+      },
+      "base_logical_lanes": 2,
+      "additional_search_lanes": 0,
+      "final_evidence_count": 5,
+      "discovery": [
+        {
+          "need_id": "n1",
+          "route": "other",
+          "original_decision": null,
+          "effective_decision": null,
+          "validation_rejection_code": null,
+          "guard": null,
+          "work": {}
+        },
+        {
+          "need_id": "n2",
+          "route": "other",
+          "original_decision": null,
+          "effective_decision": null,
+          "validation_rejection_code": null,
+          "guard": null,
+          "work": {}
+        }
+      ],
+      "targets": [],
+      "validated_used_target_ids": [],
+      "displayed_text": "For three years' service the handbook's notice table applies: for 2 years or more the required notice is one week per completed year, so after three years you give three weeks' notice.\n\nWhen you resign you should give notice as above, and complete the usual leaving steps: return any issued equipment, keys or access cards; HR will run the exit process including a final pay calculation and (where you agree) an exit interview; and you will receive a final payslip that reflects any outstanding holiday pay."
+    },
+    {
+      "item": "G2",
+      "development": false,
+      "graded": false,
+      "status": "completed",
+      "elapsed_ms": 31482.695817947388,
+      "service_calls": {
+        "/api/internal/retrieval/plan-needs": 1,
+        "/api/internal/retrieval/search": 2,
+        "/api/internal/retrieval/rerank": 2,
+        "/api/internal/retrieval/compare-family": 1,
+        "/api/internal/retrieval/generation/answer-needs": 1
+      },
+      "base_logical_lanes": 1,
+      "additional_search_lanes": 1,
+      "final_evidence_count": 5,
+      "discovery": [
+        {
+          "need_id": "n1",
+          "route": "C2-resolved",
+          "original_decision": "selected",
+          "effective_decision": "selected",
+          "validation_rejection_code": null,
+          "guard": null,
+          "work": {
+            "stop_stage": "reviewer_result",
+            "search_requests": 1,
+            "reranker_requests": 1,
+            "reviewer_requests": 1,
+            "charged_to_logical_lane_limit": false,
+            "eligibility_outcome": "evidence_found",
+            "eligibility_reason": null,
+            "active_corpus_present": true,
+            "search_candidate_count": 15,
+            "hydrated_candidate_count": 15,
+            "reranked_candidate_count": 15,
+            "reviewer_candidate_count": 12,
+            "reviewer_invoked": true
+          }
+        }
+      ],
+      "targets": {
+        "need.n1.temporal_targets": [
+          {
+            "target_id": "n1:requested",
+            "need_id": "n1",
+            "family_id": "0883c3ed-06e2-43e9-9cec-f30800e6064c",
+            "purpose": "requested",
+            "mode": "current",
+            "at": "2026-11-14T18:08:03+00:00",
+            "reference": null,
+            "versions": [
+              {
+                "version_id": "8393e791-8177-4568-8660-bfdd4efcfab3",
+                "start": "2026-05-01T00:00:00+00:00",
+                "end": null
+              }
+            ],
+            "status": "searched",
+            "reason": null
+          },
+          {
+            "target_id": "n1:date:1",
+            "need_id": "n1",
+            "family_id": "0883c3ed-06e2-43e9-9cec-f30800e6064c",
+            "purpose": "precautionary",
+            "mode": "dated",
+            "at": null,
+            "reference": {
+              "turn_id": "user-1",
+              "quote": "March 2025",
+              "at": null,
+              "precision": "month",
+              "value": "2025-03",
+              "period_start": "2025-03-01T00:00:00+00:00",
+              "period_end": "2025-04-01T00:00:00+00:00"
+            },
+            "versions": [
+              {
+                "version_id": "ea5a19a4-49e9-4815-bb07-cf72b9fe9fea",
+                "start": "2024-05-01T00:00:00+00:00",
+                "end": "2025-05-01T00:00:00+00:00"
+              }
+            ],
+            "status": "searched",
+            "reason": null
+          }
+        ]
+      },
+      "validated_used_target_ids": [
+        "n1:requested"
+      ],
+      "displayed_text": "The current Alderbridge procedure requires soiled linen to be washed at 65 degrees Celsius.\nTemporal basis: 2026-11-14T18:08:03+00:00; version 8393e791-8177-4568-8660-bfdd4efcfab3; effective 2026-05-01T00:00:00+00:00 to open end (end exclusive)."
+    },
+    {
+      "item": "G3",
+      "development": false,
+      "graded": false,
+      "status": "retrieval_no_answer",
+      "elapsed_ms": 20243.45588684082,
+      "service_calls": {
+        "/api/internal/retrieval/plan-needs": 1
+      },
+      "base_logical_lanes": 0,
+      "additional_search_lanes": 0,
+      "final_evidence_count": 0,
+      "discovery": [],
+      "targets": [],
+      "validated_used_target_ids": [],
+      "displayed_text": "I couldn't interpret this question reliably, so I haven't used a guessed interpretation to search or answer it. Please try rephrasing your question."
+    }
+  ],
+  "original_dispatch_accounting_subtotal": 0.30510164,
+  "post_run_rejected_planner_receipt_supplement": [
+    {
+      "item": "G3",
+      "attempt": 1,
+      "input_tokens": 18632,
+      "output_tokens": 865,
+      "rate_basis": "retained gpt-5-mini .25 input / 2 output per million; cache unknown treated uncached",
+      "estimated_usd": 0.006388
+    },
+    {
+      "item": "G3",
+      "attempt": 2,
+      "input_tokens": 18718,
+      "output_tokens": 904,
+      "rate_basis": "retained gpt-5-mini .25 input / 2 output per million; cache unknown treated uncached",
+      "estimated_usd": 0.0064875
+    }
+  ],
+  "known_and_retained_rate_subtotal_with_supplement": 0.31797714,
+  "reranking_conservative_allowance_usd": 0.0064627,
+  "unpriced_reserve_usd": 5,
+  "complete_invoice_total_available": false,
+  "conservative_total_with_reserve": 5.32443984,
+  "cost_limit": 50,
+  "pre_dispatch_reservation": 47,
+  "accounting_note": "Nested checker and entailment receipts are already included in parent totals; not added twice. Qdrant/infrastructure costs and complete invoice pricing remain unavailable. Frozen dispatch accounting is preserved; G3 null service receipt is supplemented only from its retained rejection token receipts."
+}

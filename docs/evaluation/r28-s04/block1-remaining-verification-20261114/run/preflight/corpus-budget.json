@@ -1,0 +1,26 @@
+{
+    "corpus_bounds": {
+        "max_text_bytes": 2798,
+        "max_recorded_tokens": 465
+    },
+    "max_context_characters": 60000,
+    "reranker_config": {
+        "embedding_attempts": 4,
+        "embedding_request_timeout_seconds": 10,
+        "embedding_initial_backoff_seconds": 15,
+        "embedding_maximum_backoff_seconds": 120,
+        "provider_cooldown_maximum_seconds": 120,
+        "qdrant_request_timeout_seconds": 10,
+        "maximum_qdrant_requests": 4,
+        "local_execution_allowance_seconds": 20,
+        "safety_margin_seconds": 20,
+        "search_minimum_timeout_seconds": 480,
+        "reranker_attempts_per_side": 3,
+        "reranker_request_timeout_seconds": 10,
+        "reranker_initial_backoff_seconds": 15,
+        "reranker_maximum_backoff_seconds": 90,
+        "reranker_provider_cooldown_maximum_seconds": 90,
+        "reranker_maximum_sides": 2,
+        "reranker_minimum_timeout_seconds": 460
+    }
+}
