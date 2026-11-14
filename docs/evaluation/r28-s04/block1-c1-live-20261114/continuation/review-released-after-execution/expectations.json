@@ -1,0 +1,61 @@
+{
+  "schema_version": "c1-confirmation-expectations-v1",
+  "package_id": "C1-CONFIRMATION-20261114",
+  "authored_by": "reviewer (Claude), 2026-11-14, before any C1 implementation output exists",
+  "status": "FROZEN",
+  "standing": "Independently prepared fresh confirmation for C1 (named-document, resolved-family scope). Engineering corpus dolved-care-v4 checkpoint-19, primary scope. Not held-out; not a statistically independent reliability estimate. No family here appears in block1-* evidence or apps test fixtures (grep at authoring time). Families excluded at authoring: those used in the temporal package, input 16, checkpoint inputs (pressure area, gas safety, resident finances, DoLS, uniform allowance, e-learning, on-call manager, key cutting, learning from deaths), and three 'added_removed_clause' families whose v2 claims removal of a permission v1 never states (agency staff usage, software licensing, pet visiting) - recorded as a corpus observation, not fixed.",
+  "source_basis": "Authored from semantic masters; key sentences confirmed verbatim in the rendered .txt artefacts for F1, F4, F5 and artefact SHA-256 prefixes match source-manifest for the PDF families (F2, F3). PDF text and ALL items must be verified against the ingested authorised chunks and the production DocumentAuthorityTimeline before execution; that verification happens only after C1 is frozen, and any defect is recorded and resolved explicitly, never silently edited.",
+  "verdict_rules": {
+    "answer": "Existing stage-specific rule: correct / qualified-correct / wrong / no-answer / clarification. Wrong = misstates source, wrong version or period, omits an explicitly requested part, drops a gating source condition, or asserts more than the source supports.",
+    "route": "Record per item whether the requested-history route or the new precautionary C1 route produced the evidence, whether the alternative lane and slot were preserved, and the validated answer target. A correct answer via the existing requested-history route is NOT evidence that the C1 safeguard executed.",
+    "c1_holds": "Wrong-version answer from the new mechanism; historical precautionary evidence used as direct support for a current claim; unsafe target promotion; silent loss of a required target; any permission/authority/citation violation."
+  },
+  "items": [
+    {
+      "id": "F1", "shape": "historical_rule",
+      "family": "v4b.complaints.compliments-escalation-guidance (title: Serious Complaint Escalation Guidance)",
+      "intended_roles": {"10 March 2026": "authority valid-at date"},
+      "versions": "v1 effective 2025-07-01, superseded 2026-07-01 (selected); v2 effective 2026-07-01 (current).",
+      "expected_answer": "Within 4 hours of the complaint being received, regardless of the time of day (the version in force on 10 March 2026). Mentioning that the window is now 2 hours is acceptable if clearly labelled as the later rule.",
+      "source_support": "v1: 'Escalate a serious complaint to the Quality Lead within 4 hours of it being received, regardless of the time of day.' v2: 'within 2 hours of it being received, a tightening from the previous 4-hour window'.",
+      "wrong": "2 hours presented as the rule on 10 March 2026; or no-answer when v1 is eligible."
+    },
+    {
+      "id": "F2", "shape": "current_question_with_old_event",
+      "family": "v4b.care.admissions-preadmission-assessment-policy (title: Admissions and Pre-Admission Assessment Policy)",
+      "intended_roles": {"March 2025": "event/fact context only (past admission)", "today": "current authority"},
+      "versions": "v1 effective 2025-02-01, superseded 2026-02-01 (in force March 2025; no capacity-screen requirement); v2 effective 2026-02-01 (current, selected).",
+      "expected_answer": "Yes. The current policy requires a documented mental capacity screen as part of every pre-admission assessment (a new mandatory step). Under the emergency placement route the screen may be completed within the first 72 hours of admission; mentioning this is good but not required.",
+      "source_support": "v2: 'Complete a documented mental capacity screen as part of every pre-admission assessment, a new mandatory step introduced in this version.' v2: under the emergency placement route '... the fuller assessment, GP summary and mental capacity screen completed within the first 72 hours of admission.'",
+      "wrong": "Answering from v1 (no screen required / not mentioned) because of the March 2025 admission; presenting historical evidence as the current requirement; asserting the screen must always precede admission with no emergency allowance."
+    },
+    {
+      "id": "F3", "shape": "two_dates_distinct_roles",
+      "family": "v4b.medication.self-administration-of-medication-policy (title: Self-Administration of Medication Policy)",
+      "intended_roles": {"20 May 2026": "event/fact context only (request date)", "10 June 2026": "authority valid-at date (start of self-administration; the rule is tied to before self-administration begins)"},
+      "versions": "v1 effective 2025-06-01, superseded 2026-06-01 (topical exemption; in force on 20 May 2026); v2 effective 2026-06-01 (selected for 10 June 2026).",
+      "expected_answer": "Yes. From 1 June 2026 a full capacity and risk assessment is required before self-administration begins for any medication, including a topical medication such as a skin cream; the earlier topical exemption was removed. Mentioning the new quarterly re-review is acceptable.",
+      "source_support": "v2: 'Complete a capacity and risk assessment before self-administration begins for any medication, including a topical medication; the previous exemption for topical medication from the full assessment has been removed.' v1: '... for any medication other than a topical medication, which may be self-administered without the full assessment under this version.'",
+      "wrong": "No / exempt (request date used as authority, selecting v1); or a categorical answer that ignores which date governs."
+    },
+    {
+      "id": "F4", "shape": "historical_current_comparison",
+      "family": "v4b.medication.fridge-breakdown-procedure (title: Medication Fridge Breakdown Procedure)",
+      "intended_roles": {"November 2025": "authority valid-at period (month) for the first part", "now": "current authority for the second part"},
+      "versions": "v1 effective 2025-04-01, superseded 2026-04-01 (November 2025 resolves to v1 for the whole month); v2 effective 2026-04-01 (current).",
+      "expected_answer": "November 2025: call the on-call manager immediately (keeping the fridge closed and not moving stock on assumption); product-specific pharmacy or manufacturer advice is then obtained for the affected medicines. Now: call both the on-call manager and the supplying pharmacy, a new requirement in the current version.",
+      "source_support": "v1: 'Keep the affected fridge closed, do not move stock on assumption, and call the on-call manager immediately'; v1 and v2: 'obtain product-specific pharmacy or manufacturer advice'. v2: 'call both the on-call manager and the supplying pharmacy (a new requirement — the previous version only required the on-call manager)'.",
+      "wrong": "Same answer for both periods; stating the supplying-pharmacy call was an immediate requirement in November 2025; stating v1 required no pharmacy contact at all; omitting either part."
+    },
+    {
+      "id": "F5", "shape": "conflicting_temporal_request",
+      "family": "v4b.care.continence-care-policy (title: Continence Care Policy)",
+      "intended_roles": {"current": "authority selector (current version)", "January 2026": "conflicting authority valid-at period"},
+      "conflict_observable_from_question": "The question pairs 'the current ... Policy' with a past month; the conflict is visible without corpus metadata.",
+      "versions": "v1 effective 2025-05-01, superseded 2026-05-01 (in force January 2026: 'should'); v2 effective 2026-05-01 (current: 'must').",
+      "expected_answer": "ACCEPTABLE: (a) a clarification about which version or date they mean; OR (b) both, with the conflict made explicit: in January 2026 the version then in force said the assessment should be completed within one week of admission and reviewed 6-monthly (not stated as mandatory); the current version, from 1 May 2026, makes it mandatory ('must ... no longer merely advisory').",
+      "source_support": "v1: 'A continence assessment should be completed within one week of admission and reviewed 6-monthly'. v2: 'A continence assessment must be completed within one week of admission and reviewed 6-monthly — no longer merely advisory'.",
+      "wrong": "Either version alone without noting that 'current' and 'January 2026' select different versions."
+    }
+  ]
+}

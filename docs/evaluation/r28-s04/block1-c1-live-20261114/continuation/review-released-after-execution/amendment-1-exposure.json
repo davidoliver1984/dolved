@@ -1,0 +1,42 @@
+{
+  "schema_version": "c1-confirmation-amendment-v1",
+  "package_id": "C1-CONFIRMATION-20261114",
+  "amends": {
+    "questions-only.json": "e1a54d05d0b688988a083596390ff9a9062b7a32c9352ea716a3a156145a9659",
+    "expectations.json": "e518c6a0705ec642a78186dc519c9191a48e9d7c5de70b1b67c09d16fb55e5bd"
+  },
+  "authored_by": "reviewer (Claude)",
+  "authored_on": "2026-11-14",
+  "trigger": "David asked for F4's exposure history to be reconciled with the earlier Medication Fridge Breakdown / pharmacy-escalation evaluation. Before execution and before any C1 implementation output.",
+  "original_files_unchanged": true,
+  "questions_and_expectations_changed": false,
+  "correction_to_original_standing": "expectations.json 'standing' says no family appears in block1-* evidence or apps test fixtures. That rested on a title-only search of those two locations and is incomplete: an exact family-ID search finds admissions-preadmission chunks in block1-extractive-continuation-20261113/additional-chunks.json, and the wider evaluation record (below) shows prior exposure of F1 and F4. The statement is superseded by this classification.",
+  "search_performed": "Exact v4b family-ID and title search over docs/evaluation, tests/evaluation/benchmarks and tests/evaluation/engineering-populations, excluding any path naming held-out, calibration or protected material (those files were not opened). The 'fridge' and 'self-administ' hits in EXP-0001..EXP-0008 are an earlier corpus's documents (no v4b identifiers) and are not exposure of these families. r28-s03 materialisation results only list ingested documents and are not question exposure.",
+  "classification": {
+    "fresh_wording_on_previously_exposed_source_contrast": {
+      "F4": {
+        "family": "v4b.medication.fridge-breakdown-procedure",
+        "prior_exposure": [
+          "Engineering population dolved-care-v4 v1/v2 case v4.case.corrected-b05-07 (temporal_mode COMPARE): 'The meds fridge has packed up—who must I call now, and what extra call was added in April 2026?' and 'Compared with the former procedure, which additional escalation contact is required when the medication refrigerator fails?' Expected evidence is the same v1/v2 escalation sentences F4 relies on.",
+          "r07-evidence-units-v4-20261111 (case-review, source-verification, evidence-units corpus, ranked-chunk snapshot): the same b05-07 evidence units.",
+          "r01p v15 confirmation, r16: 'Does the fridge breakdown procedure still only need the on-call manager called', which exposed and fixed a document-subject capture defect."
+        ],
+        "assessment": "The same shape (historical/current comparison) and the same source contrast have been used in development and repair. F4 adds a dated month (November 2025) as a valid-at period, which b05-07 does not; that is the only new element. Treat it as a known-contrast regression item, not fresh confirmation."
+      },
+      "F1": {
+        "family": "v4b.complaints.compliments-escalation-guidance",
+        "prior_exposure": [
+          "r07-evidence-units-v4-20261111 case v4.case.corrected-b03-03 (comparison): 'A serious complaint has just landed—how fast do I actually need to get it to the Quality Lead now, and what was the old window?' and 'Do we still have four hours to escalate a serious complaint, or did the deadline change in July 2026?' Same 4-hour/2-hour units."
+        ],
+        "assessment": "The source contrast is exposed. F1's shape differs: a single historical valid-at date that must select v1 alone, where b03-03 asks for current plus old. Fresh wording and shape on an exposed contrast; report separately from fresh-family items."
+      }
+    },
+    "fresh_family_and_wording": {
+      "F2": {"family": "v4b.care.admissions-preadmission-assessment-policy", "prior_exposure": "No case, expected evidence or question. Chunks appear only incidentally as retrieved candidates (r07 ranked-chunk snapshot; block1-extractive-continuation additional-chunks). Listed in the population author-declaration's whole-corpus document view, which every family is."},
+      "F3": {"family": "v4b.medication.self-administration-of-medication-policy", "prior_exposure": "No case, expected evidence or question. Incidental ranked-chunk appearances in the r07 snapshot only."},
+      "F5": {"family": "v4b.care.continence-care-policy", "prior_exposure": "No case, expected evidence or question. Incidental ranked-chunk appearances in the r07 snapshot; author-declaration whole-corpus view only."}
+    }
+  },
+  "reporting_rule": "Report three denominators separately and never pool them: fresh family and wording (F2, F3, F5; n=3); fresh wording on an exposed contrast (F1, F4; n=2); known regression items (input 16 and the T-package). A pass on F1 or F4 is not evidence of generalisation to unseen sources. The fresh-family denominator of 3 is a small direction signal, not a reliability estimate.",
+  "not_changed_and_why": "No item is replaced. Replacing F1/F4 after the exposure was found would be a selection choice outside the freeze; David can direct a replacement explicitly before execution, which would be recorded as a further amendment with new hashes."
+}

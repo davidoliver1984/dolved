@@ -1,0 +1,30 @@
+{
+  "schema_version": "c1-confirmation-assessment-v1",
+  "run_id": "R28-C1-LIVE-20261114-01",
+  "evidence": "docs/evaluation/r28-s04/block1-c1-live-20261114/continuation (published at 5997aec; execution 44219e2, runtime 4dde6707…b338)",
+  "assessed_by": "reviewer (Claude), 2026-11-14, against expectations.json (e518c6a0…5e5bd) and amendments 1-3; expectations unchanged after outputs",
+  "method": "Answer text and per-part citations mapped to the allocated-evidence order; cited handles traced to version. Planner plan, inventory, temporal targets and validated temporal use read from the case records. Stage-specific rules; no rerun.",
+  "items": {
+    "F1": {"group": "exposed contrast", "route": "Planner emitted COMPARE with authority date 2026-03-10 for a single dated question; no C1 targets (C1 is retrieve-only). Generation's first attempt was rejected for entailment_unsupported; the second was accepted within existing ceilings.",
+      "verdict": "CORRECT", "basis": "'within 4 hours of it being received' on 10 March 2026 (v1). The later 2-hour rule is labelled as superseding. Defect noted, not gating: the parenthetical '(effective from the version that replaces the 4-hour window)' is circular and gives no date.",
+      "c1_evidence": "none"},
+    "F2": {"group": "fresh", "route": "RETRIEVE, authority current, matched family. The March 2025 background date was inventoried from a context span; a precautionary v1 target was admitted (2 of 5 slots v1). The validated use is n1:requested (current v2), planner_disagreement false. All three cited handles are v2.",
+      "verdict": "CORRECT", "basis": "Mental capacity screen required in every pre-admission assessment under the version effective 1 February 2026. The 72-hour emergency allowance is not mentioned, which the expectation marks optional; the answer does not contradict it.",
+      "c1_evidence": "Current-answer protection exercised once: historical evidence present in the generation input and not used as support."},
+    "F3": {"group": "fresh", "route": "RETRIEVE, authority current, fact_reference 2026-06-10 (the same label shape as input 16's confident error, but harmless here because the current version equals the 10 June version). Precautionary targets: n1:date:1 (20 May -> v1, 3 of 5 slots) and n1:date:2 (10 June -> v2). The validated use is n1:date:2; both cited handles are v2.",
+      "verdict": "CORRECT", "basis": "A full capacity and risk assessment is required before self-administration begins for any medication, including topical, under the version in force from 1 June 2026. The answer states the 10 June temporal basis.",
+      "c1_evidence": "Dated-target selection exercised once with the wrong (v1) version present in the majority of slots and not misused. It does NOT demonstrate a live rescue from a wrongly excluded version, because the planner's label did not exclude the needed version."},
+    "F4": {"group": "exposed contrast (comparison control)", "route": "n1 COMPARE (period 2025-11) plus n2 RETRIEVE current; no C1 targets.",
+      "verdict": "CORRECT", "basis": "November 2025: call the on-call manager immediately. Now: call both the on-call manager and the supplying pharmacy. No listed wrong condition. The v1 pharmacy/manufacturer-advice step is not mentioned; that omission is non-gating per the expectation.",
+      "c1_evidence": "none"},
+    "F5": {"group": "fresh", "route": "COMPARE, authority period 2026-01; no C1 targets. Cites both v1 and v2.",
+      "verdict": "QUALIFIED - not counted as a pass", "basis": "The facts are accurate ('should' in January 2026; a later version says 'must'). But the frozen acceptable answer (b) requires the conflict to be made explicit, and the answer instead resolves it silently toward January 2026 with a categorical 'No' to a question framed 'under the current policy'. It never identifies the later version as the current one and gives no 1 May 2026 date. This falls outside the frozen 'wrong' definition (both versions are presented) but does not meet the acceptance text.",
+      "stage": "Generation (conflict disclosure). The planner's compare plan supplied both versions. Same failure class as T12 (silently dropping one temporal selector). Not a C1 hold condition.",
+      "c1_evidence": "none"}
+  },
+  "totals": {"correct": 4, "qualified_not_pass": 1, "wrong": 0, "no_answer": 0, "clarification": 0},
+  "by_group": {"fresh (F2,F3,F5)": "2 correct, 1 qualified", "exposed (F1,F4)": "2 correct"},
+  "c1_hold_conditions": "None triggered: no wrong-version answer, no historical precautionary evidence used for a current claim, no unsafe target promotion, no silent required-target loss, no integrity violation found in the records reviewed.",
+  "c1_conclusion": "Component demonstration within resolved-family scope, on n=2 exercised items (F2, F3), both correct. Live rescue from a confidently wrong exclusion is NOT demonstrated; that remains provider-free evidence only. C1 is not evidence for topic-only questions (C2).",
+  "carried_forward": ["F5 conflict-disclosure defect -> Block 3 list alongside T12", "Planner chose COMPARE for a single-date question (F1): harmless here, but it bypasses C1"]
+}

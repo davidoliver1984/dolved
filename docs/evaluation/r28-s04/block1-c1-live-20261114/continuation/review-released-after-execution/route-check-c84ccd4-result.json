@@ -1,0 +1,61 @@
+{
+    "temporal_context_migration_applied": [],
+    "F1": {
+        "references": [
+            [
+                "10 March 2026",
+                "day",
+                "serious-complaint-escalation-v1.txt"
+            ]
+        ],
+        "current": "serious-complaint-escalation-v2.txt"
+    },
+    "F2": {
+        "references": [
+            [
+                "March 2025",
+                "month",
+                "admissions-preadmission-v1.pdf",
+                null
+            ]
+        ],
+        "current": "admissions-preadmission-v2.pdf"
+    },
+    "F3": {
+        "references": [
+            [
+                "20 May 2026",
+                "day",
+                "self-administration-medication-v1.pdf"
+            ],
+            [
+                "10 June 2026",
+                "day",
+                "self-administration-medication-v2.pdf"
+            ]
+        ],
+        "current": "self-administration-medication-v2.pdf"
+    },
+    "F4": {
+        "references": [
+            [
+                "November 2025",
+                "month",
+                "medication-fridge-breakdown-v1.txt",
+                null
+            ]
+        ],
+        "current": "medication-fridge-breakdown-v2.txt"
+    },
+    "F5": {
+        "references": [
+            [
+                "January 2026",
+                "month",
+                "continence-care-policy-v1.txt",
+                null
+            ]
+        ],
+        "current": "continence-care-policy-v2.txt"
+    }
+}

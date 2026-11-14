@@ -1,0 +1,27 @@
+{
+  "schema_version": "c1-confirmation-amendment-v1",
+  "package_id": "C1-CONFIRMATION-20261114",
+  "amends": {"questions-only.json": "e1a54d05d0b688988a083596390ff9a9062b7a32c9352ea716a3a156145a9659", "expectations.json": "e518c6a0705ec642a78186dc519c9191a48e9d7c5de70b1b67c09d16fb55e5bd"},
+  "authored_by": "reviewer (Claude)", "authored_on": "2026-11-14",
+  "questions_and_expectations_changed": false,
+  "original_hashes_rechecked": "questions-only, expectations, amendment-1, amendment-2 and its two supporting files all OK.",
+  "verified_against": {"implementation_commit": "b1e94fe", "evidence_head": "c84ccd4d9570c5ceaafb187b2714483c45c597aa", "runtime_aggregate_reported": "4dde6707235e66ac707ed1cba90be8845738240dff9e4e6f2a37cc309989b338", "environment": "dolved-r28-s03-api-1 (bind-mounts the hold-branch working tree), read-only transaction, rolled back; question text via stdin only. Script route-check-c84ccd4.php; raw result route-check-c84ccd4-result.json. A temporary copy of the script in the container's /tmp was removed as root afterwards."},
+  "source_and_timeline_recheck": "Not repeated: b1e94fe changes no timeline, eligibility or ingestion code, and amendment-2's ingested results stand. Period resolution was re-run through TemporalPeriodResolver for the recognised months.",
+  "inventory_on_full_question_text": {
+    "F1": "'10 March 2026' (day) -> v1; current v2. Distinct.",
+    "F2": "'March 2025' (month) -> v1 (whole month, single version); current v2. Distinct.",
+    "F3": "'20 May 2026' (day) -> v1; '10 June 2026' (day) -> v2; current v2.",
+    "F4": "'November 2025' (month) -> v1; current v2.",
+    "F5": "'January 2026' (month) -> v1; current v2."
+  },
+  "route_classification": {
+    "historical_alternative_use": "F1 (an exposed contrast; exercised as precautionary only if the planner wrongly selects current; otherwise the current target is the precautionary alternative). F3 (fresh; whichever date the planner selects, the other version is an admitted precautionary target).",
+    "current_answer_protection": "F2 (fresh; a correct current plan gets the March 2025 v1 version as precautionary evidence that must not directly support the current answer; a wrong March 2025 plan gets current as precautionary).",
+    "conditional": "F5 (fresh): exercises C1 only if the planner emits a retrieve need; a compare or clarification plan uses existing routes. Record which occurred.",
+    "comparison_control": "F4 (exposed contrast): compare operation; C1 is retrieve-only. Kept as a comparison regression control; never C1 evidence.",
+    "dependency": "Inventory reads only the planner's grounded question/context spans. If the planner omits the dated clause from the spans, no reference exists. This is model-dependent and must be recorded per item."
+  },
+  "exposure_groups_unchanged": "Fresh family and wording: F2, F3, F5. Fresh wording on an exposed contrast: F1, F4.",
+  "deployment_finding": "The evaluation database has no applied migration matching temporal_context (2026_11_14_000001_add_temporal_context_to_generated_answers). It must be applied there as part of the coordinated deployment before dispatch, otherwise persistence of envelope-v4 answers cannot be exercised.",
+  "verdict": "PASS. Release questions-only.json for the single-pass live checkpoint."
+}

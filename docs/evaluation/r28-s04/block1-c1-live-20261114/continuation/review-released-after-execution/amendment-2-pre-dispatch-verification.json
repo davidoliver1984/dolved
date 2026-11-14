@@ -1,0 +1,40 @@
+{
+  "schema_version": "c1-confirmation-amendment-v1",
+  "package_id": "C1-CONFIRMATION-20261114",
+  "amends": {
+    "questions-only.json": "e1a54d05d0b688988a083596390ff9a9062b7a32c9352ea716a3a156145a9659",
+    "expectations.json": "e518c6a0705ec642a78186dc519c9191a48e9d7c5de70b1b67c09d16fb55e5bd",
+    "amendment-1-exposure.json": "ccc36505993fe6b7c1ff18a31f152dcf536662f9d45cc262bf4b44d60a26e6b8"
+  },
+  "authored_by": "reviewer (Claude)", "authored_on": "2026-11-14",
+  "verified_against": {
+    "c1_freeze_commit": "55f4ed601cd721e596e95c4b443eeda8c5bdd796",
+    "c1_runtime_aggregate_reported": "5121718b8ef305426e8525d32d1a8a459bfbdc9abf038251f163df7dd0d4bc1c",
+    "environment": "dolved-r28-s03 evaluation stack (container dolved-r28-s03-api-1), workspace 5323cd6b-8b7a-40f9-98b0-9413c75f643e, active corpus generation b24a79c2-875e-4f7c-8fa9-3681db92ae73, app timezone UTC, established primary actor via BuildAuthorisedKnowledgeScope (membership verified). Read-only transaction, rolled back.",
+    "script": "pre-dispatch-check.php", "raw_result": "pre-dispatch-ingested-result.json"
+  },
+  "questions_and_expectations_changed": false,
+  "results": {
+    "catalogue_titles": "All five family names in the authorised catalogue match the titles named in the questions exactly; one family and two versions per item; none tombstoned.",
+    "version_state": "All ten versions indexed, approved, not withdrawn, present in the active authorised corpus. Source checksums equal the source-manifest SHA-256 values.",
+    "timelines_production_constructor": {
+      "F1": "2026-03-10 -> v1; current -> v2. PASS",
+      "F2": "current -> v2; period 2025-03 -> v1 (background version). PASS",
+      "F3": "2026-05-20 -> v1; 2026-06-10 -> v2; current -> v2. PASS",
+      "F4": "2025-11-01 and 2025-11-30 -> v1; TemporalPeriodResolver 2025-11 -> v1 (no clarification); current -> v2. PASS",
+      "F5": "2026-01-01 and 2026-01-31 -> v1; period 2026-01 -> v1; current -> v2. PASS"
+    },
+    "ingested_text": "Every source_support sentence in expectations.json is verbatim (whitespace-normalised) in the ingested chunks of the stated version, including F2 and F3 PDFs (previously unverified) and the material conditions: F2 v2 72-hour emergency route; F3 v2 'before self-administration begins'; F4 v1 and v2 'obtain product-specific pharmacy or manufacturer advice'; F5 should/must. Discrimination confirmed: F2 v1 contains no 'mental capacity screen'; F4 v1 contains no 'supplying pharmacy'.",
+    "defects_found": "None in sources, timelines or expectations."
+  },
+  "route_applicability_under_frozen_c1": {
+    "basis": "Reading of TemporalEvidenceAlternatives / ExplicitTemporalReferences at 55f4ed6, recorded before execution. C1 augments only retrieve needs with a matched single family AND at least one exact-day date (ISO or 'D Month YYYY') in the grounded spans; month/year periods are not inventoried, and a need with no inventoried date gets no targets at all (including no current guard).",
+    "F1": "Exact day. C1 exercisable under either planner reading (correct historical: current added as precautionary; wrong current: v1 added as precautionary).",
+    "F2": "Month only ('March 2025'). C1 NOT exercised. A correct current plan answers via the existing route; a wrong March-2025 authority plan would get no current guard.",
+    "F3": "Two exact days. C1 exercisable under either reading.",
+    "F4": "Compare operation and month only. C1 does not apply; existing comparison route.",
+    "F5": "Month only. C1 NOT exercised; existing clarification/compare route only.",
+    "consequence": "Only F1 (exposed contrast) and F3 (fresh) can exercise the new mechanism. Results for F2, F4, F5 test existing routes and must be reported as 'C1 not applicable', never as C1 evidence."
+  },
+  "dispatch_status": "Verification complete. Not handed to the implementer pending David's decision on the month/year coverage limit (see report)."
+}

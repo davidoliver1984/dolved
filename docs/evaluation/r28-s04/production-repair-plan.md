@@ -10,6 +10,42 @@ This is the current checklist within the existing R00–R08 programme. The evide
 
 ### Block 1 — interpretation and execution consistency (R02/R05)
 
+#### C1 independent review outcome and road to the full run — David, 2026-11-14
+
+**C1 result (independent source-based review, released after execution):** see [review inventory](block1-c1-live-20261114/continuation/review-released-after-execution/REVIEW-INVENTORY.md) (assessment SHA-256 `a162f4e0c235f16d9a97b2545b44fc1617f4868d8c702989949667cd14b610dc`).
+
+- F1, F2, F3 and F4 are correct. F5 is partial and **not a pass**. There are no wrong answers or no-answers.
+- Only F2 and F3 exercised C1. F2 showed current-answer protection with historical evidence present. F3 showed dated-target selection with competing evidence.
+- **Not demonstrated live:** rescue from a confident planner error that excluded the required historical version. F3's dated version was also the current version, so that path has provider-free integration evidence only.
+- No C1 stop condition was observed.
+- **David accepts C1 as a bounded component demonstration** for named-document questions. It is not broad temporal reliability or pilot readiness. C1 will not be rerun to obtain a particular planner mistake.
+- Block 1 remains HOLD.
+
+**F5 attribution:** the assembled generation request carried the full "current" question, v2 as primary (`authority_start 2026-05-01`, `authoritative_at_evaluated_at: true`) and v1 as comparison. The current version's identity and date reached generation, and the answer still resolved the conflict silently. F5 is therefore a named **Block 3 conflict-disclosure acceptance case, linked to T12**. One minor upstream contribution is recorded: the plan has no conflicting-selector representation.
+
+**Sequence to the full run.** It reconciles with the dependencies and criteria already recorded under Blocks 2–4 and replaces none of them.
+
+- **A. C2 (approved increment):** ordinary questions that name no document, including the original topic-only input 16. Bounded current-side family discovery for retrieve needs is connected to the C1 mechanism within the existing limits. Any change to how discovery counts against the four searches needs its own explicit decision. The early, small production checkpoint must cover:
+  - historical evidence remaining available where the planner's choice would exclude it;
+  - current-answer protection with old dates or evidence present;
+  - questions that name no document.
+
+  It uses actual production routing, with no injected plans or bindings. Controlled wrong-plan replay is reported separately from live evidence. A live question that takes another route is recorded as such and not rerun.
+- **B. Remaining Block 1 verification:** inputs 17–32, and any closure criteria not yet evidenced, run under the then-current runtime identity as a **new run**, not a continuation of the `0eab3157…` freeze. Inputs 1–16 and every earlier result are preserved unchanged. Closure requires every Block 1 criterion already recorded below.
+- **C. Blocks 2 and 3:** their recorded deliverables and focused live checks, with known defects named and traceable. These include b01-09 `quote_not_in_candidate`, authority-change periods (relative-checkpoint inputs 2/3), historical applicability, inputs 15 and 10, the 31 baseline test-contract updates, and F5/T12 conflict disclosure.
+- **D. Block 4 full readiness run:** a freshly executed, complete production-path run, only after the final runtime and acceptance criteria are frozen.
+  - **Entry criteria:** Blocks 1–3 closed under their own criteria; the readiness-prerequisite test failures fixed or justified; acceptance criteria frozen before outputs.
+  - **Deliverables:**
+    - the existing governed population, for comparable regression measurement;
+    - a separately identified, independently authored fresh confirmation set, for generalisation, reported separately;
+    - Recall@K, Precision@K, MRR and nDCG@K with explicit K, relevance units, denominators, and attempted-search versus end-to-end treatment, as specified under Block 4;
+    - planning, authority/version selection, outcomes, answer correctness and completeness, citations, tenancy and injection results;
+    - latency, provider usage, cost, failures and retries;
+    - source-based review of answers, not retrieval metrics alone;
+    - an evidence-linked PROJECT_JOURNEY update covering improvements and unresolved failures.
+
+  The existing population is not reauthored, and no broad audit programme is added. No calendar date is promised; the remaining-work estimates under Block 4 still apply.
+
 #### Approved C1 implementation boundary — 2026-11-14
 
 **C1 single-pass live checkpoint completed, ungraded (2026-11-14):** continuation from `44219e2`, unchanged runtime `4dde6707235e66ac707ed1cba90be8845738240dff9e4e6f2a37cc309989b338`. The isolated owner-role migrator applied only the named temporal-context migration; coordinated API/AI restart and mounted-runtime verification passed. Capture-only proof: 4 existing development fixtures / 240 assertions. Five released items ran once each, in order, with five fresh persisted conversations and one user turn/run each. All reached `completed`; this is not a correctness verdict. C1 targets were admitted on F2/F3: F2 declared requested-target use, F3 precautionary `n1:date:2` use. F1/F4/F5 used comparison-containing plans without C1 temporal targets, and are not counted as new-mechanism confirmation. All ledgers and persistence reloads verified. Recorded/retained-rate subtotal USD 0.06929542; conservative reranking allowance USD 0.001045; total including uncertainty reserve USD 0.57034042 against USD 1.50 cap, not a billed invoice total. [Full ungraded evidence and report](block1-c1-live-20261114/continuation/report.md). No application change, grading, further dispatch, C2 or main merge. **Block 1 HOLD; reviewer assessment remains pending.** Earlier stopped-preflight evidence below is retained unchanged.
@@ -442,6 +478,8 @@ No organisation-name blocker remains: the nine-question reference evidence motiv
 ### Block 3 — evidence coverage and answer assembly (R04)
 
 **First implementation task — David, 2026-11-12:** update the 26 `test_polarity_structure` and 5 `test_generation_live_safety` baseline failures to the current contract, keeping every safety assertion meaningful; do not delete tests to obtain green results. Counts verified against the retained exact baseline failure set. The source-strengthening/entailment-acceptance mechanism (closing input13 and earlier input4) remains the first evidenced behavioural target after this test-contract prerequisite. No test or behavioural correction in the checker task.
+
+**Named acceptance case — 2026-11-14:** C1 live F5 (current-versus-past selector conflict answered silently despite current-version identity and date reaching generation). This is the same class as T12. See the C1 review inventory.
 
 - **Dependencies:** stable need/authority identities from Blocks 1/2; independent receiving-need eligibility checks.
 - **Tasks/deliverables:** bounded evidence-use associations let independently eligible support serve the appropriate need irrespective of retrieval origin, retaining per-aspect provenance. Separate current-source descriptions of change from independently verified historical pairs. Preserve aspects, disclose genuine gaps, prevent false disclaimers and verify live/persisted rendering. No indiscriminate pooling or reopening eligibility during generation.
