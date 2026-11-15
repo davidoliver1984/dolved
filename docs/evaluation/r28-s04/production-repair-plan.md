@@ -12,6 +12,31 @@ This is the current checklist within the existing R00–R08 programme. The evide
 
 #### C1 independent review outcome and road to the full run — David, 2026-11-14
 
+**Phase A completion findings — 2026-11-15:**
+`decision-run-preflight-20261115/completion/report.md` distinguishes two confirmed
+product defects: the backend persisted-answer re-render loses an orchestrator-added
+location notice (observed in two retained development fixtures); independently,
+the web prefers raw parts and omits rendered-only location/temporal/scope/target
+disclosures when parts exist (code-traced live/reload, not browser-observed).
+Unsupported aspects have a separate web presentation and are not generally hidden.
+Backend correctness and delivery failures must be reported separately. Hidden
+required disclosures block pilot readiness even if David approves a backend-only
+decision run; each must eventually appear once with citations, live and on reload.
+No presentation repair, assertion weakening or application change authorised here.
+The 986 primary chunks reconcile to982 original plus4 later bait chunks; separate
+foreign12 and injection-pack6 generations remain isolated. Original manifest
+document identities match; reviewer source/timeline checks are recorded as
+reviewer-reported, not independently repeated. Released34-item input checksum
+`4c6ad785d33fe032b57541fb6fcf9b06f81a48391bd4bf9e7b43bcc852769048` verified;
+wording/order unchanged. Exact original/derived hashes are bound by the harness
+adapter. No credible current expected-cost range is established; reservation
+USD324.64135 and proposed stopUSD649.28270 remain proposals, not authority.
+Before Phase B: David approves backend-only interpretation, spending stop and
+execution-context map; recover the missing secure provider override, bind/verify
+capture destination and unchanged settings, then obtain separate authority.
+Runtime remains `b73d054d9492e909cfaeadb642544950cfe940de10bfcbe12b388b089997b901`.
+No provider calls, live authority, full-suite rerun, main merge or closure. Block1 HOLD.
+
 **Phase A preflight — 2026-11-15:** frozen application `15ce7c041f465a2a312c54b30c1bcd62b9805ee7`, runtime `b73d054d9492e909cfaeadb642544950cfe940de10bfcbe12b388b089997b901`.
 See `decision-run-preflight-20261115/report.md` and its checksums. Isolated API/AI
 restarted; 50 migrations Ran, zero pending; 986 active Qdrant/database identities

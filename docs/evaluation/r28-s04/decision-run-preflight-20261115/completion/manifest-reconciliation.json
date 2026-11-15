@@ -1,0 +1,32 @@
+{
+  "primary": {
+    "original_manifest_sha256": "5eebd0e8b228992135efc6ae9c52a3727e8fcd75d2cd851eb642b92d5aa336c7",
+    "expected_original_documents": 300,
+    "original_document_identities_match": true,
+    "current_documents": 304,
+    "previous_chunks": 982,
+    "current_chunks": 986,
+    "added_chunk_count": 4,
+    "removed_chunk_count": 0
+  },
+  "foreign_tenant": {
+    "original_manifest_sha256": "a2fba5a71cc95063d5664b9e8990c8147b105524cc1fb718134a2736fa69b720",
+    "expected_original_documents": 12,
+    "original_document_identities_match": true,
+    "current_documents": 12,
+    "previous_chunks": 12,
+    "current_chunks": 12,
+    "added_chunk_count": 0,
+    "removed_chunk_count": 0
+  },
+  "prompt_injection_pack": {
+    "original_manifest_sha256": "a8b4209daa14c2aaf6a5dea885a9afa9b796a252f35a86e125fb6b05fe4b6079",
+    "expected_original_documents": 6,
+    "original_document_identities_match": true,
+    "current_documents": 6,
+    "previous_chunks": 6,
+    "current_chunks": 6,
+    "added_chunk_count": 0,
+    "removed_chunk_count": 0
+  }
+}

@@ -1,0 +1,218 @@
+{
+  "release_sha256": "4c6ad785d33fe032b57541fb6fcf9b06f81a48391bd4bf9e7b43bcc852769048",
+  "counts": {
+    "fresh": 24,
+    "control": 4,
+    "regression": 6
+  },
+  "items": [
+    {
+      "ordinal": 1,
+      "id": "O1",
+      "group": "fresh",
+      "utterance_sha256": "53e4e7dd03703a76bec97c812ad8de0d6b0efeec938f1ab777ccc0f00d92734d"
+    },
+    {
+      "ordinal": 2,
+      "id": "O2",
+      "group": "fresh",
+      "utterance_sha256": "6be2ad58ae2c379fe87b9c4de9589bcbecff0872a0abd723aa6eaa99de0da6f1"
+    },
+    {
+      "ordinal": 3,
+      "id": "O3",
+      "group": "fresh",
+      "utterance_sha256": "30ae8f9df6e5a60b080d5d6df1b176ffd4adffdc7fc96b17a18377c17190bb51"
+    },
+    {
+      "ordinal": 4,
+      "id": "O4",
+      "group": "fresh",
+      "utterance_sha256": "2d412d0e30afd91a7820152d39813ca1ec8865bcba09af91169c4f7eafabc481"
+    },
+    {
+      "ordinal": 5,
+      "id": "O5",
+      "group": "fresh",
+      "utterance_sha256": "6356adc5ea3643b19ef554094d733c063f15f2ed81c52dee7be5f68bc944eb56"
+    },
+    {
+      "ordinal": 6,
+      "id": "O6",
+      "group": "fresh",
+      "utterance_sha256": "e93bebf372ae5a445fbf6bb9bda31e8cd94356dacf2f2bd3e8b8c5f55bb532a4"
+    },
+    {
+      "ordinal": 7,
+      "id": "O7",
+      "group": "fresh",
+      "utterance_sha256": "0104dfe3205b349db0d33138ae584f19bc91bda1e06de7ded0a4305ce8195f54"
+    },
+    {
+      "ordinal": 8,
+      "id": "O8",
+      "group": "fresh",
+      "utterance_sha256": "f894ae4512c35bae3a18980851fc4f9040735baf877d9ed62e45b65f299755d9"
+    },
+    {
+      "ordinal": 9,
+      "id": "O9",
+      "group": "fresh",
+      "utterance_sha256": "6211435ca96120504591a7599207b988504e897f4f166f420df2854418b588a4"
+    },
+    {
+      "ordinal": 10,
+      "id": "O10",
+      "group": "fresh",
+      "utterance_sha256": "73c96015bea13775b58293655b39d140c69dcbfd1461e5458f144f9505c6a2a7"
+    },
+    {
+      "ordinal": 11,
+      "id": "O11",
+      "group": "fresh",
+      "utterance_sha256": "bb28cd678ce3aea224af8eb733b683391b3c70e28db7e08531bf13ade2372f68"
+    },
+    {
+      "ordinal": 12,
+      "id": "O12",
+      "group": "fresh",
+      "utterance_sha256": "cdf1b13f6869bc9507f25b185ddfede494e78f7b693d28a76e4f24060b2dcd13"
+    },
+    {
+      "ordinal": 13,
+      "id": "H1",
+      "group": "fresh",
+      "utterance_sha256": "46000a73253301a16aee536f1e480c826cb6e9e020a42282ce191f286935faf9"
+    },
+    {
+      "ordinal": 14,
+      "id": "H2",
+      "group": "fresh",
+      "utterance_sha256": "3cf61322cf785404e7ab8c9408fb4f2e8aad7b15d48f83fe7321378bccc4b23c"
+    },
+    {
+      "ordinal": 15,
+      "id": "H3",
+      "group": "fresh",
+      "utterance_sha256": "6a55c9bbbcb45bf04f08e81ad09b5c76d73570067094491d9407fe335c4a3478"
+    },
+    {
+      "ordinal": 16,
+      "id": "H4",
+      "group": "fresh",
+      "utterance_sha256": "f517943d43b2e76cea6e9c8e4cdf2ae7085466906794bdd1b6bda46d9d696dd8"
+    },
+    {
+      "ordinal": 17,
+      "id": "C1",
+      "group": "fresh",
+      "utterance_sha256": "6be38011c850a605b1191d06bd8c70d8dcda41a4aad9c7c08a1bcd460fc16c25"
+    },
+    {
+      "ordinal": 18,
+      "id": "C2",
+      "group": "fresh",
+      "utterance_sha256": "ea5d97cbf1a20b3f791231d9298739664bb527aba916141f3521a39374d44912"
+    },
+    {
+      "ordinal": 19,
+      "id": "C3",
+      "group": "fresh",
+      "utterance_sha256": "6b03cb376fd1b3d9a45af507f697248bb7f125c99dc7e24a6b145dcf39680860"
+    },
+    {
+      "ordinal": 20,
+      "id": "C4",
+      "group": "fresh",
+      "utterance_sha256": "bfd21f68f65c9c46df6b0830fac53a2d5ddd388dfbc6a10b1c1b829b0ef83ee6"
+    },
+    {
+      "ordinal": 21,
+      "id": "M1",
+      "group": "fresh",
+      "utterance_sha256": "75ea687b63c1549cfa88b680a05a8e1d25c4c0b922a85bf33660e9eac76758e4"
+    },
+    {
+      "ordinal": 22,
+      "id": "M2",
+      "group": "fresh",
+      "utterance_sha256": "511c97e43099c9b281cde87e88662a7753c4132e5f787c92e7035ac20e908e19"
+    },
+    {
+      "ordinal": 23,
+      "id": "M3",
+      "group": "fresh",
+      "utterance_sha256": "b0424c66634278fc040d9c602b1354d11e990054a7e20d86af04b6832e2f09c7"
+    },
+    {
+      "ordinal": 24,
+      "id": "M4",
+      "group": "fresh",
+      "utterance_sha256": "a6c6e1e13e2339384badbeba745dbaf8b374f9bf950a979f3c96e0f99a5259f4"
+    },
+    {
+      "ordinal": 25,
+      "id": "K1",
+      "group": "control",
+      "utterance_sha256": "28a1a970dc62fd8e789cba3ef6781e5e5ec5138dbedced9d41862db55abb34d6"
+    },
+    {
+      "ordinal": 26,
+      "id": "K2",
+      "group": "control",
+      "utterance_sha256": "4d68c382cc280549d1dcb6ef7df98c825c578b05a346d9855cbb31be2fed703f"
+    },
+    {
+      "ordinal": 27,
+      "id": "K3",
+      "group": "control",
+      "utterance_sha256": "fff9d72b4b00bb8b0229ad27c8f01615a4632434da14f09096f0f83fdc2842ee"
+    },
+    {
+      "ordinal": 28,
+      "id": "K4",
+      "group": "control",
+      "utterance_sha256": "675dd9041684ded4911a386c5934c1df51246870546ce454a908d1fd7d8c2694"
+    },
+    {
+      "ordinal": 29,
+      "id": "R19",
+      "group": "regression",
+      "utterance_sha256": "87c7d958e12d30982357efbedbc2ca310a44b6df309d7c7bd78295367522462d"
+    },
+    {
+      "ordinal": 30,
+      "id": "R24",
+      "group": "regression",
+      "utterance_sha256": "a6ce6dbaf3bf897d169ae43343a7af2e1fd8a9c89575ff14e5d09ac9c7d2dba1"
+    },
+    {
+      "ordinal": 31,
+      "id": "R26",
+      "group": "regression",
+      "utterance_sha256": "607c68ec06457f9e18509dbd9d6f2b0631c7c6b95b0ea6147dcbe12ca1c19589"
+    },
+    {
+      "ordinal": 32,
+      "id": "R28",
+      "group": "regression",
+      "utterance_sha256": "c915a34bb65c08c6e1dd0f82dc0d1e1741e5d309c7598db5ef7836a19d8028d6"
+    },
+    {
+      "ordinal": 33,
+      "id": "R29",
+      "group": "regression",
+      "utterance_sha256": "f199f5d25564632da440168e8a31660ace89e5cb2b3d074a977c9bd3736fc91d"
+    },
+    {
+      "ordinal": 34,
+      "id": "G3",
+      "group": "regression",
+      "utterance_sha256": "ad6e92dbd333d06db101576cf4ede6965092592fb55040a5ec71c1076f05eff0"
+    }
+  ],
+  "normalised_execution_sha256": "5f7acc7bba8921eb6c2bd5e7f2f7e82283401c94a79ed408c6472389be70cfbd",
+  "workspace_context_supplied_in_release": false,
+  "expectations_accessed": false,
+  "dispatches": 0
+}

@@ -1,0 +1,172 @@
+[
+  {
+    "fixture": "capture-c2_original_input16.json",
+    "evidence_sha256": "e2f5637aa09498e5f1929594290e558ea8a476f31f2525092e6c325029008e91",
+    "backend_display_equals_reloaded": false,
+    "markers": {
+      "Location coverage not established": {
+        "saved_message": true,
+        "reloaded_answer": false,
+        "raw_parts": false
+      },
+      "Temporal basis:": {
+        "saved_message": true,
+        "reloaded_answer": true,
+        "raw_parts": false
+      },
+      "Recorded policy scope": {
+        "saved_message": false,
+        "reloaded_answer": false,
+        "raw_parts": false
+      },
+      "Temporal evidence incomplete": {
+        "saved_message": false,
+        "reloaded_answer": false,
+        "raw_parts": false
+      },
+      "Unconfirmed requested aspects": {
+        "saved_message": false,
+        "reloaded_answer": false,
+        "raw_parts": false
+      }
+    },
+    "web_result": "code_traced_not_browser_exercised",
+    "unsupported_aspects": []
+  },
+  {
+    "fixture": "capture-modified_input16.json",
+    "evidence_sha256": "f093cef2d7decc492693af4e03df46b55d1c4a0c1591402b5e02d93f0803a95a",
+    "backend_display_equals_reloaded": false,
+    "markers": {
+      "Location coverage not established": {
+        "saved_message": true,
+        "reloaded_answer": false,
+        "raw_parts": false
+      },
+      "Temporal basis:": {
+        "saved_message": true,
+        "reloaded_answer": true,
+        "raw_parts": false
+      },
+      "Recorded policy scope": {
+        "saved_message": false,
+        "reloaded_answer": false,
+        "raw_parts": false
+      },
+      "Temporal evidence incomplete": {
+        "saved_message": false,
+        "reloaded_answer": false,
+        "raw_parts": false
+      },
+      "Unconfirmed requested aspects": {
+        "saved_message": false,
+        "reloaded_answer": false,
+        "raw_parts": false
+      }
+    },
+    "web_result": "code_traced_not_browser_exercised",
+    "unsupported_aspects": []
+  },
+  {
+    "fixture": "capture-month_replay.json",
+    "evidence_sha256": "a02d2f6b36400a5003a2668391a5c8e613a3553ceb7c3750ecc03c67f87ffcd1",
+    "backend_display_equals_reloaded": true,
+    "markers": {
+      "Location coverage not established": {
+        "saved_message": false,
+        "reloaded_answer": false,
+        "raw_parts": false
+      },
+      "Temporal basis:": {
+        "saved_message": true,
+        "reloaded_answer": true,
+        "raw_parts": false
+      },
+      "Recorded policy scope": {
+        "saved_message": false,
+        "reloaded_answer": false,
+        "raw_parts": false
+      },
+      "Temporal evidence incomplete": {
+        "saved_message": false,
+        "reloaded_answer": false,
+        "raw_parts": false
+      },
+      "Unconfirmed requested aspects": {
+        "saved_message": false,
+        "reloaded_answer": false,
+        "raw_parts": false
+      }
+    },
+    "web_result": "code_traced_not_browser_exercised",
+    "unsupported_aspects": []
+  },
+  {
+    "fixture": "capture-varied_development.json",
+    "evidence_sha256": "f1193c51d75cf827008a89ce195440ca0c1f5b633a042308596e1838d0cf19c8",
+    "backend_display_equals_reloaded": true,
+    "markers": {
+      "Location coverage not established": {
+        "saved_message": false,
+        "reloaded_answer": false,
+        "raw_parts": false
+      },
+      "Temporal basis:": {
+        "saved_message": true,
+        "reloaded_answer": true,
+        "raw_parts": false
+      },
+      "Recorded policy scope": {
+        "saved_message": false,
+        "reloaded_answer": false,
+        "raw_parts": false
+      },
+      "Temporal evidence incomplete": {
+        "saved_message": false,
+        "reloaded_answer": false,
+        "raw_parts": false
+      },
+      "Unconfirmed requested aspects": {
+        "saved_message": false,
+        "reloaded_answer": false,
+        "raw_parts": false
+      }
+    },
+    "web_result": "code_traced_not_browser_exercised",
+    "unsupported_aspects": []
+  },
+  {
+    "fixture": "capture-year_replay.json",
+    "evidence_sha256": "d02b8300e6d61d42e4855bf4270329ebb1459091c6d3c097b32989c787b4dec3",
+    "backend_display_equals_reloaded": true,
+    "markers": {
+      "Location coverage not established": {
+        "saved_message": false,
+        "reloaded_answer": false,
+        "raw_parts": false
+      },
+      "Temporal basis:": {
+        "saved_message": true,
+        "reloaded_answer": true,
+        "raw_parts": false
+      },
+      "Recorded policy scope": {
+        "saved_message": false,
+        "reloaded_answer": false,
+        "raw_parts": false
+      },
+      "Temporal evidence incomplete": {
+        "saved_message": false,
+        "reloaded_answer": false,
+        "raw_parts": false
+      },
+      "Unconfirmed requested aspects": {
+        "saved_message": false,
+        "reloaded_answer": false,
+        "raw_parts": false
+      }
+    },
+    "web_result": "code_traced_not_browser_exercised",
+    "unsupported_aspects": []
+  }
+]
