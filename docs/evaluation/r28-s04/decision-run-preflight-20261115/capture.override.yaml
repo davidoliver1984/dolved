@@ -1,0 +1,9 @@
+# Prepared only. Bind the released Phase B evidence destination before deployment.
+# Current serving capture remains off; no authorisation or execution is implied.
+services:
+  ai:
+    environment:
+      EVALUATION_CAPTURE_ENABLED: "true"
+      EVALUATION_CAPTURE_DESTINATION: /evaluation-evidence/capture
+    volumes:
+      - ${DECISION_RUN_EVIDENCE_DESTINATION:?Phase B evidence destination required}:/evaluation-evidence

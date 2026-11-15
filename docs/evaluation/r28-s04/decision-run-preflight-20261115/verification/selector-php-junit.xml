@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="/app/phpunit.xml" tests="13" assertions="46" errors="0" failures="0" skipped="0" time="0.755452">
+    <testsuite name="Unit" tests="4" assertions="14" errors="0" failures="0" skipped="0" time="0.002546">
+      <testsuite name="Tests\Unit\CoverageAllocationTest" file="/app/tests/Unit/CoverageAllocationTest.php" tests="4" assertions="14" errors="0" failures="0" skipped="0" time="0.002546">
+        <testcase name="test_malformed_output_is_typed_and_never_consumed" file="/app/tests/Unit/CoverageAllocationTest.php" line="14" class="Tests\Unit\CoverageAllocationTest" classname="Tests.Unit.CoverageAllocationTest" assertions="6" time="0.001851"/>
+        <testcase name="test_saturation_is_unmet_not_claimed_coverage_and_shared_passages_use_one_slot" file="/app/tests/Unit/CoverageAllocationTest.php" line="27" class="Tests\Unit\CoverageAllocationTest" classname="Tests.Unit.CoverageAllocationTest" assertions="5" time="0.000388"/>
+        <testcase name="test_a_missing_requested_need_is_rejected" file="/app/tests/Unit/CoverageAllocationTest.php" line="48" class="Tests\Unit\CoverageAllocationTest" classname="Tests.Unit.CoverageAllocationTest" assertions="1" time="0.000149"/>
+        <testcase name="test_proposed_unmet_support_is_not_an_answerability_gate" file="/app/tests/Unit/CoverageAllocationTest.php" line="54" class="Tests\Unit\CoverageAllocationTest" classname="Tests.Unit.CoverageAllocationTest" assertions="2" time="0.000158"/>
+      </testsuite>
+    </testsuite>
+    <testsuite name="Feature" tests="9" assertions="32" errors="0" failures="0" skipped="0" time="0.752906">
+      <testsuite name="Tests\Feature\CoverageSelectionClientTest" file="/app/tests/Feature/CoverageSelectionClientTest.php" tests="9" assertions="32" errors="0" failures="0" skipped="0" time="0.752906">
+        <testsuite name="Tests\Feature\CoverageSelectionClientTest::test_one_attempt_failure_categories_are_not_blanket_fallbacks" tests="7" assertions="25" errors="0" failures="0" skipped="0" time="0.709951">
+          <testcase name="test_one_attempt_failure_categories_are_not_blanket_fallbacks with data set #0" file="/app/tests/Feature/CoverageSelectionClientTest.php" line="29" class="Tests\Feature\CoverageSelectionClientTest" classname="Tests.Feature.CoverageSelectionClientTest" assertions="5" time="0.603443"/>
+          <testcase name="test_one_attempt_failure_categories_are_not_blanket_fallbacks with data set #1" file="/app/tests/Feature/CoverageSelectionClientTest.php" line="29" class="Tests\Feature\CoverageSelectionClientTest" classname="Tests.Feature.CoverageSelectionClientTest" assertions="5" time="0.025825"/>
+          <testcase name="test_one_attempt_failure_categories_are_not_blanket_fallbacks with data set #2" file="/app/tests/Feature/CoverageSelectionClientTest.php" line="29" class="Tests\Feature\CoverageSelectionClientTest" classname="Tests.Feature.CoverageSelectionClientTest" assertions="3" time="0.018927"/>
+          <testcase name="test_one_attempt_failure_categories_are_not_blanket_fallbacks with data set #3" file="/app/tests/Feature/CoverageSelectionClientTest.php" line="29" class="Tests\Feature\CoverageSelectionClientTest" classname="Tests.Feature.CoverageSelectionClientTest" assertions="3" time="0.018160"/>
+          <testcase name="test_one_attempt_failure_categories_are_not_blanket_fallbacks with data set #4" file="/app/tests/Feature/CoverageSelectionClientTest.php" line="29" class="Tests\Feature\CoverageSelectionClientTest" classname="Tests.Feature.CoverageSelectionClientTest" assertions="3" time="0.014103"/>
+          <testcase name="test_one_attempt_failure_categories_are_not_blanket_fallbacks with data set #5" file="/app/tests/Feature/CoverageSelectionClientTest.php" line="29" class="Tests\Feature\CoverageSelectionClientTest" classname="Tests.Feature.CoverageSelectionClientTest" assertions="3" time="0.014113"/>
+          <testcase name="test_one_attempt_failure_categories_are_not_blanket_fallbacks with data set #6" file="/app/tests/Feature/CoverageSelectionClientTest.php" line="29" class="Tests\Feature\CoverageSelectionClientTest" classname="Tests.Feature.CoverageSelectionClientTest" assertions="3" time="0.015379"/>
+        </testsuite>
+        <testcase name="test_exhausted_deadline_never_starts_optional_work_or_fallback" file="/app/tests/Feature/CoverageSelectionClientTest.php" line="50" class="Tests\Feature\CoverageSelectionClientTest" classname="Tests.Feature.CoverageSelectionClientTest" assertions="3" time="0.013211"/>
+        <testcase name="test_deadline_expiring_during_transport_keeps_attempt_accounting_and_stops" file="/app/tests/Feature/CoverageSelectionClientTest.php" line="64" class="Tests\Feature\CoverageSelectionClientTest" classname="Tests.Feature.CoverageSelectionClientTest" assertions="4" time="0.029745"/>
+      </testsuite>
+    </testsuite>
+  </testsuite>
+</testsuites>

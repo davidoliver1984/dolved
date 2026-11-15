@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="Tests\Feature\DecisionCaptureFixtureTest" file="/workspace/docs/evaluation/r28-s04/decision-run-preflight-20261115/harness/DecisionCaptureFixtureTest.php" tests="5" assertions="0" errors="5" failures="0" skipped="0" time="0.000000">
+    <testsuite name="Tests\Feature\DecisionCaptureFixtureTest::test_c1_wrong_current_plan_preserves_dated_alternative_and_persisted_answer_use" tests="5" assertions="0" errors="5" failures="0" skipped="0" time="0.000000">
+      <testcase name="test_c1_wrong_current_plan_preserves_dated_alternative_and_persisted_answer_use with data set #0" file="/workspace/docs/evaluation/r28-s04/decision-run-preflight-20261115/harness/DecisionCaptureFixtureTest.php" line="339" class="Tests\Feature\DecisionCaptureFixtureTest" classname="Tests.Feature.DecisionCaptureFixtureTest" assertions="0" time="0.000000">
+        <error type="Error">Tests\Feature\DecisionCaptureFixtureTest::test_c1_wrong_current_plan_preserves_dated_alternative_and_persisted_answer_use with data set #0
+Error: Failed opening required '/workspace/apps/api/vendor/laravel/framework/config/hashing.php' (include_path='.:/usr/local/lib/php')
+
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/LoadConfiguration.php:209
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/LoadConfiguration.php:88
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/LoadConfiguration.php:55
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Application.php:349
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php:494
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Testing/TestCase.php:59
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Testing/TestCase.php:85
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Testing/Concerns/InteractsWithTestCaseLifecycle.php:101
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Testing/TestCase.php:75
+/workspace/docs/evaluation/r28-s04/decision-run-preflight-20261115/harness/DecisionCaptureFixtureTest.php:73</error>
+      </testcase>
+      <testcase name="test_c1_wrong_current_plan_preserves_dated_alternative_and_persisted_answer_use with data set #1" file="/workspace/docs/evaluation/r28-s04/decision-run-preflight-20261115/harness/DecisionCaptureFixtureTest.php" line="339" class="Tests\Feature\DecisionCaptureFixtureTest" classname="Tests.Feature.DecisionCaptureFixtureTest" assertions="0" time="0.000000">
+        <error type="Error">Tests\Feature\DecisionCaptureFixtureTest::test_c1_wrong_current_plan_preserves_dated_alternative_and_persisted_answer_use with data set #1
+Error: Failed opening required '/workspace/apps/api/vendor/laravel/framework/config/hashing.php' (include_path='.:/usr/local/lib/php')
+
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/LoadConfiguration.php:209
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/LoadConfiguration.php:88
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/LoadConfiguration.php:55
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Application.php:349
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php:494
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Testing/TestCase.php:59
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Testing/TestCase.php:85
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Testing/Concerns/InteractsWithTestCaseLifecycle.php:101
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Testing/TestCase.php:75
+/workspace/docs/evaluation/r28-s04/decision-run-preflight-20261115/harness/DecisionCaptureFixtureTest.php:73</error>
+      </testcase>
+      <testcase name="test_c1_wrong_current_plan_preserves_dated_alternative_and_persisted_answer_use with data set #2" file="/workspace/docs/evaluation/r28-s04/decision-run-preflight-20261115/harness/DecisionCaptureFixtureTest.php" line="339" class="Tests\Feature\DecisionCaptureFixtureTest" classname="Tests.Feature.DecisionCaptureFixtureTest" assertions="0" time="0.000000">
+        <error type="Error">Tests\Feature\DecisionCaptureFixtureTest::test_c1_wrong_current_plan_preserves_dated_alternative_and_persisted_answer_use with data set #2
+Error: Failed opening required '/workspace/apps/api/vendor/laravel/framework/config/hashing.php' (include_path='.:/usr/local/lib/php')
+
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/LoadConfiguration.php:209
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/LoadConfiguration.php:88
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/LoadConfiguration.php:55
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Application.php:349
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php:494
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Testing/TestCase.php:59
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Testing/TestCase.php:85
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Testing/Concerns/InteractsWithTestCaseLifecycle.php:101
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Testing/TestCase.php:75
+/workspace/docs/evaluation/r28-s04/decision-run-preflight-20261115/harness/DecisionCaptureFixtureTest.php:73</error>
+      </testcase>
+      <testcase name="test_c1_wrong_current_plan_preserves_dated_alternative_and_persisted_answer_use with data set #3" file="/workspace/docs/evaluation/r28-s04/decision-run-preflight-20261115/harness/DecisionCaptureFixtureTest.php" line="339" class="Tests\Feature\DecisionCaptureFixtureTest" classname="Tests.Feature.DecisionCaptureFixtureTest" assertions="0" time="0.000000">
+        <error type="Error">Tests\Feature\DecisionCaptureFixtureTest::test_c1_wrong_current_plan_preserves_dated_alternative_and_persisted_answer_use with data set #3
+Error: Failed opening required '/workspace/apps/api/vendor/laravel/framework/config/hashing.php' (include_path='.:/usr/local/lib/php')
+
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/LoadConfiguration.php:209
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/LoadConfiguration.php:88
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/LoadConfiguration.php:55
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Application.php:349
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php:494
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Testing/TestCase.php:59
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Testing/TestCase.php:85
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Testing/Concerns/InteractsWithTestCaseLifecycle.php:101
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Testing/TestCase.php:75
+/workspace/docs/evaluation/r28-s04/decision-run-preflight-20261115/harness/DecisionCaptureFixtureTest.php:73</error>
+      </testcase>
+      <testcase name="test_c1_wrong_current_plan_preserves_dated_alternative_and_persisted_answer_use with data set #4" file="/workspace/docs/evaluation/r28-s04/decision-run-preflight-20261115/harness/DecisionCaptureFixtureTest.php" line="339" class="Tests\Feature\DecisionCaptureFixtureTest" classname="Tests.Feature.DecisionCaptureFixtureTest" assertions="0" time="0.000000">
+        <error type="Error">Tests\Feature\DecisionCaptureFixtureTest::test_c1_wrong_current_plan_preserves_dated_alternative_and_persisted_answer_use with data set #4
+Error: Failed opening required '/workspace/apps/api/vendor/laravel/framework/config/hashing.php' (include_path='.:/usr/local/lib/php')
+
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/LoadConfiguration.php:209
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/LoadConfiguration.php:88
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/LoadConfiguration.php:55
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Application.php:349
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php:494
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Testing/TestCase.php:59
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Testing/TestCase.php:85
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Testing/Concerns/InteractsWithTestCaseLifecycle.php:101
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Testing/TestCase.php:75
+/workspace/docs/evaluation/r28-s04/decision-run-preflight-20261115/harness/DecisionCaptureFixtureTest.php:73</error>
+      </testcase>
+    </testsuite>
+  </testsuite>
+</testsuites>

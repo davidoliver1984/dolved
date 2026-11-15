@@ -1,0 +1,7 @@
+ Container dolved-r28-s03-ai-run-ffaf4195f4ce Creating 
+ Container dolved-r28-s03-ai-run-ffaf4195f4ce Created 
+...........
+----------------------------------------------------------------------
+Ran 11 tests in 0.375s
+
+OK

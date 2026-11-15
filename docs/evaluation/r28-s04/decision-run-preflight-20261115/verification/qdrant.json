@@ -1,0 +1,22 @@
+{
+  "collection": "rag-platform-vectors-v1",
+  "status": "green",
+  "vector_config": {
+    "dense": {
+      "size": 1024,
+      "distance": "Cosine"
+    }
+  },
+  "sparse_config": {
+    "sparse": {
+      "index": {
+        "on_disk": false
+      }
+    }
+  },
+  "scoped_points": 986,
+  "foreign_points_in_active_generation": 0,
+  "chunk_identity_set_matches_database": true,
+  "read_only": true,
+  "provider_calls": 0
+}

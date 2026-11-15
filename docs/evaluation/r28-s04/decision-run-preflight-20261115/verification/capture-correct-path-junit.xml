@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="Tests\Feature\DecisionCaptureFixtureTest" file="/workspace/docs/evaluation/r28-s04/decision-run-preflight-20261115/harness/DecisionCaptureFixtureTest.php" tests="5" assertions="223" errors="0" failures="2" skipped="0" time="1.394249">
+    <testsuite name="Tests\Feature\DecisionCaptureFixtureTest::test_c1_wrong_current_plan_preserves_dated_alternative_and_persisted_answer_use" tests="5" assertions="223" errors="0" failures="2" skipped="0" time="1.394249">
+      <testcase name="test_c1_wrong_current_plan_preserves_dated_alternative_and_persisted_answer_use with data set #0" file="/workspace/docs/evaluation/r28-s04/decision-run-preflight-20261115/harness/DecisionCaptureFixtureTest.php" line="339" class="Tests\Feature\DecisionCaptureFixtureTest" classname="Tests.Feature.DecisionCaptureFixtureTest" assertions="49" time="0.802242"/>
+      <testcase name="test_c1_wrong_current_plan_preserves_dated_alternative_and_persisted_answer_use with data set #1" file="/workspace/docs/evaluation/r28-s04/decision-run-preflight-20261115/harness/DecisionCaptureFixtureTest.php" line="339" class="Tests\Feature\DecisionCaptureFixtureTest" classname="Tests.Feature.DecisionCaptureFixtureTest" assertions="31" time="0.150581">
+        <failure type="PHPUnit\Framework\ExpectationFailedException">Tests\Feature\DecisionCaptureFixtureTest::test_c1_wrong_current_plan_preserves_dated_alternative_and_persisted_answer_use with data set #1
+Failed asserting that two strings are identical.
+--- Expected
++++ Actual
+@@ @@
+ 'CleanCo South West Ltd provided the daily cleaning at Harbour View on 1 February 2026.
+-Temporal basis: 1 February 2026; version 2bc060ea-8a56-3ae6-8804-82b51698d2b1; effective 2025-06-01T00:00:00+00:00 to 2026-06-01T00:00:00+00:00 (end exclusive) (differs from the provisional planner target).
+-
+-Location coverage not established
+-
+-The named location in your question could not be matched to a registered site. The guidance above is general; its applicability to that location has not been established.'
++Temporal basis: 1 February 2026; version 2bc060ea-8a56-3ae6-8804-82b51698d2b1; effective 2025-06-01T00:00:00+00:00 to 2026-06-01T00:00:00+00:00 (end exclusive) (differs from the provisional planner target).'
+
+/workspace/docs/evaluation/r28-s04/decision-run-preflight-20261115/harness/DecisionCaptureFixtureTest.php:489</failure>
+      </testcase>
+      <testcase name="test_c1_wrong_current_plan_preserves_dated_alternative_and_persisted_answer_use with data set #2" file="/workspace/docs/evaluation/r28-s04/decision-run-preflight-20261115/harness/DecisionCaptureFixtureTest.php" line="339" class="Tests\Feature\DecisionCaptureFixtureTest" classname="Tests.Feature.DecisionCaptureFixtureTest" assertions="51" time="0.137379"/>
+      <testcase name="test_c1_wrong_current_plan_preserves_dated_alternative_and_persisted_answer_use with data set #3" file="/workspace/docs/evaluation/r28-s04/decision-run-preflight-20261115/harness/DecisionCaptureFixtureTest.php" line="339" class="Tests\Feature\DecisionCaptureFixtureTest" classname="Tests.Feature.DecisionCaptureFixtureTest" assertions="51" time="0.151464"/>
+      <testcase name="test_c1_wrong_current_plan_preserves_dated_alternative_and_persisted_answer_use with data set #4" file="/workspace/docs/evaluation/r28-s04/decision-run-preflight-20261115/harness/DecisionCaptureFixtureTest.php" line="339" class="Tests\Feature\DecisionCaptureFixtureTest" classname="Tests.Feature.DecisionCaptureFixtureTest" assertions="41" time="0.152584">
+        <failure type="PHPUnit\Framework\ExpectationFailedException">Tests\Feature\DecisionCaptureFixtureTest::test_c1_wrong_current_plan_preserves_dated_alternative_and_persisted_answer_use with data set #4
+Failed asserting that two strings are identical.
+--- Expected
++++ Actual
+@@ @@
+ 'CleanCo South West Ltd provided the daily cleaning at Harbour View on 1 February 2026.
+-Temporal basis: 1 February 2026; version eee6a4d6-e955-3f14-9d55-f32b034744f1; effective 2025-06-01T00:00:00+00:00 to 2026-06-01T00:00:00+00:00 (end exclusive) (differs from the provisional planner target).
+-
+-Location coverage not established
+-
+-The named location in your question could not be matched to a registered site. The guidance above is general; its applicability to that location has not been established.'
++Temporal basis: 1 February 2026; version eee6a4d6-e955-3f14-9d55-f32b034744f1; effective 2025-06-01T00:00:00+00:00 to 2026-06-01T00:00:00+00:00 (end exclusive) (differs from the provisional planner target).'
+
+/workspace/docs/evaluation/r28-s04/decision-run-preflight-20261115/harness/DecisionCaptureFixtureTest.php:489</failure>
+      </testcase>
+    </testsuite>
+  </testsuite>
+</testsuites>

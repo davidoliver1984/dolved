@@ -12,6 +12,24 @@ This is the current checklist within the existing R00–R08 programme. The evide
 
 #### C1 independent review outcome and road to the full run — David, 2026-11-14
 
+**Phase A preflight — 2026-11-15:** frozen application `15ce7c041f465a2a312c54b30c1bcd62b9805ee7`, runtime `b73d054d9492e909cfaeadb642544950cfe940de10bfcbe12b388b089997b901`.
+See `decision-run-preflight-20261115/report.md` and its checksums. Isolated API/AI
+restarted; 50 migrations Ran, zero pending; 986 active Qdrant/database identities
+match with zero foreign assignments/points. Harness prepared from committed source,
+excluding the unrelated dirty runner. Controls12/12, AI capture/selector28/28,
+PHP selector13/13 pass. Development capture3/5 passes: two fixtures preserve a
+location notice in assistant display but omit it on persisted-answer re-render.
+Both strings and failing assertions are retained; no application fix made.
+Phase A is **not cleared for dispatch**. Capture remains off on the serving AI
+pending the Phase B destination binding; raw internal source-review receipts are
+unavailable (derived checks/usage and bounded rejection records are available).
+Reviewer inputs and authorisation remain unreleased. Reservation proposal
+USD324.64135, ceiling USD649.28270 (round upward324.65/649.29), not spend authority.
+The report records an accidental dependency-start of role-bootstrap that failed
+authentication before connecting; no roles/grants/migrations changed. No provider
+calls, input access, authorisation creation/consumption, main merge or closure.
+Block1 HOLD. Existing local temporal-meaning note below is preserved separately.
+
 **Current amendment — David, 2026-11-15:** investment-cap accounting is withdrawn.
 Do not record charged/remaining allowance or gate work against the cap. David manages
 the 20 November deadline. Ordinary elapsed observations may remain in reports.

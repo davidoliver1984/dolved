@@ -1,0 +1,94 @@
+ Container dolved-r28-s03-api-run-3c7652026fac Creating 
+ Container dolved-r28-s03-api-run-3c7652026fac Created 
+
+Notice: include(): Read of 3714 bytes failed with errno=5 I/O error in /app/vendor/composer/ClassLoader.php on line 576
+
+Warning: include(): Failed opening '/workspace/apps/api/vendor/composer/../laravel/framework/src/Illuminate/Reflection/Traits/ReflectsClosures.php' for inclusion (include_path='.:/usr/local/lib/php') in /app/vendor/composer/ClassLoader.php on line 576
+PHPUnit 12.5.31 by Sebastian Bergmann and contributors.
+
+Runtime:       PHP 8.4.25
+Configuration: /workspace/apps/api/phpunit.xml
+
+
+Notice: file_get_contents(): Read of 149706 bytes failed with errno=5 I/O error in /app/vendor/phpunit/phpunit/src/Runner/ResultCache/DefaultResultCache.php on line 100
+[31;1mE[0m[31;1mE[0m[31;1mE[0m[31;1mE[0m[31;1mE[0m                                                               5 / 5 (100%)
+Notice: file_put_contents(): Write of 761 bytes failed with errno=35 Resource deadlock would occur in /app/vendor/phpunit/phpunit/src/Runner/ResultCache/DefaultResultCache.php on line 153
+
+
+Time: 00:00.155, Memory: 38.50 MB
+
+There were 5 errors:
+
+1) Tests\Feature\DecisionCaptureFixtureTest::test_c1_wrong_current_plan_preserves_dated_alternative_and_persisted_answer_use#0 with data ('varied_development')
+Error: Failed opening required '/workspace/apps/api/vendor/laravel/framework/config/hashing.php' (include_path='.:/usr/local/lib/php')
+
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/LoadConfiguration.php:209
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/LoadConfiguration.php:88
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/LoadConfiguration.php:55
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Application.php:349
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php:494
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Testing/TestCase.php:59
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Testing/TestCase.php:85
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Testing/Concerns/InteractsWithTestCaseLifecycle.php:101
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Testing/TestCase.php:75
+/workspace/docs/evaluation/r28-s04/decision-run-preflight-20261115/harness/DecisionCaptureFixtureTest.php:73
+
+2) Tests\Feature\DecisionCaptureFixtureTest::test_c1_wrong_current_plan_preserves_dated_alternative_and_persisted_answer_use#1 with data ('modified_input16')
+Error: Failed opening required '/workspace/apps/api/vendor/laravel/framework/config/hashing.php' (include_path='.:/usr/local/lib/php')
+
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/LoadConfiguration.php:209
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/LoadConfiguration.php:88
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/LoadConfiguration.php:55
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Application.php:349
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php:494
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Testing/TestCase.php:59
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Testing/TestCase.php:85
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Testing/Concerns/InteractsWithTestCaseLifecycle.php:101
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Testing/TestCase.php:75
+/workspace/docs/evaluation/r28-s04/decision-run-preflight-20261115/harness/DecisionCaptureFixtureTest.php:73
+
+3) Tests\Feature\DecisionCaptureFixtureTest::test_c1_wrong_current_plan_preserves_dated_alternative_and_persisted_answer_use#2 with data ('month_replay')
+Error: Failed opening required '/workspace/apps/api/vendor/laravel/framework/config/hashing.php' (include_path='.:/usr/local/lib/php')
+
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/LoadConfiguration.php:209
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/LoadConfiguration.php:88
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/LoadConfiguration.php:55
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Application.php:349
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php:494
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Testing/TestCase.php:59
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Testing/TestCase.php:85
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Testing/Concerns/InteractsWithTestCaseLifecycle.php:101
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Testing/TestCase.php:75
+/workspace/docs/evaluation/r28-s04/decision-run-preflight-20261115/harness/DecisionCaptureFixtureTest.php:73
+
+4) Tests\Feature\DecisionCaptureFixtureTest::test_c1_wrong_current_plan_preserves_dated_alternative_and_persisted_answer_use#3 with data ('year_replay')
+Error: Failed opening required '/workspace/apps/api/vendor/laravel/framework/config/hashing.php' (include_path='.:/usr/local/lib/php')
+
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/LoadConfiguration.php:209
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/LoadConfiguration.php:88
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/LoadConfiguration.php:55
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Application.php:349
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php:494
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Testing/TestCase.php:59
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Testing/TestCase.php:85
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Testing/Concerns/InteractsWithTestCaseLifecycle.php:101
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Testing/TestCase.php:75
+/workspace/docs/evaluation/r28-s04/decision-run-preflight-20261115/harness/DecisionCaptureFixtureTest.php:73
+
+5) Tests\Feature\DecisionCaptureFixtureTest::test_c1_wrong_current_plan_preserves_dated_alternative_and_persisted_answer_use#4 with data ('c2_original_input16')
+Error: Failed opening required '/workspace/apps/api/vendor/laravel/framework/config/hashing.php' (include_path='.:/usr/local/lib/php')
+
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/LoadConfiguration.php:209
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/LoadConfiguration.php:88
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/LoadConfiguration.php:55
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Application.php:349
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php:494
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Testing/TestCase.php:59
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Testing/TestCase.php:85
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Testing/Concerns/InteractsWithTestCaseLifecycle.php:101
+/workspace/apps/api/vendor/laravel/framework/src/Illuminate/Foundation/Testing/TestCase.php:75
+/workspace/docs/evaluation/r28-s04/decision-run-preflight-20261115/harness/DecisionCaptureFixtureTest.php:73
+
+[37;41mERRORS![0m
+[37;41mTests: 5[0m[37;41m, Assertions: 0[0m[37;41m, Errors: 5[0m[37;41m, Warnings: 193[0m[37;41m, Notices: 190[0m[37;41m.[0m
+

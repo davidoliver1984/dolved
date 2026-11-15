@@ -1,0 +1,116 @@
+{
+  "items": 34,
+  "status": "proposal_only_no_authorisation",
+  "models": {
+    "llm": "openai/gpt-5-mini",
+    "embedding": "voyage/voyage-4-large",
+    "reranker": "voyage/rerank-2.5",
+    "sparse": "local fastembed/Splade_PP_en_v1"
+  },
+  "rate_basis": "Retained application settings: OpenAI snapshot 2026-08-19 (.25 input / 2 output per million), Voyage embedding 2026-08-12 (.12), reranker 2026-09-04 (.05). Not a fresh price verification; no cache discounts.",
+  "rows": [
+    {
+      "stage": "planner",
+      "requests_per_item": 4,
+      "input_tokens_per_request": 400000,
+      "output_tokens_per_request": 25000,
+      "usd_per_million_input": 0.25,
+      "usd_per_million_output": 2,
+      "per_item_usd": 0.6,
+      "all_34_usd": 20.4,
+      "notes": "2 Python plan attempts x up to 2 enclosing Laravel transport attempts; completed validation exhaustion is not retried."
+    },
+    {
+      "stage": "interpretation_check",
+      "requests_per_item": 4,
+      "input_tokens_per_request": 400000,
+      "output_tokens_per_request": 4096,
+      "usd_per_million_input": 0.25,
+      "usd_per_million_output": 2,
+      "per_item_usd": 0.432768,
+      "all_34_usd": 14.714112,
+      "notes": "At most one check per valid proposed plan; no separate temporal checker."
+    },
+    {
+      "stage": "topical_family_review",
+      "requests_per_item": 6,
+      "input_tokens_per_request": 400000,
+      "output_tokens_per_request": 4096,
+      "usd_per_million_input": 0.25,
+      "usd_per_million_output": 2,
+      "per_item_usd": 0.649152,
+      "all_34_usd": 22.071168,
+      "notes": "At most 3 needs x 2 Laravel transport attempts; optional C2 failures may terminate earlier."
+    },
+    {
+      "stage": "coverage_selection",
+      "requests_per_item": 1,
+      "input_tokens_per_request": 30000,
+      "output_tokens_per_request": 4096,
+      "usd_per_million_input": 0.25,
+      "usd_per_million_output": 2,
+      "per_item_usd": 0.015692,
+      "all_34_usd": 0.533528,
+      "notes": "One optional call; no retry; 6 aspects / 20 passages / 5 final passages."
+    },
+    {
+      "stage": "generation",
+      "requests_per_item": 6,
+      "input_tokens_per_request": 400000,
+      "output_tokens_per_request": 4096,
+      "usd_per_million_input": 0.25,
+      "usd_per_million_output": 2,
+      "per_item_usd": 0.649152,
+      "all_34_usd": 22.071168,
+      "notes": "2 validation attempts x 3 Python transport attempts; no SDK retries."
+    },
+    {
+      "stage": "source_review_entailment",
+      "requests_per_item": 6,
+      "input_tokens_per_request": 400000,
+      "output_tokens_per_request": 17408,
+      "usd_per_million_input": 0.25,
+      "usd_per_million_output": 2,
+      "per_item_usd": 0.808896,
+      "all_34_usd": 27.502464,
+      "notes": "Same sequential call, not two stages. Review transport retry may regenerate; conservative six of each, not additive aliases."
+    },
+    {
+      "stage": "query_embedding",
+      "requests_per_item": 80,
+      "input_tokens_per_request": 32000,
+      "output_tokens_per_request": 0,
+      "usd_per_million_input": 0.12,
+      "usd_per_million_output": 0,
+      "per_item_usd": 0.3072,
+      "all_34_usd": 10.444799999999999,
+      "notes": "10 conservative search units x 2 Laravel attempts x 4 embedding attempts; 8000 Unicode characters <=32000 UTF-8 bytes/tokens."
+    },
+    {
+      "stage": "reranking",
+      "requests_per_item": 60,
+      "input_tokens_per_request": 1391920,
+      "output_tokens_per_request": 0,
+      "usd_per_million_input": 0.05,
+      "usd_per_million_output": 0,
+      "per_item_usd": 4.17576,
+      "all_34_usd": 141.97584,
+      "notes": "40 candidates, query charged once per candidate conservatively, maximum ingested chunk UTF-8 bytes; 3 attempts per unit. Local sparse/Qdrant not another paid reranker."
+    }
+  ],
+  "subtotal_usd": 259.71308,
+  "unpriced_uncertainty_allowance_usd": 64.92827,
+  "conservative_reservation_usd": 324.64135,
+  "proposed_ceiling_usd": 649.2827,
+  "unknowns": [
+    "Current billed prices may differ from retained rates; additive 25% or USD10 allowance, whichever larger.",
+    "Local compute/index/storage costs are not metered per item; not asserted zero; covered provisionally by uncertainty allowance.",
+    "Lost-response billing and unavailable provider usage are reserved as fully charged attempts."
+  ],
+  "conditions": [
+    "Revalidate unchanged limits, corpus and model identities before Phase B.",
+    "No contextualiser call for single-turn needs path. Intrinsic catalogue binding belongs to planner, source review and entailment are one call.",
+    "No input release read. This deliberately loose maximum is not an expected spend estimate.",
+    "Provider-free sizing does not guarantee completion inside existing 120-second provider / 480-second outer generation timeouts."
+  ]
+}

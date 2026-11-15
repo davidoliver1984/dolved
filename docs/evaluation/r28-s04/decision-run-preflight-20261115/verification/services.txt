@@ -1,0 +1,10 @@
+dolved-r28-s03-ai-1 Up 10 minutes (healthy)
+dolved-r28-s03-api-1 Up 10 minutes (healthy)
+dolved-r28-s03-conversation-worker-1 Exited (0) 2 months ago
+dolved-r28-s03-postgres-role-bootstrap-1 Exited (2) 10 minutes ago
+dolved-r28-s03-qdrant-1 Up 10 minutes (healthy)
+dolved-r28-s03-localstack-1 Up 10 minutes (healthy)
+dolved-r28-s03-postgres-1 Up 11 minutes (healthy)
+dolved-r28-s03-mailpit-1 Up 10 minutes (healthy)
+dolved-r28-s03-worker-1 Exited (0) 2 months ago
+dolved-r28-s03-publisher-1 Exited (1) 2 months ago

@@ -1,0 +1,7 @@
+ Container dolved-r28-s03-ai-run-0c498f1c7c21 Creating 
+ Container dolved-r28-s03-ai-run-0c498f1c7c21 Created 
+............
+----------------------------------------------------------------------
+Ran 12 tests in 0.380s
+
+OK

@@ -1,0 +1,50 @@
+ Container dolved-r28-s03-api-run-2fefdb49ee97 Creating 
+ Container dolved-r28-s03-api-run-2fefdb49ee97 Created 
+PHPUnit 12.5.31 by Sebastian Bergmann and contributors.
+
+Runtime:       PHP 8.4.25
+Configuration: /app/phpunit.xml
+
+
+Notice: file_get_contents(): Read of 149706 bytes failed with errno=5 I/O error in /app/vendor/phpunit/phpunit/src/Runner/ResultCache/DefaultResultCache.php on line 100
+.[41;37mF[0m..[41;37mF[0m                                                               5 / 5 (100%)
+Notice: file_put_contents(): Write of 1068 bytes failed with errno=35 Resource deadlock would occur in /app/vendor/phpunit/phpunit/src/Runner/ResultCache/DefaultResultCache.php on line 153
+
+
+Time: 00:01.048, Memory: 71.00 MB
+
+There were 2 failures:
+
+1) Tests\Feature\DecisionCaptureFixtureTest::test_c1_wrong_current_plan_preserves_dated_alternative_and_persisted_answer_use#1 with data ('modified_input16')
+Failed asserting that two strings are identical.
+--- Expected
++++ Actual
+@@ @@
+ 'CleanCo South West Ltd provided the daily cleaning at Harbour View on 1 February 2026.
+-Temporal basis: 1 February 2026; version 64a46288-9eb0-36be-8b39-5c6b3781761e; effective 2025-06-01T00:00:00+00:00 to 2026-06-01T00:00:00+00:00 (end exclusive) (differs from the provisional planner target).
+-
+-Location coverage not established
+-
+-The named location in your question could not be matched to a registered site. The guidance above is general; its applicability to that location has not been established.'
++Temporal basis: 1 February 2026; version 64a46288-9eb0-36be-8b39-5c6b3781761e; effective 2025-06-01T00:00:00+00:00 to 2026-06-01T00:00:00+00:00 (end exclusive) (differs from the provisional planner target).'
+
+/workspace/docs/evaluation/r28-s04/decision-run-preflight-20261115/harness/DecisionCaptureFixtureTest.php:490
+
+2) Tests\Feature\DecisionCaptureFixtureTest::test_c1_wrong_current_plan_preserves_dated_alternative_and_persisted_answer_use#4 with data ('c2_original_input16')
+Failed asserting that two strings are identical.
+--- Expected
++++ Actual
+@@ @@
+ 'CleanCo South West Ltd provided the daily cleaning at Harbour View on 1 February 2026.
+-Temporal basis: 1 February 2026; version a310b0ac-ceb5-3a9f-a21e-f3b52506e44d; effective 2025-06-01T00:00:00+00:00 to 2026-06-01T00:00:00+00:00 (end exclusive) (differs from the provisional planner target).
+-
+-Location coverage not established
+-
+-The named location in your question could not be matched to a registered site. The guidance above is general; its applicability to that location has not been established.'
++Temporal basis: 1 February 2026; version a310b0ac-ceb5-3a9f-a21e-f3b52506e44d; effective 2025-06-01T00:00:00+00:00 to 2026-06-01T00:00:00+00:00 (end exclusive) (differs from the provisional planner target).'
+
+/workspace/docs/evaluation/r28-s04/decision-run-preflight-20261115/harness/DecisionCaptureFixtureTest.php:490
+
+[37;41mFAILURES![0m
+[37;41mTests: 5[0m[37;41m, Assertions: 223[0m[37;41m, Failures: 2[0m[37;41m.[0m
+

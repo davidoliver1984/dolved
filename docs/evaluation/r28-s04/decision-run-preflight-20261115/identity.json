@@ -1,0 +1,11 @@
+{
+  "application_commit": "15ce7c041f465a2a312c54b30c1bcd62b9805ee7",
+  "runtime": "b73d054d9492e909cfaeadb642544950cfe940de10bfcbe12b388b089997b901",
+  "harness_sha256": "bb833effac2ac658886f9e8474e9446f65fbec22733073d9d85c68749ce5ab3f",
+  "dependencies_sha256": "8b7178ce3798af9dd286992c9c129ad4440284377ac3e6e0e309f4756baf1e6b",
+  "main": "348f09e053c8ad73676921c5c616cced812111d7",
+  "status": "phase_a_not_cleared",
+  "provider_calls": 0,
+  "authorisations_created_or_consumed": 0,
+  "input_files_accessed": 0
+}
