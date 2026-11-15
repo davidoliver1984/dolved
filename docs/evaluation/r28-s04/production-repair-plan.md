@@ -12,6 +12,23 @@ This is the current checklist within the existing R00–R08 programme. The evide
 
 #### C1 independent review outcome and road to the full run — David, 2026-11-14
 
+**Phase B harness wiring review boundary — 2026-11-15:**
+The earlier mechanical-completion claim omitted production callback wiring:
+the frozen checkpoint accepted injected verify/dispatch/budget functions but
+had only substitute test invocations. David authorised this bounded tooling-only
+addition after the permitted neutral K2 confirmation was supplied. See
+`decision-run-preflight-20261115/runner/report.md`: frozen checkpoint/dispatcher/
+preflight/persistence/typed-stop files unchanged; new callbacks recheck identities,
+execute the existing dispatcher, reconcile persistence/capture and durably reserve
+maximum per-item liability before dispatch. Final provider-free result30 tests
+plus10 subtests passed; no application changes or provider calls. Reservation
+USD136.737303 and hard stop USD273.474606 unchanged. New executable hash recorded
+in runner/identity.json. Publish hold branch only; STOP for reviewer runner-diff
+review before any operational authorisation creation/consumption. Neutral K2
+confirmation retained unchanged; no expectations accessed. Block1 HOLD, main
+unchanged and presentation blockers remain. This note supersedes only the earlier
+claim that executable wiring was already complete, not its integrity evidence.
+
 **Phase A mechanical completion — 2026-11-15:**
 `decision-run-preflight-20261115/mechanical/report.md` binds all34 released items
 to the primary workspace/generation and verified owner actor, with no site

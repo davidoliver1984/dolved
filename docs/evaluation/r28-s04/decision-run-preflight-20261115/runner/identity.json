@@ -1,0 +1,12 @@
+{
+  "parent_commit": "b98569487046d1649003ccffa429c90678482c1c",
+  "frozen_base_harness_sha256": "607aa1d76a36d97a0db83d77f9f6c7a603d89d39bca429428a1628d856e1c79b",
+  "executable_harness_sha256": "f9bdcc4bd6158ada0d6f7d1c4e16d73f98f261cab114fa780abaeb68465ff407",
+  "runtime_sha256": "b73d054d9492e909cfaeadb642544950cfe940de10bfcbe12b388b089997b901",
+  "dependencies_sha256": "907dc0bf43095dd390d3da24caf85bbb08f07d17bb76ceb30be1ef922d03a2fb",
+  "reviewer_confirmation_sha256": "75f564ef5b8076bc9b6f7cfe67b647176a2f532704812d5cd9933419ea37fbce",
+  "reservation_usd": "136.737303",
+  "hard_stop_usd": "273.474606",
+  "status": "provider_free_only_pending_runner_review",
+  "live_authority_created": false
+}

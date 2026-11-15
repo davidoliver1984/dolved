@@ -1,0 +1,15 @@
+fd907bcff1194839d7cf891aeac76447a11307c1fa0f332702620942cde079a7  docs/evaluation/r28-s04/decision-run-preflight-20261115/runner/accounting.py
+f9bdcc4bd6158ada0d6f7d1c4e16d73f98f261cab114fa780abaeb68465ff407  docs/evaluation/r28-s04/decision-run-preflight-20261115/runner/executable.sha256
+350eae3ea75cc2c7a7254de4e20bc06fa574ba11d6862fff1355e8fbe6bf4670  docs/evaluation/r28-s04/decision-run-preflight-20261115/runner/freeze.py
+90619f695333843f059200fb65c4607a3b02819ef16b3aad3777e67a44dd4c39  docs/evaluation/r28-s04/decision-run-preflight-20261115/runner/frozen-harness-check.txt
+0e8312c453a949fa56a59e4fdf22542a76b0d4848a54e295cebd8153aa231dfe  docs/evaluation/r28-s04/decision-run-preflight-20261115/runner/identity.json
+b8261440ffc22a9d460424aab0d9609e55fd5ada99c740f3c728890a31d8312b  docs/evaluation/r28-s04/decision-run-preflight-20261115/runner/provider-free-final.txt
+5a86bd809fabcbc08e42a2eec242356c4c0c5de93058a77e40b0e30c4b647e51  docs/evaluation/r28-s04/decision-run-preflight-20261115/runner/provider-free-final.xml
+50b7e543bcca9cf7a7f1d2378366a752e43069a54adfec88ed88de5cb26cda7d  docs/evaluation/r28-s04/decision-run-preflight-20261115/runner/provider-free.txt
+58901aa61ddaebd3d34b9dcf887dc81e9b4a1928711db949d8a7bc9b35623ffa  docs/evaluation/r28-s04/decision-run-preflight-20261115/runner/provider-free.xml
+00b840f32a04eb7b216706375e84e81c3c87d8f2c38e8757c337b39d69842348  docs/evaluation/r28-s04/decision-run-preflight-20261115/runner/report.md
+34eee0358b3b68a360faae7b53d1d40c3ed65a9e47007be8319d00bfca7930fa  docs/evaluation/r28-s04/decision-run-preflight-20261115/runner/run_once.sh
+f692505f9595cc003476a9b8d825ae0777d2938b9705a31e080a1f099a25f4b7  docs/evaluation/r28-s04/decision-run-preflight-20261115/runner/runner.py
+a26a8ab1be74a082fafb4be75a6bc812d0c0aa3ef3a248096307a90a215ac1a9  docs/evaluation/r28-s04/decision-run-preflight-20261115/runner/runtime-check.txt
+1c1e9c9c65227486db1e77d7fdd65266b52584376f8fe6925b03e9158ae9b7e2  docs/evaluation/r28-s04/decision-run-preflight-20261115/runner/shell-check.txt
+bc8855e9dad30fb36bebb3ec8cda3a6ecaca32e1ce307f6785d1e39d4629ec15  docs/evaluation/r28-s04/decision-run-preflight-20261115/runner/test_runner.py
