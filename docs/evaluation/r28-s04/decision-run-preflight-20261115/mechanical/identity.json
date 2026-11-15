@@ -1,0 +1,11 @@
+{
+  "runtime_sha256": "b73d054d9492e909cfaeadb642544950cfe940de10bfcbe12b388b089997b901",
+  "runtime_files": 972,
+  "input_sha256": "4c6ad785d33fe032b57541fb6fcf9b06f81a48391bd4bf9e7b43bcc852769048",
+  "harness_sha256": "607aa1d76a36d97a0db83d77f9f6c7a603d89d39bca429428a1628d856e1c79b",
+  "dependencies_sha256": "907dc0bf43095dd390d3da24caf85bbb08f07d17bb76ceb30be1ef922d03a2fb",
+  "context_sha256": "ad924bdaee89267d3f42ebbcb9111d73ea723706a9c1574b55eab4cb3301d23c",
+  "provider_calls": 0,
+  "authorisations_created_or_consumed": 0,
+  "status": "mechanical_preflight_complete_pending_phase_b_approval"
+}

@@ -1,0 +1,14 @@
+{
+  "api": {
+    "all_environment_values_match": true,
+    "image_command_user_match": true,
+    "port_binding_match": true,
+    "intentional_change": "none"
+  },
+  "ai": {
+    "all_environment_values_match": true,
+    "image_command_user_match": true,
+    "port_binding_match": true,
+    "intentional_change": "capture enablement and evidence mount only"
+  }
+}

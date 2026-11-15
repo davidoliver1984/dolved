@@ -12,6 +12,24 @@ This is the current checklist within the existing R00–R08 programme. The evide
 
 #### C1 independent review outcome and road to the full run — David, 2026-11-14
 
+**Phase A mechanical completion — 2026-11-15:**
+`decision-run-preflight-20261115/mechanical/report.md` binds all34 released items
+to the primary workspace/generation and verified owner actor, with no site
+assignment (K1/K2 also primary). Private persistent override recovered from
+running settings and compared before/after coordinated isolated API/AI deployment;
+capture enabled and destination verified provider-free, 13 capture tests pass.
+Empty corpus mount has provisioning/governance readers, not this backend path.
+Frozen972-file runtime remains `b73d054d9492e909cfaeadb642544950cfe940de10bfcbe12b388b089997b901`.
+Exact input/context/harness/dependencies and focused JUnit/checksums retained.
+Revised conservative reservation USD136.73730275; proposed stop USD273.474606
+(rounded upward), NOT spending authority. Expected cost range unavailable.
+No provider calls, authorisations, application changes or full-suite rerun.
+Prior missing-override/capture/context prerequisites are now satisfied; historical
+notes below retained. David's Phase B backend-only execution/spending approval
+and subsequently bound one-use authority remain required. Raw internal source-review
+JSON unavailable. Presentation defects below remain pilot blockers; Block1 HOLD,
+main unchanged. No readiness or closure claim.
+
 **Phase A completion findings — 2026-11-15:**
 `decision-run-preflight-20261115/completion/report.md` distinguishes two confirmed
 product defects: the backend persisted-answer re-render loses an orchestrator-added

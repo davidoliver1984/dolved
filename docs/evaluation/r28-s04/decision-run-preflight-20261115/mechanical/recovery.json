@@ -1,0 +1,65 @@
+{
+  "recovered": true,
+  "override_sha256": "3232de3a4ff7e3776fddd7b8bfe19d1741ea38abe62806ae51ebd9131589c4da",
+  "services": {
+    "api": {
+      "image": "sha256:2831b7678833d675161ab61fea4f3ba1440b62c5f3a7d9c743ca06c84b9dcaa5",
+      "identities": {
+        "RETRIEVAL_MAX_ATTEMPTS": "2",
+        "GENERATION_MODEL": "gpt-5-mini",
+        "RETRIEVAL_TIMEOUT_SECONDS": "480",
+        "OPERATIONAL_METRICS_TIMEOUT_SECONDS": "1",
+        "RETRIEVAL_PLANNER_PROVIDER": "openai",
+        "CONTEXTUALISER_MODEL": "gpt-5-mini",
+        "CONVERSATION_RUN_TIMEOUT_SECONDS": "900",
+        "EMBEDDING_MAX_ATTEMPTS": "4",
+        "RERANKER_MAX_ATTEMPTS": "3",
+        "RETRIEVAL_PLANNER_MODEL": "gpt-5-mini",
+        "EMBEDDING_TIMEOUT_SECONDS": "10",
+        "CONTEXTUALISER_PROVIDER": "openai",
+        "GENERATION_PROVIDER": "openai",
+        "QDRANT_TIMEOUT_SECONDS": "10",
+        "RERANKER_TIMEOUT_SECONDS": "10"
+      },
+      "credential_presence": {},
+      "project": "dolved-r28-s03"
+    },
+    "ai": {
+      "image": "sha256:3da21b4478c1f0d357f9941d01b8b65e3c008847742b9a57ac87eef18d246468",
+      "identities": {
+        "CONTEXTUALISER_PROVIDER": "openai",
+        "EMBEDDING_PROVIDER": "voyage",
+        "RERANKER_PROVIDER": "voyage",
+        "EMBEDDING_TIMEOUT_SECONDS": "10",
+        "RERANKER_MODEL": "rerank-2.5",
+        "RETRIEVAL_PLANNER_TIMEOUT_SECONDS": "60",
+        "SPARSE_EMBEDDING_PROVIDER": "fastembed",
+        "GENERATION_MAX_ATTEMPTS": "3",
+        "GENERATION_REASONING_EFFORT": "low",
+        "GENERATION_MAX_OUTPUT_TOKENS": "4096",
+        "CONTEXTUALISER_MODEL": "gpt-5-mini",
+        "EMBEDDING_MAX_ATTEMPTS": "4",
+        "GENERATION_CONTEXT_WINDOW_TOKENS": "400000",
+        "RETRIEVAL_PLANNER_MODEL": "gpt-5-mini",
+        "CONTEXTUALISER_TIMEOUT_SECONDS": "60",
+        "EMBEDDING_MODEL": "voyage-4-large",
+        "GENERATION_PROVIDER": "openai",
+        "RETRIEVAL_PLANNER_PROVIDER": "openai",
+        "SPARSE_EMBEDDING_MODEL": "prithivida/Splade_PP_en_v1",
+        "RERANKER_MAX_ATTEMPTS": "3",
+        "GENERATION_TIMEOUT_SECONDS": "120",
+        "RERANKER_TIMEOUT_SECONDS": "10",
+        "CONTEXTUALISER_MAX_ATTEMPTS": "3",
+        "GENERATION_MODEL": "gpt-5-mini"
+      },
+      "credential_presence": {
+        "VOYAGE_API_KEY": true,
+        "GENERATION_OPENAI_API_KEY": true,
+        "OPENAI_API_KEY": false,
+        "RETRIEVAL_PLANNER_API_KEY": true
+      },
+      "project": "dolved-r28-s03"
+    }
+  },
+  "secrets_in_evidence": false
+}

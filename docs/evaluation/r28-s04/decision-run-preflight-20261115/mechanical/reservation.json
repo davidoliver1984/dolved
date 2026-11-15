@@ -1,0 +1,104 @@
+{
+  "items": 34,
+  "release_sha256": "4c6ad785d33fe032b57541fb6fcf9b06f81a48391bd4bf9e7b43bcc852769048",
+  "single_turn": true,
+  "max_question_utf8_bytes": 218,
+  "compiled_request_bound_bytes": 1970,
+  "family_serialized_bytes": 205981,
+  "family_schema_framing_allowance": 16384,
+  "rows": [
+    {
+      "stage": "planner",
+      "max_calls_per_item": 4,
+      "input_tokens_per_call": 104096,
+      "output_tokens_per_call": 25000,
+      "input_rate_per_million": 0.25,
+      "output_rate_per_million": 2,
+      "all_34_usd": 10.339264,
+      "basis": "Enforced complete request.content <=100000 bytes +4096 provider framing tokens. Up to2 outer x2 inner attempts."
+    },
+    {
+      "stage": "interpretation_check",
+      "max_calls_per_item": 4,
+      "input_tokens_per_call": 400000,
+      "output_tokens_per_call": 4096,
+      "input_rate_per_million": 0.25,
+      "output_rate_per_million": 2,
+      "all_34_usd": 14.714112,
+      "basis": "Retain whole-context allowance: complete checker plan serialization not independently bounded more tightly here."
+    },
+    {
+      "stage": "topical_family_review",
+      "max_calls_per_item": 6,
+      "input_tokens_per_call": 222365,
+      "output_tokens_per_call": 4096,
+      "input_rate_per_million": 0.25,
+      "output_rate_per_million": 2,
+      "all_34_usd": 13.011783,
+      "basis": "12 maximum-sized candidates; worst JSON escaping incl outer request; extra16384 covers small fixed schema, UUID/response format metadata and provider framing; up to3 needs x2 transports."
+    },
+    {
+      "stage": "coverage_selector",
+      "max_calls_per_item": 1,
+      "input_tokens_per_call": 34096,
+      "output_tokens_per_call": 4096,
+      "input_rate_per_million": 0.25,
+      "output_rate_per_million": 2,
+      "all_34_usd": 0.568344,
+      "basis": "Enforced30000 metered input plus4096 explicit schema/framing uncertainty; no retry."
+    },
+    {
+      "stage": "generation",
+      "max_calls_per_item": 6,
+      "input_tokens_per_call": 400000,
+      "output_tokens_per_call": 4096,
+      "input_rate_per_million": 0.25,
+      "output_rate_per_million": 2,
+      "all_34_usd": 22.071168,
+      "basis": "Retain whole context; 2 validation x3 transport, SDK retries0."
+    },
+    {
+      "stage": "source_review_entailment",
+      "max_calls_per_item": 6,
+      "input_tokens_per_call": 400000,
+      "output_tokens_per_call": 17408,
+      "input_rate_per_million": 0.25,
+      "output_rate_per_million": 2,
+      "all_34_usd": 27.502464,
+      "basis": "One sequential review call, not a separate entailment charge; review failure can repeat generation."
+    },
+    {
+      "stage": "embedding",
+      "max_calls_per_item": 80,
+      "input_tokens_per_call": 2098,
+      "output_tokens_per_call": 0,
+      "input_rate_per_million": 0.12,
+      "output_rate_per_million": 0,
+      "all_34_usd": 0.6847871999999999,
+      "basis": "10 conservative search units x2 enclosing x4 embedding; single-turn9 grounded spans;128 framing allowance."
+    },
+    {
+      "stage": "reranking",
+      "max_calls_per_item": 60,
+      "input_tokens_per_call": 200960,
+      "output_tokens_per_call": 0,
+      "input_rate_per_million": 0.05,
+      "output_rate_per_million": 0,
+      "all_34_usd": 20.49792,
+      "basis": "10 units x2 enclosing x3 reranker;40 candidates, full query charged per candidate, measured2798-byte primary chunk max;256 framing tokens per pair."
+    }
+  ],
+  "subtotal_usd": 109.3898422,
+  "unpriced_allowance_usd": 27.34746055,
+  "reservation_usd": 136.73730275,
+  "proposed_spending_stop_usd": 273.4746055,
+  "expected_cost_range": "unavailable: new selector/review package has no representative live usage; older totals incomplete",
+  "rates": "Retained OpenAI2026-08-19 input.25/output2; Voyage embedding2026-08-12 .12/rerank2026-09-04 .05 USD per million; not fresh prices; no cache discounts.",
+  "unknowns": [
+    "25% or USD10 floor retains unpriced/local cost and pricing uncertainty, not zero.",
+    "Absent receipts charged at full reserved attempts."
+  ],
+  "unchanged_conservative_maxima": "10 search units retains4 ordinary+3 discovery+3 distinct-version alternatives; successful reuse and failed discovery may make maxima mutually exclusive, but none subtracted.",
+  "authority": "proposal_only_no_spend_authorisation",
+  "settings_changed": false
+}
