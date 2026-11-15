@@ -1,9 +1,35 @@
 # Extractive needs — v4
 
-New producer: bounded-evidence-needs-v26 / structured-chat-needs-v12.
+New producer: bounded-evidence-needs-v27 / structured-chat-needs-v12.
 Transport envelope remains v2; the plan schema identity is evidence-needs-plan-v4.
 Read compatibility includes v3; the live client/producer rejects legacy execution.
 Archived v3 plans/answers are not rewritten, re-executed, or reinterpreted on read.
+
+Prompt v27 consolidates temporal meaning guidance in place: a specified change
+uses transition_period/transition_boundary; a dated state uses date; a requested
+interval remains period; before/after must preserve the requested relationship;
+background events do not automatically change current authority. Illustrations
+are not keyword rules. Adapter v12, schema v4, validators and retry limits are
+unchanged. The PHP current-producer pin advances with the prompt. Historical
+receipts stay readable as stored data, not automatically authorised for execution.
+
+`compare` continues to require distinct predecessor/successor versions, with all
+existing downstream ownership and timeline checks. Two independently requested
+dated states use separate retrieve/date needs and may resolve to the same version.
+Version identity alone does not prove unchanged operational facts. No new date-pair
+wire format or semantic code-side rewrite is introduced. A missing transition now
+retains `transition_authority_unresolved` through needs aggregation and the existing
+controlled no-answer renderer; multiple transitions use
+`ambiguous_authority_transition`, asking which update rather than repeating the
+already supplied date question. Execution v24 / controlled renderer v2 identify
+these response changes. Other period ambiguity and previous-version behaviour
+are unchanged.
+
+`temporal-meaning-examples.json` is produced by the real Python adapter with
+controlled HTTP and interpretation boundaries. PHP consumes the same plans with
+synthetic authorised family identities to test actual timeline resolution. It
+proves contract/execution compatibility, not live planner interpretation. Explicit
+regeneration uses WRITE_TEMPORAL_MEANING_FIXTURE=1; normal tests never rewrite it.
 
 Needs execution v21 preserves the precision of a unique explicit calendar
 reference inside a named historical selector, using the existing calendar

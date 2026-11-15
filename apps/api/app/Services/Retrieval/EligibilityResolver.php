@@ -343,7 +343,7 @@ final readonly class EligibilityResolver
             }
             if (count($pairs) > 1) {
                 return new EligibleRetrievalScope(RetrievalOutcome::ClarificationRequired,
-                    reason: EligibilityClarificationReason::AmbiguousAuthorityWindowForPeriod->value,
+                    reason: EligibilityClarificationReason::AmbiguousAuthorityTransition->value,
                     resolvedLocationPublicId: $location?->public_id,
                     clarificationSource: RetrievalClarificationSource::EligibilityResolver);
             }
@@ -354,7 +354,8 @@ final readonly class EligibilityResolver
         }
 
         return $primary->isEmpty()
-            ? new EligibleRetrievalScope(RetrievalOutcome::ComparisonScopeIncomplete, resolvedLocationPublicId: $location?->public_id)
+            ? new EligibleRetrievalScope(RetrievalOutcome::ComparisonScopeIncomplete,
+                reason: 'transition_authority_unresolved', resolvedLocationPublicId: $location?->public_id)
             : new EligibleRetrievalScope(RetrievalOutcome::EvidenceFound,
                 ['primary' => $primary->pluck('public_id')->all(), 'comparison' => $comparison->pluck('public_id')->all()],
                 resolvedLocationPublicId: $location?->public_id);

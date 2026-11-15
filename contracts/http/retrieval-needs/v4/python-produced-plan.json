@@ -59,9 +59,9 @@
     "provider": "openai",
     "model": "gpt-5-mini",
     "contract_schema_version": "evidence-needs-plan-v4",
-    "prompt_version": "bounded-evidence-needs-v26",
+    "prompt_version": "bounded-evidence-needs-v27",
     "adapter_version": "structured-chat-needs-v12",
-    "fingerprint": "c10885f8531e24a435078e47cc16f03420093beea28d2f380bcf7b50fc6b9d54"
+    "fingerprint": "9fb6b4425c5843f8d2f94962768207e86c1ffb0d90c535b941e747f8798ddc28"
   },
   "usage": {
     "stage": "planner",

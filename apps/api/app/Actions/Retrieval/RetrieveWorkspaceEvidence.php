@@ -357,7 +357,9 @@ final readonly class RetrieveWorkspaceEvidence
         return new RetrievalResult($selected === [] && $scopeFacts === [] ? RetrievalOutcome::InsufficientEvidence : RetrievalOutcome::EvidenceFound,
             $selected, reason: $selected === [] && $coverage !== []
                 && count(array_filter($coverage, fn ($need) => $need['retrieval_reason'] === 'no_previous_version')) === count($coverage)
-                    ? 'no_previous_version' : null,
+                    ? 'no_previous_version' : ($selected === [] && $coverage !== []
+                        && count(array_filter($coverage, fn ($need) => $need['retrieval_reason'] === 'transition_authority_unresolved')) === count($coverage)
+                            ? 'transition_authority_unresolved' : null),
             lineage: ['planner' => $plan->lineage->toArray(), 'evidence_selection' => 'bounded-needs-k5-v4',
                 'temporal_alternatives' => ['version' => 'bounded-temporal-targets-v1',
                     'additional_search_lanes' => $temporal['additional_search_lanes']],

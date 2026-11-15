@@ -1,0 +1,14 @@
+{
+  "starting_commit": "72a83ab7d0565e73aa83a18fa47a7afb6b293038",
+  "aggregate": "b73d054d9492e909cfaeadb642544950cfe940de10bfcbe12b388b089997b901",
+  "files": 972,
+  "planner_prompt": "bounded-evidence-needs-v27",
+  "planner_adapter": "structured-chat-needs-v12",
+  "planner_contract": "evidence-needs-plan-v4",
+  "execution": "bounded-needs-slice-v24",
+  "controlled_renderer": "controlled-conversation-response-v2",
+  "generation_unchanged": "v6 / grounded-generation-needs-v15 / openai-responses-needs-v7",
+  "source_review_unchanged": "need-source-support-v2 / 17408 tokens",
+  "provider_calls": 0,
+  "live_confirmation": "not performed"
+}

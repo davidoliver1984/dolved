@@ -30,7 +30,7 @@ final readonly class EvidenceNeedsPlan
         $observation = PlannerUsage::fromArray($usage);
         $extractive = $value['schema_version'] === 'evidence-needs-plan-v4';
         if ($identity->contractSchemaVersion !== $value['schema_version']
-            || $identity->promptVersion !== ($extractive ? 'bounded-evidence-needs-v26' : 'bounded-evidence-needs-v25')
+            || $identity->promptVersion !== ($extractive ? 'bounded-evidence-needs-v27' : 'bounded-evidence-needs-v25')
             || $identity->adapterVersion !== ($extractive ? 'structured-chat-needs-v12' : 'structured-chat-needs-v9')
             || $identity->provider !== $observation->provider
             || $identity->model !== $observation->model) {

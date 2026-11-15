@@ -9,7 +9,7 @@ return [
     'title_max_characters' => (int) env('CONVERSATION_TITLE_MAX_CHARACTERS', 80),
     'message_max_characters' => (int) env('CONVERSATION_MESSAGE_MAX_CHARACTERS', 8_000),
     'clarification_max_characters' => (int) env('CONVERSATION_CLARIFICATION_MAX_CHARACTERS', 1_000),
-    'controlled_renderer_version' => 'controlled-conversation-response-v1',
+    'controlled_renderer_version' => 'controlled-conversation-response-v2',
     'candidate_k' => (int) env('CONVERSATION_RETRIEVAL_CANDIDATE_K', 40),
     'run_timeout_seconds' => (int) env('CONVERSATION_RUN_TIMEOUT_SECONDS', 900),
     'queue' => env('CONVERSATION_QUEUE', 'conversation-generation'),

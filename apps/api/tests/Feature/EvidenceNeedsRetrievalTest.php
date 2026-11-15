@@ -21,6 +21,7 @@ use App\Models\DocumentChunk;
 use App\Models\EmbeddingProfile;
 use App\Models\EmbeddingSpaceGeneration;
 use App\Models\EvidenceThresholdPolicy;
+use App\Models\GeneratedAnswer;
 use App\Models\IngestionEventClaim;
 use App\Models\OrganisationalLocation;
 use App\Models\OrganisationalLocationAlias;
@@ -37,6 +38,8 @@ use App\Services\Conversation\ControlledResponseRenderer;
 use App\Services\Generation\GenerationProfileFactory;
 use App\Services\Retrieval\CoverageSelectionClient;
 use App\Services\Retrieval\EligibilityResolver;
+use App\Services\Retrieval\HistoricalReferenceResolver;
+use App\Services\Retrieval\TemporalPeriodResolver;
 use App\Support\Generation\GenerationAssemblyInput;
 use App\Support\Generation\GenerationResult;
 use App\Support\Generation\UnresolvedNamedCoverageDisclosure;
@@ -963,6 +966,149 @@ final class EvidenceNeedsRetrievalTest extends TestCase
         Http::assertSentCount($case === 'missing_history' ? 4 : 6);
     }
 
+    public function test_python_temporal_meaning_plans_resolve_real_authorised_timeline_and_honest_failures(): void
+    {
+        [$workspace, $generation, $scope] = $this->scope();
+        $old = $this->document($workspace, $generation, '2024-01-01');
+        $revision = $this->document($workspace, $generation, '2024-09-18', $old);
+        $current = $this->document($workspace, $generation, '2024-12-01', $revision);
+        $examples = json_decode(file_get_contents('/contracts/http/retrieval-needs/v4/temporal-meaning-examples.json'), true, flags: JSON_THROW_ON_ERROR);
+        Http::preventStrayRequests();
+        foreach ($examples as $data) {
+            // Only substitute the synthetic authorised family ID at the provider boundary.
+            $data['plan']['bindings'][0]['subject_status'] = 'matched';
+            $data['plan']['bindings'][0]['family_ids'] = [$old->family->public_id];
+            $plan = EvidenceNeedsPlan::fromArray($data['plan'], $data['turns'], $data['classifier_lineage'], $data['usage']);
+            $at = CarbonImmutable::parse('2026-11-15');
+            $result = app(EligibilityResolver::class)->handle($scope, $plan->retrievalPlan('n1'), $at);
+            if ($data['name'] === 'missing_transition') {
+                $this->assertSame(RetrievalOutcome::ComparisonScopeIncomplete, $result->outcome);
+                $this->assertSame('transition_authority_unresolved', $result->reason);
+                // Exercise the real aggregate path, not just a hand-built renderer input.
+                $retrieved = app(RetrieveWorkspaceEvidence::class)->handleNeeds($scope, $plan, 10, $at);
+                $this->assertSame('transition_authority_unresolved', $retrieved->reason);
+                $text = app(ControlledResponseRenderer::class)->noAnswer(false, $retrieved->reason)['text'];
+                $this->assertStringContainsString('authorised before-and-after version pair', $text);
+                $this->assertStringNotContainsString('find enough', $text);
+
+                continue;
+            }
+            if ($data['name'] === 'conflicting_window') {
+                $this->assertSame(RetrievalOutcome::ClarificationRequired, $result->outcome);
+                $this->assertSame('ambiguous_authority_transition', $result->reason);
+                $text = app(ControlledResponseRenderer::class)->clarification($result->clarificationSource, $result->reason)['text'];
+                $this->assertStringContainsString('Which update', $text);
+                $this->assertStringNotContainsString('Which date', $text);
+
+                continue;
+            }
+            $expected = match ($data['name']) {
+                'update', 'boundary' => ['primary' => [$revision->public_id], 'comparison' => [$old->public_id]],
+                'previous' => ['primary' => [$current->public_id], 'comparison' => [$revision->public_id]],
+                'before' => ['primary' => [$old->public_id]],
+                'background' => ['primary' => [$current->public_id]],
+                default => ['primary' => [$revision->public_id]],
+            };
+            $this->assertSame(RetrievalOutcome::EvidenceFound, $result->outcome, $data['name']);
+            $this->assertSame($expected, $result->documentPublicIdsBySide, $data['name']);
+        }
+        Http::assertNothingSent();
+    }
+
+    public function test_two_requested_dates_can_resolve_the_same_version_without_asserting_operational_equality(): void
+    {
+        [$workspace, $generation, $scope] = $this->scope();
+        $old = $this->document($workspace, $generation, '2024-01-01');
+        $current = $this->document($workspace, $generation, '2024-09-18', $old);
+        $plan = $this->plan(0, function ($data) use ($old) {
+            $questions = ['What archive checks applied on 19 September 2024?', 'What archive checks applied on 20 September 2024?'];
+            $data['turns'] = [['turn_id' => 'u1', 'text' => implode(' ', $questions)]];
+            foreach ($data['plan']['needs'] as $i => &$need) {
+                $need['question_span'] = ['turn_id' => 'u1', 'quote' => $questions[$i]];
+                $need['context_spans'] = [];
+                $need['operation'] = 'retrieve';
+                $need['fact_reference'] = null;
+                $need['authority'] = ['kind' => 'date', 'value' => '2024-09-'.(19 + $i), 'precision' => 'day',
+                    'source' => ['turn_id' => 'u1', 'quote' => (19 + $i).' September 2024']];
+            }
+            foreach ($data['plan']['bindings'] as &$binding) {
+                $binding['subject_status'] = 'matched';
+                $binding['family_ids'] = [$old->family->public_id];
+            }
+
+            return $data;
+        });
+        foreach (['n1', 'n2'] as $id) {
+            $result = app(EligibilityResolver::class)->handle($scope, $plan->retrievalPlan($id), CarbonImmutable::parse('2026-11-15'));
+            $this->assertSame(['primary' => [$current->public_id]], $result->documentPublicIdsBySide);
+            $this->assertArrayNotHasKey('comparison', $result->documentPublicIdsBySide);
+        }
+        // No answer or assertion about unchanged operational facts is fabricated by resolution.
+        $this->assertSame(0, GeneratedAnswer::query()->count());
+        Http::assertNothingSent();
+    }
+
+    public function test_retained_item19_calendar_precision_is_not_a_transition_repair(): void
+    {
+        // Development replay of the retained plan with controlled application dates,
+        // not a new production outcome or reconstruction of database state.
+        $record = json_decode(file_get_contents('/workspace/docs/evaluation/r28-s04/block1-remaining-verification-20261114/run/cases/19.json'), true, flags: JSON_THROW_ON_ERROR);
+        [$workspace, $generation, $scope] = $this->scope();
+        $old = $this->document($workspace, $generation, '2025-02-01');
+        $updated = $this->document($workspace, $generation, '2026-02-01', $old);
+        $at = CarbonImmutable::parse('2026-11-15');
+        $history = app(HistoricalReferenceResolver::class);
+        $this->assertTrue($history->resolve($old->family, 'February 2026 update', $at)->document->is($updated));
+        $this->assertSame('ambiguous_authority_window_for_period', app(TemporalPeriodResolver::class)->resolve($old->family, '2026')->reason->value);
+        foreach (['historical_reference', 'transition_period'] as $kind) {
+            $plan = $this->plan(0, function ($data) use ($record, $kind, $old) {
+                $data['plan'] = $record['retrieval']['lineage']['evidence_needs_plan'];
+                $data['turns'] = [['turn_id' => 'user-1', 'text' => $record['input']['utterance']]];
+                $data['plan']['bindings'][0]['family_ids'] = [$old->family->public_id];
+                if ($kind === 'transition_period') {
+                    $data['plan']['needs'][0]['authority']['kind'] = $kind;
+                    $data['plan']['needs'][0]['authority']['value'] = '2026-02';
+                    $data['plan']['needs'][0]['authority']['precision'] = 'month';
+                }
+
+                return $data;
+            });
+            $result = app(EligibilityResolver::class)->handle($scope, $plan->retrievalPlan('n1'), $at);
+            if ($kind === 'historical_reference') {
+                $this->assertSame(RetrievalOutcome::ComparisonScopeIncomplete, $result->outcome);
+            } else {
+                $this->assertSame(['primary' => [$updated->public_id], 'comparison' => [$old->public_id]], $result->documentPublicIdsBySide);
+            }
+        }
+    }
+
+    public function test_activation_day_state_is_not_the_day_excluding_after_boundary(): void
+    {
+        [$workspace, $generation, $scope] = $this->scope();
+        $old = $this->document($workspace, $generation, '2024-01-01');
+        $activation = $this->document($workspace, $generation, '2024-09-18', $old);
+        $nextDay = $this->document($workspace, $generation, '2024-09-19', $activation);
+        foreach (['date' => $activation, 'after' => $nextDay] as $kind => $expected) {
+            $plan = $this->plan(4, function ($data) use ($kind, $old) {
+                $question = 'Which archive checks applied '.($kind === 'date' ? 'on' : 'after').' 18 September 2024?';
+                $data['turns'] = [['turn_id' => 'u1', 'text' => $question]];
+                $need = &$data['plan']['needs'][0];
+                $need['question_span'] = ['turn_id' => 'u1', 'quote' => $question];
+                $need['context_spans'] = [];
+                $need['operation'] = 'retrieve';
+                $need['scope_question'] = null;
+                $need['applicability'] = ['kind' => 'generic', 'source' => null];
+                $need['authority'] = ['kind' => $kind, 'value' => '2024-09-18', 'precision' => 'day', 'source' => $need['question_span']];
+                $data['plan']['bindings'][0]['subject_status'] = 'matched';
+                $data['plan']['bindings'][0]['family_ids'] = [$old->family->public_id];
+
+                return $data;
+            });
+            $result = app(EligibilityResolver::class)->handle($scope, $plan->retrievalPlan('n1'), CarbonImmutable::parse('2026-11-15'));
+            $this->assertSame(['primary' => [$expected->public_id]], $result->documentPublicIdsBySide);
+        }
+    }
+
     private function scope(bool $hybrid = false, bool $voyage = false): array
     {
         $workspace = Workspace::factory()->create();
@@ -1017,7 +1163,7 @@ final class EvidenceNeedsRetrievalTest extends TestCase
             $data = $mutate($data);
         }
         $lineage = ['provider' => 'openai', 'model' => 'gpt-5-mini', 'contract_schema_version' => 'evidence-needs-plan-v4',
-            'prompt_version' => 'bounded-evidence-needs-v26', 'adapter_version' => 'structured-chat-needs-v12'];
+            'prompt_version' => 'bounded-evidence-needs-v27', 'adapter_version' => 'structured-chat-needs-v12'];
         ksort($lineage);
         $lineage['fingerprint'] = hash('sha256', json_encode($lineage, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES));
 

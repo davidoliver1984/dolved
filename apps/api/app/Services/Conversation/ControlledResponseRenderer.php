@@ -21,9 +21,11 @@ final readonly class ControlledResponseRenderer
                 ? "I couldn't interpret this question reliably, so I haven't used a guessed interpretation to search or answer it. Please try rephrasing your question."
                 : ($reason === 'no_previous_version'
                 ? 'Only one version of the requested document is available in this knowledge library, so there is no earlier version available to compare.'
+                : ($reason === 'transition_authority_unresolved'
+                ? "I couldn't establish an authorised before-and-after version pair for the requested update, so I can't say what that update changed."
                 : ($comparisonIncomplete
                 ? "I couldn't find enough available evidence to complete both sides of that comparison."
-                : "I couldn't find enough available evidence to answer that question.")),
+                : "I couldn't find enough available evidence to answer that question."))),
             'renderer_version' => (string) config('conversation.controlled_renderer_version'),
         ];
     }
@@ -43,6 +45,7 @@ final readonly class ControlledResponseRenderer
             RetrievalClarificationSource::EligibilityResolver => match (EligibilityClarificationReason::tryFrom($reason)) {
                 EligibilityClarificationReason::AmbiguousDocumentSubject => 'Which document or policy do you mean?',
                 EligibilityClarificationReason::AmbiguousAuthorityWindowForPeriod => 'Which date within that period should I use?',
+                EligibilityClarificationReason::AmbiguousAuthorityTransition => 'More than one authorised version change occurred within the supplied period. Which update do you want to compare?',
                 EligibilityClarificationReason::UnresolvableTemporalPeriod => 'Which specific date or recognised calendar period should I use?',
                 EligibilityClarificationReason::AmbiguousHistoricalReference => 'Which historical version should I use?',
                 EligibilityClarificationReason::HistoricalReferenceUnresolved => 'Can you identify the historical version or date you mean?',

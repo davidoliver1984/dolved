@@ -99,7 +99,7 @@ def test_notation_only_conversion_reaches_real_adapter(
     result = adapter(plan, calls).plan_needs(turns, evaluated_at="2026-11-14T12:00:00Z")
     assert len(calls) == 1
     assert getattr(result.plan.needs[0], field).value == canonical
-    assert result.lineage.prompt_version == "bounded-evidence-needs-v26"
+    assert result.lineage.prompt_version == "bounded-evidence-needs-v27"
     assert result.lineage.adapter_version == "structured-chat-needs-v12"
     if field == "fact_reference":
         assert result.plan.needs[0].authority.kind == "current"

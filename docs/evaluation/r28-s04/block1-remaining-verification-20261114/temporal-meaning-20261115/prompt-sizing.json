@@ -1,0 +1,10 @@
+{
+  "measurement": "provider-free canonical prompt text, not provider usage",
+  "old_prompt_tokens": 4045,
+  "new_prompt_tokens": 4513,
+  "delta_per_planner_attempt": 468,
+  "two_attempt_delta": 936,
+  "new_calls": 0,
+  "production_output_limits_unchanged": true,
+  "reservation": "Recompute complete decision-run reservation at preflight with prompt v27; retain the previous review/selector bounds and existing retry accounting. No authorisation consumed."
+}

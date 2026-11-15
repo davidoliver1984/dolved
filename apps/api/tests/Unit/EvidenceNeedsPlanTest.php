@@ -50,7 +50,7 @@ final class EvidenceNeedsPlanTest extends TestCase
             'needs' => [$need], 'bindings' => []];
         $turns = [['turn_id' => 'u1', 'text' => 'Tell me about the equipment register.'], ['turn_id' => 'u2', 'text' => 'Who maintains it?']];
         $lineage = ['provider' => 'openai', 'model' => 'gpt-5-mini', 'contract_schema_version' => 'evidence-needs-plan-v4',
-            'prompt_version' => 'bounded-evidence-needs-v26', 'adapter_version' => 'structured-chat-needs-v12'];
+            'prompt_version' => 'bounded-evidence-needs-v27', 'adapter_version' => 'structured-chat-needs-v12'];
         ksort($lineage);
         $lineage['fingerprint'] = hash('sha256', json_encode($lineage, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES));
         $plan = EvidenceNeedsPlan::fromArray($value, $turns, $lineage,

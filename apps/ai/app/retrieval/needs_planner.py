@@ -219,15 +219,40 @@ with value copied verbatim and its unit retained; other rule quantities use quan
 These values are question context only, never date filters. Do not request a date
 merely because the user supplied a duration. Calendar fact references retain their
 existing day/month/year/interval meanings.
-Preserve an explicit before/after relation: before July 2026 uses authority kind
-before, precision month, value 2026-07, with the original before phrase as source.
-It means the authority immediately preceding that period. After a named period
-means immediately after its end; after an exact day excludes that day. Laravel
-resolves those boundaries; never choose a document/version or substitute the period
-itself. An in/during period remains period, not before/after. A follow-up can ground
-the calendar value in an earlier authorised turn; quote that calendar in authority.source
-and preserve the explicit relation in the current need's question_span. Do not invent
-a relation or calendar selector absent from those quoted user spans.
+Select temporal representation from the requested meaning, not a trigger word:
+- Change event: a request for what changed in a specified update selects compare
+  with transition_period for a month/year/interval, or transition_boundary for an
+  exact day. Laravel resolves the authorised predecessor and successor at the
+  actual transition within that window, not today's version versus the named
+  edition. Do not encode a dated change event as historical_reference merely
+  because the user names an update. Example: 'What changed in the laboratory
+  handover revision during September 2024?' requests that transition.
+- State at a date: use retrieve with date authority for what applied on a stated
+  day, including the state from a stated activation day. Example: 'The archive
+  rota was agreed on 3 March 2024 and began on 18 April 2024. Which checks applied
+  when it began?' selects date 2024-04-18, not after that day and not the agreement
+  date. Background event dates remain fact context, not competing authorities.
+- Requested interval: preserve the requested month/year/interval with period
+  authority. 'What checks applied throughout September 2024?' asks for that
+  interval, not its update or an invented day. If authority changes within it,
+  preserve the interval for application resolution; never silently narrow it.
+- Before/after: use these only for the relationship actually requested and
+  grounded in the user's spans. Before a period means immediately preceding its
+  start; after means immediately after its end; after an exact day excludes that
+  day. 'Who held the duty before October 2024?' uses before/month/2024-10.
+  A state beginning on a date must not become after that day. Laravel owns the
+  arithmetic; never select document/version IDs or substitute a different period.
+  The unchanged grounding contract also requires the corresponding before/after
+  word in authority.source or question_span; an onset is not that relationship.
+- Background dates: 'A pump was installed in 2022; what checks are required now?'
+  keeps current authority. The old event alone does not select a historical rule.
+These examples illustrate meaning, not keyword mappings: 'from', 'once', 'update'
+or any similar word alone determines neither the operation nor the authority.
+A follow-up may ground the calendar value in an earlier authorised turn; quote
+that calendar in authority.source and preserve the requested relationship in the
+current question_span. Do not invent a relation absent from the quoted spans.
+If conflicting selectors cannot be represented faithfully, use the existing
+clarification outcome rather than guessing, dropping a clause or changing its role.
 Do not
 turn 'our training' or grammatical past tense into a historical authority selection.
 But when the user asks which rule applied to THEIR specific past event or state
@@ -242,6 +267,11 @@ question. An explicit date/period and an old-versus-current comparison such as
 'what was the old window?' retain their existing authority paths; do not ask
 for a date merely because an already-grounded comparison is relative.
 Use compare only for document/policy changes, not a contrast of two current policy values.
+For two independently requested dated states, use separate retrieve/date needs,
+within the unchanged need limit. The same authorised version may answer both;
+that establishes no version change across those dates, not that every operational
+fact was unchanged. A requested update instead requires the transition pair;
+comparing a version with itself cannot establish what changed in that update.
 Use scope_enquiry for a deliberate question about whether a particular policy covers a
 named location, including a question whose requested requirement depends on that policy's
 site coverage. Bind the exact relevant catalogue family and retain the grounded location.
@@ -257,9 +287,11 @@ Bank' as the grounded applicability quote. By contrast, 'Does the Key Safe
 Procedure cover Willow Bank?' asks only whether that place is included: use
 scope_enquiry with scope_question=membership. Do not infer how scope changed
 over time from either question; breadth reports the current recorded extent.
-A single current snapshot cannot prove a historical change: use the existing comparison
-authority only when two versions are actually requested, otherwise clarify an
-ambiguous change request. Non-scope needs set scope_question=null.
+A single current snapshot cannot prove a historical change: a specified update
+requests its predecessor/successor pair even without naming both editions; use
+the transition authority above. Clarify an ambiguous change request when no
+grounded transition or historical selector can be represented. Non-scope needs
+set scope_question=null.
 The requested fact must be WHERE the policy applies: recorded organisational/site
 membership in its scope. Whether a telephone number, contact route, form, procedure or
 other working method is STILL the current way to act asks for operational guidance;
@@ -284,10 +316,10 @@ or compound 'How do I inspect equipment at East Lodge?' remains retrieve. A poli
 change question remains compare. Recheck each clause's purpose independently before returning
 the plan; keep the exact original question_span and do not create an extra unasked need.
 Previous means current versus the previous attained document version. Historical_reference
-retains a named historical selector. Exact authority dates use ISO day, calendar periods use
-month/year/interval precision without an invented day. Explicit changes during a period use
-transition_period; a change at an exact boundary uses transition_boundary. Never substitute
-today's state for the requested transition's actual before/after states.
+retains a named historical edition selector (for example 'version 2'), not a dated
+change event. Exact authority dates use ISO day; calendar periods use month/year/
+interval precision without an invented day. Apply the temporal distinctions above
+consistently; never substitute today's state for a transition's actual before/after states.
 Generic nouns such as workplace do not invent named sites. Named/relational applicability
 quotes a real user reference; Laravel alone resolves it against authorised registry context.
 When a site-dependent working procedure is requested "at the home", "at our home",
@@ -360,9 +392,9 @@ Replace dangling 'there', 'that field', 'it' and 'they' with their stated antece
 aspect only; leave all source quotes untouched. Preserve constraints such as audience/data
 type in the rewritten question. Do not introduce a policy title or answer not supplied.
 
-Temporal selection precedence: when change is explicitly tied to a calendar period, use
-transition_period with that period's normalised value, even when the wording says 'in'
-rather than 'during'. A quoted calendar period is not a named previous-version selector.
+Temporal selection precedence follows the meaning distinctions above, not the
+presence of an update noun or date alone. A change tied to a calendar selector
+takes precedence over an unqualified previous-version comparison.
 For a specifically named point-in-time record such as a memo, meeting minutes or audit
 outcome, a month or year that is part of that record's own event/title identity identifies
 the record; it does not select a historical version of the record. When the authorised
@@ -384,11 +416,11 @@ for 'the Riverside House site', quote 'Riverside House'. Preserve words that are
 the location's own name, such as 'Region' in 'North West Region' or 'Community Service'
 in 'Willow Bank Community Service'. Do not remove a word merely because it can also
 be a generic qualifier.
-When change is tied to an explicit day boundary, use transition_boundary. Only WITHOUT
-such a calendar qualifier, for an unqualified change into the current state ('replaced', 'renamed', 'became', 'old'
+Only without a calendar qualifier, for an unqualified change into the current state ('replaced', 'renamed', 'became', 'old'
 versus current), choose operation=compare and authority.kind=previous, precision=named.
-Use the actual change phrase as value and source.quote. The relative before/after meaning
-is sufficient grounding: Laravel determines the attained versions, not the planner. Use
+Use the actual change phrase as value and source.quote. This relative version
+comparison grounds previous, not a calendar before/after kind. Laravel determines
+the attained versions, not the planner. Use
 historical_reference only for a specifically named older selector rather than a generic
 current-versus-previous change. Do not ask for a date solely because a relative comparison
 has none. Do not ask whether an explicitly current policy is current. Clarify only a real
@@ -568,7 +600,7 @@ class StructuredChatNeedsPlanner(StructuredChatRetrievalPlanner):
             timeout_seconds=timeout_seconds,
             client=client,
             contract_schema_version="evidence-needs-plan-v4",
-            prompt_version="bounded-evidence-needs-v26",
+            prompt_version="bounded-evidence-needs-v27",
             adapter_version="structured-chat-needs-v12",
         )
 

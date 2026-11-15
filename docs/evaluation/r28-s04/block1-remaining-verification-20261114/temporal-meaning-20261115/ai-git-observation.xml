@@ -1,0 +1,1 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="0" skipped="0" tests="1" time="0.710" timestamp="2026-11-15T11:32:10.665838+00:00" hostname="b18deb57ec25"><testcase classname="tests.test_r28_frozen_population_evaluation" name="test_canonical_frozen_candidate_accepts" time="0.154" /></testsuite></testsuites>

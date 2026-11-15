@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="3" skipped="0" tests="39" time="1.684" timestamp="2026-11-15T11:22:23.317956+00:00" hostname="a728e826f780"><testcase classname="tests.test_needs_temporal_meaning" name="test_temporal_guidance_is_coherent_not_a_keyword_classifier" time="0.001" /><testcase classname="tests.test_needs_temporal_meaning" name="test_temporal_meaning_producer_artifact" time="0.031"><failure message="IndexError: 3">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0xffff72193360&gt;
+
+    def test_temporal_meaning_producer_artifact(monkeypatch):
+        monkeypatch.setattr("app.retrieval.needs_planner.time.perf_counter", lambda: 1.0)
+        artifacts = []
+        for name, question, *fields in CASES:
+            raw = controlled_plan(question, *fields)
+            turns = (UserTurn(turn_id="u1", text=question),)
+            calls = []
+            result = adapter(raw, calls).plan_needs(turns, evaluated_at="2026-11-15T12:00:00Z")
+            assert len(calls) == 1
+            assert result.plan.needs[0].authority.model_dump() == raw["needs"][0]["authority"]
+            artifacts.append({"name": name, "turns": [t.model_dump() for t in turns],
+                              "plan": result.plan.model_dump(mode="json"),
+                              "classifier_lineage": result.lineage.model_dump(mode="json"),
+                              "usage": result.usage.model_dump(mode="json")})
+        target = Path("/contracts/http/retrieval-needs/v4/temporal-meaning-examples.json")
+        if os.environ.get("WRITE_TEMPORAL_MEANING_FIXTURE") == "1":
+&gt;           writable = Path(__file__).resolve().parents[3] / "contracts/http/retrieval-needs/v4/temporal-meaning-examples.json"
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_needs_temporal_meaning.py:74: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;PosixPath.parents&gt;, idx = 3
+
+    def __getitem__(self, idx):
+        if isinstance(idx, slice):
+            return tuple(self[i] for i in range(*idx.indices(len(self))))
+    
+        if idx &gt;= len(self) or idx &lt; -len(self):
+&gt;           raise IndexError(idx)
+E           IndexError: 3
+
+/usr/local/lib/python3.14/pathlib/__init__.py:68: IndexError</failure></testcase><testcase classname="tests.test_needs_temporal_meaning" name="test_conflicting_selectors_can_use_existing_clarification_without_retry" time="0.001"><failure message="TypeError: StructuredChatNeedsPlanner.plan_needs() missing 1 required keyword-only argument: 'evaluated_at'">def test_conflicting_selectors_can_use_existing_clarification_without_retry():
+        raw = {"schema_version": "evidence-needs-plan-v4", "decision": "clarify",
+               "clarification": "Do you mean the archive rota at its start or after its first revision?",
+               "needs": [], "bindings": []}
+        calls = []
+&gt;       result = adapter(raw, calls).plan_needs((UserTurn(turn_id="u1", text="Use its starting rule, not its starting rule but the later one."),))
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: StructuredChatNeedsPlanner.plan_needs() missing 1 required keyword-only argument: 'evaluated_at'
+
+tests/test_needs_temporal_meaning.py:84: TypeError</failure></testcase><testcase classname="tests.test_needs_calendar_notation" name="test_current_python_adapter_matches_shared_php_consumption_fixture" time="0.004"><failure message="IndexError: 3">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0xffff71cbc380&gt;
+
+    def test_current_python_adapter_matches_shared_php_consumption_fixture(monkeypatch):
+        """PHP consumes this same artifact; producer drift must fail this assertion."""
+        monkeypatch.setattr("app.retrieval.needs_planner.time.perf_counter", lambda: 1.0)
+        plan, turns = sample("November 2023", "month")
+        result = adapter(plan, [], finished=True).plan_needs(
+            turns, evaluated_at="2026-11-14T12:00:00Z"
+        )
+        artifact = {
+            "evidence_kind": "real_python_adapter_controlled_transport_and_interpretation",
+            "evaluated_at": "2026-11-14T12:00:00Z",
+            "turns": [turn.model_dump(mode="json") for turn in turns],
+            "plan": result.plan.model_dump(mode="json"),
+            "classifier_lineage": result.lineage.model_dump(mode="json"),
+            "usage": result.usage.model_dump(mode="json"),
+        }
+        target = Path("/contracts/http/retrieval-needs/v4/python-produced-plan.json")
+        # Explicit regeneration is a maintenance action, never automatic on a test failure.
+        if os.environ.get("WRITE_NEEDS_CROSS_SERVICE_FIXTURE") == "1":
+            writable = (
+&gt;               Path(__file__).resolve().parents[3]
+                / "contracts/http/retrieval-needs/v4/python-produced-plan.json"
+            )
+
+tests/test_needs_calendar_notation.py:38: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;PosixPath.parents&gt;, idx = 3
+
+    def __getitem__(self, idx):
+        if isinstance(idx, slice):
+            return tuple(self[i] for i in range(*idx.indices(len(self))))
+    
+        if idx &gt;= len(self) or idx &lt; -len(self):
+&gt;           raise IndexError(idx)
+E           IndexError: 3
+
+/usr/local/lib/python3.14/pathlib/__init__.py:68: IndexError</failure></testcase><testcase classname="tests.test_needs_calendar_notation" name="test_notation_only_conversion_reaches_real_adapter[fact_reference-March 2025-month-2025-03]" time="0.004" /><testcase classname="tests.test_needs_calendar_notation" name="test_notation_only_conversion_reaches_real_adapter[fact_reference-1 July 2025-day-2025-07-01]" time="0.003" /><testcase classname="tests.test_needs_calendar_notation" name="test_notation_only_conversion_reaches_real_adapter[fact_reference-November 2023-month-2023-11]" time="0.003" /><testcase classname="tests.test_needs_calendar_notation" name="test_notation_only_conversion_reaches_real_adapter[fact_reference-Nov. 2023-month-2023-11]" time="0.003" /><testcase classname="tests.test_needs_calendar_notation" name="test_notation_only_conversion_reaches_real_adapter[fact_reference-29th February 2024-day-2024-02-29]" time="0.003" /><testcase classname="tests.test_needs_calendar_notation" name="test_notation_only_conversion_reaches_real_adapter[fact_reference-February 29th, 2024-day-2024-02-29]" time="0.003" /><testcase classname="tests.test_needs_calendar_notation" name="test_notation_only_conversion_reaches_real_adapter[fact_reference-Feb. 29, 2024-day-2024-02-29]" time="0.003" /><testcase classname="tests.test_needs_calendar_notation" name="test_notation_only_conversion_reaches_real_adapter[fact_reference-09 OCT 2023-day-2023-10-09]" time="0.003" /><testcase classname="tests.test_needs_calendar_notation" name="test_notation_only_conversion_reaches_real_adapter[authority-March 2025-month-2025-03]" time="0.003" /><testcase classname="tests.test_needs_calendar_notation" name="test_notation_only_conversion_reaches_real_adapter[authority-1 July 2025-day-2025-07-01]" time="0.003" /><testcase classname="tests.test_needs_calendar_notation" name="test_notation_only_conversion_reaches_real_adapter[authority-November 2023-month-2023-11]" time="0.003" /><testcase classname="tests.test_needs_calendar_notation" name="test_notation_only_conversion_reaches_real_adapter[authority-Nov. 2023-month-2023-11]" time="0.003" /><testcase classname="tests.test_needs_calendar_notation" name="test_notation_only_conversion_reaches_real_adapter[authority-29th February 2024-day-2024-02-29]" time="0.002" /><testcase classname="tests.test_needs_calendar_notation" name="test_notation_only_conversion_reaches_real_adapter[authority-February 29th, 2024-day-2024-02-29]" time="0.002" /><testcase classname="tests.test_needs_calendar_notation" name="test_notation_only_conversion_reaches_real_adapter[authority-Feb. 29, 2024-day-2024-02-29]" time="0.003" /><testcase classname="tests.test_needs_calendar_notation" name="test_notation_only_conversion_reaches_real_adapter[authority-09 OCT 2023-day-2023-10-09]" time="0.003" /><testcase classname="tests.test_needs_calendar_notation" name="test_invalid_or_ungrounded_notation_is_unchanged_and_rejected[November 2023-day-November 2023]" time="0.004" /><testcase classname="tests.test_needs_calendar_notation" name="test_invalid_or_ungrounded_notation_is_unchanged_and_rejected[9 November 2023-month-9 November 2023]" time="0.000" /><testcase classname="tests.test_needs_calendar_notation" name="test_invalid_or_ungrounded_notation_is_unchanged_and_rejected[9 November 2023-year-9 November 2023]" time="0.000" /><testcase classname="tests.test_needs_calendar_notation" name="test_invalid_or_ungrounded_notation_is_unchanged_and_rejected[November 2023-month-December 2023]" time="0.000" /><testcase classname="tests.test_needs_calendar_notation" name="test_invalid_or_ungrounded_notation_is_unchanged_and_rejected[31 November 2023-day-31 November 2023]" time="0.000" /><testcase classname="tests.test_needs_calendar_notation" name="test_invalid_or_ungrounded_notation_is_unchanged_and_rejected[29 February 2023-day-29 February 2023]" time="0.000" /><testcase classname="tests.test_needs_calendar_notation" name="test_invalid_or_ungrounded_notation_is_unchanged_and_rejected[11/09/2023-day-11/09/2023]" time="0.000" /><testcase classname="tests.test_needs_calendar_notation" name="test_invalid_or_ungrounded_notation_is_unchanged_and_rejected[last month-month-last month]" time="0.000" /><testcase classname="tests.test_needs_calendar_notation" name="test_invalid_or_ungrounded_notation_is_unchanged_and_rejected[November 2023-month-November 20230]" time="0.000" /><testcase classname="tests.test_needs_calendar_notation" name="test_invalid_or_ungrounded_notation_is_unchanged_and_rejected[November 2023-interval-November 2023]" time="0.000" /><testcase classname="tests.test_needs_calendar_notation" name="test_existing_numeric_and_noncalendar_values_are_untouched[2023-11-09-day]" time="0.000" /><testcase classname="tests.test_needs_calendar_notation" name="test_existing_numeric_and_noncalendar_values_are_untouched[2023-11-month]" time="0.000" /><testcase classname="tests.test_needs_calendar_notation" name="test_existing_numeric_and_noncalendar_values_are_untouched[2023-year]" time="0.000" /><testcase classname="tests.test_needs_calendar_notation" name="test_existing_numeric_and_noncalendar_values_are_untouched[2023-11-01/2023-11-30-interval]" time="0.000" /><testcase classname="tests.test_needs_calendar_notation" name="test_existing_numeric_and_noncalendar_values_are_untouched[three years-duration]" time="0.000" /><testcase classname="tests.test_needs_calendar_notation" name="test_existing_numeric_and_noncalendar_values_are_untouched[five shifts-quantity]" time="0.000" /><testcase classname="tests.test_needs_calendar_notation" name="test_invented_source_is_not_normalized_and_does_not_bypass_grounding" time="0.003" /><testcase classname="tests.test_needs_calendar_notation" name="test_format_correction_does_not_repair_unquoted_after_relation" time="0.005" /><testcase classname="tests.test_needs_calendar_notation" name="test_logging_contains_count_only" time="0.003" /></testsuite></testsuites>

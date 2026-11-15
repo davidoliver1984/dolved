@@ -101,6 +101,10 @@ class ConversationOrchestrationTest extends TestCase
         $run = app(SubmitConversationMessage::class)->handle($conversation, $user, 'A synthetic question', (string) Str::uuid());
         $pin = $run->fresh()->needs_profile;
         $this->assertNotNull($pin);
+        $producer = json_decode(file_get_contents('/contracts/http/retrieval-needs/v4/python-produced-plan.json'), true, flags: JSON_THROW_ON_ERROR)['classifier_lineage'];
+        $this->assertSame($producer['contract_schema_version'], $pin['planner_contract']);
+        $this->assertSame($producer['prompt_version'], $pin['planner_prompt']);
+        $this->assertSame($producer['adapter_version'], $pin['planner_adapter']);
         $reordered = array_reverse($pin, true);
         app(GenerationProfileFactory::class)->pinnedNeeds($reordered);
         try {
@@ -167,7 +171,7 @@ class ConversationOrchestrationTest extends TestCase
         Http::fake(function (Request $request) use ($question, $attempts) {
             $identity = ['provider' => 'openai', 'model' => 'gpt-5-mini',
                 'contract_schema_version' => 'evidence-needs-plan-v4',
-                'prompt_version' => 'bounded-evidence-needs-v26', 'adapter_version' => 'structured-chat-needs-v12'];
+                'prompt_version' => 'bounded-evidence-needs-v27', 'adapter_version' => 'structured-chat-needs-v12'];
             $canonical = $identity;
             ksort($canonical);
 
@@ -515,7 +519,7 @@ class ConversationOrchestrationTest extends TestCase
                 $this->assertSame([['turn_id' => 'user-1', 'text' => 'What does the current approved procedure require?']], $body['user_turns']);
                 $lineage = ['provider' => 'openai', 'model' => 'gpt-5-mini',
                     'contract_schema_version' => 'evidence-needs-plan-v4',
-                    'prompt_version' => 'bounded-evidence-needs-v26', 'adapter_version' => 'structured-chat-needs-v12'];
+                    'prompt_version' => 'bounded-evidence-needs-v27', 'adapter_version' => 'structured-chat-needs-v12'];
                 ksort($lineage);
                 $lineage['fingerprint'] = hash('sha256', json_encode($lineage, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES));
 
