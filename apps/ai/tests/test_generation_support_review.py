@@ -120,7 +120,9 @@ def test_related_situation_substitution_is_rejected_through_real_adapter():
     assert (
         len(responses.calls) == 2
     )  # one generation, the existing review; no new retry
-    assert responses.calls[1]["max_output_tokens"] == 32768
+    from app.generation.support_review import SUPPORT_REVIEW_OUTPUT_TOKENS
+
+    assert responses.calls[1]["max_output_tokens"] == SUPPORT_REVIEW_OUTPUT_TOKENS
 
 
 def test_well_formed_but_wrong_semantic_judgement_is_not_claimed_detected():
@@ -154,41 +156,16 @@ def test_shared_temporal_paragraph_does_not_share_support_ownership():
         validate_support(request, output, SourceSupportReview.model_validate(review))
 
 
-def test_full_quote_receipt_sizing_includes_headroom_not_just_small_fake_output():
+def test_full_receipt_sizing_includes_every_field_and_headroom():
     import tiktoken
 
     from app.generation.support_review import SUPPORT_REVIEW_OUTPUT_TOKENS
+    from tests.test_support_receipt_bounds import maximum_receipt
 
-    # Three needs, five source passages, one claim/source association each.
-    # Use the actual 8,000-character per-source-quote contract limit, not a short stub.
-    source = (SOURCE + " ") * 70
-    source = source[:8000]
-    parts = []
-    for need in range(1, 4):
-        claims = []
-        for evidence in range(1, 6):
-            claims.append(
-                {
-                    "need_id": f"n{need}",
-                    "answer_quote": ANSWER * 3,
-                    "evidence_id": f"ev-{evidence:02}",
-                    "source_quote": source,
-                    "same_situation": "established",
-                    "requirement_preserved": "established",
-                }
-            )
-        parts.append(
-            {
-                "part_index": need - 1,
-                "verdict": "supported",
-                "missing_condition": None,
-                "claims": claims,
-            }
-        )
-    review = SourceSupportReview.model_validate({"parts": parts})
+    review = SourceSupportReview.model_validate(maximum_receipt())
     tokens = len(tiktoken.get_encoding("o200k_base").encode(review.model_dump_json()))
     assert tokens > 1024
-    assert tokens + 4096 <= SUPPORT_REVIEW_OUTPUT_TOKENS  # explicit reasoning headroom
+    assert tokens + 4096 + 1024 <= SUPPORT_REVIEW_OUTPUT_TOKENS
 
 
 @pytest.mark.parametrize("parsed", [None, "valid_partial"])

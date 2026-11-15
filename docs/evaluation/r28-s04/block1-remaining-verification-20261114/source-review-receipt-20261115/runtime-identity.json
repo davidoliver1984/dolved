@@ -1,0 +1,11 @@
+{
+  "aggregate": "578ea2dad8ffa14655ea6568436fb5eb1e8f325f4bb97753032f0433e4ac99e2",
+  "files": 971,
+  "execution": "bounded-needs-slice-v23",
+  "support_contract": "need-source-support-v2",
+  "review_output_tokens": 17408,
+  "generation_prompt": "grounded-generation-needs-v15",
+  "generation_adapter": "openai-responses-needs-v7",
+  "temporal_profile": "v6",
+  "live_execution": false
+}

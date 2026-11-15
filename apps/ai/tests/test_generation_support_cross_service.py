@@ -14,7 +14,7 @@ def test_real_adapter_source_support_projection_matches_php_fixture():
     assert len(responses.calls) == 2
     assert (
         result.usage["entailment_review"]["support_contract"]
-        == "need-source-support-v1"
+        == "need-source-support-v2"
     )
     payload = result.model_dump(mode="json")
     # Omit nondeterministic observation timing, not semantic contract fields.

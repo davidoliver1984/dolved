@@ -3,8 +3,8 @@
     "provider": "openai",
     "model": "gpt-5-mini",
     "contract_version": "generation-result-v3",
-    "prompt_version": "grounded-generation-needs-v14",
-    "adapter_version": "openai-responses-needs-v6",
+    "prompt_version": "grounded-generation-needs-v15",
+    "adapter_version": "openai-responses-needs-v7",
     "quality_affecting_configuration": {
       "reasoning_effort": "low",
       "max_output_tokens": 4096,
@@ -13,7 +13,7 @@
       "truncation": "disabled"
     }
   },
-  "profile_fingerprint": "5d1a14c68c7c9f40b31e5fa0c1c8743a5679bc17e10bdd036f3ee9bcfdeb51e6",
+  "profile_fingerprint": "bb87db4d5259f8bf28b697007bb9e91909c6d6f3157a9147ca0f0a9eedb88c9a",
   "request": {
     "contract_version": 2,
     "request_id": "00000000-0000-4000-8000-000000000001",

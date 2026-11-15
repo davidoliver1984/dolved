@@ -1,0 +1,130 @@
+{
+  "$defs": {
+    "ClaimSupport": {
+      "additionalProperties": false,
+      "properties": {
+        "need_id": {
+          "maxLength": 32,
+          "minLength": 1,
+          "title": "Need Id",
+          "type": "string"
+        },
+        "answer_quote": {
+          "maxLength": 600,
+          "minLength": 1,
+          "title": "Answer Quote",
+          "type": "string"
+        },
+        "evidence_id": {
+          "maxLength": 32,
+          "minLength": 1,
+          "title": "Evidence Id",
+          "type": "string"
+        },
+        "source_quote": {
+          "maxLength": 300,
+          "minLength": 1,
+          "title": "Source Quote",
+          "type": "string"
+        },
+        "same_situation": {
+          "enum": [
+            "established",
+            "different",
+            "unestablished"
+          ],
+          "title": "Same Situation",
+          "type": "string"
+        },
+        "requirement_preserved": {
+          "enum": [
+            "established",
+            "changed",
+            "unestablished"
+          ],
+          "title": "Requirement Preserved",
+          "type": "string"
+        }
+      },
+      "required": [
+        "need_id",
+        "answer_quote",
+        "evidence_id",
+        "source_quote",
+        "same_situation",
+        "requirement_preserved"
+      ],
+      "title": "ClaimSupport",
+      "type": "object"
+    },
+    "SupportedPart": {
+      "additionalProperties": false,
+      "properties": {
+        "part_index": {
+          "maximum": 11,
+          "minimum": 0,
+          "title": "Part Index",
+          "type": "integer"
+        },
+        "verdict": {
+          "enum": [
+            "supported",
+            "unsupported",
+            "uncertain"
+          ],
+          "title": "Verdict",
+          "type": "string"
+        },
+        "missing_condition": {
+          "anyOf": [
+            {
+              "maxLength": 160,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Missing Condition"
+        },
+        "claims": {
+          "items": {
+            "$ref": "#/$defs/ClaimSupport"
+          },
+          "maxItems": 30,
+          "title": "Claims",
+          "type": "array"
+        }
+      },
+      "required": [
+        "part_index",
+        "verdict",
+        "missing_condition",
+        "claims"
+      ],
+      "title": "SupportedPart",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "parts": {
+      "items": {
+        "$ref": "#/$defs/SupportedPart"
+      },
+      "maxItems": 12,
+      "title": "Parts",
+      "type": "array"
+    },
+    "capacity_exceeded": {
+      "title": "Capacity Exceeded",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "parts",
+    "capacity_exceeded"
+  ],
+  "title": "SourceSupportReview",
+  "type": "object"
+}

@@ -49,6 +49,27 @@ live improvement is unmeasured. Block1 HOLD, main unchanged. Historical statemen
 above/below describing allocation as not yet implemented are superseded by this
 entry, not deleted. No full-package completion or decision-run readiness claimed.
 
+**Bounded review-receipt correction — 2026-11-15:**
+`block1-remaining-verification-20261114/source-review-receipt-20261115/report.md`
+supersedes the 32,768 review-output allowance, not the historical evidence. Internal
+source-support v2 returns exact 8–300-character anchors (whole substantive shorter
+passages allowed), while the reviewer still receives full passages and context.
+Twelve parts, thirty total claim/source/need associations, bounded answer quotes,
+identifiers/reasons and a 12,288-token whole-receipt cap prevent unbounded receipts.
+Explicit capacity/invalid/incomplete receipts never imply partial acceptance.
+Output 17,408 =12,288 receipt +4,096 reasoning +1,024 format headroom; no timeout,
+selector, call-count or retry-policy change. Measured maximum-field English
+receipt 6,694 tokens; dense Unicode correctly fails the whole cap. No latency
+guarantee or live correctness claim. Production pins advance to needs v15/v7,
+temporal v6, execution v23; source-review contract v2.
+The same 120s provider client runs generation then review inside the 480s Laravel
+call. Existing transport retries can regenerate the answer before another review;
+reserve up to six generation and six review calls across the two validation
+attempts, not merely two reviews. Output component 129,024 tokens, plus unchanged
+selector/other stages and conservative input allowances; no new authorisation
+or complete USD reservation claimed. Full failure sets remain 38 AI /2 Laravel,
+none new or resolved. Item19/G3 stay open, frozen criteria unchanged, Block1 HOLD.
+
 **Superseded investment activation amendment — David, 2026-11-15 08:50:42 Europe/London:**
 This receipt timestamp supersedes the previously proposed 16 November start.
 Allowance is five focused working days of seven hours (35 focused hours), counting

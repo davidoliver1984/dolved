@@ -71,15 +71,15 @@ final readonly class GenerateGroundedAnswer
         }
         $initialRequestId = $request->requestId;
         if ($request->evidenceNeeds !== [] && ($profile->contractVersion !== 'generation-result-v3'
-            || $profile->promptVersion !== 'grounded-generation-needs-v14'
-            || $profile->adapterVersion !== 'openai-responses-needs-v6'
+            || $profile->promptVersion !== 'grounded-generation-needs-v15'
+            || $profile->adapterVersion !== 'openai-responses-needs-v7'
             || $profile->deliveryMode !== GenerationDeliveryMode::CompleteResultOnly)) {
             throw new GenerationException('Needs generation requires the pinned v2 complete-result profile.');
         }
         $observeStage?->__invoke('generating');
         if ($request->toArray()['contract_version'] >= 5) {
             $profile = new GenerationProfile($profile->provider, $profile->model, 'generation-result-v'.$request->toArray()['contract_version'],
-                'grounded-generation-temporal-v5', 'openai-responses-temporal-v5', $profile->deliveryMode, $profile->qualityAffectingConfiguration);
+                'grounded-generation-temporal-v6', 'openai-responses-temporal-v6', $profile->deliveryMode, $profile->qualityAffectingConfiguration);
         }
         $receipts = [];
         $completedSafetyRejections = 0;
@@ -199,8 +199,8 @@ final readonly class GenerateGroundedAnswer
     private function prepareScopeAnswer(GenerationAssemblyInput $input, GenerationProfile $profile, ?callable $observeStage, ?callable $observeCandidate): PreparedGroundedAnswer
     {
         if ($profile->contractVersion !== 'generation-result-v3'
-            || $profile->promptVersion !== 'grounded-generation-needs-v14'
-            || $profile->adapterVersion !== 'openai-responses-needs-v6'
+            || $profile->promptVersion !== 'grounded-generation-needs-v15'
+            || $profile->adapterVersion !== 'openai-responses-needs-v7'
             || $profile->deliveryMode !== GenerationDeliveryMode::CompleteResultOnly) {
             throw new GenerationException('Scope composition requires the pinned complete-result needs profile.');
         }
@@ -279,7 +279,7 @@ final readonly class GenerateGroundedAnswer
         $request = new GenerationRequest((string) Str::uuid(), $input->authorisedScope->workspace->public_id,
             $input->question, [], 'whole-needs-evidence-v1', (int) config('generation.max_context_characters'), [], evidenceNeeds: $needs);
         $fingerprint = $this->fingerprints->make($profile->provider, $profile->model, 'generation-result-v5',
-            'grounded-generation-temporal-v5', 'openai-responses-temporal-v5', $profile->qualityAffectingConfiguration);
+            'grounded-generation-temporal-v6', 'openai-responses-temporal-v6', $profile->qualityAffectingConfiguration);
 
         return new PreparedGroundedAnswer($request, $result, $fingerprint, $input->correlationLineage['correlation_id'] ?? $request->requestId);
     }

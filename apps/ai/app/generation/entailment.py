@@ -79,6 +79,9 @@ def review_input(
                         "question_span": need.question_span.model_dump(mode="json")
                         if need.question_span
                         else None,
+                        "context_spans": [
+                            span.model_dump(mode="json") for span in need.context_spans
+                        ],
                         "allowed_evidence_ids": list(
                             association_evidence(
                                 request,

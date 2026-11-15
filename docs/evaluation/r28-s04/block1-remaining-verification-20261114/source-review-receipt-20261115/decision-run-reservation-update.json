@@ -1,0 +1,18 @@
+{
+  "scope": "per question output component; not a whole-run authorisation",
+  "provider_calls_made": 0,
+  "generation_attempts_per_python_request": 3,
+  "laravel_validation_attempts": 2,
+  "maximum_generation_calls": 6,
+  "maximum_review_calls": 6,
+  "generation_output_per_call": 4096,
+  "review_output_per_call": 17408,
+  "normal_two_completed_review_output": 34816,
+  "conservative_generation_and_review_output": 129024,
+  "previous_same_envelope_output": 221184,
+  "selector_output_unchanged_additive": 4096,
+  "input_and_other_stages": "Retain existing conservative reservation, including failed/unknown transport usage; review input is not separately metered by generation preflight.",
+  "full_run_usd_reservation": null,
+  "reason": "No decision-run dispatch/authorisation in this task; this is the output-component replacement, not a claim that input usage is zero.",
+  "runaway_guard_rule_unchanged": "max(USD 50, twice the complete conservative reservation)"
+}

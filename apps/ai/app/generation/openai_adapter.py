@@ -42,8 +42,8 @@ MODEL = "gpt-5-mini"
 CONTRACT_VERSION = "generation-result-v1"
 ADAPTER_VERSION = "openai-responses-v3-claim-type"
 NEEDS_CONTRACT_VERSION = "generation-result-v3"
-NEEDS_PROMPT_VERSION = "grounded-generation-needs-v14"
-NEEDS_ADAPTER_VERSION = "openai-responses-needs-v6"
+NEEDS_PROMPT_VERSION = "grounded-generation-needs-v15"
+NEEDS_ADAPTER_VERSION = "openai-responses-needs-v7"
 NEEDS_INSTRUCTIONS = """
 In v6 a physical passage can have validated_need_associations. Use only the
 receiving need's own authority, applicability and side from that map. Shared text
@@ -417,8 +417,8 @@ class OpenAIGenerator:
             temporal.profile = replace(
                 self.profile,
                 contract_version=f"generation-result-v{request.contract_version}",
-                prompt_version="grounded-generation-temporal-v5",
-                adapter_version="openai-responses-temporal-v5",
+                prompt_version="grounded-generation-temporal-v6",
+                adapter_version="openai-responses-temporal-v6",
             )
             return temporal._generate(request.legacy_request(), request)
         with trace.get_tracer("dolved.python.generation").start_as_current_span(
@@ -561,6 +561,7 @@ class OpenAIGenerator:
                             SUPPORT_REVIEW_OUTPUT_TOKENS,
                             SUPPORT_REVIEW_VERSION,
                             SourceSupportReview,
+                            validate_review_capacity,
                             validate_support,
                         )
 
@@ -616,6 +617,7 @@ class OpenAIGenerator:
                         verifier_receipt: dict[str, object] | None = None
                         checks = []
                         if provider_output.answer_parts:
+                            validate_review_capacity(needs_output)
                             review_started = self._monotonic()
                             review_response = self._client.responses.parse(
                                 model=rendered.model,

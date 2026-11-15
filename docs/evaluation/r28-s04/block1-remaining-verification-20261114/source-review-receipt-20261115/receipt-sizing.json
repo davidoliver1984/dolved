@@ -1,0 +1,25 @@
+{
+  "measurement": "provider-free o200k canonical JSON; no live tokens/latency",
+  "maximum_fields_fixture": {
+    "parts": 12,
+    "associations": 30,
+    "answer_quote_chars": 600,
+    "source_anchor_chars": 300,
+    "identifier_chars": 32,
+    "missing_condition_chars": 160,
+    "canonical_tokens": 6694,
+    "canonical_bytes": 36009
+  },
+  "dense_maximum_fields_fixture_rejected": true,
+  "dense_canonical_tokens": 56314,
+  "entire_receipt_acceptance_tokens": 12288,
+  "reasoning_headroom_tokens": 4096,
+  "format_headroom_tokens": 1024,
+  "output_allowance": 17408,
+  "fits_headroom": true,
+  "latency_guarantee": false,
+  "illustrative_max_fields_emission_seconds_at_40_to_100_tokens_per_second": [
+    66.94,
+    167.35
+  ]
+}
