@@ -12,6 +12,46 @@ This is the current checklist within the existing R00–R08 programme. The evide
 
 #### C1 independent review outcome and road to the full run — David, 2026-11-14
 
+**Investment activation amendment — David, 2026-11-15 08:50:42 Europe/London:**
+This receipt timestamp supersedes the previously proposed 16 November start.
+Allowance is five focused working days of seven hours (35 focused hours), counting
+diagnosis, implementation, testing, review, deployment preparation and reporting.
+Hard calendar end is 2026-11-20 18:00 Europe/London; whichever limit is reached
+first ends the allowance. Work before activation is pre-activation and excluded;
+unmeasured earlier work is unknown, not zero. No allowance reset between tasks or
+mechanisms. The private record's old unactivated status is superseded by this
+explicit decision; no retroactive charge or assumed working-day definition.
+The current package starts from `0722c6a`, runtime `d5e0b5caf13ec428919d0020fb1bd701620b467c16c5310b13d7eabe04758279`.
+Main and unrelated edits remain unchanged; Block 1 HOLD. Application verification
+uses only the isolated dolved-r28-s03 stack, no provider calls or deployment.
+
+**Remaining package increment — 2026-11-15, provider-free, HOLD:**
+Implementation `94c6545c0634ef0e8dc6c78646dffdd60128e35f`.
+`block1-remaining-verification-20261114/repair-20261115/report.md` records the
+retained-evidence diagnosis and independent implementation. The existing generation
+review now requires exact source/answer support receipts, need ownership and
+separate same-situation/requirement judgements; quotation checks are not semantic
+proof. Needs prompt/adapter v13/v5, temporal v4, execution v21. The named historical
+resolver preserves an inventoried day/month instead of discarding it to year;
+item19's historical-versus-transition interpretation remains unresolved.
+Full failure identities remain exactly 38 AI / 2 Laravel, none new or resolved;
+56 focused tests pass. Runtime `07038b22886571b1058b8bb70a713b1c691a60b2a1b6523ada3c2c68d8279330`.
+
+Trace correction: 28's required site-role passage survived n3 retrieval/threshold
+but was lost at global allocation. 26's encryption passage was likewise lost;
+its cyber-route passage was eligible for n3 but absent from n3 reranking, while
+supplied to n1/n2. These are distinct mechanisms. David approved **design assessment
+only** of coverage-aware allocation; `repair-20261115/allocation-design.md` assesses
+the current reranker, proposed bounds and independent evidence associations.
+No allocator, ranking, threshold, extra provider call or sharing change is implemented.
+Stop for approval before that allocation change. 17 remains a separate family-review
+no_match; 19, 24, 26, 28, 29 and G3 remain explicitly in the package matrix.
+No full-package freeze, decision-run readiness, main merge or Block 1 closure claimed.
+Investment checkpoint 2026-11-15 09:22:45 Europe/London: 32m03s continuous
+chargeable work since activation, 34h27m57s remaining at that timestamp. This
+includes the allocation design note (its separate sub-duration is unmeasured,
+not zero). Publication/reporting tail remains chargeable; no allowance reset.
+
 **Bounded leading-relation correction (2026-11-14; provider-free, HOLD):**
 From `c21c586`, implementation `2dc6bfc3ffad5cdd9291ca60786f4fa648ee60a0`
 advances the planner adapter only to `structured-chat-needs-v12` (prompt v26 and

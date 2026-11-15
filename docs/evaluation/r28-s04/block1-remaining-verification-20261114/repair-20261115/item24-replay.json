@@ -1,0 +1,28 @@
+{
+  "source": "docs/evaluation/r28-s04/block1-remaining-verification-20261114/run/cases/24.json",
+  "source_sha256": "3f106b6c4c944ca02712d9afde4e2295738a1332dc494c3ddb73925ef46b7915",
+  "synthetic_fields": [
+    "outcome=answered",
+    "aspect_links",
+    "review claim receipts and semantic verdicts"
+  ],
+  "original_missing_output_reconstructed": false,
+  "live_calls": 0,
+  "legacy_retained_supported_checks_accepted": "answered",
+  "new_review_replays": [
+    {
+      "controlled_same_situation_verdict": "different",
+      "accepted": false,
+      "code": "entailment_uncertain",
+      "provider_boundary_calls": 2
+    },
+    {
+      "controlled_same_situation_verdict": "established",
+      "accepted": true,
+      "code": null,
+      "outcome": "answered",
+      "provider_boundary_calls": 2
+    }
+  ],
+  "limitation": "Controlled rejection proves enforcement, not that a real reviewer will judge this claim correctly. A false supported judgement still passes."
+}

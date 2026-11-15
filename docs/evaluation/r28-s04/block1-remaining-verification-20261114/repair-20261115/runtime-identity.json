@@ -1,0 +1,6 @@
+{
+  "aggregate": "07038b22886571b1058b8bb70a713b1c691a60b2a1b6523ada3c2c68d8279330",
+  "files": 963,
+  "execution": "bounded-needs-slice-v21",
+  "support_contract": "need-source-support-v1"
+}

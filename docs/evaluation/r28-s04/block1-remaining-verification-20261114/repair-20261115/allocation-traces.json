@@ -1,0 +1,71 @@
+[
+  {
+    "item": 26,
+    "need_id": "n1",
+    "chunk_id": "c172d391-404f-524f-b645-00deeb087486",
+    "source_sha256": "ccb37864a0989b2d220c9cc57aa00f6b81243695fb31a18a51c6ed03fc6fe3b6",
+    "document_id": "8fba29d4-7857-488b-ae48-9be6c3799abd",
+    "family_id": "5b6e4dc5-2f4c-4f91-8e94-36e3923fcbc4",
+    "version_position": 2,
+    "source_text": "Data Encryption Standard\n\nSupersedes the version effective 1 January 2025. 'Laptop encryption' renamed to 'Device encryption' to reflect coverage of tablets as well as laptops \u2014 no requirement changed for laptops specifically.\n\nPurpose and scope\n\nThis standard sets out how Alderbridge encrypts data held on a laptop or tablet. It applies to every Alderbridge-issued laptop and, newly reflected in this version's title, every issued tablet.\n\nPolicy statement\n\nAll Alderbridge laptops, and as before any issued tablet, use full-disk encryption enabled by IT before issue, protecting resident and staff data if a device is lost or stolen.\n\nDefinitions\n\n**Full-disk encryption** encryption applied to an entire device's storage, so data cannot be read without the correct credentials, even if the physical storage is removed. **Device** covers both a laptop and an issued tablet under this version's renamed title; the underlying laptop requirement is unchanged from the previous version. **Enabled before issue** the requirement that encryption is confirmed active before a device reaches its user, never enabled retrospectively after use has begun.\n\nEnable full-disk encryption on every laptop and issued tablet before it is issued to a staff member.\n\nVerify encryption status as part of IT's pre-issue checklist, never issuing a device where this check has not passed.\n\nReport a device suspected to have been issued without encryption enabled to IT immediately for urgent remediation.\n\nInclude encryption verification for both laptops and tablets in the annual device audit across all sites.\n\nInteraction with other Alderbridge policies\n\nThis standard works alongside the Mobile Device Management Policy (governing the wider device management framework encryption sits within) and the Cyber Incident Response Plan (relevant where a lost device's encryption status affects the incident response).",
+    "document_in_need_eligibility": true,
+    "need_reranked": [
+      {
+        "chunk_id": "c172d391-404f-524f-b645-00deeb087486",
+        "side": "primary",
+        "score": 0.4875451326370239,
+        "rank": 5
+      }
+    ],
+    "need_final_rank": [
+      5
+    ],
+    "generation_handles": [],
+    "generation_need_owners": []
+  },
+  {
+    "item": 26,
+    "need_id": "n3",
+    "chunk_id": "9aa4ac30-490d-5237-93ba-271c1f07f55a",
+    "source_sha256": "ccb37864a0989b2d220c9cc57aa00f6b81243695fb31a18a51c6ed03fc6fe3b6",
+    "document_id": "64b73301-2992-4db3-aadd-374dc825df78",
+    "family_id": "bcfc7bc6-8338-471b-a5b2-062421d10e33",
+    "version_position": 3,
+    "source_text": " implications within 12 hours. **The Chief Executive**, for a Tier 4 ransomware-related decision, now seeks Board Chair co-approval before proceeding, a new governance safeguard introduced in this version.\n\nReport a suspected cyber incident to IT immediately.\n\nIT classifies the incident against the four-tier severity model within 30 minutes.\n\nIT isolates the affected device or system from the network immediately, regardless of severity tier.\n\nIT notifies Alderbridge's cyber insurance provider within 24 hours of a Tier 3 or above classification; this is a new mandatory step introduced in this version, previously left to case-by-case judgement.\n\nDo not pay a ransomware demand, and do not negotiate with an attacker; a Tier 4 ransomware-related decision now requires Board Chair co-approval alongside the Chief Executive, a new safeguard introduced in this version.\n\nThe Data Protection Officer assesses within 12 hours whether the incident constitutes a personal data breach requiring ICO notification within 72 hours.\n\nRestore affected systems from a verified clean backup only once IT confirms the original vulnerability has been addressed.\n\nContact the regional IT emergency contact for out-of-hours support at a Tier 2 or higher incident.\n\nSeverity classification table\n\nTier\tDescription\tExample\tResponse\nTier 1\tSingle device, no evidence of spread\tOne laptop displaying a suspicious prompt\tIT service desk handles directly during normal hours\nTier 2\tSingle site affected, contained locally\tA site's local network shows unusual traffic\tIT escalates to the on-call IT lead; regional emergency contact engaged if out of hours\nTier 3\tMultiple sites or a core system affected\tA shared care records system shows signs of compromise\tIT Director engaged; Business Continuity Plan considered; cyber insurance provider notified\nTier 4\tOrganisation-wide, or resident safety directly implicated\tRansomware affecting the medication administration system network-wide\tChief Executive and Board Chair engaged immediately; Business Continuity Plan activated; cyber insurance provider notified\n\nExceptions and professional judgement\n\nWhere an affected system is critical to immediate resident safety regardless of its formal severity tier, IT prioritises a safe manual fallback process alongside containment, treating the resident-safety implication as at least Tier 3, which also now triggers the cyber insurance notification step.",
+    "document_in_need_eligibility": true,
+    "need_reranked": [],
+    "need_final_rank": [],
+    "generation_handles": [
+      "ev-01",
+      "ev-02"
+    ],
+    "generation_need_owners": [
+      "n1",
+      "n2"
+    ]
+  },
+  {
+    "item": 28,
+    "need_id": "n3",
+    "chunk_id": "afd325b1-df26-51f5-bbc2-fe2e69b23c1c",
+    "source_sha256": "22b988f5974284eeb95ff5ced8c9f27d2528b8db63ed0477d502b07f84eef726",
+    "document_id": "822e205e-2579-4d1c-812d-7882d886bb97",
+    "family_id": "0804eb2e-ede8-4856-8fc2-f5d77fbaf8c5",
+    "version_position": 3,
+    "source_text": "Self-neglect** a resident's own inability or unwillingness to care for themselves or their environment to a degree that risks their health or safety, now explicitly recognised within this suite. **Multi-agency information sharing** the principles governing what safeguarding information Alderbridge shares with an external agency such as the local authority or police.\n\nRoles and responsibilities\n\n**Any member of staff** reports a safeguarding concern immediately, including a self-neglect concern, following the specific procedure relevant to the type of concern. **The registered manager** leads the response to most safeguarding concerns. **The site Safeguarding Champion**, referred to consistently by this title throughout this version, provides local expertise and support. **The organisation-level Safeguarding Lead** oversees the suite and coordinates multi-agency information sharing per the new appendix.\n\nRefer to the Adult Safeguarding Policy for the general framework and reporting route for any safeguarding concern.\n\nRefer to the Allegations Against Staff Procedure where the concern involves a member of staff's own conduct.\n\nRefer to the Missing Person Procedure where a resident cannot be located.\n\nRefer to Body Mapping Guidance for how to document an unexplained mark or injury.\n\nRefer to the Resident Finances and Appointeeship Policy for a financial concern, escalated to the organisation-level Safeguarding Lead directly.\n\nRefer to the new Self-Neglect Guidance where a resident's own care of themselves or their environment raises a concern; this is newly added to the suite in this version.\n\nShare information with an external agency only in line with the multi-agency information sharing appendix below, balancing a resident's confidentiality against the safety benefit of appropriate disclosure.\n\nMulti-agency information sharing appendix\n\nSituation\tInformation sharing principle\tTypical recipient\nOngoing safeguarding investigation\tShare what is necessary and proportionate for the investigation\tLocal authority safeguarding team, police where relevant\nLADO referral\tShare full relevant conduct and employment context\tLocal Authority Designated Officer\nMissing person\tShare immediately, full description and last known information\tPolice\nRoutine multi-agency review meeting\tShare a summary relevant to the meeting's purpose only\tAttending agency representatives",
+    "document_in_need_eligibility": true,
+    "need_reranked": [
+      {
+        "chunk_id": "afd325b1-df26-51f5-bbc2-fe2e69b23c1c",
+        "side": "primary",
+        "score": 0.6194784641265869,
+        "rank": 3
+      }
+    ],
+    "need_final_rank": [
+      3
+    ],
+    "generation_handles": [],
+    "generation_need_owners": []
+  }
+]
