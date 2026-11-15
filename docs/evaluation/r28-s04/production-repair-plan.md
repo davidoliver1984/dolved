@@ -12,6 +12,23 @@ This is the current checklist within the existing R00–R08 programme. The evide
 
 #### C1 independent review outcome and road to the full run — David, 2026-11-14
 
+**Phase B approved execution — stopped, 2026-11-15:**
+Reviewer-approved runner `6a2d52248e2ddfc224f72fab3233b37831d91a0a` executed once
+under `R28-DECISION-BACKEND-AUTH-20261115-01`. Run
+`R28-DECISION-BACKEND-20261115-01` dispatched O1–O12,H1,H2 (14 fresh items);
+13 finalised, H2 production completed but post-dispatch validation halted with
+JSONDecodeError at16:10:42 UTC. Retained JSON/ledgers parse after the stop; exact
+failing read/cause inconclusive, no failure waived. Remaining10 fresh,4 controls,
+6 regressions never dispatched. Literal production statuses4 completed/10
+retrieval_no_answer, ungraded. No correctness claim or expectation access.
+`decision-run-20261115/backend-run/report.md`, raw records, accounting and checksums
+preserve the partial run. Known/retained-rate subtotal approximatelyUSD0.17873925;
+full14-item liability USD56.303595250 retained against unchanged reservation
+USD136.737303/hard stopUSD273.474606. Runtime and harness unchanged, final mounted
+checks pass. No resume/re-dispatch, repairs or additional providers. Raw internal
+source-review JSON unavailable; presentation defects remain pilot blockers.
+Publish hold only; main unchanged; Block1 HOLD; stop for independent assessment.
+
 **Phase B harness wiring review boundary — 2026-11-15:**
 The earlier mechanical-completion claim omitted production callback wiring:
 the frozen checkpoint accepted injected verify/dispatch/budget functions but

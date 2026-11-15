@@ -1,0 +1,20 @@
+{
+    "items": [
+        {
+            "item": "O8",
+            "run_id": "aa3f589d-7e0e-4bb7-b418-1a965382e3a1",
+            "conversation_id": "46db67c6-e092-4603-9dbc-7961b72145c3",
+            "workspace_id": "5323cd6b-8b7a-40f9-98b0-9413c75f643e",
+            "actor_id": "ae454ce6-4d91-4c7e-9a40-b4750b696a6b",
+            "user_turns": 1,
+            "generation_runs": 1,
+            "status": "retrieval_no_answer",
+            "question": "I'm taking the pool car out for a community visit this morning. What checks do I need to do before I drive off?",
+            "temporal_context": null,
+            "reloaded_rendered_text": null,
+            "assistant_display_text": "I couldn't find enough available evidence to answer that question."
+        }
+    ],
+    "verified_at": "2026-11-15T16:07:08+00:00",
+    "grading": false
+}

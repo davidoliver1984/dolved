@@ -1,0 +1,20 @@
+{
+    "items": [
+        {
+            "item": "O1",
+            "run_id": "55901848-9b0e-4154-bb86-df17618e5634",
+            "conversation_id": "052e5d1a-2632-4b08-902d-b5299ac6ba00",
+            "workspace_id": "5323cd6b-8b7a-40f9-98b0-9413c75f643e",
+            "actor_id": "ae454ce6-4d91-4c7e-9a40-b4750b696a6b",
+            "user_turns": 1,
+            "generation_runs": 1,
+            "status": "retrieval_no_answer",
+            "question": "I've just started as a care worker. How long is my probation, and when are my formal review meetings?",
+            "temporal_context": null,
+            "reloaded_rendered_text": null,
+            "assistant_display_text": "I couldn't find enough available evidence to answer that question."
+        }
+    ],
+    "verified_at": "2026-11-15T16:03:25+00:00",
+    "grading": false
+}

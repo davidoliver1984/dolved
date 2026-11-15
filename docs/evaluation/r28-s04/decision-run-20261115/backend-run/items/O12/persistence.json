@@ -1,0 +1,20 @@
+{
+    "items": [
+        {
+            "item": "O12",
+            "run_id": "9e166ad5-cd56-46ce-b1ed-ede7dedc6588",
+            "conversation_id": "ee3eeb1f-1baa-4142-81dd-4e87ee6ac23e",
+            "workspace_id": "5323cd6b-8b7a-40f9-98b0-9413c75f643e",
+            "actor_id": "ae454ce6-4d91-4c7e-9a40-b4750b696a6b",
+            "user_turns": 1,
+            "generation_runs": 1,
+            "status": "retrieval_no_answer",
+            "question": "The care records system has gone down. Who do I contact, and when does it get escalated?",
+            "temporal_context": null,
+            "reloaded_rendered_text": null,
+            "assistant_display_text": "I couldn't find enough available evidence to answer that question."
+        }
+    ],
+    "verified_at": "2026-11-15T16:08:57+00:00",
+    "grading": false
+}

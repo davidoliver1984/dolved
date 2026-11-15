@@ -1,0 +1,14 @@
+{
+  "api": {
+    "healthy": true,
+    "all_environment_values_verified": true,
+    "image_command_user_verified": true,
+    "container_id": "c3310d5626ac81d9537887d6810fcf16e31c61f2461ea535d1fa118c9612a3dc"
+  },
+  "ai": {
+    "healthy": true,
+    "all_environment_values_verified": true,
+    "image_command_user_verified": true,
+    "container_id": "9275a8da7e5a776b186a13b6dcd27a53ef24083d4610b7a255812ba9b5e42156"
+  }
+}

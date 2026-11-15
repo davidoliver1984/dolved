@@ -1,0 +1,24 @@
+{
+    "items": [
+        {
+            "item": "O7",
+            "run_id": "c207bce2-30ca-4f09-aa5a-6ae3dfeb2851",
+            "conversation_id": "4fe90381-4184-4758-876a-2defe7eb5e6b",
+            "workspace_id": "5323cd6b-8b7a-40f9-98b0-9413c75f643e",
+            "actor_id": "ae454ce6-4d91-4c7e-9a40-b4750b696a6b",
+            "user_turns": 1,
+            "generation_runs": 1,
+            "status": "completed",
+            "question": "How long do we keep CCTV footage, and who is allowed to watch it?",
+            "temporal_context": {
+                "uses": [],
+                "targets": [],
+                "version": "temporal-answer-use-v2"
+            },
+            "reloaded_rendered_text": "I couldn't find enough available evidence to answer that question.",
+            "assistant_display_text": "I couldn't find enough available evidence to answer that question."
+        }
+    ],
+    "verified_at": "2026-11-15T16:06:43+00:00",
+    "grading": false
+}

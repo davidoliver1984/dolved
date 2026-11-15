@@ -1,0 +1,621 @@
+{
+  "run_id": "R28-DECISION-BACKEND-20261115-01",
+  "authorization_id": "R28-DECISION-BACKEND-AUTH-20261115-01",
+  "grading": false,
+  "items": [
+    {
+      "ordinal": 1,
+      "id": "O1",
+      "cohort": "fresh",
+      "execution": "recorded",
+      "production_status": "retrieval_no_answer",
+      "run_id": "55901848-9b0e-4154-bb86-df17618e5634",
+      "started_at_london": "2026-11-15T16:02:34+00:00",
+      "finished_at_london": "2026-11-15T16:03:24+00:00",
+      "elapsed_ms": 49857.02085494995,
+      "service_calls": 6,
+      "backend_representations_equal": false,
+      "persistence_receipt": true,
+      "capture_check_completed": true,
+      "failure_code": null,
+      "attempt_sidecars": [
+        {
+          "file": "f59302d1-22b8-4196-8b23-0fe7b58d02a7-0da0623f-5e5b-45c5-9eec-3217550d6c7f.json",
+          "stage": "planner",
+          "attempt": 2,
+          "status": "accepted",
+          "validation": null
+        },
+        {
+          "file": "f59302d1-22b8-4196-8b23-0fe7b58d02a7-a58940ca-f5ca-44a0-8824-46fa4f1be973.json",
+          "stage": "planner",
+          "attempt": 1,
+          "status": "rejected",
+          "validation": {
+            "stage": "interpretation",
+            "field": "root",
+            "code": "scope_added"
+          }
+        }
+      ],
+      "sidecar_status_counts": {
+        "accepted": 1,
+        "rejected": 1
+      }
+    },
+    {
+      "ordinal": 2,
+      "id": "O2",
+      "cohort": "fresh",
+      "execution": "recorded",
+      "production_status": "completed",
+      "run_id": "a9ecba78-c601-4c52-8a91-e5ba9aba2a41",
+      "started_at_london": "2026-11-15T16:03:27+00:00",
+      "finished_at_london": "2026-11-15T16:04:14+00:00",
+      "elapsed_ms": 46789.998054504395,
+      "service_calls": 6,
+      "backend_representations_equal": true,
+      "persistence_receipt": true,
+      "capture_check_completed": true,
+      "failure_code": null,
+      "attempt_sidecars": [
+        {
+          "file": "6b28d552-fdf6-46cc-a934-834e3dc52a60-43e89531-47c3-45e2-8cb9-8e6f1e66e019.json",
+          "stage": "planner",
+          "attempt": 1,
+          "status": "accepted",
+          "validation": null
+        },
+        {
+          "file": "7509412a-2168-40b9-adaf-7b1c81557a22-056b3045-598c-407b-8560-3abbfbeb53ed.json",
+          "stage": "generation",
+          "attempt": 1,
+          "status": "rejected",
+          "validation": {
+            "field": "answer_parts.text",
+            "code": "entailment_uncertain"
+          }
+        },
+        {
+          "file": "58b5c0ad-07d3-4d6a-8110-be45bb38ef08-181a5dd2-e9a1-473d-80bb-32b260bbe217.json",
+          "stage": "generation",
+          "attempt": 1,
+          "status": "rejected",
+          "validation": {
+            "field": "answer_parts.text",
+            "code": "entailment_uncertain"
+          }
+        }
+      ],
+      "sidecar_status_counts": {
+        "accepted": 1,
+        "rejected": 2
+      }
+    },
+    {
+      "ordinal": 3,
+      "id": "O3",
+      "cohort": "fresh",
+      "execution": "recorded",
+      "production_status": "retrieval_no_answer",
+      "run_id": "63e404eb-40a0-4371-964b-7fd574579627",
+      "started_at_london": "2026-11-15T16:04:16+00:00",
+      "finished_at_london": "2026-11-15T16:04:42+00:00",
+      "elapsed_ms": 26276.72791481018,
+      "service_calls": 6,
+      "backend_representations_equal": false,
+      "persistence_receipt": true,
+      "capture_check_completed": true,
+      "failure_code": null,
+      "attempt_sidecars": [
+        {
+          "file": "6a1a6b0e-682f-413f-91cb-5d01f83162b3-91ddeddd-0fae-4f6c-83df-7421caf1efb7.json",
+          "stage": "planner",
+          "attempt": 1,
+          "status": "accepted",
+          "validation": null
+        }
+      ],
+      "sidecar_status_counts": {
+        "accepted": 1
+      }
+    },
+    {
+      "ordinal": 4,
+      "id": "O4",
+      "cohort": "fresh",
+      "execution": "recorded",
+      "production_status": "retrieval_no_answer",
+      "run_id": "782f0c65-998e-412e-bc07-c843ca28db41",
+      "started_at_london": "2026-11-15T16:04:44+00:00",
+      "finished_at_london": "2026-11-15T16:05:12+00:00",
+      "elapsed_ms": 27141.933917999268,
+      "service_calls": 6,
+      "backend_representations_equal": false,
+      "persistence_receipt": true,
+      "capture_check_completed": true,
+      "failure_code": null,
+      "attempt_sidecars": [
+        {
+          "file": "891fa3f6-30c0-41b6-932c-f0ba1858acfe-2ec106b6-cb97-499a-a7d1-15fb168db778.json",
+          "stage": "planner",
+          "attempt": 1,
+          "status": "accepted",
+          "validation": null
+        }
+      ],
+      "sidecar_status_counts": {
+        "accepted": 1
+      }
+    },
+    {
+      "ordinal": 5,
+      "id": "O5",
+      "cohort": "fresh",
+      "execution": "recorded",
+      "production_status": "retrieval_no_answer",
+      "run_id": "ff78847b-6ad4-4557-a649-6ae576abae51",
+      "started_at_london": "2026-11-15T16:05:15+00:00",
+      "finished_at_london": "2026-11-15T16:05:35+00:00",
+      "elapsed_ms": 20712.56184577942,
+      "service_calls": 4,
+      "backend_representations_equal": false,
+      "persistence_receipt": true,
+      "capture_check_completed": true,
+      "failure_code": null,
+      "attempt_sidecars": [
+        {
+          "file": "11a1aff8-e866-433b-9f0f-3bf7def76cff-b7c21684-21df-489e-aba3-3d6356c6a550.json",
+          "stage": "planner",
+          "attempt": 1,
+          "status": "accepted",
+          "validation": null
+        }
+      ],
+      "sidecar_status_counts": {
+        "accepted": 1
+      }
+    },
+    {
+      "ordinal": 6,
+      "id": "O6",
+      "cohort": "fresh",
+      "execution": "recorded",
+      "production_status": "retrieval_no_answer",
+      "run_id": "639b2492-8f1f-4f35-a752-ca7c02f4792d",
+      "started_at_london": "2026-11-15T16:05:37+00:00",
+      "finished_at_london": "2026-11-15T16:05:52+00:00",
+      "elapsed_ms": 14712.821006774902,
+      "service_calls": 4,
+      "backend_representations_equal": false,
+      "persistence_receipt": true,
+      "capture_check_completed": true,
+      "failure_code": null,
+      "attempt_sidecars": [
+        {
+          "file": "6ad4d5b7-31ae-4f1b-a0be-b4c10e946790-080f7815-036d-4245-a44a-138aaeba61bc.json",
+          "stage": "planner",
+          "attempt": 1,
+          "status": "accepted",
+          "validation": null
+        }
+      ],
+      "sidecar_status_counts": {
+        "accepted": 1
+      }
+    },
+    {
+      "ordinal": 7,
+      "id": "O7",
+      "cohort": "fresh",
+      "execution": "recorded",
+      "production_status": "completed",
+      "run_id": "c207bce2-30ca-4f09-aa5a-6ae3dfeb2851",
+      "started_at_london": "2026-11-15T16:05:54+00:00",
+      "finished_at_london": "2026-11-15T16:06:43+00:00",
+      "elapsed_ms": 48810.03212928772,
+      "service_calls": 8,
+      "backend_representations_equal": true,
+      "persistence_receipt": true,
+      "capture_check_completed": true,
+      "failure_code": null,
+      "attempt_sidecars": [
+        {
+          "file": "438ae341-39d2-4cc7-8925-30d34bb49f11-1e08f591-19ba-4c87-8948-7785b38b25e7.json",
+          "stage": "planner",
+          "attempt": 1,
+          "status": "accepted",
+          "validation": null
+        },
+        {
+          "file": "4e869c0f-8736-4b8a-854c-1c66ca1b6b09-83c9268b-d575-491f-a21f-03755cddef49.json",
+          "stage": "generation",
+          "attempt": 1,
+          "status": "rejected",
+          "validation": {
+            "field": "answer_parts.evidence_ids",
+            "code": "citation_ownership"
+          }
+        },
+        {
+          "file": "828f63f8-d07a-47c1-bf44-69ae05177625-3a859ac8-cdc3-4125-b348-5145dad39c9b.json",
+          "stage": "generation",
+          "attempt": 1,
+          "status": "rejected",
+          "validation": {
+            "field": "answer_parts.evidence_ids",
+            "code": "citation_ownership"
+          }
+        }
+      ],
+      "sidecar_status_counts": {
+        "accepted": 1,
+        "rejected": 2
+      }
+    },
+    {
+      "ordinal": 8,
+      "id": "O8",
+      "cohort": "fresh",
+      "execution": "recorded",
+      "production_status": "retrieval_no_answer",
+      "run_id": "aa3f589d-7e0e-4bb7-b418-1a965382e3a1",
+      "started_at_london": "2026-11-15T16:06:45+00:00",
+      "finished_at_london": "2026-11-15T16:07:08+00:00",
+      "elapsed_ms": 22524.742126464844,
+      "service_calls": 4,
+      "backend_representations_equal": false,
+      "persistence_receipt": true,
+      "capture_check_completed": true,
+      "failure_code": null,
+      "attempt_sidecars": [
+        {
+          "file": "6fc26beb-4149-40e8-bfec-f7643c88ff6f-34399218-e880-40c7-80ba-85edebca73f6.json",
+          "stage": "planner",
+          "attempt": 1,
+          "status": "accepted",
+          "validation": null
+        }
+      ],
+      "sidecar_status_counts": {
+        "accepted": 1
+      }
+    },
+    {
+      "ordinal": 9,
+      "id": "O9",
+      "cohort": "fresh",
+      "execution": "recorded",
+      "production_status": "retrieval_no_answer",
+      "run_id": "444e77f6-e769-47ea-8cf6-2d23c8ad857f",
+      "started_at_london": "2026-11-15T16:07:10+00:00",
+      "finished_at_london": "2026-11-15T16:07:28+00:00",
+      "elapsed_ms": 18121.623039245605,
+      "service_calls": 4,
+      "backend_representations_equal": false,
+      "persistence_receipt": true,
+      "capture_check_completed": true,
+      "failure_code": null,
+      "attempt_sidecars": [
+        {
+          "file": "25f43b1c-c116-4d32-977f-87a0beb54a2a-35de573b-ec00-4194-86a5-16b4af9b4e5e.json",
+          "stage": "planner",
+          "attempt": 1,
+          "status": "accepted",
+          "validation": null
+        }
+      ],
+      "sidecar_status_counts": {
+        "accepted": 1
+      }
+    },
+    {
+      "ordinal": 10,
+      "id": "O10",
+      "cohort": "fresh",
+      "execution": "recorded",
+      "production_status": "retrieval_no_answer",
+      "run_id": "420b0a8e-a52e-4b3a-8338-8aab76db1441",
+      "started_at_london": "2026-11-15T16:07:30+00:00",
+      "finished_at_london": "2026-11-15T16:08:08+00:00",
+      "elapsed_ms": 37914.79992866516,
+      "service_calls": 4,
+      "backend_representations_equal": false,
+      "persistence_receipt": true,
+      "capture_check_completed": true,
+      "failure_code": null,
+      "attempt_sidecars": [
+        {
+          "file": "65383939-e6fb-4afa-8a3d-59c0f4b5936c-2f728ff5-bfbf-43ed-80b0-795df4674e03.json",
+          "stage": "planner",
+          "attempt": 1,
+          "status": "rejected",
+          "validation": {
+            "stage": "interpretation",
+            "field": "root",
+            "code": "clause_omitted"
+          }
+        },
+        {
+          "file": "65383939-e6fb-4afa-8a3d-59c0f4b5936c-a492989a-9edd-4e8d-af6b-6bb389998ed3.json",
+          "stage": "planner",
+          "attempt": 2,
+          "status": "accepted",
+          "validation": null
+        }
+      ],
+      "sidecar_status_counts": {
+        "rejected": 1,
+        "accepted": 1
+      }
+    },
+    {
+      "ordinal": 11,
+      "id": "O11",
+      "cohort": "fresh",
+      "execution": "recorded",
+      "production_status": "retrieval_no_answer",
+      "run_id": "3a9e98ac-27a7-4213-88e5-9210f857f0e3",
+      "started_at_london": "2026-11-15T16:08:11+00:00",
+      "finished_at_london": "2026-11-15T16:08:29+00:00",
+      "elapsed_ms": 17848.979949951172,
+      "service_calls": 4,
+      "backend_representations_equal": false,
+      "persistence_receipt": true,
+      "capture_check_completed": true,
+      "failure_code": null,
+      "attempt_sidecars": [
+        {
+          "file": "2ecd9d3d-a7eb-4c55-bbc0-c5599dac738d-58a1e9ce-15bc-4a23-943a-6af8b6b4689c.json",
+          "stage": "planner",
+          "attempt": 1,
+          "status": "accepted",
+          "validation": null
+        }
+      ],
+      "sidecar_status_counts": {
+        "accepted": 1
+      }
+    },
+    {
+      "ordinal": 12,
+      "id": "O12",
+      "cohort": "fresh",
+      "execution": "recorded",
+      "production_status": "retrieval_no_answer",
+      "run_id": "9e166ad5-cd56-46ce-b1ed-ede7dedc6588",
+      "started_at_london": "2026-11-15T16:08:32+00:00",
+      "finished_at_london": "2026-11-15T16:08:57+00:00",
+      "elapsed_ms": 25491.014003753662,
+      "service_calls": 6,
+      "backend_representations_equal": false,
+      "persistence_receipt": true,
+      "capture_check_completed": true,
+      "failure_code": null,
+      "attempt_sidecars": [
+        {
+          "file": "19a3966a-5238-490e-9aac-108618af3fe3-c72fc1c4-e14d-412c-96fe-0ebdf8e2e302.json",
+          "stage": "planner",
+          "attempt": 1,
+          "status": "accepted",
+          "validation": null
+        }
+      ],
+      "sidecar_status_counts": {
+        "accepted": 1
+      }
+    },
+    {
+      "ordinal": 13,
+      "id": "H1",
+      "cohort": "fresh",
+      "execution": "recorded",
+      "production_status": "completed",
+      "run_id": "22714b89-7fa5-491e-b87a-9bd676b1709e",
+      "started_at_london": "2026-11-15T16:08:59+00:00",
+      "finished_at_london": "2026-11-15T16:10:05+00:00",
+      "elapsed_ms": 65743.4470653534,
+      "service_calls": 9,
+      "backend_representations_equal": true,
+      "persistence_receipt": true,
+      "capture_check_completed": true,
+      "failure_code": null,
+      "attempt_sidecars": [
+        {
+          "file": "b262689a-ffa0-4939-915f-1eeba5437f76-8a6ee73e-3597-4707-b5c3-db2ca239e0a3.json",
+          "stage": "planner",
+          "attempt": 1,
+          "status": "accepted",
+          "validation": null
+        },
+        {
+          "file": "38634b94-4d72-40ab-a8b0-2ede77547be9-dba6bc7b-af58-4a66-9b0c-3f68826f462c.json",
+          "stage": "generation",
+          "attempt": 1,
+          "status": "rejected",
+          "validation": {
+            "field": "answer_parts.text",
+            "code": "entailment_uncertain"
+          }
+        }
+      ],
+      "sidecar_status_counts": {
+        "accepted": 1,
+        "rejected": 1
+      }
+    },
+    {
+      "ordinal": 14,
+      "id": "H2",
+      "cohort": "fresh",
+      "execution": "dispatched_unfinalised",
+      "production_status": "completed",
+      "run_id": "4c20b91a-d25f-482d-b3c5-babeb1341d87",
+      "started_at_london": "2026-11-15T16:10:09+00:00",
+      "finished_at_london": "2026-11-15T16:10:42+00:00",
+      "elapsed_ms": 33463.47212791443,
+      "service_calls": 8,
+      "backend_representations_equal": true,
+      "persistence_receipt": true,
+      "capture_check_completed": false,
+      "failure_code": null,
+      "attempt_sidecars": [
+        {
+          "file": "5286dd17-b66c-4006-a1b8-788bb71b619a-2e009448-c8bd-4d90-94b0-fec4a154670f.json",
+          "stage": "planner",
+          "attempt": 1,
+          "status": "accepted",
+          "validation": null
+        }
+      ],
+      "sidecar_status_counts": {
+        "accepted": 1
+      }
+    },
+    {
+      "ordinal": 15,
+      "id": "H3",
+      "cohort": "fresh",
+      "execution": "not_dispatched"
+    },
+    {
+      "ordinal": 16,
+      "id": "H4",
+      "cohort": "fresh",
+      "execution": "not_dispatched"
+    },
+    {
+      "ordinal": 17,
+      "id": "C1",
+      "cohort": "fresh",
+      "execution": "not_dispatched"
+    },
+    {
+      "ordinal": 18,
+      "id": "C2",
+      "cohort": "fresh",
+      "execution": "not_dispatched"
+    },
+    {
+      "ordinal": 19,
+      "id": "C3",
+      "cohort": "fresh",
+      "execution": "not_dispatched"
+    },
+    {
+      "ordinal": 20,
+      "id": "C4",
+      "cohort": "fresh",
+      "execution": "not_dispatched"
+    },
+    {
+      "ordinal": 21,
+      "id": "M1",
+      "cohort": "fresh",
+      "execution": "not_dispatched"
+    },
+    {
+      "ordinal": 22,
+      "id": "M2",
+      "cohort": "fresh",
+      "execution": "not_dispatched"
+    },
+    {
+      "ordinal": 23,
+      "id": "M3",
+      "cohort": "fresh",
+      "execution": "not_dispatched"
+    },
+    {
+      "ordinal": 24,
+      "id": "M4",
+      "cohort": "fresh",
+      "execution": "not_dispatched"
+    },
+    {
+      "ordinal": 25,
+      "id": "K1",
+      "cohort": "control",
+      "execution": "not_dispatched"
+    },
+    {
+      "ordinal": 26,
+      "id": "K2",
+      "cohort": "control",
+      "execution": "not_dispatched"
+    },
+    {
+      "ordinal": 27,
+      "id": "K3",
+      "cohort": "control",
+      "execution": "not_dispatched"
+    },
+    {
+      "ordinal": 28,
+      "id": "K4",
+      "cohort": "control",
+      "execution": "not_dispatched"
+    },
+    {
+      "ordinal": 29,
+      "id": "R19",
+      "cohort": "regression",
+      "execution": "not_dispatched"
+    },
+    {
+      "ordinal": 30,
+      "id": "R24",
+      "cohort": "regression",
+      "execution": "not_dispatched"
+    },
+    {
+      "ordinal": 31,
+      "id": "R26",
+      "cohort": "regression",
+      "execution": "not_dispatched"
+    },
+    {
+      "ordinal": 32,
+      "id": "R28",
+      "cohort": "regression",
+      "execution": "not_dispatched"
+    },
+    {
+      "ordinal": 33,
+      "id": "R29",
+      "cohort": "regression",
+      "execution": "not_dispatched"
+    },
+    {
+      "ordinal": 34,
+      "id": "G3",
+      "cohort": "regression",
+      "execution": "not_dispatched"
+    }
+  ],
+  "production_status_by_dispatched_cohort": {
+    "fresh": {
+      "retrieval_no_answer": 10,
+      "completed": 4
+    }
+  },
+  "recorded": 13,
+  "dispatched": 14,
+  "parse_errors": [],
+  "ledger_errors": [],
+  "known_or_retained_rate_subtotal_usd": "0.1787392499999999995",
+  "retained_unknown_liability_usd": "56.1248560000000000005",
+  "conservative_committed_usd": "56.303595250",
+  "service_receipt_token_subtotal": {
+    "input_tokens": 622130,
+    "output_tokens": 27560
+  },
+  "accounting_limitations": "Service receipts only; nested aggregates not added. Missing provider receipts/failed attempts are not inferred; full per-item reserve retained.",
+  "raw_internal_source_review_json": "unavailable",
+  "stop": {
+    "type": "JSONDecodeError",
+    "at": "2026-11-15T16:10:42.835537+00:00",
+    "completed_callbacks": 14,
+    "resume_authorised": false
+  }
+}

@@ -1,0 +1,24 @@
+{
+    "items": [
+        {
+            "item": "O2",
+            "run_id": "a9ecba78-c601-4c52-8a91-e5ba9aba2a41",
+            "conversation_id": "3ecf8cac-f7f3-407d-821e-3ab997b17e77",
+            "workspace_id": "5323cd6b-8b7a-40f9-98b0-9413c75f643e",
+            "actor_id": "ae454ce6-4d91-4c7e-9a40-b4750b696a6b",
+            "user_turns": 1,
+            "generation_runs": 1,
+            "status": "completed",
+            "question": "I've been invited to a disciplinary hearing. Can I bring my husband with me?",
+            "temporal_context": {
+                "uses": [],
+                "targets": [],
+                "version": "temporal-answer-use-v2"
+            },
+            "reloaded_rendered_text": "I couldn't find enough available evidence to answer that question.",
+            "assistant_display_text": "I couldn't find enough available evidence to answer that question."
+        }
+    ],
+    "verified_at": "2026-11-15T16:04:14+00:00",
+    "grading": false
+}

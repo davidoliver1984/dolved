@@ -1,0 +1,20 @@
+{
+    "items": [
+        {
+            "item": "O3",
+            "run_id": "63e404eb-40a0-4371-964b-7fd574579627",
+            "conversation_id": "339cd060-bf12-4e5b-bbf4-efec608f5d93",
+            "workspace_id": "5323cd6b-8b7a-40f9-98b0-9413c75f643e",
+            "actor_id": "ae454ce6-4d91-4c7e-9a40-b4750b696a6b",
+            "user_turns": 1,
+            "generation_runs": 1,
+            "status": "retrieval_no_answer",
+            "question": "How often should the first aid box be checked, and where do I record it when I've treated someone's minor cut?",
+            "temporal_context": null,
+            "reloaded_rendered_text": null,
+            "assistant_display_text": "I couldn't find enough available evidence to answer that question."
+        }
+    ],
+    "verified_at": "2026-11-15T16:04:42+00:00",
+    "grading": false
+}

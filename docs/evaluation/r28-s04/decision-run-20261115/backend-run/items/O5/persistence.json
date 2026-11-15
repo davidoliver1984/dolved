@@ -1,0 +1,20 @@
+{
+    "items": [
+        {
+            "item": "O5",
+            "run_id": "ff78847b-6ad4-4557-a649-6ae576abae51",
+            "conversation_id": "491da007-d9a7-4cd5-bad0-9d81a869f45f",
+            "workspace_id": "5323cd6b-8b7a-40f9-98b0-9413c75f643e",
+            "actor_id": "ae454ce6-4d91-4c7e-9a40-b4750b696a6b",
+            "user_turns": 1,
+            "generation_runs": 1,
+            "status": "retrieval_no_answer",
+            "question": "My colleague has forgotten her password. Can I let her log in with mine for the rest of the shift?",
+            "temporal_context": null,
+            "reloaded_rendered_text": null,
+            "assistant_display_text": "I couldn't find enough available evidence to answer that question."
+        }
+    ],
+    "verified_at": "2026-11-15T16:05:36+00:00",
+    "grading": false
+}

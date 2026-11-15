@@ -1,0 +1,20 @@
+{
+    "items": [
+        {
+            "item": "O11",
+            "run_id": "3a9e98ac-27a7-4213-88e5-9210f857f0e3",
+            "conversation_id": "421be2f1-debb-4d02-992e-ee3f674eb470",
+            "workspace_id": "5323cd6b-8b7a-40f9-98b0-9413c75f643e",
+            "actor_id": "ae454ce6-4d91-4c7e-9a40-b4750b696a6b",
+            "user_turns": 1,
+            "generation_runs": 1,
+            "status": "retrieval_no_answer",
+            "question": "Am I allowed to check my personal email on a work computer?",
+            "temporal_context": null,
+            "reloaded_rendered_text": null,
+            "assistant_display_text": "I couldn't find enough available evidence to answer that question."
+        }
+    ],
+    "verified_at": "2026-11-15T16:08:29+00:00",
+    "grading": false
+}

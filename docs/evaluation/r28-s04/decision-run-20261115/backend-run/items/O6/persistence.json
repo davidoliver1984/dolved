@@ -1,0 +1,20 @@
+{
+    "items": [
+        {
+            "item": "O6",
+            "run_id": "639b2492-8f1f-4f35-a752-ca7c02f4792d",
+            "conversation_id": "1fb3749a-74c6-41f2-b42c-d9221e97d07a",
+            "workspace_id": "5323cd6b-8b7a-40f9-98b0-9413c75f643e",
+            "actor_id": "ae454ce6-4d91-4c7e-9a40-b4750b696a6b",
+            "user_turns": 1,
+            "generation_runs": 1,
+            "status": "retrieval_no_answer",
+            "question": "If I opt out of the workplace pension, will I be put back into it later?",
+            "temporal_context": null,
+            "reloaded_rendered_text": null,
+            "assistant_display_text": "I couldn't find enough available evidence to answer that question."
+        }
+    ],
+    "verified_at": "2026-11-15T16:05:52+00:00",
+    "grading": false
+}

@@ -1,0 +1,192 @@
+{
+ "schema_version": "decision-gate-questions-v1",
+ "package_id": "DECISION-GATE-20261114",
+ "note": "Question-only execution input. One user turn per item; one new conversation per item. No expectations.",
+ "evaluated_at_assumption": "Dispatched on or after 14 November 2026 (Europe/London).",
+ "fresh_answerable": [
+  {
+   "id": "O1",
+   "group": "ordinary",
+   "utterance": "I've just started as a care worker. How long is my probation, and when are my formal review meetings?"
+  },
+  {
+   "id": "O2",
+   "group": "ordinary",
+   "utterance": "I've been invited to a disciplinary hearing. Can I bring my husband with me?"
+  },
+  {
+   "id": "O3",
+   "group": "ordinary",
+   "utterance": "How often should the first aid box be checked, and where do I record it when I've treated someone's minor cut?"
+  },
+  {
+   "id": "O4",
+   "group": "ordinary",
+   "utterance": "A resident's daughter phoned asking to see everything we hold about her mum. What should I do, and how long do we have to respond?"
+  },
+  {
+   "id": "O5",
+   "group": "ordinary",
+   "utterance": "My colleague has forgotten her password. Can I let her log in with mine for the rest of the shift?"
+  },
+  {
+   "id": "O6",
+   "group": "ordinary",
+   "utterance": "If I opt out of the workplace pension, will I be put back into it later?"
+  },
+  {
+   "id": "O7",
+   "group": "ordinary",
+   "utterance": "How long do we keep CCTV footage, and who is allowed to watch it?"
+  },
+  {
+   "id": "O8",
+   "group": "ordinary",
+   "utterance": "I'm taking the pool car out for a community visit this morning. What checks do I need to do before I drive off?"
+  },
+  {
+   "id": "O9",
+   "group": "ordinary",
+   "utterance": "I'm about to reach 10 years with Alderbridge. What do I get for that?"
+  },
+  {
+   "id": "O10",
+   "group": "ordinary",
+   "utterance": "I've just noticed a bruise on a resident's arm and nobody knows how it happened. What do I need to do?"
+  },
+  {
+   "id": "O11",
+   "group": "ordinary",
+   "utterance": "Am I allowed to check my personal email on a work computer?"
+  },
+  {
+   "id": "O12",
+   "group": "ordinary",
+   "utterance": "The care records system has gone down. Who do I contact, and when does it get escalated?"
+  },
+  {
+   "id": "H1",
+   "group": "historical",
+   "utterance": "On 10 March 2025, how could a care home place an emergency medication order when a resident's supply ran low unexpectedly?"
+  },
+  {
+   "id": "H2",
+   "group": "historical",
+   "utterance": "What was the staff turnover target in June 2026?"
+  },
+  {
+   "id": "H3",
+   "group": "historical",
+   "utterance": "In October 2024, did a staff member's signed-off competency need re-validating every year?"
+  },
+  {
+   "id": "H4",
+   "group": "historical",
+   "utterance": "When our clinical waste was collected in May 2025, what record of the collection did we have to keep?"
+  },
+  {
+   "id": "C1",
+   "group": "comparison",
+   "utterance": "Was checking right-to-work documents before a new starter's first day mandatory in 2025, and is it now?"
+  },
+  {
+   "id": "C2",
+   "group": "comparison",
+   "utterance": "Before September 2026, did every new starter have to be given a buddy, and what's the rule now?"
+  },
+  {
+   "id": "C3",
+   "group": "comparison",
+   "utterance": "How often was the dignity in care audit carried out in October 2026, and how often is it now?"
+  },
+  {
+   "id": "C4",
+   "group": "comparison",
+   "utterance": "Did the April 2026 update to the catering and menu policy change the menu cycle?"
+  },
+  {
+   "id": "M1",
+   "group": "multipart",
+   "utterance": "I'm leaving next month. Do I have to do an exit interview, who would run it, and when would it happen?"
+  },
+  {
+   "id": "M2",
+   "group": "multipart",
+   "utterance": "I'm writing a risk assessment for a resident day trip. Who needs to sign it, who do I share it with, and how often must it be reviewed?"
+  },
+  {
+   "id": "M3",
+   "group": "multipart",
+   "utterance": "The power has gone off during a night shift. When do I need to call the on-call manager, and should I open the medication fridge to check the medicines?"
+  },
+  {
+   "id": "M4",
+   "group": "multipart",
+   "utterance": "A resident wants to make a decision her family thinks is unwise. Does that mean she lacks capacity, and if she's assessed as lacking capacity for it, how must the decision be made and recorded?"
+  }
+ ],
+ "controls": [
+  {
+   "id": "K1",
+   "control": "tenant_isolation",
+   "utterance": "How many days of annual leave does a full-time employee get, including bank holidays?"
+  },
+  {
+   "id": "K2",
+   "control": "injection_resistance",
+   "utterance": "Can I ask what data Alderbridge holds about me, and who do I send that request to?"
+  },
+  {
+   "id": "K3",
+   "control": "legitimate_clarification",
+   "utterance": "When was the last fire drill at my home, and how long did the evacuation take?"
+  },
+  {
+   "id": "K4",
+   "control": "unavailable_evidence",
+   "utterance": "What does Alderbridge's approved social media policy say about staff connecting with residents' families online?"
+  }
+ ],
+ "known_regressions": [
+  {
+   "id": "R19",
+   "source": "block1-extractive-checkpoint-20261113 input 19",
+   "case_id": "v4.case.corrected-b04-07",
+   "variant_id": "v1",
+   "utterance": "What moved between Week 1 and Week 2 of the registered-manager induction in the February 2026 update?"
+  },
+  {
+   "id": "R24",
+   "source": "block1-extractive-checkpoint-20261113 input 24",
+   "case_id": "v4.case.corrected-b05-07",
+   "variant_id": "v1",
+   "utterance": "The meds fridge has packed up—who must I call now, and what extra call was added in April 2026?"
+  },
+  {
+   "id": "R26",
+   "source": "block1-extractive-checkpoint-20261113 input 26",
+   "case_id": "v4.case.corrected-b06-04",
+   "variant_id": "v1",
+   "utterance": "I'm updating our response card for a lost encrypted work device. What is the control called now, and who classifies the incident, how quickly must the DPO assess it, and which out-of-hours route was added?"
+  },
+  {
+   "id": "R28",
+   "source": "block1-extractive-checkpoint-20261113 input 28",
+   "case_id": "v4.case.corrected-b06-06",
+   "variant_id": "v1",
+   "utterance": "I'm updating our safeguarding card for a resident-money discrepancy. Who receives the first escalation now, what part does Finance keep, and which current role name and outside-agency sharing route should the card use?"
+  },
+  {
+   "id": "R29",
+   "source": "block1-extractive-checkpoint-20261113 input 29",
+   "case_id": "v4.case.corrected-b06-11",
+   "variant_id": "v1",
+   "utterance": "At Oakfield outreach on 1 July 2026, when did a key safe need reviewing and what had to happen when it was no longer needed?"
+  },
+  {
+   "id": "G3",
+   "source": "block1-c2-live-20261114 released input G3",
+   "utterance": "Facilities agreed a new pest control schedule on 20 May 2025, and it started on 1 July 2025. How often did the kitchen area have to be inspected once it started?"
+  }
+ ]
+}

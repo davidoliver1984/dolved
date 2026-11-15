@@ -1,0 +1,11 @@
+{
+  "run_id": "R28-DECISION-BACKEND-20261115-01",
+  "execution_commit": "6a2d52248e2ddfc224f72fab3233b37831d91a0a",
+  "checksums_sha256": "ede7358e21cd9bfa00b35d2789ab3d878d3fd7e8790b5d24b0b9a975424963b5",
+  "files_bound": 325,
+  "runtime_sha256": "b73d054d9492e909cfaeadb642544950cfe940de10bfcbe12b388b089997b901",
+  "status": "stopped_no_resume",
+  "graded": false,
+  "main_unchanged": true,
+  "block1": "HOLD"
+}

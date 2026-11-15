@@ -1,0 +1,239 @@
+{
+    "items": [
+        {
+            "item": "H1",
+            "run_id": "22714b89-7fa5-491e-b87a-9bd676b1709e",
+            "conversation_id": "4fc1840d-e768-456b-a5dd-6717c0b8c6d4",
+            "workspace_id": "5323cd6b-8b7a-40f9-98b0-9413c75f643e",
+            "actor_id": "ae454ce6-4d91-4c7e-9a40-b4750b696a6b",
+            "user_turns": 1,
+            "generation_runs": 1,
+            "status": "completed",
+            "question": "On 10 March 2025, how could a care home place an emergency medication order when a resident's supply ran low unexpectedly?",
+            "temporal_context": {
+                "uses": [
+                    {
+                        "target": {
+                            "at": "2025-03-10T00:00:00+00:00",
+                            "mode": "dated",
+                            "reason": null,
+                            "status": "searched",
+                            "need_id": "n1",
+                            "purpose": "precautionary",
+                            "versions": [
+                                {
+                                    "end": "2025-10-01T00:00:00+00:00",
+                                    "start": "2023-06-01T00:00:00+00:00",
+                                    "version_id": "d2b1d0e8-4a8c-4921-8403-a40924273b27"
+                                }
+                            ],
+                            "family_id": "c285af45-2615-442f-be2d-5197a75f5abd",
+                            "reference": {
+                                "at": "2025-03-10T00:00:00+00:00",
+                                "quote": "10 March 2025",
+                                "value": "2025-03-10",
+                                "turn_id": "user-1",
+                                "precision": "day",
+                                "period_end": null,
+                                "period_start": null
+                            },
+                            "target_id": "n1:date:1"
+                        },
+                        "need_id": "n1",
+                        "target_id": "n1:date:1",
+                        "part_index": 0,
+                        "evidence_ids": [
+                            "ev-01",
+                            "ev-05"
+                        ],
+                        "question_quote": "On 10 March 2025, how could a care home place an emergency medication order when a resident's supply ran low unexpectedly?",
+                        "planner_disagreement": false
+                    }
+                ],
+                "targets": [
+                    {
+                        "at": "2025-03-10T00:00:00+00:00",
+                        "mode": "provisional",
+                        "reason": null,
+                        "status": "searched",
+                        "need_id": "n1",
+                        "purpose": "requested",
+                        "versions": [
+                            {
+                                "end": "2025-10-01T00:00:00+00:00",
+                                "start": "2023-06-01T00:00:00+00:00",
+                                "version_id": "d2b1d0e8-4a8c-4921-8403-a40924273b27"
+                            }
+                        ],
+                        "family_id": "c285af45-2615-442f-be2d-5197a75f5abd",
+                        "reference": null,
+                        "target_id": "n1:requested"
+                    },
+                    {
+                        "at": "2025-03-10T00:00:00+00:00",
+                        "mode": "dated",
+                        "reason": null,
+                        "status": "searched",
+                        "need_id": "n1",
+                        "purpose": "precautionary",
+                        "versions": [
+                            {
+                                "end": "2025-10-01T00:00:00+00:00",
+                                "start": "2023-06-01T00:00:00+00:00",
+                                "version_id": "d2b1d0e8-4a8c-4921-8403-a40924273b27"
+                            }
+                        ],
+                        "family_id": "c285af45-2615-442f-be2d-5197a75f5abd",
+                        "reference": {
+                            "at": "2025-03-10T00:00:00+00:00",
+                            "quote": "10 March 2025",
+                            "value": "2025-03-10",
+                            "turn_id": "user-1",
+                            "precision": "day",
+                            "period_end": null,
+                            "period_start": null
+                        },
+                        "target_id": "n1:date:1"
+                    },
+                    {
+                        "at": "2026-11-15T16:09:00+00:00",
+                        "mode": "current",
+                        "reason": null,
+                        "status": "searched",
+                        "need_id": "n1",
+                        "purpose": "precautionary",
+                        "versions": [
+                            {
+                                "end": null,
+                                "start": "2025-10-01T00:00:00+00:00",
+                                "version_id": "23c48834-49e0-4c88-bb96-9f203c0780d9"
+                            }
+                        ],
+                        "family_id": "c285af45-2615-442f-be2d-5197a75f5abd",
+                        "reference": null,
+                        "target_id": "n1:current"
+                    }
+                ],
+                "version": "temporal-answer-use-v2",
+                "evidence_associations": {
+                    "ev-01": {
+                        "n1": {
+                            "side": "primary",
+                            "temporal_authority": {
+                                "need_id": "n1",
+                                "evaluated_at": "2026-11-15T16:09:00+00:00",
+                                "document_title": "medication-ordering-stock-v1.docx",
+                                "temporal_basis": "application-labelled-targets-v1",
+                                "authority_start": "2023-06-01T00:00:00+00:00",
+                                "document_family_id": "c285af45-2615-442f-be2d-5197a75f5abd",
+                                "document_version_id": "d2b1d0e8-4a8c-4921-8403-a40924273b27",
+                                "temporal_target_ids": [
+                                    "n1:requested",
+                                    "n1:date:1"
+                                ],
+                                "document_family_title": "Medication Ordering and Stock Policy",
+                                "authoritative_at_evaluated_at": false
+                            },
+                            "applicability_context": {
+                                "resolved_location_public_id": null
+                            }
+                        }
+                    },
+                    "ev-02": {
+                        "n1": {
+                            "side": "primary",
+                            "temporal_authority": {
+                                "need_id": "n1",
+                                "evaluated_at": "2026-11-15T16:09:00+00:00",
+                                "document_title": "medication-ordering-stock-v2.docx",
+                                "temporal_basis": "application-labelled-targets-v1",
+                                "authority_start": "2025-10-01T00:00:00+00:00",
+                                "document_family_id": "c285af45-2615-442f-be2d-5197a75f5abd",
+                                "document_version_id": "23c48834-49e0-4c88-bb96-9f203c0780d9",
+                                "temporal_target_ids": [
+                                    "n1:current"
+                                ],
+                                "document_family_title": "Medication Ordering and Stock Policy",
+                                "authoritative_at_evaluated_at": true
+                            },
+                            "applicability_context": {
+                                "resolved_location_public_id": null
+                            }
+                        }
+                    },
+                    "ev-03": {
+                        "n1": {
+                            "side": "primary",
+                            "temporal_authority": {
+                                "need_id": "n1",
+                                "evaluated_at": "2026-11-15T16:09:00+00:00",
+                                "document_title": "medication-ordering-stock-v2.docx",
+                                "temporal_basis": "application-labelled-targets-v1",
+                                "authority_start": "2025-10-01T00:00:00+00:00",
+                                "document_family_id": "c285af45-2615-442f-be2d-5197a75f5abd",
+                                "document_version_id": "23c48834-49e0-4c88-bb96-9f203c0780d9",
+                                "temporal_target_ids": [
+                                    "n1:current"
+                                ],
+                                "document_family_title": "Medication Ordering and Stock Policy",
+                                "authoritative_at_evaluated_at": true
+                            },
+                            "applicability_context": {
+                                "resolved_location_public_id": null
+                            }
+                        }
+                    },
+                    "ev-04": {
+                        "n1": {
+                            "side": "primary",
+                            "temporal_authority": {
+                                "need_id": "n1",
+                                "evaluated_at": "2026-11-15T16:09:00+00:00",
+                                "document_title": "medication-ordering-stock-v2.docx",
+                                "temporal_basis": "application-labelled-targets-v1",
+                                "authority_start": "2025-10-01T00:00:00+00:00",
+                                "document_family_id": "c285af45-2615-442f-be2d-5197a75f5abd",
+                                "document_version_id": "23c48834-49e0-4c88-bb96-9f203c0780d9",
+                                "temporal_target_ids": [
+                                    "n1:current"
+                                ],
+                                "document_family_title": "Medication Ordering and Stock Policy",
+                                "authoritative_at_evaluated_at": true
+                            },
+                            "applicability_context": {
+                                "resolved_location_public_id": null
+                            }
+                        }
+                    },
+                    "ev-05": {
+                        "n1": {
+                            "side": "primary",
+                            "temporal_authority": {
+                                "need_id": "n1",
+                                "evaluated_at": "2026-11-15T16:09:00+00:00",
+                                "document_title": "medication-ordering-stock-v1.docx",
+                                "temporal_basis": "application-labelled-targets-v1",
+                                "authority_start": "2023-06-01T00:00:00+00:00",
+                                "document_family_id": "c285af45-2615-442f-be2d-5197a75f5abd",
+                                "document_version_id": "d2b1d0e8-4a8c-4921-8403-a40924273b27",
+                                "temporal_target_ids": [
+                                    "n1:requested",
+                                    "n1:date:1"
+                                ],
+                                "document_family_title": "Medication Ordering and Stock Policy",
+                                "authoritative_at_evaluated_at": false
+                            },
+                            "applicability_context": {
+                                "resolved_location_public_id": null
+                            }
+                        }
+                    }
+                }
+            },
+            "reloaded_rendered_text": "On 10 March 2025 a care home could place an emergency order by telephoning the supplying pharmacy (a verbal emergency order), then completing the order-book entry retrospectively within 24 hours with the registered manager countersigning it as required; the worked example shows a senior carer phoning the pharmacy, arranging Saturday delivery and completing the paperwork when the registered manager next signed. Alternatively, where a genuinely urgent clinical need arose outside pharmacy hours, the on\u2011call registered manager could authorise sourcing a single dose from a partner site's stock, recording the transfer in both sites' order books and reconciling it at the next stock count.\nTemporal basis: 10 March 2025; version d2b1d0e8-4a8c-4921-8403-a40924273b27; effective 2023-06-01T00:00:00+00:00 to 2025-10-01T00:00:00+00:00 (end exclusive).",
+            "assistant_display_text": "On 10 March 2025 a care home could place an emergency order by telephoning the supplying pharmacy (a verbal emergency order), then completing the order-book entry retrospectively within 24 hours with the registered manager countersigning it as required; the worked example shows a senior carer phoning the pharmacy, arranging Saturday delivery and completing the paperwork when the registered manager next signed. Alternatively, where a genuinely urgent clinical need arose outside pharmacy hours, the on\u2011call registered manager could authorise sourcing a single dose from a partner site's stock, recording the transfer in both sites' order books and reconciling it at the next stock count.\nTemporal basis: 10 March 2025; version d2b1d0e8-4a8c-4921-8403-a40924273b27; effective 2023-06-01T00:00:00+00:00 to 2025-10-01T00:00:00+00:00 (end exclusive)."
+        }
+    ],
+    "verified_at": "2026-11-15T16:10:06+00:00",
+    "grading": false
+}

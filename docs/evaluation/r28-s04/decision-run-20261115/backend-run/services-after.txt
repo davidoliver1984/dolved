@@ -1,0 +1,6 @@
+dolved-r28-s03-api-1 Up About an hour (healthy)
+dolved-r28-s03-ai-1 Up About an hour (healthy)
+dolved-r28-s03-qdrant-1 Up 4 hours (healthy)
+dolved-r28-s03-localstack-1 Up 4 hours (healthy)
+dolved-r28-s03-postgres-1 Up 4 hours (healthy)
+dolved-r28-s03-mailpit-1 Up 4 hours (healthy)

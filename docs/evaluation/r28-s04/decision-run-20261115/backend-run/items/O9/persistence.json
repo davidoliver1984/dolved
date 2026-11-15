@@ -1,0 +1,20 @@
+{
+    "items": [
+        {
+            "item": "O9",
+            "run_id": "444e77f6-e769-47ea-8cf6-2d23c8ad857f",
+            "conversation_id": "ed9ed665-ca2a-4e43-b6b0-af10d58a2f0a",
+            "workspace_id": "5323cd6b-8b7a-40f9-98b0-9413c75f643e",
+            "actor_id": "ae454ce6-4d91-4c7e-9a40-b4750b696a6b",
+            "user_turns": 1,
+            "generation_runs": 1,
+            "status": "retrieval_no_answer",
+            "question": "I'm about to reach 10 years with Alderbridge. What do I get for that?",
+            "temporal_context": null,
+            "reloaded_rendered_text": null,
+            "assistant_display_text": "I couldn't find enough available evidence to answer that question."
+        }
+    ],
+    "verified_at": "2026-11-15T16:07:28+00:00",
+    "grading": false
+}

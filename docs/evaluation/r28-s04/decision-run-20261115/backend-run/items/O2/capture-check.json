@@ -1,0 +1,19 @@
+{
+  "sidecars": [
+    {
+      "file": "6b28d552-fdf6-46cc-a934-834e3dc52a60-43e89531-47c3-45e2-8cb9-8e6f1e66e019.json",
+      "sha256": "ac969bf11210c0261e7bdb06261145f2f37abaa983a04287b5a2a135ec1208e7"
+    },
+    {
+      "file": "7509412a-2168-40b9-adaf-7b1c81557a22-056b3045-598c-407b-8560-3abbfbeb53ed.json",
+      "sha256": "23487811465cc82870e16726666a3039a44c076dde09d3cc664ba967d5aef16e"
+    },
+    {
+      "file": "58b5c0ad-07d3-4d6a-8110-be45bb38ef08-181a5dd2-e9a1-473d-80bb-32b260bbe217.json",
+      "sha256": "6f3b36f06d996a188429341e9d58e09f922b9fe779f2ba9e78d2379cdd0bf082"
+    }
+  ],
+  "raw_source_review_json": "unavailable",
+  "backend_representations_equal": true,
+  "grading": false
+}

@@ -1,0 +1,118 @@
+{
+    "at": "2026-11-15T16:04:43+00:00",
+    "database": "dolved_e2e_r28_s03",
+    "host": "postgres",
+    "actor": "ae454ce6-4d91-4c7e-9a40-b4750b696a6b",
+    "membership": "6bf6a4a2-d235-4dc1-8be8-dda675cfdfca",
+    "role": "owner",
+    "workspace": "5323cd6b-8b7a-40f9-98b0-9413c75f643e",
+    "generation": "b24a79c2-875e-4f7c-8fa9-3681db92ae73",
+    "site_assignment": null,
+    "site_assignment_basis": "No actor\/membership site columns; BuildAuthorisedKnowledgeScope carries only user, workspace and active corpus. No site\/context supplied by dispatcher.",
+    "schema_columns_checked": [
+        {
+            "table_name": "document_applicability_locations",
+            "column_name": "organisational_location_id"
+        },
+        {
+            "table_name": "document_family_default_applicabilities",
+            "column_name": "organisational_location_id"
+        },
+        {
+            "table_name": "organisational_location_aliases",
+            "column_name": "organisational_location_id"
+        },
+        {
+            "table_name": "saved_views",
+            "column_name": "user_id"
+        },
+        {
+            "table_name": "sessions",
+            "column_name": "user_id"
+        },
+        {
+            "table_name": "user_disablement_reconciliation_sources",
+            "column_name": "user_id"
+        },
+        {
+            "table_name": "user_notification_preferences",
+            "column_name": "user_id"
+        },
+        {
+            "table_name": "users",
+            "column_name": "created_at"
+        },
+        {
+            "table_name": "users",
+            "column_name": "disabled_at"
+        },
+        {
+            "table_name": "users",
+            "column_name": "email"
+        },
+        {
+            "table_name": "users",
+            "column_name": "email_verified_at"
+        },
+        {
+            "table_name": "users",
+            "column_name": "id"
+        },
+        {
+            "table_name": "users",
+            "column_name": "name"
+        },
+        {
+            "table_name": "users",
+            "column_name": "password"
+        },
+        {
+            "table_name": "users",
+            "column_name": "platform_role"
+        },
+        {
+            "table_name": "users",
+            "column_name": "public_id"
+        },
+        {
+            "table_name": "users",
+            "column_name": "remember_token"
+        },
+        {
+            "table_name": "users",
+            "column_name": "updated_at"
+        },
+        {
+            "table_name": "workspace_memberships",
+            "column_name": "created_at"
+        },
+        {
+            "table_name": "workspace_memberships",
+            "column_name": "id"
+        },
+        {
+            "table_name": "workspace_memberships",
+            "column_name": "joined_at"
+        },
+        {
+            "table_name": "workspace_memberships",
+            "column_name": "public_id"
+        },
+        {
+            "table_name": "workspace_memberships",
+            "column_name": "role"
+        },
+        {
+            "table_name": "workspace_memberships",
+            "column_name": "updated_at"
+        },
+        {
+            "table_name": "workspace_memberships",
+            "column_name": "user_id"
+        },
+        {
+            "table_name": "workspace_memberships",
+            "column_name": "workspace_id"
+        }
+    ]
+}

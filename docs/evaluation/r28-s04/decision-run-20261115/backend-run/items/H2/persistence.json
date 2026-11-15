@@ -1,0 +1,171 @@
+{
+    "items": [
+        {
+            "item": "H2",
+            "run_id": "4c20b91a-d25f-482d-b3c5-babeb1341d87",
+            "conversation_id": "b7d62d40-07bf-413a-a59e-ec7f3a90add2",
+            "workspace_id": "5323cd6b-8b7a-40f9-98b0-9413c75f643e",
+            "actor_id": "ae454ce6-4d91-4c7e-9a40-b4750b696a6b",
+            "user_turns": 1,
+            "generation_runs": 1,
+            "status": "completed",
+            "question": "What was the staff turnover target in June 2026?",
+            "temporal_context": {
+                "uses": [
+                    {
+                        "target": {
+                            "at": null,
+                            "mode": "dated",
+                            "reason": null,
+                            "status": "searched",
+                            "need_id": "n1",
+                            "purpose": "precautionary",
+                            "versions": [
+                                {
+                                    "end": "2026-09-01T00:00:00+00:00",
+                                    "start": "2025-04-01T00:00:00+00:00",
+                                    "version_id": "afadf59c-f0f5-4eed-a2d3-6844365567a1"
+                                }
+                            ],
+                            "family_id": "d07172de-20ec-4b11-a377-97b6ec13f9f1",
+                            "reference": {
+                                "at": null,
+                                "quote": "June 2026",
+                                "value": "2026-06",
+                                "turn_id": "user-1",
+                                "precision": "month",
+                                "period_end": "2026-07-01T00:00:00+00:00",
+                                "period_start": "2026-06-01T00:00:00+00:00"
+                            },
+                            "target_id": "n1:date:1"
+                        },
+                        "need_id": "n1",
+                        "target_id": "n1:date:1",
+                        "part_index": 0,
+                        "evidence_ids": [
+                            "ev-01"
+                        ],
+                        "question_quote": "What was the staff turnover target in June 2026?",
+                        "planner_disagreement": false
+                    }
+                ],
+                "targets": [
+                    {
+                        "at": null,
+                        "mode": "provisional",
+                        "reason": null,
+                        "status": "searched",
+                        "need_id": "n1",
+                        "purpose": "requested",
+                        "versions": [
+                            {
+                                "end": "2026-09-01T00:00:00+00:00",
+                                "start": "2025-04-01T00:00:00+00:00",
+                                "version_id": "afadf59c-f0f5-4eed-a2d3-6844365567a1"
+                            }
+                        ],
+                        "family_id": "d07172de-20ec-4b11-a377-97b6ec13f9f1",
+                        "reference": null,
+                        "target_id": "n1:requested"
+                    },
+                    {
+                        "at": null,
+                        "mode": "dated",
+                        "reason": null,
+                        "status": "searched",
+                        "need_id": "n1",
+                        "purpose": "precautionary",
+                        "versions": [
+                            {
+                                "end": "2026-09-01T00:00:00+00:00",
+                                "start": "2025-04-01T00:00:00+00:00",
+                                "version_id": "afadf59c-f0f5-4eed-a2d3-6844365567a1"
+                            }
+                        ],
+                        "family_id": "d07172de-20ec-4b11-a377-97b6ec13f9f1",
+                        "reference": {
+                            "at": null,
+                            "quote": "June 2026",
+                            "value": "2026-06",
+                            "turn_id": "user-1",
+                            "precision": "month",
+                            "period_end": "2026-07-01T00:00:00+00:00",
+                            "period_start": "2026-06-01T00:00:00+00:00"
+                        },
+                        "target_id": "n1:date:1"
+                    },
+                    {
+                        "at": "2026-11-15T16:10:09+00:00",
+                        "mode": "current",
+                        "reason": null,
+                        "status": "searched",
+                        "need_id": "n1",
+                        "purpose": "precautionary",
+                        "versions": [
+                            {
+                                "end": null,
+                                "start": "2026-09-01T00:00:00+00:00",
+                                "version_id": "c40c8cd9-2262-4806-850c-2fb0864eb0d2"
+                            }
+                        ],
+                        "family_id": "d07172de-20ec-4b11-a377-97b6ec13f9f1",
+                        "reference": null,
+                        "target_id": "n1:current"
+                    }
+                ],
+                "version": "temporal-answer-use-v2",
+                "evidence_associations": {
+                    "ev-01": {
+                        "n1": {
+                            "side": "primary",
+                            "temporal_authority": {
+                                "need_id": "n1",
+                                "evaluated_at": "2026-11-15T16:10:09+00:00",
+                                "document_title": "kpi-reporting-policy-v1.docx",
+                                "temporal_basis": "application-labelled-targets-v1",
+                                "authority_start": "2025-04-01T00:00:00+00:00",
+                                "document_family_id": "d07172de-20ec-4b11-a377-97b6ec13f9f1",
+                                "document_version_id": "afadf59c-f0f5-4eed-a2d3-6844365567a1",
+                                "temporal_target_ids": [
+                                    "n1:requested",
+                                    "n1:date:1"
+                                ],
+                                "document_family_title": "KPI Reporting Policy",
+                                "authoritative_at_evaluated_at": false
+                            },
+                            "applicability_context": {
+                                "resolved_location_public_id": null
+                            }
+                        }
+                    },
+                    "ev-02": {
+                        "n1": {
+                            "side": "primary",
+                            "temporal_authority": {
+                                "need_id": "n1",
+                                "evaluated_at": "2026-11-15T16:10:09+00:00",
+                                "document_title": "kpi-reporting-policy-v2-scheduled.docx",
+                                "temporal_basis": "application-labelled-targets-v1",
+                                "authority_start": "2026-09-01T00:00:00+00:00",
+                                "document_family_id": "d07172de-20ec-4b11-a377-97b6ec13f9f1",
+                                "document_version_id": "c40c8cd9-2262-4806-850c-2fb0864eb0d2",
+                                "temporal_target_ids": [
+                                    "n1:current"
+                                ],
+                                "document_family_title": "KPI Reporting Policy",
+                                "authoritative_at_evaluated_at": true
+                            },
+                            "applicability_context": {
+                                "resolved_location_public_id": null
+                            }
+                        }
+                    }
+                }
+            },
+            "reloaded_rendered_text": "The staff turnover target in June 2026 was < 25% annualised.\nTemporal basis: June 2026; whole month 2026-06-01T00:00:00+00:00 to 2026-07-01T00:00:00+00:00 (end exclusive); version afadf59c-f0f5-4eed-a2d3-6844365567a1; effective 2025-04-01T00:00:00+00:00 to 2026-09-01T00:00:00+00:00 (end exclusive).",
+            "assistant_display_text": "The staff turnover target in June 2026 was < 25% annualised.\nTemporal basis: June 2026; whole month 2026-06-01T00:00:00+00:00 to 2026-07-01T00:00:00+00:00 (end exclusive); version afadf59c-f0f5-4eed-a2d3-6844365567a1; effective 2025-04-01T00:00:00+00:00 to 2026-09-01T00:00:00+00:00 (end exclusive)."
+        }
+    ],
+    "verified_at": "2026-11-15T16:10:42+00:00",
+    "grading": false
+}

@@ -1,0 +1,20 @@
+{
+    "items": [
+        {
+            "item": "O10",
+            "run_id": "420b0a8e-a52e-4b3a-8338-8aab76db1441",
+            "conversation_id": "10008b1b-bf22-4c50-a3a4-25dd8ba43403",
+            "workspace_id": "5323cd6b-8b7a-40f9-98b0-9413c75f643e",
+            "actor_id": "ae454ce6-4d91-4c7e-9a40-b4750b696a6b",
+            "user_turns": 1,
+            "generation_runs": 1,
+            "status": "retrieval_no_answer",
+            "question": "I've just noticed a bruise on a resident's arm and nobody knows how it happened. What do I need to do?",
+            "temporal_context": null,
+            "reloaded_rendered_text": null,
+            "assistant_display_text": "I couldn't find enough available evidence to answer that question."
+        }
+    ],
+    "verified_at": "2026-11-15T16:08:09+00:00",
+    "grading": false
+}
