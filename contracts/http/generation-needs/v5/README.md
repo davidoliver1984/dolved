@@ -1,8 +1,10 @@
 # Needs generation v5: temporal associations
 
 New temporal requests/results use envelope 5, `generation-result-v5`,
-`grounded-generation-temporal-v3`, and `openai-responses-temporal-v3`.
-Non-temporal execution is unchanged. Deploy PHP and Python together.
+`grounded-generation-temporal-v4`, and `openai-responses-temporal-v4`.
+These identities include the same internal `need-source-support-v1` review as
+non-temporal needs v3. Deploy PHP and Python together. The v3 temporal identities
+remain historical; existing receipts are not rewritten.
 
 `temporal_uses` contains exactly one receipt per `(part_index, need_id)` linked
 association with temporal targets, not one per paragraph. Each receipt adds a

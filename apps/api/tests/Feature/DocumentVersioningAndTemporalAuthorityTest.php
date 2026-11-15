@@ -103,6 +103,30 @@ class DocumentVersioningAndTemporalAuthorityTest extends TestCase
         $this->assertTrue($workspace->fresh()->documentFamilies->contains($document->family));
     }
 
+    public function test_named_calendar_history_retains_precision_without_inventing_a_transition(): void
+    {
+        [$workspace, $owner] = $this->workspaceOwner();
+        $first = $this->document($workspace, $owner, CarbonImmutable::parse('2023-01-01'));
+        $this->travelTo('2023-01-01');
+        app(ApproveDocumentVersion::class)->handle($first, $owner);
+        $second = $this->successor($first, $owner, CarbonImmutable::parse('2024-08-15'));
+        $this->travelTo('2024-08-15');
+        app(ApproveDocumentVersion::class)->handle($second, $owner);
+        $history = app(HistoricalReferenceResolver::class);
+        foreach (['March 2024 edition', 'guidance dated 14 August 2024'] as $reference) {
+            $this->assertTrue($history->resolve($first->family, $reference, now()->toImmutable())->document->is($first));
+        }
+        foreach (['September 2024 release', 'guidance dated 2024-08-15'] as $reference) {
+            $this->assertTrue($history->resolve($first->family, $reference, now()->toImmutable())->document->is($second));
+        }
+        foreach (['2024', 'August 2024 revision'] as $reference) {
+            $this->assertSame('ambiguous_authority_window_for_period', $history->resolve($first->family, $reference, now()->toImmutable())->reason->value);
+        }
+        $this->assertSame('ambiguous_historical_reference', $history->resolve($first->family, 'March 2024 or September 2024', now()->toImmutable())->reason->value);
+        $this->assertTrue($history->resolve($first->family, 'version 1', now()->toImmutable())->document->is($first));
+        $this->assertNull($history->resolve($first->family, 'March 2022 edition', now()->toImmutable())->document);
+    }
+
     public function test_successor_preserves_family_lineage_and_copies_applicability(): void
     {
         [$workspace, $owner] = $this->workspaceOwner();

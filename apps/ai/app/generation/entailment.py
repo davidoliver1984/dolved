@@ -64,6 +64,8 @@ resolved by the application; never reinterpret workspace, family or authority.
 def review_input(
     request: GenerationNeedsRequest, output: OpenAIGenerationOutput
 ) -> str:
+    from app.generation.temporal_targets import association_evidence
+
     evidence = {item.evidence_id: item for item in request.evidence}
     return json.dumps(
         [
@@ -71,6 +73,29 @@ def review_input(
                 "part_index": index,
                 "user_question": request.question,
                 "claim_text": part.text,
+                "need_associations": [
+                    {
+                        "need_id": need.need_id,
+                        "question_span": need.question_span.model_dump(mode="json")
+                        if need.question_span
+                        else None,
+                        "allowed_evidence_ids": list(
+                            association_evidence(
+                                request,
+                                output.answer_parts,
+                                getattr(output, "temporal_uses", ()),
+                                need.need_id,
+                                index,
+                            )
+                        ),
+                    }
+                    for need in request.evidence_needs
+                    if any(
+                        link.need_id == need.need_id
+                        and index in link.answer_part_indices
+                        for link in getattr(output, "aspect_links", ())
+                    )
+                ],
                 **(
                     {
                         "temporal_uses": [

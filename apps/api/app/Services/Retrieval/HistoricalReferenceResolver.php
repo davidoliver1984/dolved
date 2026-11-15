@@ -8,6 +8,7 @@ use App\Enums\EligibilityClarificationReason;
 use App\Models\Document;
 use App\Models\DocumentFamily;
 use App\Support\Documents\DocumentAuthorityTimeline;
+use App\Support\Retrieval\ExplicitTemporalReferences;
 use App\Support\Retrieval\TemporalResolution;
 use Carbon\CarbonImmutable;
 
@@ -50,7 +51,22 @@ final readonly class HistoricalReferenceResolver
                 : TemporalResolution::unresolved(EligibilityClarificationReason::HistoricalReferenceUnresolved);
         }
         if ($yearMatches[1] !== []) {
-            $resolution = $this->periods->resolve($family, $yearMatches[1][0]);
+            // Preserve a quoted calendar selector's precision. Inventory is not
+            // intent classification: this must never turn a historical selector
+            // into a transition pair or choose a different family.
+            $references = ExplicitTemporalReferences::forNeed([
+                'question_span' => ['turn_id' => 'historical-reference', 'quote' => $reference],
+            ]);
+            if (count($references) > 1) {
+                return TemporalResolution::unresolved(EligibilityClarificationReason::AmbiguousHistoricalReference);
+            }
+            $calendar = $references[0] ?? null;
+            if (($calendar['precision'] ?? null) === 'day') {
+                $document = $this->timeline->resolve($family, CarbonImmutable::parse($calendar['at']));
+
+                return $document === null ? TemporalResolution::empty() : TemporalResolution::found($document);
+            }
+            $resolution = $this->periods->resolve($family, $calendar['value'] ?? $yearMatches[1][0]);
             if ($resolution->reason === EligibilityClarificationReason::UnresolvableTemporalPeriod) {
                 return TemporalResolution::unresolved(EligibilityClarificationReason::HistoricalReferenceUnresolved);
             }

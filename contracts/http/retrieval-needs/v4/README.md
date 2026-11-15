@@ -5,6 +5,14 @@ Transport envelope remains v2; the plan schema identity is evidence-needs-plan-v
 Read compatibility includes v3; the live client/producer rejects legacy execution.
 Archived v3 plans/answers are not rewritten, re-executed, or reinterpreted on read.
 
+Needs execution v21 preserves the precision of a unique explicit calendar
+reference inside a named historical selector, using the existing calendar
+inventory. A month is no longer reduced to its year. Conflicting explicit
+references clarify; this does not reinterpret a historical selector as a
+transition, choose another family, or override applicability/eligibility.
+The generation profile pin also includes source-support review v1; the planner
+producer identity and all planner validators remain unchanged.
+
 Calendar-notation adapter v11 converts only explicit, quoted English calendar
 values to their declared numeric precision before the existing checks. Prompt v26,
 wire schema, grounding, retry limits and temporal meaning are unchanged. Deploy

@@ -9,7 +9,6 @@ import pytest
 from fastapi.testclient import TestClient
 from pydantic import ValidationError
 
-from app.generation.entailment import EntailmentReview, PartEntailment
 from app.generation.errors import GenerationContextBudgetError
 from app.generation.needs_output import NEEDS_RESPONSE, OpenAIGenerationNeedsOutput
 from app.generation.needs_request import GenerationNeedsRequest
@@ -21,6 +20,7 @@ from app.generation.openai_adapter import (
     OpenAIGenerator,
 )
 from app.generation.routes import needs_generator_dependency
+from app.generation.support_review import SourceSupportReview
 from app.main import app
 from app.settings import get_settings
 from tests.test_generation_contract import signed_request
@@ -31,19 +31,42 @@ class AutoReviewResponses(FakeResponses):
     """Recording adapter: only the verifier verdict is synthetic in legacy tests."""
 
     def parse(self, **kwargs: object) -> object:
-        if kwargs.get("text_format") is EntailmentReview:
+        if kwargs.get("text_format") is SourceSupportReview:
             self.calls.append(kwargs)
             parsed = self.last_output
             if not isinstance(parsed, OpenAIGenerationNeedsOutput):
                 parsed = OpenAIGenerationNeedsOutput.model_validate(parsed)
+            inputs = json.loads(kwargs["input"])
             return response(
-                EntailmentReview(
-                    parts=[
-                        PartEntailment(
-                            part_index=i, verdict="supported", missing_condition=None
-                        )
-                        for i in range(len(parsed.answer_parts))
-                    ]
+                SourceSupportReview.model_validate(
+                    {
+                        "parts": [
+                            {
+                                "part_index": i,
+                                "verdict": "supported",
+                                "missing_condition": None,
+                                "claims": [
+                                    {
+                                        "need_id": association["need_id"],
+                                        "answer_quote": part.text,
+                                        "evidence_id": association[
+                                            "allowed_evidence_ids"
+                                        ][0],
+                                        "source_quote": next(
+                                            p["text"]
+                                            for p in inputs[i]["cited_passages"]
+                                            if p["evidence_id"]
+                                            == association["allowed_evidence_ids"][0]
+                                        ),
+                                        "same_situation": "established",
+                                        "requirement_preserved": "established",
+                                    }
+                                    for association in inputs[i]["need_associations"]
+                                ],
+                            }
+                            for i, part in enumerate(parsed.answer_parts)
+                        ]
+                    }
                 )
             )
         value = super().parse(**kwargs)

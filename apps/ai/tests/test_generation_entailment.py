@@ -6,8 +6,6 @@ import pytest
 
 from app.generation.entailment import (
     EntailmentRejection,
-    EntailmentReview,
-    PartEntailment,
     conditional_obligation_guard,
     review_input,
 )
@@ -21,6 +19,7 @@ from app.generation.openai_adapter import (
     OpenAIGenerationProfile,
     OpenAIGenerator,
 )
+from app.generation.support_review import SourceSupportReview, SupportedPart
 from tests.test_generation_needs_request import request
 from tests.test_openai_generation_adapter import FakeResponses, response
 
@@ -131,12 +130,13 @@ def test_unrelated_subject_to_phrase_does_not_trigger_narrow_guard():
 
 def test_absent_obligation_is_blocked_by_independent_review():
     incoming, output = scenario("The register is kept by Facilities.", OVERCLAIM)
-    review = EntailmentReview(
+    review = SourceSupportReview(
         parts=[
-            PartEntailment(
+            SupportedPart(
                 part_index=0,
                 verdict="unsupported",
                 missing_condition="No cited passage requires a register check before drilling.",
+                claims=[],
             )
         ]
     )

@@ -42,8 +42,8 @@ MODEL = "gpt-5-mini"
 CONTRACT_VERSION = "generation-result-v1"
 ADAPTER_VERSION = "openai-responses-v3-claim-type"
 NEEDS_CONTRACT_VERSION = "generation-result-v3"
-NEEDS_PROMPT_VERSION = "grounded-generation-needs-v12"
-NEEDS_ADAPTER_VERSION = "openai-responses-needs-v4"
+NEEDS_PROMPT_VERSION = "grounded-generation-needs-v13"
+NEEDS_ADAPTER_VERSION = "openai-responses-needs-v5"
 NEEDS_INSTRUCTIONS = """
 Answer directly with an evidence-supported statement. If an answer part starts with
 Yes or No, join that word to its immediate justification in the SAME sentence using
@@ -414,12 +414,8 @@ class OpenAIGenerator:
             temporal.profile = replace(
                 self.profile,
                 contract_version=f"generation-result-v{request.contract_version}",
-                prompt_version="grounded-generation-temporal-v3"
-                if request.contract_version == 5
-                else "grounded-generation-temporal-v2",
-                adapter_version="openai-responses-temporal-v3"
-                if request.contract_version == 5
-                else "openai-responses-temporal-v2",
+                prompt_version="grounded-generation-temporal-v4",
+                adapter_version="openai-responses-temporal-v4",
             )
             return temporal._generate(request.legacy_request(), request)
         with trace.get_tracer("dolved.python.generation").start_as_current_span(
@@ -549,7 +545,6 @@ class OpenAIGenerator:
                         from app.generation.entailment import (
                             ENTAILMENT_INSTRUCTIONS,
                             EntailmentRejection,
-                            EntailmentReview,
                             conditional_obligation_guard,
                             review_input,
                         )
@@ -557,6 +552,12 @@ class OpenAIGenerator:
                             GenerationNeedsResult,
                             GenerationTemporalAssociationResult,
                             GenerationTemporalResult,
+                        )
+                        from app.generation.support_review import (
+                            SUPPORT_INSTRUCTIONS,
+                            SUPPORT_REVIEW_VERSION,
+                            SourceSupportReview,
+                            validate_support,
                         )
 
                         needs_output = cast(
@@ -614,9 +615,10 @@ class OpenAIGenerator:
                             review_started = self._monotonic()
                             review_response = self._client.responses.parse(
                                 model=rendered.model,
-                                instructions=ENTAILMENT_INSTRUCTIONS,
+                                instructions=ENTAILMENT_INSTRUCTIONS
+                                + SUPPORT_INSTRUCTIONS,
                                 input=review_input(needs_request, provider_output),
-                                text_format=EntailmentReview,
+                                text_format=SourceSupportReview,
                                 max_output_tokens=1024,
                                 reasoning=cast(
                                     Any, {"effort": rendered.reasoning_effort}
@@ -631,12 +633,14 @@ class OpenAIGenerator:
                                 )
                             review = (
                                 raw_review
-                                if isinstance(raw_review, EntailmentReview)
-                                else EntailmentReview.model_validate(raw_review)
+                                if isinstance(raw_review, SourceSupportReview)
+                                else SourceSupportReview.model_validate(raw_review)
                             )
-                            checks = review.parts
                             verifier_receipt = self._response_receipt(
                                 review_response, 1, review_started
+                            )
+                            verifier_receipt["support_contract"] = (
+                                SUPPORT_REVIEW_VERSION
                             )
                             for key in (
                                 "request_count",
@@ -664,24 +668,12 @@ class OpenAIGenerator:
                                 and isinstance(second_cost, (int, float))
                                 else None
                             )
-                            if [check.part_index for check in checks] != list(
-                                range(len(provider_output.answer_parts))
-                            ):
-                                raise EntailmentRejection(
-                                    "entailment_uncertain",
-                                    0,
-                                    "review coverage incomplete",
-                                )
-                            for check in checks:
-                                if check.verdict != "supported":
-                                    raise EntailmentRejection(
-                                        "entailment_unsupported"
-                                        if check.verdict == "unsupported"
-                                        else "entailment_uncertain",
-                                        check.part_index,
-                                        check.missing_condition
-                                        or "condition unestablished",
-                                    )
+                            checks = validate_support(
+                                needs_request, needs_output, review
+                            )
+                            verifier_receipt["validated_support_count"] = sum(
+                                len(part.claims) for part in review.parts
+                            )
                         usage = {**(result.usage or {}), **failure_usage}
                         if verifier_receipt is not None:
                             usage["entailment_review"] = verifier_receipt
