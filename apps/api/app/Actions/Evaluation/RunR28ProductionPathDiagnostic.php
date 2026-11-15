@@ -251,6 +251,11 @@ final readonly class RunR28ProductionPathDiagnostic
 
             return $result;
         }
+        if ($stage === 'coverage_selection') {
+            // Already bounded/validated production projection; no provider raw body.
+            return collect($value)->only(['status', 'reason', 'proposal', 'allocation', 'usage',
+                'run_stop_required', 'proposal_consumed'])->all();
+        }
         if ($stage === 'plan') {
             return collect($value)->only([
                 'temporal_mode', 'explicit_date', 'temporal_reference', 'location_references',

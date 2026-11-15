@@ -283,6 +283,39 @@ async def plan_evidence_needs(
     )
 
 
+@router.post("/coverage-selection")
+async def select_coverage(request: Request):
+    from app.retrieval.coverage_selection import (
+        CoverageRequest,
+        CoverageSelectionError,
+        CoverageSelector,
+    )
+
+    settings = get_settings()
+    body = await authenticate(request, "retrieval.coverage-selection", settings)
+    try:
+        incoming = CoverageRequest.model_validate_json(body)
+    except ValueError as exception:
+        raise HTTPException(422, "Invalid coverage selection request.") from exception
+    if str(incoming.workspace_id) != request.headers.get(
+        "X-Retrieval-Caller-Workspace-ID"
+    ) or str(incoming.request_id) != request.headers.get(
+        "X-Retrieval-Caller-Request-ID"
+    ):
+        raise HTTPException(401, "Signed identity does not match body.")
+    selector = CoverageSelector(
+        api_url=settings.retrieval_planner_api_url,
+        api_key=settings.retrieval_planner_api_key,
+        model=settings.retrieval_planner_model,
+    )
+    try:
+        return selector.select(incoming)
+    except CoverageSelectionError as exception:
+        raise HTTPException(
+            503, {"code": exception.code, "usage": exception.usage}
+        ) from None
+
+
 @router.post("/compare-family", response_model=CompareFamilyResponse)
 async def review_compare_family(
     request: Request,

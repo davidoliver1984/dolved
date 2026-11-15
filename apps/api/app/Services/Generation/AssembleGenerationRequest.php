@@ -49,7 +49,13 @@ final readonly class AssembleGenerationRequest
                 throw new GenerationContextBudgetExceeded('bounded-temporal-targets-v1', count($need['temporal_targets']), 9);
             }
         }
-        foreach ($input->retrievalResult->candidates as $index => $candidate) {
+        $expanded = [];
+        foreach ($input->retrievalResult->candidates as $candidate) {
+            foreach ($candidate['validated_associations'] ?? [null] as $association) {
+                $expanded[] = $association === null ? $candidate : [...$candidate, ...$association];
+            }
+        }
+        foreach ($expanded as $index => $candidate) {
             $chunk = $chunks->get($candidate['chunk_id'] ?? null);
             if (! $chunk instanceof DocumentChunk
                 || $chunk->document_id !== $this->documentInternalId($candidate, $input)
@@ -112,6 +118,29 @@ final readonly class AssembleGenerationRequest
                 $side,
             );
         }
+        if (array_any($input->retrievalResult->candidates, fn ($c) => isset($c['validated_associations']))) {
+            $physical = [];
+            foreach ($evidence as $item) {
+                $physical[$item->documentChunkId][] = $item;
+            }
+            $evidence = [];
+            foreach ($physical as $items) {
+                $first = $items[0];
+                $associations = [];
+                foreach ($items as $item) {
+                    $id = $item->temporalAuthority['need_id'];
+                    if (isset($associations[$id])) {
+                        throw new GenerationException('Duplicate physical evidence association.');
+                    }
+                    $associations[$id] = ['temporal_authority' => $item->temporalAuthority,
+                        'applicability_context' => $item->applicabilityContext, 'side' => $item->side->value];
+                }
+                $evidence[] = new GenerationEvidence(sprintf('ev-%02d', count($evidence) + 1), $first->text,
+                    $first->documentChunkId, $first->documentId, $first->ingestionEventClaimId, $first->sourceProvenance,
+                    [...$first->temporalAuthority, 'validated_need_associations' => $associations],
+                    $first->applicabilityContext, $first->side);
+            }
+        }
         $requiredSides = collect($evidence)->pluck('side')->unique(fn (GenerationSide $side): string => $side->value)->values()->all();
         $policyVersion = (string) config('generation.context_policy_version');
         $maximum = (int) config('generation.max_context_characters');
@@ -127,7 +156,7 @@ final readonly class AssembleGenerationRequest
             // Preserve the already-selected bounded units whole; never split a pair.
             $packed = $evidence;
             foreach ($needs as $need) {
-                $items = array_values(array_filter($packed, fn ($item) => $item->temporalAuthority['need_id'] === $need['need_id']));
+                $items = array_values(array_filter(array_map(fn ($item) => $item->forNeed($need['need_id']), $packed)));
                 $families = [];
                 foreach ($items as $item) {
                     $families[$item->temporalAuthority['document_family_id']][$item->side->value][] = $item->documentId;

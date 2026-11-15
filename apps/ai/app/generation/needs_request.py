@@ -47,7 +47,7 @@ class GenerationNeed(ImmutableModel):
 
 
 class GenerationNeedsRequest(ImmutableModel):
-    contract_version: Literal[2, 3, 4, 5]
+    contract_version: Literal[2, 3, 4, 5, 6]
     request_id: UUID
     workspace_id: UUID
     question: BoundedText
@@ -82,7 +82,10 @@ class GenerationNeedsRequest(ImmutableModel):
             ):
                 raise ValueError("generation requires the compiled extractive request")
             if need.temporal_targets:
-                if self.contract_version not in (4, 5) or need.operation != "retrieve":
+                if (
+                    self.contract_version not in (4, 5, 6)
+                    or need.operation != "retrieve"
+                ):
                     raise ValueError("temporal targets require the C1 envelope")
                 if len({t.target_id for t in need.temporal_targets}) != len(
                     need.temporal_targets
@@ -101,12 +104,14 @@ class GenerationNeedsRequest(ImmutableModel):
             ids = need.evidence_ids
             if len(set(ids)) != len(ids) or not set(ids).issubset(by_id):
                 raise ValueError("need evidence references must be unique and supplied")
-            if assigned.intersection(ids):
+            if self.contract_version < 6 and assigned.intersection(ids):
                 raise ValueError("each evidence item has exactly one need owner")
             assigned.update(ids)
             families: dict[str, dict[str, set[int]]] = {}
             for handle in ids:
-                item = by_id[handle]
+                item = by_id[handle].for_need(need.need_id)
+                if item is None:
+                    raise ValueError("evidence need ownership mismatch")
                 family = item.temporal_authority.get("document_family_id")
                 version = item.temporal_authority.get("document_version_id")
                 if item.temporal_authority.get("need_id") != need.need_id:
@@ -134,4 +139,13 @@ class GenerationNeedsRequest(ImmutableModel):
                     raise ValueError("retrieve needs cannot use a comparison lane")
         if assigned != set(by_id):
             raise ValueError("all supplied evidence must belong to a requested need")
+        for item in self.evidence:
+            associations = item.temporal_authority.get("validated_need_associations")
+            if associations is not None and (
+                self.contract_version != 6
+                or not isinstance(associations, dict)
+                or set(associations)
+                != {n.need_id for n in needs if item.evidence_id in n.evidence_ids}
+            ):
+                raise ValueError("shared evidence association mismatch")
         return self

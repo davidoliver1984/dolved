@@ -154,7 +154,9 @@ def validate_temporal_uses(request, parts, links, uses):
         if association_scoped and not set(handles).issubset(need.evidence_ids):
             raise ValueError("temporal evidence ownership or version mismatch")
         for handle in handles:
-            item = evidence[handle]
+            item = evidence[handle].for_need(use.need_id)
+            if item is None:
+                raise ValueError("temporal evidence ownership or version mismatch")
             version = versions.get(item.temporal_authority.get("document_version_id"))
             if (
                 item.temporal_authority.get("need_id") != use.need_id

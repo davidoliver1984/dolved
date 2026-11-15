@@ -15,6 +15,9 @@ from app.generation.entailment import EntailmentRejection, PartEntailment
 from app.generation.temporal_targets import association_evidence
 
 SUPPORT_REVIEW_VERSION = "need-source-support-v1"
+# Includes source/answer quotations and provider reasoning in one bounded call.
+# The previous 1,024 ceiling could not represent realistic complete receipts.
+SUPPORT_REVIEW_OUTPUT_TOKENS = 32_768
 
 
 class ClaimSupport(BaseModel):

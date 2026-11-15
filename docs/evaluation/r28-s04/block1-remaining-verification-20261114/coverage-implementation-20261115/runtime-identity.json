@@ -1,0 +1,9 @@
+{
+  "aggregate": "db8768df5487de398a5ed4e97635f17a5c39a6c2706371e21cd328b7b60ace88",
+  "files": 971,
+  "execution": "bounded-needs-slice-v22",
+  "coverage": "grounded-coverage-selection-v1",
+  "generation_contract": 6,
+  "support_review_output_tokens": 32768,
+  "live_execution": false
+}

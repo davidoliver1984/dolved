@@ -21,6 +21,22 @@ final readonly class GenerationEvidence
         public GenerationSide $side,
     ) {}
 
+    public function forNeed(string $id): ?self
+    {
+        $associations = $this->temporalAuthority['validated_need_associations'] ?? null;
+        if ($associations === null) {
+            return ($this->temporalAuthority['need_id'] ?? null) === $id ? $this : null;
+        }
+        $association = $associations[$id] ?? null;
+        if ($association === null) {
+            return null;
+        }
+
+        return new self($this->evidenceId, $this->text, $this->documentChunkId, $this->documentId,
+            $this->ingestionEventClaimId, $this->sourceProvenance, $association['temporal_authority'],
+            $association['applicability_context'], GenerationSide::from($association['side']));
+    }
+
     /** @return array<string, mixed> */
     public function toArray(): array
     {

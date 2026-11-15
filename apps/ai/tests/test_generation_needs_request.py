@@ -132,7 +132,7 @@ def test_shared_request_schema_matches_model_and_example():
     Draft202012Validator.check_schema(schema)
     Draft202012Validator(schema).validate(request())
     current = json.loads(
-        Path("/contracts/http/generation-needs/v5/request.schema.json").read_text()
+        Path("/contracts/http/generation-needs/v6/request.schema.json").read_text()
     )
     assert current == GenerationNeedsRequest.model_json_schema()
 

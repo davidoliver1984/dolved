@@ -41,11 +41,19 @@ use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Str;
 use LogicException;
 use PHPUnit\Framework\Attributes\DataProvider;
+use Tests\Concerns\WithUnavailableCoverageSelector;
 use Tests\TestCase;
 
 class ConversationOrchestrationTest extends TestCase
 {
     use RefreshDatabase;
+    use WithUnavailableCoverageSelector;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->fakeUnavailableCoverageSelector();
+    }
 
     public function test_internal_failure_diagnostic_bounds_and_redacts_exception_message(): void
     {

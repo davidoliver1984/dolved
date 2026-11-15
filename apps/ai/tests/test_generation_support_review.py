@@ -120,7 +120,7 @@ def test_related_situation_substitution_is_rejected_through_real_adapter():
     assert (
         len(responses.calls) == 2
     )  # one generation, the existing review; no new retry
-    assert responses.calls[1]["max_output_tokens"] == 1024
+    assert responses.calls[1]["max_output_tokens"] == 32768
 
 
 def test_well_formed_but_wrong_semantic_judgement_is_not_claimed_detected():
@@ -152,3 +152,68 @@ def test_shared_temporal_paragraph_does_not_share_support_ownership():
     claims[1]["evidence_id"] = "ev-02"
     with pytest.raises(EntailmentRejection, match="entailment_uncertain"):
         validate_support(request, output, SourceSupportReview.model_validate(review))
+
+
+def test_full_quote_receipt_sizing_includes_headroom_not_just_small_fake_output():
+    import tiktoken
+
+    from app.generation.support_review import SUPPORT_REVIEW_OUTPUT_TOKENS
+
+    # Three needs, five source passages, one claim/source association each.
+    # Use the actual 8,000-character per-source-quote contract limit, not a short stub.
+    source = (SOURCE + " ") * 70
+    source = source[:8000]
+    parts = []
+    for need in range(1, 4):
+        claims = []
+        for evidence in range(1, 6):
+            claims.append(
+                {
+                    "need_id": f"n{need}",
+                    "answer_quote": ANSWER * 3,
+                    "evidence_id": f"ev-{evidence:02}",
+                    "source_quote": source,
+                    "same_situation": "established",
+                    "requirement_preserved": "established",
+                }
+            )
+        parts.append(
+            {
+                "part_index": need - 1,
+                "verdict": "supported",
+                "missing_condition": None,
+                "claims": claims,
+            }
+        )
+    review = SourceSupportReview.model_validate({"parts": parts})
+    tokens = len(tiktoken.get_encoding("o200k_base").encode(review.model_dump_json()))
+    assert tokens > 1024
+    assert tokens + 4096 <= SUPPORT_REVIEW_OUTPUT_TOKENS  # explicit reasoning headroom
+
+
+@pytest.mark.parametrize("parsed", [None, "valid_partial"])
+def test_incomplete_review_is_not_consumed_and_its_usage_survives(parsed):
+    from app.generation.support_review import SUPPORT_REVIEW_OUTPUT_TOKENS
+
+    incoming, output = scenario(SOURCE, ANSWER)
+    truncated = response(receipt() if parsed else None)
+    truncated.status = "incomplete"
+    truncated.usage.output_tokens = SUPPORT_REVIEW_OUTPUT_TOKENS
+    responses = FakeResponses([response(output), truncated])
+    adapter = OpenAIGenerator(
+        api_key="test-only",
+        client=SimpleNamespace(responses=responses),
+        profile=OpenAIGenerationProfile(
+            contract_version=NEEDS_CONTRACT_VERSION,
+            prompt_version=NEEDS_PROMPT_VERSION,
+            adapter_version=NEEDS_ADAPTER_VERSION,
+        ),
+    )
+    with pytest.raises(GenerationProviderFailure) as caught:
+        adapter.generate_needs(incoming)
+    assert caught.value.error.validation.code == "entailment_uncertain"
+    assert caught.value.error.usage["request_count"] == 2
+    assert (
+        caught.value.error.usage["output_tokens"] == SUPPORT_REVIEW_OUTPUT_TOKENS + 45
+    )
+    assert len(responses.calls) == 2

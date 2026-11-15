@@ -31,7 +31,7 @@ final class NeedsEvidenceSelection
     }
 
     /** Counts refer to complete eligible units (a comparison unit is a pair), not source completeness. */
-    public function selectWithCoverage(array $needs, array $results): array
+    public function selectWithCoverage(array $needs, array $results, ?array $physicalSelection = null): array
     {
         if (count($needs) > self::MAX_NEEDS || self::searchLanes($needs) > self::MAX_SEARCH_LANES) {
             throw new InvalidArgumentException('The production slice permits three needs and four search lanes.');
@@ -96,6 +96,17 @@ final class NeedsEvidenceSelection
             $this->includeUnit($selected, $item['need_id'], $item['unit']);
         }
 
+        if ($physicalSelection !== null) {
+            if (count($physicalSelection) > self::FINAL_K) {
+                throw new InvalidArgumentException('Physical allocation exceeds five passages.');
+            }
+            $selected = [];
+            foreach ($physicalSelection as $candidate) {
+                foreach ($candidate['validated_associations'] ?? [$candidate['need_id'].':'.$candidate['side'] => $candidate] as $association => $metadata) {
+                    $selected[$association.':'.$candidate['chunk_id']] = [...$candidate, ...$metadata];
+                }
+            }
+        }
         $coverage = [];
         foreach ($unitsByNeed as $id => $units) {
             $included = count(array_filter($units, static function (array $unit) use ($selected, $id): bool {

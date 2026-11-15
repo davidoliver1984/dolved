@@ -29,7 +29,7 @@ final class PersistGeneratedAnswer
         if ($scopeComposed !== ($result->scopeFacts !== [])) {
             throw new GenerationException('Scope facts require their dedicated composed-answer contract.');
         }
-        if (! $scopeComposed && $hasNeeds !== in_array(($fingerprint['snapshot']['contract_version'] ?? null), ['generation-result-v3', 'generation-result-v4', 'generation-result-v5'], true)) {
+        if (! $scopeComposed && $hasNeeds !== in_array(($fingerprint['snapshot']['contract_version'] ?? null), ['generation-result-v3', 'generation-result-v4', 'generation-result-v5', 'generation-result-v6'], true)) {
             throw new GenerationException('Generation coverage does not match the pinned contract.');
         }
         $coverageResult = $scopeComposed ? $result->operationalResult : $result;

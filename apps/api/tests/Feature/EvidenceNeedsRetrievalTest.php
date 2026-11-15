@@ -35,6 +35,7 @@ use App\Models\WorkspaceUsageEvent;
 use App\Queries\Retrieval\BuildAuthorisedKnowledgeScope;
 use App\Services\Conversation\ControlledResponseRenderer;
 use App\Services\Generation\GenerationProfileFactory;
+use App\Services\Retrieval\CoverageSelectionClient;
 use App\Services\Retrieval\EligibilityResolver;
 use App\Support\Generation\GenerationAssemblyInput;
 use App\Support\Generation\GenerationResult;
@@ -56,11 +57,121 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Str;
 use PHPUnit\Framework\Attributes\DataProvider;
+use Tests\Concerns\WithUnavailableCoverageSelector;
 use Tests\TestCase;
 
 final class EvidenceNeedsRetrievalTest extends TestCase
 {
     use RefreshDatabase;
+    use WithUnavailableCoverageSelector;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->fakeUnavailableCoverageSelector();
+    }
+
+    public function test_real_retrieval_selection_associates_an_eligible_unretrieved_need_without_new_search(): void
+    {
+        app()->forgetInstance(CoverageSelectionClient::class);
+        [$workspace, $generation, $scope] = $this->scope();
+        $document = $this->document($workspace, $generation, '2026-01-01', text: 'The engineer inspects weekly. The coordinator keeps the log.');
+        $plan = $this->plan(4, function ($data) use ($document) {
+            $questions = ['Who inspects?', 'Who keeps the log?'];
+            $data['turns'] = [['turn_id' => 'user-1', 'text' => implode(' ', $questions)]];
+            $template = $data['plan']['needs'][0];
+            $data['plan']['needs'] = $data['plan']['bindings'] = [];
+            foreach ($questions as $index => $question) {
+                $id = 'n'.($index + 1);
+                $data['plan']['needs'][] = [...$template, 'need_id' => $id, 'question_span' => ['turn_id' => 'user-1', 'quote' => $question],
+                    'context_spans' => [], 'aspect' => $question, 'operation' => 'retrieve', 'scope_question' => null,
+                    'authority' => ['kind' => 'current', 'value' => null, 'precision' => 'none', 'source' => null],
+                    'fact_reference' => null, 'applicability' => ['kind' => 'generic', 'source' => null], 'supports_need_id' => null];
+                $data['plan']['bindings'][] = ['need_id' => $id, 'subject_status' => 'matched', 'family_ids' => [$document->family->public_id],
+                    'ownership' => 'authorised_workspace', 'ownership_source' => null];
+            }
+
+            return $data;
+        });
+        $searches = $selections = 0;
+        Http::preventStrayRequests();
+        Http::fake(function (Request $request) use ($generation, $document, &$searches, &$selections) {
+            $body = $request->data();
+            if (str_ends_with($request->url(), '/coverage-selection')) {
+                $selections++;
+                $candidate = $body['candidates'][0];
+                $this->assertSame(['n1:primary', 'n2:primary'], $candidate['associations']);
+
+                return Http::response(['contract_version' => 1, 'request_id' => $body['request_id'], 'version' => 'grounded-coverage-selection-v1',
+                    'proposal' => ['aspects' => array_map(fn ($need) => ['need_id' => $need['need_id'], 'quote' => $need['question_span'],
+                        'support' => [['candidate_id' => $candidate['candidate_id'], 'association' => $need['need_id'].':primary', 'quote' => $candidate['text']]],
+                        'unmet' => 'none'], $body['needs'])],
+                    'usage' => ['stage' => 'coverage_selection', 'provider' => 'openai', 'model' => config('retrieval.planner.model'),
+                        'request_count' => 1, 'retry_count' => 0, 'input_tokens' => 200, 'output_tokens' => 100, 'latency_ms' => 1]]);
+            }
+            $this->assertStringEndsWith('/search', $request->url());
+            $searches++;
+
+            return Http::response(['request_id' => $body['request_id'], 'candidates' => $searches === 2 ? [] : [[
+                'chunk_id' => $document->chunks()->firstOrFail()->public_id, 'document_id' => $document->public_id,
+                'workspace_corpus_generation_id' => $generation->public_id,
+                'embedding_space_generation_id' => $generation->embeddingSpaceGeneration->public_id,
+                'score' => 0.9, 'rank' => 1, 'retrieval_method' => 'dense', 'side' => 'primary']], 'lineage' => [], 'diagnostics' => []]);
+        });
+        $result = app(RetrieveWorkspaceEvidence::class)->handleNeeds($scope, $plan, 10, CarbonImmutable::parse('2026-11-15'));
+        $this->assertSame(RetrievalOutcome::EvidenceFound, $result->outcome);
+        $this->assertSame(2, $searches);
+        $this->assertSame(1, $selections);
+        $this->assertCount(1, $result->candidates);
+        $this->assertSame(['n1:primary', 'n2:primary'], array_keys($result->candidates[0]['validated_associations']));
+        $this->assertFalse($result->lineage['coverage_selection']['allocation']['semantic_completeness_verified']);
+        $this->assertSame(1, $result->usage[array_key_last($result->usage)]['request_count']);
+    }
+
+    public function test_receiving_need_rechecks_unretrieved_shared_passage_against_real_eligibility(): void
+    {
+        [$workspace, $generation, $scope] = $this->scope(true);
+        $document = $this->document($workspace, $generation, '2026-01-01', text: 'The analyst reports incidents to the duty engineer.');
+        $other = $this->document($workspace, $generation, '2026-01-01');
+        $generation->load(['embeddingSpaceGeneration.embeddingProfile', 'sparseSpaceGeneration']);
+        $plan = $this->plan(0, function ($data) {
+            $data['turns'] = [['turn_id' => 'u1', 'text' => 'Who classifies incidents? Who receives the report?']];
+            $template = $data['plan']['needs'][1];
+            $data['plan']['needs'] = $data['plan']['bindings'] = [];
+            foreach (['Who classifies incidents?', 'Who receives the report?'] as $i => $quote) {
+                $id = 'n'.($i + 1);
+                $data['plan']['needs'][] = [...$template, 'need_id' => $id, 'aspect' => $quote,
+                    'question_span' => ['turn_id' => 'u1', 'quote' => $quote], 'context_spans' => [],
+                    'supports_need_id' => null, 'fact_reference' => null];
+                $data['plan']['bindings'][] = ['need_id' => $id, 'ownership' => 'authorised_workspace',
+                    'ownership_source' => null, 'subject_status' => 'topic', 'family_ids' => []];
+            }
+
+            return $data;
+        });
+        $chunk = $document->chunks()->firstOrFail();
+        $candidate = ['chunk_id' => $chunk->public_id, 'document_id' => $document->public_id,
+            'document_family_id' => $document->family->public_id, 'chunk_text' => $chunk->text,
+            'workspace_corpus_generation_id' => $generation->public_id,
+            'embedding_space_generation_id' => $generation->embeddingSpaceGeneration->public_id,
+            'sparse_space_generation_id' => $generation->sparseSpaceGeneration->public_id,
+            'rank' => 1, 'score' => 0.95, 'side' => 'primary', 'retrieval_method' => 'hybrid'];
+        $results = ['n1' => new RetrievalResult(RetrievalOutcome::EvidenceFound, [$candidate]),
+            'n2' => new RetrievalResult(RetrievalOutcome::InsufficientEvidence)];
+        $plans = ['n1' => $plan->retrievalPlan('n1'), 'n2' => $plan->retrievalPlan('n2')];
+        $method = new \ReflectionMethod(RetrieveWorkspaceEvidence::class, 'coverageCandidates');
+        $action = app(RetrieveWorkspaceEvidence::class);
+        $at = CarbonImmutable::parse('2026-11-15');
+        $shared = $method->invoke($action, $scope, $plan->executionNeeds(), $plans, $results, $at);
+        $this->assertSame(['n1:primary', 'n2:primary'], $shared[0]['associations']);
+        $this->assertSame([], $results['n2']->candidates); // not relabelled as n2 retrieval
+        $bound = new \ReflectionMethod(RetrieveWorkspaceEvidence::class, 'comparisonPlanForFamily');
+        $plans['n2'] = $bound->invoke($action, $plans['n2'], $other->family->public_id);
+        $restricted = $method->invoke($action, $scope, $plan->executionNeeds(), $plans, $results, $at);
+        $this->assertSame(['n1:primary'], $restricted[0]['associations']);
+        $document->forceFill(['status' => DocumentStatus::Deleting])->save();
+        $this->assertSame([], $method->invoke($action, $scope, $plan->executionNeeds(), $plans, $results, $at));
+    }
 
     public static function crossServiceCases(): array
     {

@@ -11,6 +11,7 @@ use App\Enums\GenerationDeliveryMode;
 use App\Enums\GenerationOutcome;
 use App\Enums\GenerationSide;
 use App\Enums\RetrievalOutcome;
+use App\Exceptions\GenerationCitationOwnershipException;
 use App\Exceptions\GenerationContextBudgetExceeded;
 use App\Exceptions\GenerationException;
 use App\Exceptions\GenerationProviderException;
@@ -36,6 +37,7 @@ use App\Support\Generation\GenerationResult;
 use App\Support\Generation\GenerationValidationDiagnostics;
 use App\Support\Generation\ValidationAttemptUsage;
 use App\Support\Retrieval\AuthorisedKnowledgeScope;
+use App\Support\Retrieval\CoverageAllocation;
 use App\Support\Retrieval\RetrievalResult;
 use App\Support\Usage\RecordWorkspaceUsage;
 use Carbon\CarbonImmutable;
@@ -51,6 +53,65 @@ use Tests\TestCase;
 class GroundedGenerationFoundationTest extends TestCase
 {
     use RefreshDatabase;
+
+    public function test_physical_shared_coverage_allocates_assembles_validates_persists_and_reloads_without_borrowing(): void
+    {
+        [$base, $chunk] = $this->assemblyFixture();
+        $text = 'The engineer checks weekly and the clerk records the result.';
+        $chunk = DocumentChunk::factory()->create(['workspace_id' => $chunk->workspace_id,
+            'document_id' => $chunk->document_id, 'ingestion_event_claim_id' => $chunk->ingestion_event_claim_id,
+            'ordinal' => 2, 'text' => $text, 'content_digest' => hash('sha256', $text)]);
+        $questions = ['n1' => 'Who checks and when?', 'n2' => 'Who records the result?'];
+        $needs = $requested = $aspects = $associations = [];
+        foreach ($questions as $id => $question) {
+            $requested[] = ['need_id' => $id, 'question_span' => $question, 'operation' => 'retrieve'];
+            $aspects[] = ['need_id' => $id, 'quote' => $question, 'unmet' => 'none', 'support' => [[
+                'candidate_id' => $chunk->public_id, 'association' => $id.':primary', 'quote' => $text]]];
+            $associations[$id.':primary'] = ['need_id' => $id, 'side' => 'primary', 'temporal_target_ids' => []];
+            $needs[] = ['need_id' => $id, 'aspect' => $question, 'question_span' => ['turn_id' => 'u1', 'quote' => $question],
+                'context_spans' => [], 'request_text_version' => 'extractive-request-v1', 'central' => true, 'operation' => 'retrieve',
+                'authority' => ['kind' => 'current', 'value' => null, 'precision' => 'none', 'source' => null],
+                'fact_reference' => null, 'applicability' => ['kind' => 'generic', 'source' => null],
+                'retrieval_outcome' => 'EVIDENCE_FOUND', 'retrieval_reason' => null,
+                'resolved_temporal_authority' => ['mode' => 'current'], 'resolved_applicability_location' => []];
+        }
+        $allocated = (new CoverageAllocation)->allocate($requested, [[
+            'candidate_id' => $chunk->public_id, 'text' => $text, 'rank' => 1, 'associations' => array_keys($associations),
+        ]], ['aspects' => $aspects]);
+        $this->assertCount(1, $allocated['selected']);
+        $this->assertCount(2, $allocated['selected'][0]['associations']);
+        $candidate = ['chunk_id' => $chunk->public_id, 'document_id' => $chunk->document->public_id,
+            'document_family_id' => $chunk->document->family->public_id, 'chunk_text' => $text, 'need_id' => 'n1',
+            'side' => 'primary', 'validated_associations' => $associations];
+        $input = new GenerationAssemblyInput(implode(' ', $questions),
+            new RetrievalResult(RetrievalOutcome::EvidenceFound, [$candidate], evidenceNeeds: $needs),
+            [], [], $base->authorisedScope, []);
+        $request = app(AssembleGenerationRequest::class)->handle($input);
+        $this->assertSame(6, $request->toArray()['contract_version']);
+        $this->assertCount(1, $request->evidence);
+        $this->assertSame([['ev-01'], ['ev-01']], array_column($request->evidenceNeeds, 'evidence_ids'));
+        $payload = ['contract_version' => 6, 'outcome' => 'answered',
+            'answer_parts' => [['text' => $text, 'evidence_ids' => ['ev-01']]], 'unsupported_aspects' => [],
+            'insufficiency_reason' => null, 'usage' => null, 'temporal_uses' => [],
+            'entailment_checks' => [['part_index' => 0, 'verdict' => 'supported', 'missing_condition' => null]],
+            'aspect_links' => array_map(fn ($id) => ['need_id' => $id, 'answer_part_indices' => [0],
+                'unsupported_aspect_indices' => []], array_keys($questions))];
+        $result = app(ValidateGenerationResult::class)->handleNeeds($request, ['n1', 'n2'], $payload);
+        $fingerprint = app(GenerationFingerprint::class)->make('deterministic', 'contract-fake',
+            'generation-result-v6', 'test-only', 'test-only', []);
+        $saved = app(PersistGeneratedAnswer::class)->handle($base->authorisedScope, $input->question,
+            (string) Str::uuid(), $request, $result, $fingerprint)->fresh();
+        $this->assertCount(1, $saved->evidenceSnapshots);
+        $this->assertCount(2, $saved->temporal_context['evidence_associations']['ev-01']);
+        $this->assertSame($text, $saved->renderedText());
+        $without = $request->evidenceNeeds;
+        $without[1]['evidence_ids'] = [];
+        $invalid = new GenerationRequest($request->requestId, $request->workspacePublicId, $request->question,
+            $request->evidence, $request->contextPolicyVersion, $request->maxContextCharacters, $request->requiredSides,
+            evidenceNeeds: $without);
+        $this->expectException(GenerationCitationOwnershipException::class);
+        app(ValidateGenerationResult::class)->handleNeeds($invalid, ['n1', 'n2'], $payload);
+    }
 
     public function test_shared_temporal_receipts_persist_reload_and_render_each_association(): void
     {

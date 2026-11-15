@@ -7,6 +7,7 @@ namespace App\Services\Retrieval;
 use App\Enums\RetrievalOutcome;
 use App\Enums\RetrievalTemporalMode;
 use App\Enums\RetrievalTemporalReferenceKind;
+use App\Exceptions\CoverageSelectionFailure;
 use App\Models\Document;
 use App\Support\Documents\DocumentAuthorityTimeline;
 use App\Support\Retrieval\AuthorisedKnowledgeScope;
@@ -20,6 +21,35 @@ use Carbon\CarbonImmutable;
 final readonly class TemporalEvidenceAlternatives
 {
     public function __construct(private EligibilityResolver $eligibility, private DocumentAuthorityTimeline $timeline) {}
+
+    /** Receiving-need authority check for an already admitted target; never searches. */
+    public function recheckTarget(AuthorisedKnowledgeScope $scope, RetrievalPlan $plan, array $target, CarbonImmutable $evaluatedAt): array
+    {
+        $check = $plan;
+        if ($target['purpose'] !== 'requested') {
+            $reference = $target['reference'];
+            $period = $reference !== null && ($reference['precision'] ?? 'day') !== 'day';
+            $need = $plan->evidenceNeed;
+            if ($period) {
+                $need['authority'] = ['kind' => 'period', 'source' => ['turn_id' => $reference['turn_id'], 'quote' => $reference['quote']]];
+            }
+            $check = new RetrievalPlan($plan->query, $reference === null ? RetrievalTemporalMode::Current : RetrievalTemporalMode::ValidAtDate,
+                $reference === null || $period ? null : CarbonImmutable::parse($target['at']),
+                $period ? ['kind' => RetrievalTemporalReferenceKind::CalendarPeriod, 'value' => $reference['value']] : null,
+                $plan->locationReferences, null, $plan->classifierLineage, $plan->classifierUsage,
+                factDate: $plan->factDate, requestedEvidenceType: $plan->requestedEvidenceType, evidenceNeed: $need);
+        }
+        $fresh = $this->eligibility->handle($scope, $check, $evaluatedAt);
+        $versions = $fresh->canSearch() ? ($fresh->documentPublicIdsBySide['primary'] ?? []) : [];
+        $receipt = $this->target($scope, $target['target_id'], $target['need_id'], $target['family_id'],
+            $target['purpose'], $target['mode'], $target['at'] === null ? null : CarbonImmutable::parse($target['at']),
+            $target['reference'], $versions, $target['status']);
+        if ($receipt['versions'] !== $target['versions']) {
+            throw new CoverageSelectionFailure('coverage_temporal_authority_changed', true);
+        }
+
+        return $versions;
+    }
 
     public function augment(AuthorisedKnowledgeScope $scope, array $needs, array $plans, array $results,
         CarbonImmutable $evaluatedAt, callable $execute, ?callable $observe = null): array

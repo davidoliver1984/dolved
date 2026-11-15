@@ -32,7 +32,7 @@ from app.generation.temporal_targets import (
 
 
 class NeedsCompletedResponse(ImmutableModel):
-    contract_version: Literal[2, 3, 4, 5]
+    contract_version: Literal[2, 3, 4, 5, 6]
     request_id: UUID
     status: Literal["completed"]
     result: (
@@ -43,14 +43,14 @@ class NeedsCompletedResponse(ImmutableModel):
 
 
 class NeedsBudgetResponse(ImmutableModel):
-    contract_version: Literal[2, 3, 4, 5]
+    contract_version: Literal[2, 3, 4, 5, 6]
     request_id: UUID
     status: Literal["context_budget_exceeded"]
     failure: GenerationContextBudgetExceeded
 
 
 class NeedsProviderResponse(ImmutableModel):
-    contract_version: Literal[2, 3, 4, 5]
+    contract_version: Literal[2, 3, 4, 5, 6]
     request_id: UUID
     status: Literal["provider_error"]
     error: GenerationProviderError
@@ -179,12 +179,15 @@ class OpenAIGenerationTemporalOutput(OpenAIGenerationNeedsOutput):
 
 
 class GenerationTemporalAssociationResult(GenerationNeedsResult):
-    contract_version: Literal[5]  # type: ignore[assignment]
+    contract_version: Literal[5, 6]  # type: ignore[assignment]
     temporal_uses: tuple[TemporalAssociationUse, ...] = Field(max_length=32)
 
     def validate_for_needs_request(self, request):
         super().validate_for_needs_request(request)
-        if request.contract_version != 5:
+        if (
+            request.contract_version not in (5, 6)
+            or self.contract_version != request.contract_version
+        ):
             raise ValueError("temporal association result requires the v5 request")
         validate_temporal_uses(
             request, self.answer_parts, self.aspect_links, self.temporal_uses

@@ -1,0 +1,460 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="/app/phpunit.xml" tests="219" assertions="1589" errors="0" failures="10" skipped="3" time="5.465111">
+    <testsuite name="Unit" tests="31" assertions="45" errors="0" failures="0" skipped="0" time="0.006930">
+      <testsuite name="Tests\Unit\AspectCoverageTest" file="/app/tests/Unit/AspectCoverageTest.php" tests="23" assertions="23" errors="0" failures="0" skipped="0" time="0.004809">
+        <testsuite name="Tests\Unit\AspectCoverageTest::test_shared_aspect_contract" tests="23" assertions="23" errors="0" failures="0" skipped="0" time="0.004809">
+          <testcase name="test_shared_aspect_contract with data set &quot;all-supported&quot;" file="/app/tests/Unit/AspectCoverageTest.php" line="26" class="Tests\Unit\AspectCoverageTest" classname="Tests.Unit.AspectCoverageTest" assertions="1" time="0.001809"/>
+          <testcase name="test_shared_aspect_contract with data set &quot;qualified-separate-needs&quot;" file="/app/tests/Unit/AspectCoverageTest.php" line="26" class="Tests\Unit\AspectCoverageTest" classname="Tests.Unit.AspectCoverageTest" assertions="1" time="0.000198"/>
+          <testcase name="test_shared_aspect_contract with data set &quot;partial-is-not-supported&quot;" file="/app/tests/Unit/AspectCoverageTest.php" line="26" class="Tests\Unit\AspectCoverageTest" classname="Tests.Unit.AspectCoverageTest" assertions="1" time="0.000265"/>
+          <testcase name="test_shared_aspect_contract with data set &quot;all-unsupported&quot;" file="/app/tests/Unit/AspectCoverageTest.php" line="26" class="Tests\Unit\AspectCoverageTest" classname="Tests.Unit.AspectCoverageTest" assertions="1" time="0.000140"/>
+          <testcase name="test_shared_aspect_contract with data set &quot;unknown-need&quot;" file="/app/tests/Unit/AspectCoverageTest.php" line="26" class="Tests\Unit\AspectCoverageTest" classname="Tests.Unit.AspectCoverageTest" assertions="1" time="0.000160"/>
+          <testcase name="test_shared_aspect_contract with data set &quot;duplicate-need&quot;" file="/app/tests/Unit/AspectCoverageTest.php" line="26" class="Tests\Unit\AspectCoverageTest" classname="Tests.Unit.AspectCoverageTest" assertions="1" time="0.000128"/>
+          <testcase name="test_shared_aspect_contract with data set &quot;missing-need&quot;" file="/app/tests/Unit/AspectCoverageTest.php" line="26" class="Tests\Unit\AspectCoverageTest" classname="Tests.Unit.AspectCoverageTest" assertions="1" time="0.000130"/>
+          <testcase name="test_shared_aspect_contract with data set &quot;empty-need&quot;" file="/app/tests/Unit/AspectCoverageTest.php" line="26" class="Tests\Unit\AspectCoverageTest" classname="Tests.Unit.AspectCoverageTest" assertions="1" time="0.000137"/>
+          <testcase name="test_shared_aspect_contract with data set &quot;negative-index&quot;" file="/app/tests/Unit/AspectCoverageTest.php" line="26" class="Tests\Unit\AspectCoverageTest" classname="Tests.Unit.AspectCoverageTest" assertions="1" time="0.000118"/>
+          <testcase name="test_shared_aspect_contract with data set &quot;out-of-range&quot;" file="/app/tests/Unit/AspectCoverageTest.php" line="26" class="Tests\Unit\AspectCoverageTest" classname="Tests.Unit.AspectCoverageTest" assertions="1" time="0.000123"/>
+          <testcase name="test_shared_aspect_contract with data set &quot;duplicate-reference&quot;" file="/app/tests/Unit/AspectCoverageTest.php" line="26" class="Tests\Unit\AspectCoverageTest" classname="Tests.Unit.AspectCoverageTest" assertions="1" time="0.000134"/>
+          <testcase name="test_shared_aspect_contract with data set &quot;boolean-index&quot;" file="/app/tests/Unit/AspectCoverageTest.php" line="26" class="Tests\Unit\AspectCoverageTest" classname="Tests.Unit.AspectCoverageTest" assertions="1" time="0.000125"/>
+          <testcase name="test_shared_aspect_contract with data set &quot;string-index&quot;" file="/app/tests/Unit/AspectCoverageTest.php" line="26" class="Tests\Unit\AspectCoverageTest" classname="Tests.Unit.AspectCoverageTest" assertions="1" time="0.000124"/>
+          <testcase name="test_shared_aspect_contract with data set &quot;float-index&quot;" file="/app/tests/Unit/AspectCoverageTest.php" line="26" class="Tests\Unit\AspectCoverageTest" classname="Tests.Unit.AspectCoverageTest" assertions="1" time="0.000116"/>
+          <testcase name="test_shared_aspect_contract with data set &quot;unmapped-answer&quot;" file="/app/tests/Unit/AspectCoverageTest.php" line="26" class="Tests\Unit\AspectCoverageTest" classname="Tests.Unit.AspectCoverageTest" assertions="1" time="0.000124"/>
+          <testcase name="test_shared_aspect_contract with data set &quot;unmapped-gap&quot;" file="/app/tests/Unit/AspectCoverageTest.php" line="26" class="Tests\Unit\AspectCoverageTest" classname="Tests.Unit.AspectCoverageTest" assertions="1" time="0.000136"/>
+          <testcase name="test_shared_aspect_contract with data set &quot;model-status-forbidden&quot;" file="/app/tests/Unit/AspectCoverageTest.php" line="26" class="Tests\Unit\AspectCoverageTest" classname="Tests.Unit.AspectCoverageTest" assertions="1" time="0.000128"/>
+          <testcase name="test_shared_aspect_contract with data set &quot;model-text-forbidden&quot;" file="/app/tests/Unit/AspectCoverageTest.php" line="26" class="Tests\Unit\AspectCoverageTest" classname="Tests.Unit.AspectCoverageTest" assertions="1" time="0.000107"/>
+          <testcase name="test_shared_aspect_contract with data set &quot;contradictory-outcome&quot;" file="/app/tests/Unit/AspectCoverageTest.php" line="26" class="Tests\Unit\AspectCoverageTest" classname="Tests.Unit.AspectCoverageTest" assertions="1" time="0.000118"/>
+          <testcase name="test_shared_aspect_contract with data set &quot;invalid-request-need&quot;" file="/app/tests/Unit/AspectCoverageTest.php" line="26" class="Tests\Unit\AspectCoverageTest" classname="Tests.Unit.AspectCoverageTest" assertions="1" time="0.000123"/>
+          <testcase name="test_shared_aspect_contract with data set &quot;unknown-request-need&quot;" file="/app/tests/Unit/AspectCoverageTest.php" line="26" class="Tests\Unit\AspectCoverageTest" classname="Tests.Unit.AspectCoverageTest" assertions="1" time="0.000114"/>
+          <testcase name="test_shared_aspect_contract with data set &quot;missing-gap-reference&quot;" file="/app/tests/Unit/AspectCoverageTest.php" line="26" class="Tests\Unit\AspectCoverageTest" classname="Tests.Unit.AspectCoverageTest" assertions="1" time="0.000122"/>
+          <testcase name="test_shared_aspect_contract with data set &quot;model-order-does-not-change-request-order&quot;" file="/app/tests/Unit/AspectCoverageTest.php" line="26" class="Tests\Unit\AspectCoverageTest" classname="Tests.Unit.AspectCoverageTest" assertions="1" time="0.000130"/>
+        </testsuite>
+      </testsuite>
+      <testsuite name="Tests\Unit\CoverageAllocationTest" file="/app/tests/Unit/CoverageAllocationTest.php" tests="3" assertions="8" errors="0" failures="0" skipped="0" time="0.001131">
+        <testcase name="test_saturation_is_unmet_not_claimed_coverage_and_shared_passages_use_one_slot" file="/app/tests/Unit/CoverageAllocationTest.php" line="13" class="Tests\Unit\CoverageAllocationTest" classname="Tests.Unit.CoverageAllocationTest" assertions="5" time="0.000564"/>
+        <testcase name="test_a_missing_requested_need_is_rejected" file="/app/tests/Unit/CoverageAllocationTest.php" line="34" class="Tests\Unit\CoverageAllocationTest" classname="Tests.Unit.CoverageAllocationTest" assertions="1" time="0.000435"/>
+        <testcase name="test_proposed_unmet_support_is_not_an_answerability_gate" file="/app/tests/Unit/CoverageAllocationTest.php" line="40" class="Tests\Unit\CoverageAllocationTest" classname="Tests.Unit.CoverageAllocationTest" assertions="2" time="0.000132"/>
+      </testsuite>
+      <testsuite name="Tests\Unit\UnresolvedNamedCoverageDisclosureTest" file="/app/tests/Unit/UnresolvedNamedCoverageDisclosureTest.php" tests="5" assertions="14" errors="0" failures="0" skipped="0" time="0.000990">
+        <testsuite name="Tests\Unit\UnresolvedNamedCoverageDisclosureTest::test_named_unresolved_retrieval_discloses_coverage_once" tests="2" assertions="6" errors="0" failures="0" skipped="0" time="0.000537">
+          <testcase name="test_named_unresolved_retrieval_discloses_coverage_once with data set &quot;141 two needs&quot;" file="/app/tests/Unit/UnresolvedNamedCoverageDisclosureTest.php" line="22" class="Tests\Unit\UnresolvedNamedCoverageDisclosureTest" classname="Tests.Unit.UnresolvedNamedCoverageDisclosureTest" assertions="3" time="0.000405"/>
+          <testcase name="test_named_unresolved_retrieval_discloses_coverage_once with data set &quot;142 one need&quot;" file="/app/tests/Unit/UnresolvedNamedCoverageDisclosureTest.php" line="22" class="Tests\Unit\UnresolvedNamedCoverageDisclosureTest" classname="Tests.Unit.UnresolvedNamedCoverageDisclosureTest" assertions="3" time="0.000132"/>
+        </testsuite>
+        <testcase name="test_scope_fact_and_generic_second_need_do_not_change_case_15_display" file="/app/tests/Unit/UnresolvedNamedCoverageDisclosureTest.php" line="32" class="Tests\Unit\UnresolvedNamedCoverageDisclosureTest" classname="Tests.Unit.UnresolvedNamedCoverageDisclosureTest" assertions="1" time="0.000088"/>
+        <testcase name="test_resolved_named_location_and_non_evidence_outcome_are_unchanged" file="/app/tests/Unit/UnresolvedNamedCoverageDisclosureTest.php" line="42" class="Tests\Unit\UnresolvedNamedCoverageDisclosureTest" classname="Tests.Unit.UnresolvedNamedCoverageDisclosureTest" assertions="2" time="0.000189"/>
+        <testcase name="test_only_positive_non_site_classifications_suppress_unresolved_notice" file="/app/tests/Unit/UnresolvedNamedCoverageDisclosureTest.php" line="62" class="Tests\Unit\UnresolvedNamedCoverageDisclosureTest" classname="Tests.Unit.UnresolvedNamedCoverageDisclosureTest" assertions="5" time="0.000176"/>
+      </testsuite>
+    </testsuite>
+    <testsuite name="Feature" tests="188" assertions="1544" errors="0" failures="10" skipped="3" time="5.458181">
+      <testsuite name="Tests\Feature\ConversationOrchestrationTest" file="/app/tests/Feature/ConversationOrchestrationTest.php" tests="35" assertions="278" errors="0" failures="4" skipped="0" time="1.147095">
+        <testcase name="test_internal_failure_diagnostic_bounds_and_redacts_exception_message" file="/app/tests/Feature/ConversationOrchestrationTest.php" line="57" class="Tests\Feature\ConversationOrchestrationTest" classname="Tests.Feature.ConversationOrchestrationTest" assertions="8" time="0.332758"/>
+        <testcase name="test_unclassified_exception_is_recorded_in_internal_trace_without_changing_failure_code" file="/app/tests/Feature/ConversationOrchestrationTest.php" line="71" class="Tests\Feature\ConversationOrchestrationTest" classname="Tests.Feature.ConversationOrchestrationTest" assertions="5" time="0.044826"/>
+        <testcase name="test_needs_profile_is_immutable_survives_retry_and_rejects_deployment_drift" file="/app/tests/Feature/ConversationOrchestrationTest.php" line="92" class="Tests\Feature\ConversationOrchestrationTest" classname="Tests.Feature.ConversationOrchestrationTest" assertions="5" time="0.016549"/>
+        <testcase name="test_needs_planner_failure_retains_safe_typed_detail_and_stops_before_retrieval" file="/app/tests/Feature/ConversationOrchestrationTest.php" line="122" class="Tests\Feature\ConversationOrchestrationTest" classname="Tests.Feature.ConversationOrchestrationTest" assertions="6" time="0.021074"/>
+        <testsuite name="Tests\Feature\ConversationOrchestrationTest::test_needs_clarification_keeps_text_separate_from_the_bounded_reason_code" tests="2" assertions="16" errors="0" failures="0" skipped="0" time="0.059129">
+          <testcase name="test_needs_clarification_keeps_text_separate_from_the_bounded_reason_code with data set #0" file="/app/tests/Feature/ConversationOrchestrationTest.php" line="159" class="Tests\Feature\ConversationOrchestrationTest" classname="Tests.Feature.ConversationOrchestrationTest" assertions="7" time="0.038187"/>
+          <testcase name="test_needs_clarification_keeps_text_separate_from_the_bounded_reason_code with data set #1" file="/app/tests/Feature/ConversationOrchestrationTest.php" line="159" class="Tests\Feature\ConversationOrchestrationTest" classname="Tests.Feature.ConversationOrchestrationTest" assertions="9" time="0.020942"/>
+        </testsuite>
+        <testsuite name="Tests\Feature\ConversationOrchestrationTest::test_invalid_model_reference_is_not_misrepresented_as_missing_user_information" tests="6" assertions="60" errors="0" failures="0" skipped="0" time="0.130692">
+          <testcase name="test_invalid_model_reference_is_not_misrepresented_as_missing_user_information with data set #0" file="/app/tests/Feature/ConversationOrchestrationTest.php" line="205" class="Tests\Feature\ConversationOrchestrationTest" classname="Tests.Feature.ConversationOrchestrationTest" assertions="10" time="0.017867"/>
+          <testcase name="test_invalid_model_reference_is_not_misrepresented_as_missing_user_information with data set #1" file="/app/tests/Feature/ConversationOrchestrationTest.php" line="205" class="Tests\Feature\ConversationOrchestrationTest" classname="Tests.Feature.ConversationOrchestrationTest" assertions="10" time="0.017522"/>
+          <testcase name="test_invalid_model_reference_is_not_misrepresented_as_missing_user_information with data set #2" file="/app/tests/Feature/ConversationOrchestrationTest.php" line="205" class="Tests\Feature\ConversationOrchestrationTest" classname="Tests.Feature.ConversationOrchestrationTest" assertions="10" time="0.020563"/>
+          <testcase name="test_invalid_model_reference_is_not_misrepresented_as_missing_user_information with data set #3" file="/app/tests/Feature/ConversationOrchestrationTest.php" line="205" class="Tests\Feature\ConversationOrchestrationTest" classname="Tests.Feature.ConversationOrchestrationTest" assertions="10" time="0.024603"/>
+          <testcase name="test_invalid_model_reference_is_not_misrepresented_as_missing_user_information with data set #4" file="/app/tests/Feature/ConversationOrchestrationTest.php" line="205" class="Tests\Feature\ConversationOrchestrationTest" classname="Tests.Feature.ConversationOrchestrationTest" assertions="10" time="0.020163"/>
+          <testcase name="test_invalid_model_reference_is_not_misrepresented_as_missing_user_information with data set #5" file="/app/tests/Feature/ConversationOrchestrationTest.php" line="205" class="Tests\Feature\ConversationOrchestrationTest" classname="Tests.Feature.ConversationOrchestrationTest" assertions="10" time="0.029975"/>
+        </testsuite>
+        <testsuite name="Tests\Feature\ConversationOrchestrationTest::test_completed_invalid_plans_have_an_honest_controlled_outcome_not_a_date_question" tests="8" assertions="62" errors="0" failures="0" skipped="0" time="0.154654">
+          <testcase name="test_completed_invalid_plans_have_an_honest_controlled_outcome_not_a_date_question with data set &quot;exhausted calendar grounding&quot;" file="/app/tests/Feature/ConversationOrchestrationTest.php" line="244" class="Tests\Feature\ConversationOrchestrationTest" classname="Tests.Feature.ConversationOrchestrationTest" assertions="8" time="0.018748"/>
+          <testcase name="test_completed_invalid_plans_have_an_honest_controlled_outcome_not_a_date_question with data set &quot;exhausted omitted clause&quot;" file="/app/tests/Feature/ConversationOrchestrationTest.php" line="244" class="Tests\Feature\ConversationOrchestrationTest" classname="Tests.Feature.ConversationOrchestrationTest" assertions="8" time="0.017748"/>
+          <testcase name="test_completed_invalid_plans_have_an_honest_controlled_outcome_not_a_date_question with data set &quot;exhausted changed meaning&quot;" file="/app/tests/Feature/ConversationOrchestrationTest.php" line="244" class="Tests\Feature\ConversationOrchestrationTest" classname="Tests.Feature.ConversationOrchestrationTest" assertions="8" time="0.023130"/>
+          <testcase name="test_completed_invalid_plans_have_an_honest_controlled_outcome_not_a_date_question with data set &quot;exhausted added scope&quot;" file="/app/tests/Feature/ConversationOrchestrationTest.php" line="244" class="Tests\Feature\ConversationOrchestrationTest" classname="Tests.Feature.ConversationOrchestrationTest" assertions="8" time="0.020617"/>
+          <testcase name="test_completed_invalid_plans_have_an_honest_controlled_outcome_not_a_date_question with data set &quot;single legacy rejection&quot;" file="/app/tests/Feature/ConversationOrchestrationTest.php" line="244" class="Tests\Feature\ConversationOrchestrationTest" classname="Tests.Feature.ConversationOrchestrationTest" assertions="8" time="0.019136"/>
+          <testcase name="test_completed_invalid_plans_have_an_honest_controlled_outcome_not_a_date_question with data set &quot;other exhausted validation&quot;" file="/app/tests/Feature/ConversationOrchestrationTest.php" line="244" class="Tests\Feature\ConversationOrchestrationTest" classname="Tests.Feature.ConversationOrchestrationTest" assertions="8" time="0.019992"/>
+          <testcase name="test_completed_invalid_plans_have_an_honest_controlled_outcome_not_a_date_question with data set &quot;mixed exhausted validation&quot;" file="/app/tests/Feature/ConversationOrchestrationTest.php" line="244" class="Tests\Feature\ConversationOrchestrationTest" classname="Tests.Feature.ConversationOrchestrationTest" assertions="8" time="0.018846"/>
+          <testcase name="test_completed_invalid_plans_have_an_honest_controlled_outcome_not_a_date_question with data set &quot;provider failure cannot become clarification&quot;" file="/app/tests/Feature/ConversationOrchestrationTest.php" line="244" class="Tests\Feature\ConversationOrchestrationTest" classname="Tests.Feature.ConversationOrchestrationTest" assertions="6" time="0.016438"/>
+        </testsuite>
+        <testcase name="test_submission_is_workspace_scoped_idempotent_and_allows_only_one_active_run" file="/app/tests/Feature/ConversationOrchestrationTest.php" line="298" class="Tests\Feature\ConversationOrchestrationTest" classname="Tests.Feature.ConversationOrchestrationTest" assertions="16" time="0.043945"/>
+        <testcase name="test_failed_run_reports_when_provisional_content_was_retracted" file="/app/tests/Feature/ConversationOrchestrationTest.php" line="345" class="Tests\Feature\ConversationOrchestrationTest" classname="Tests.Feature.ConversationOrchestrationTest" assertions="4" time="0.017242"/>
+        <testcase name="test_queued_cancellation_is_terminal_and_retry_is_idempotent" file="/app/tests/Feature/ConversationOrchestrationTest.php" line="369" class="Tests\Feature\ConversationOrchestrationTest" classname="Tests.Feature.ConversationOrchestrationTest" assertions="6" time="0.021447"/>
+        <testcase name="test_contextualisation_clarification_completes_without_retrieval_or_generation" file="/app/tests/Feature/ConversationOrchestrationTest.php" line="389" class="Tests\Feature\ConversationOrchestrationTest" classname="Tests.Feature.ConversationOrchestrationTest" assertions="6" time="0.016723"/>
+        <testcase name="test_no_eligible_evidence_maps_to_durable_controlled_no_answer" file="/app/tests/Feature/ConversationOrchestrationTest.php" line="422" class="Tests\Feature\ConversationOrchestrationTest" classname="Tests.Feature.ConversationOrchestrationTest" assertions="7" time="0.022507"/>
+        <testsuite name="Tests\Feature\ConversationOrchestrationTest::test_evidence_found_runs_the_complete_generation_and_persists_one_authoritative_answer" tests="5" assertions="52" errors="0" failures="4" skipped="0" time="0.180153">
+          <testcase name="test_evidence_found_runs_the_complete_generation_and_persists_one_authoritative_answer with data set #0" file="/app/tests/Feature/ConversationOrchestrationTest.php" line="462" class="Tests\Feature\ConversationOrchestrationTest" classname="Tests.Feature.ConversationOrchestrationTest" assertions="37" time="0.053687"/>
+          <testcase name="test_evidence_found_runs_the_complete_generation_and_persists_one_authoritative_answer with data set #1" file="/app/tests/Feature/ConversationOrchestrationTest.php" line="462" class="Tests\Feature\ConversationOrchestrationTest" classname="Tests.Feature.ConversationOrchestrationTest" assertions="3" time="0.032527">
+            <failure type="PHPUnit\Framework\ExpectationFailedException">Tests\Feature\ConversationOrchestrationTest::test_evidence_found_runs_the_complete_generation_and_persists_one_authoritative_answer with data set #1
+null
+Failed asserting that two variables reference the same object.
+--- Expected
++++ Actual
+@@ @@
+-App\Enums\GenerationRunStatus Enum #12171 (Completed, 'completed')
++App\Enums\GenerationRunStatus Enum #12164 (Failed, 'failed')
+
+/app/tests/Feature/ConversationOrchestrationTest.php:617</failure>
+          </testcase>
+          <testcase name="test_evidence_found_runs_the_complete_generation_and_persists_one_authoritative_answer with data set #2" file="/app/tests/Feature/ConversationOrchestrationTest.php" line="462" class="Tests\Feature\ConversationOrchestrationTest" classname="Tests.Feature.ConversationOrchestrationTest" assertions="4" time="0.031358">
+            <failure type="PHPUnit\Framework\ExpectationFailedException">Tests\Feature\ConversationOrchestrationTest::test_evidence_found_runs_the_complete_generation_and_persists_one_authoritative_answer with data set #2
+Failed asserting that two variables reference the same object.
+--- Expected
++++ Actual
+@@ @@
+-App\Enums\GenerationRunFailureCode Enum #12396 (GenerationContractInvalid, 'generation_contract_invalid')
++App\Enums\GenerationRunFailureCode Enum #12392 (InternalFailure, 'internal_failure')
+
+/app/tests/Feature/ConversationOrchestrationTest.php:603</failure>
+          </testcase>
+          <testcase name="test_evidence_found_runs_the_complete_generation_and_persists_one_authoritative_answer with data set #3" file="/app/tests/Feature/ConversationOrchestrationTest.php" line="462" class="Tests\Feature\ConversationOrchestrationTest" classname="Tests.Feature.ConversationOrchestrationTest" assertions="4" time="0.031229">
+            <failure type="PHPUnit\Framework\ExpectationFailedException">Tests\Feature\ConversationOrchestrationTest::test_evidence_found_runs_the_complete_generation_and_persists_one_authoritative_answer with data set #3
+Failed asserting that two variables reference the same object.
+--- Expected
++++ Actual
+@@ @@
+-App\Enums\GenerationRunFailureCode Enum #12400 (ProviderUnavailable, 'provider_unavailable')
++App\Enums\GenerationRunFailureCode Enum #12392 (InternalFailure, 'internal_failure')
+
+/app/tests/Feature/ConversationOrchestrationTest.php:603</failure>
+          </testcase>
+          <testcase name="test_evidence_found_runs_the_complete_generation_and_persists_one_authoritative_answer with data set #4" file="/app/tests/Feature/ConversationOrchestrationTest.php" line="462" class="Tests\Feature\ConversationOrchestrationTest" classname="Tests.Feature.ConversationOrchestrationTest" assertions="4" time="0.031351">
+            <failure type="PHPUnit\Framework\ExpectationFailedException">Tests\Feature\ConversationOrchestrationTest::test_evidence_found_runs_the_complete_generation_and_persists_one_authoritative_answer with data set #4
+Failed asserting that two variables reference the same object.
+--- Expected
++++ Actual
+@@ @@
+-App\Enums\GenerationRunFailureCode Enum #12400 (ProviderUnavailable, 'provider_unavailable')
++App\Enums\GenerationRunFailureCode Enum #12392 (InternalFailure, 'internal_failure')
+
+/app/tests/Feature/ConversationOrchestrationTest.php:603</failure>
+          </testcase>
+        </testsuite>
+        <testcase name="test_sse_replays_after_last_event_id_and_closes_on_terminal_event" file="/app/tests/Feature/ConversationOrchestrationTest.php" line="685" class="Tests\Feature\ConversationOrchestrationTest" classname="Tests.Feature.ConversationOrchestrationTest" assertions="10" time="0.017001"/>
+        <testcase name="test_e2e_event_limit_closes_after_one_durable_event_for_native_reconnect" file="/app/tests/Feature/ConversationOrchestrationTest.php" line="711" class="Tests\Feature\ConversationOrchestrationTest" classname="Tests.Feature.ConversationOrchestrationTest" assertions="4" time="0.015493"/>
+        <testcase name="test_open_sse_stream_terminates_before_delivering_more_events_after_membership_revocation" file="/app/tests/Feature/ConversationOrchestrationTest.php" line="733" class="Tests\Feature\ConversationOrchestrationTest" classname="Tests.Feature.ConversationOrchestrationTest" assertions="3" time="0.020293"/>
+        <testcase name="test_message_role_invariants_and_immutability_fail_closed" file="/app/tests/Feature/ConversationOrchestrationTest.php" line="758" class="Tests\Feature\ConversationOrchestrationTest" classname="Tests.Feature.ConversationOrchestrationTest" assertions="2" time="0.015899"/>
+        <testcase name="test_stale_active_runs_fail_closed_and_stale_cancellation_is_acknowledged" file="/app/tests/Feature/ConversationOrchestrationTest.php" line="778" class="Tests\Feature\ConversationOrchestrationTest" classname="Tests.Feature.ConversationOrchestrationTest" assertions="6" time="0.016710"/>
+      </testsuite>
+      <testsuite name="Tests\Feature\CoverageSelectionClientTest" file="/app/tests/Feature/CoverageSelectionClientTest.php" tests="8" assertions="28" errors="0" failures="0" skipped="0" time="0.085345">
+        <testsuite name="Tests\Feature\CoverageSelectionClientTest::test_one_attempt_failure_categories_are_not_blanket_fallbacks" tests="7" assertions="25" errors="0" failures="0" skipped="0" time="0.076068">
+          <testcase name="test_one_attempt_failure_categories_are_not_blanket_fallbacks with data set #0" file="/app/tests/Feature/CoverageSelectionClientTest.php" line="28" class="Tests\Feature\CoverageSelectionClientTest" classname="Tests.Feature.CoverageSelectionClientTest" assertions="5" time="0.011254"/>
+          <testcase name="test_one_attempt_failure_categories_are_not_blanket_fallbacks with data set #1" file="/app/tests/Feature/CoverageSelectionClientTest.php" line="28" class="Tests\Feature\CoverageSelectionClientTest" classname="Tests.Feature.CoverageSelectionClientTest" assertions="5" time="0.010460"/>
+          <testcase name="test_one_attempt_failure_categories_are_not_blanket_fallbacks with data set #2" file="/app/tests/Feature/CoverageSelectionClientTest.php" line="28" class="Tests\Feature\CoverageSelectionClientTest" classname="Tests.Feature.CoverageSelectionClientTest" assertions="3" time="0.013046"/>
+          <testcase name="test_one_attempt_failure_categories_are_not_blanket_fallbacks with data set #3" file="/app/tests/Feature/CoverageSelectionClientTest.php" line="28" class="Tests\Feature\CoverageSelectionClientTest" classname="Tests.Feature.CoverageSelectionClientTest" assertions="3" time="0.010689"/>
+          <testcase name="test_one_attempt_failure_categories_are_not_blanket_fallbacks with data set #4" file="/app/tests/Feature/CoverageSelectionClientTest.php" line="28" class="Tests\Feature\CoverageSelectionClientTest" classname="Tests.Feature.CoverageSelectionClientTest" assertions="3" time="0.010551"/>
+          <testcase name="test_one_attempt_failure_categories_are_not_blanket_fallbacks with data set #5" file="/app/tests/Feature/CoverageSelectionClientTest.php" line="28" class="Tests\Feature\CoverageSelectionClientTest" classname="Tests.Feature.CoverageSelectionClientTest" assertions="3" time="0.010296"/>
+          <testcase name="test_one_attempt_failure_categories_are_not_blanket_fallbacks with data set #6" file="/app/tests/Feature/CoverageSelectionClientTest.php" line="28" class="Tests\Feature\CoverageSelectionClientTest" classname="Tests.Feature.CoverageSelectionClientTest" assertions="3" time="0.009772"/>
+        </testsuite>
+        <testcase name="test_exhausted_deadline_never_starts_optional_work_or_fallback" file="/app/tests/Feature/CoverageSelectionClientTest.php" line="49" class="Tests\Feature\CoverageSelectionClientTest" classname="Tests.Feature.CoverageSelectionClientTest" assertions="3" time="0.009277"/>
+      </testsuite>
+      <testsuite name="Tests\Feature\EvidenceNeedsRetrievalTest" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" tests="119" assertions="1199" errors="0" failures="6" skipped="3" time="4.012526">
+        <testcase name="test_receiving_need_rechecks_unretrieved_shared_passage_against_real_eligibility" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="72" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="4" time="0.031635">
+          <failure type="PHPUnit\Framework\ExpectationFailedException">Tests\Feature\EvidenceNeedsRetrievalTest::test_receiving_need_rechecks_unretrieved_shared_passage_against_real_eligibility
+Failed asserting that two arrays are identical.
+--- Expected
++++ Actual
+@@ @@
+-Array &amp;0 []
++Array &amp;0 [
++    0 =&gt; Array &amp;1 [
++        'candidate_id' =&gt; '561cea6d-bc4d-321b-9817-3d4ec800d7f9',
++        'text' =&gt; 'The analyst reports incidents to the duty engineer.',
++        'rank' =&gt; 1,
++        'candidate' =&gt; Array &amp;2 [
++            'chunk_id' =&gt; '561cea6d-bc4d-321b-9817-3d4ec800d7f9',
++            'document_id' =&gt; 'a40116c2-cad5-353c-a320-988b444e933c',
++            'document_family_id' =&gt; '746e037c-1824-39f3-8dce-898248e47e0f',
++            'version_position' =&gt; 1,
++            'source_filename' =&gt; 'exercitationem.pdf',
++            'document_title' =&gt; 'exercitationem.pdf',
++            'document_family_title' =&gt; 'similique omnis accusantium',
++            'section_heading' =&gt; null,
++            'chunk_text' =&gt; 'The analyst reports incidents to the duty engineer.',
++            'provenance' =&gt; Array &amp;3 [
++                0 =&gt; Array &amp;4 [
++                    'normalised_element_id' =&gt; '02617e9d-3330-3056-b9eb-0786a16fc726',
++                    'source_element_ids' =&gt; Array &amp;5 [
++                        0 =&gt; '65804469-4437-3ce1-b0b2-0c285e887c80',
++                    ],
++                    'source_locations' =&gt; Array &amp;6 [
++                        0 =&gt; Array &amp;7 [
++                            'type' =&gt; 'text',
++                            'start_character' =&gt; 0,
++                            'end_character' =&gt; 20,
++                            'start_line' =&gt; 1,
++                            'end_line' =&gt; 1,
++                        ],
++                    ],
++                    'element_start_character' =&gt; 0,
++                    'element_end_character' =&gt; 20,
++                    'chunk_start_character' =&gt; 0,
++                    'chunk_end_character' =&gt; 20,
++                    'role' =&gt; 'primary',
++                ],
++            ],
++            'score' =&gt; 0.95,
++            'rank' =&gt; 1,
++            'retrieval_method' =&gt; 'hybrid',
++            'side' =&gt; 'primary',
++            'workspace_corpus_generation_id' =&gt; '5796a490-587b-3ca6-a6b0-dfa1ab9bde0b',
++            'embedding_space_generation_id' =&gt; 'a1f7681d-fc6e-39c6-81a6-5df46c58d24d',
++            'sparse_space_generation_id' =&gt; '09f350f8-5bd5-3633-915d-2eede4179037',
++            'dense_score' =&gt; null,
++            'dense_rank' =&gt; null,
++            'sparse_score' =&gt; null,
++            'sparse_rank' =&gt; null,
++        ],
++        'associations' =&gt; Array &amp;8 [
++            0 =&gt; 'n1:primary',
++        ],
++        'validated_associations' =&gt; Array &amp;9 [
++            'n1:primary' =&gt; Array &amp;10 [
++                'need_id' =&gt; 'n1',
++                'side' =&gt; 'primary',
++                'temporal_target_ids' =&gt; Array &amp;11 [],
++            ],
++        ],
++    ],
++]
+
+/app/tests/Feature/EvidenceNeedsRetrievalTest.php:113</failure>
+        </testcase>
+        <testsuite name="Tests\Feature\EvidenceNeedsRetrievalTest::test_c1_admission_respects_existing_eligibility_and_four_lane_cap" tests="16" assertions="121" errors="0" failures="0" skipped="0" time="0.535648">
+          <testcase name="test_c1_admission_respects_existing_eligibility_and_four_lane_cap with data set #0" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="133" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="9" time="0.059127"/>
+          <testcase name="test_c1_admission_respects_existing_eligibility_and_four_lane_cap with data set #1" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="133" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="5" time="0.025109"/>
+          <testcase name="test_c1_admission_respects_existing_eligibility_and_four_lane_cap with data set #2" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="133" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="6" time="0.033504"/>
+          <testcase name="test_c1_admission_respects_existing_eligibility_and_four_lane_cap with data set #3" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="133" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="6" time="0.032949"/>
+          <testcase name="test_c1_admission_respects_existing_eligibility_and_four_lane_cap with data set #4" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="133" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="5" time="0.020679"/>
+          <testcase name="test_c1_admission_respects_existing_eligibility_and_four_lane_cap with data set #5" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="133" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="6" time="0.027129"/>
+          <testcase name="test_c1_admission_respects_existing_eligibility_and_four_lane_cap with data set #6" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="133" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="7" time="0.029013"/>
+          <testcase name="test_c1_admission_respects_existing_eligibility_and_four_lane_cap with data set #7" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="133" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="8" time="0.034334"/>
+          <testcase name="test_c1_admission_respects_existing_eligibility_and_four_lane_cap with data set #8" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="133" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="7" time="0.036364"/>
+          <testcase name="test_c1_admission_respects_existing_eligibility_and_four_lane_cap with data set #9" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="133" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="9" time="0.033284"/>
+          <testcase name="test_c1_admission_respects_existing_eligibility_and_four_lane_cap with data set #10" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="133" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="9" time="0.033312"/>
+          <testcase name="test_c1_admission_respects_existing_eligibility_and_four_lane_cap with data set #11" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="133" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="9" time="0.027356"/>
+          <testcase name="test_c1_admission_respects_existing_eligibility_and_four_lane_cap with data set #12" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="133" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="9" time="0.027829"/>
+          <testcase name="test_c1_admission_respects_existing_eligibility_and_four_lane_cap with data set #13" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="133" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="9" time="0.026949"/>
+          <testcase name="test_c1_admission_respects_existing_eligibility_and_four_lane_cap with data set #14" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="133" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="8" time="0.030830"/>
+          <testcase name="test_c1_admission_respects_existing_eligibility_and_four_lane_cap with data set #15" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="133" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="9" time="0.057881"/>
+        </testsuite>
+        <testsuite name="Tests\Feature\EvidenceNeedsRetrievalTest::test_c1_wrong_current_plan_preserves_dated_alternative_and_persisted_answer_use" tests="5" assertions="124" errors="0" failures="5" skipped="0" time="0.434532">
+          <testcase name="test_c1_wrong_current_plan_preserves_dated_alternative_and_persisted_answer_use with data set #0" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="276" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="22" time="0.078025">
+            <failure type="PHPUnit\Framework\ExpectationFailedException">Tests\Feature\EvidenceNeedsRetrievalTest::test_c1_wrong_current_plan_preserves_dated_alternative_and_persisted_answer_use with data set #0
+{"contextualisation":null,"internal_failure":{"exception_class":"InvalidArgumentException","message":"The workspace usage entry is invalid."}}
+Failed asserting that two variables reference the same object.
+--- Expected
++++ Actual
+@@ @@
+-App\Enums\GenerationRunStatus Enum #12171 (Completed, 'completed')
++App\Enums\GenerationRunStatus Enum #12164 (Failed, 'failed')
+
+/app/tests/Feature/EvidenceNeedsRetrievalTest.php:419</failure>
+          </testcase>
+          <testcase name="test_c1_wrong_current_plan_preserves_dated_alternative_and_persisted_answer_use with data set #1" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="276" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="22" time="0.091491">
+            <failure type="PHPUnit\Framework\ExpectationFailedException">Tests\Feature\EvidenceNeedsRetrievalTest::test_c1_wrong_current_plan_preserves_dated_alternative_and_persisted_answer_use with data set #1
+{"contextualisation":null,"internal_failure":{"exception_class":"InvalidArgumentException","message":"The workspace usage entry is invalid."}}
+Failed asserting that two variables reference the same object.
+--- Expected
++++ Actual
+@@ @@
+-App\Enums\GenerationRunStatus Enum #12171 (Completed, 'completed')
++App\Enums\GenerationRunStatus Enum #12164 (Failed, 'failed')
+
+/app/tests/Feature/EvidenceNeedsRetrievalTest.php:419</failure>
+          </testcase>
+          <testcase name="test_c1_wrong_current_plan_preserves_dated_alternative_and_persisted_answer_use with data set #2" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="276" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="24" time="0.089229">
+            <failure type="PHPUnit\Framework\ExpectationFailedException">Tests\Feature\EvidenceNeedsRetrievalTest::test_c1_wrong_current_plan_preserves_dated_alternative_and_persisted_answer_use with data set #2
+{"contextualisation":null,"internal_failure":{"exception_class":"InvalidArgumentException","message":"The workspace usage entry is invalid."}}
+Failed asserting that two variables reference the same object.
+--- Expected
++++ Actual
+@@ @@
+-App\Enums\GenerationRunStatus Enum #12171 (Completed, 'completed')
++App\Enums\GenerationRunStatus Enum #12164 (Failed, 'failed')
+
+/app/tests/Feature/EvidenceNeedsRetrievalTest.php:419</failure>
+          </testcase>
+          <testcase name="test_c1_wrong_current_plan_preserves_dated_alternative_and_persisted_answer_use with data set #3" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="276" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="24" time="0.079677">
+            <failure type="PHPUnit\Framework\ExpectationFailedException">Tests\Feature\EvidenceNeedsRetrievalTest::test_c1_wrong_current_plan_preserves_dated_alternative_and_persisted_answer_use with data set #3
+{"contextualisation":null,"internal_failure":{"exception_class":"InvalidArgumentException","message":"The workspace usage entry is invalid."}}
+Failed asserting that two variables reference the same object.
+--- Expected
++++ Actual
+@@ @@
+-App\Enums\GenerationRunStatus Enum #12171 (Completed, 'completed')
++App\Enums\GenerationRunStatus Enum #12164 (Failed, 'failed')
+
+/app/tests/Feature/EvidenceNeedsRetrievalTest.php:419</failure>
+          </testcase>
+          <testcase name="test_c1_wrong_current_plan_preserves_dated_alternative_and_persisted_answer_use with data set #4" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="276" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="32" time="0.096110">
+            <failure type="PHPUnit\Framework\ExpectationFailedException">Tests\Feature\EvidenceNeedsRetrievalTest::test_c1_wrong_current_plan_preserves_dated_alternative_and_persisted_answer_use with data set #4
+{"contextualisation":null,"internal_failure":{"exception_class":"InvalidArgumentException","message":"The workspace usage entry is invalid."}}
+Failed asserting that two variables reference the same object.
+--- Expected
++++ Actual
+@@ @@
+-App\Enums\GenerationRunStatus Enum #12171 (Completed, 'completed')
++App\Enums\GenerationRunStatus Enum #12164 (Failed, 'failed')
+
+/app/tests/Feature/EvidenceNeedsRetrievalTest.php:419</failure>
+          </testcase>
+        </testsuite>
+        <testsuite name="Tests\Feature\EvidenceNeedsRetrievalTest::test_c2_discovery_is_single_family_fail_closed_and_bounded" tests="13" assertions="211" errors="0" failures="0" skipped="0" time="0.550299">
+          <testcase name="test_c2_discovery_is_single_family_fail_closed_and_bounded with data set #0" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="468" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="22" time="0.047558"/>
+          <testcase name="test_c2_discovery_is_single_family_fail_closed_and_bounded with data set #1" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="468" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="16" time="0.037253"/>
+          <testcase name="test_c2_discovery_is_single_family_fail_closed_and_bounded with data set #2" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="468" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="16" time="0.038001"/>
+          <testcase name="test_c2_discovery_is_single_family_fail_closed_and_bounded with data set #3" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="468" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="16" time="0.037908"/>
+          <testcase name="test_c2_discovery_is_single_family_fail_closed_and_bounded with data set #4" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="468" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="16" time="0.038757"/>
+          <testcase name="test_c2_discovery_is_single_family_fail_closed_and_bounded with data set #5" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="468" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="15" time="0.039197"/>
+          <testcase name="test_c2_discovery_is_single_family_fail_closed_and_bounded with data set #6" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="468" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="15" time="0.028483"/>
+          <testcase name="test_c2_discovery_is_single_family_fail_closed_and_bounded with data set #7" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="468" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="14" time="0.033538"/>
+          <testcase name="test_c2_discovery_is_single_family_fail_closed_and_bounded with data set #8" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="468" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="19" time="0.080342"/>
+          <testcase name="test_c2_discovery_is_single_family_fail_closed_and_bounded with data set #9" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="468" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="15" time="0.038333"/>
+          <testcase name="test_c2_discovery_is_single_family_fail_closed_and_bounded with data set #10" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="468" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="16" time="0.044947"/>
+          <testcase name="test_c2_discovery_is_single_family_fail_closed_and_bounded with data set #11" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="468" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="16" time="0.043971"/>
+          <testcase name="test_c2_discovery_is_single_family_fail_closed_and_bounded with data set #12" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="468" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="15" time="0.042011"/>
+        </testsuite>
+        <testsuite name="Tests\Feature\EvidenceNeedsRetrievalTest::test_c2_fallback_retains_original_scope_typed_failures_and_saved_diagnostics" tests="24" assertions="177" errors="0" failures="0" skipped="0" time="0.789710">
+          <testcase name="test_c2_fallback_retains_original_scope_typed_failures_and_saved_diagnostics with data set #0" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="644" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="13" time="0.030792"/>
+          <testcase name="test_c2_fallback_retains_original_scope_typed_failures_and_saved_diagnostics with data set #1" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="644" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="11" time="0.027803"/>
+          <testcase name="test_c2_fallback_retains_original_scope_typed_failures_and_saved_diagnostics with data set #2" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="644" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="16" time="0.049238"/>
+          <testcase name="test_c2_fallback_retains_original_scope_typed_failures_and_saved_diagnostics with data set #3" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="644" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="14" time="0.022677"/>
+          <testcase name="test_c2_fallback_retains_original_scope_typed_failures_and_saved_diagnostics with data set #4" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="644" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="4" time="0.024622"/>
+          <testcase name="test_c2_fallback_retains_original_scope_typed_failures_and_saved_diagnostics with data set #5" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="644" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="4" time="0.024086"/>
+          <testcase name="test_c2_fallback_retains_original_scope_typed_failures_and_saved_diagnostics with data set #6" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="644" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="4" time="0.024721"/>
+          <testcase name="test_c2_fallback_retains_original_scope_typed_failures_and_saved_diagnostics with data set #7" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="644" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="4" time="0.024292"/>
+          <testcase name="test_c2_fallback_retains_original_scope_typed_failures_and_saved_diagnostics with data set #8" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="644" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="4" time="0.025806"/>
+          <testcase name="test_c2_fallback_retains_original_scope_typed_failures_and_saved_diagnostics with data set #9" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="644" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="4" time="0.024450"/>
+          <testcase name="test_c2_fallback_retains_original_scope_typed_failures_and_saved_diagnostics with data set #10" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="644" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="4" time="0.024207"/>
+          <testcase name="test_c2_fallback_retains_original_scope_typed_failures_and_saved_diagnostics with data set #11" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="644" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="4" time="0.025892"/>
+          <testcase name="test_c2_fallback_retains_original_scope_typed_failures_and_saved_diagnostics with data set #12" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="644" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="7" time="0.057864"/>
+          <testcase name="test_c2_fallback_retains_original_scope_typed_failures_and_saved_diagnostics with data set #13" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="644" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="4" time="0.032461"/>
+          <testcase name="test_c2_fallback_retains_original_scope_typed_failures_and_saved_diagnostics with data set #14" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="644" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="18" time="0.059057"/>
+          <testcase name="test_c2_fallback_retains_original_scope_typed_failures_and_saved_diagnostics with data set #15" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="644" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="16" time="0.067385"/>
+          <testcase name="test_c2_fallback_retains_original_scope_typed_failures_and_saved_diagnostics with data set #16" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="644" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="11" time="0.031094"/>
+          <testcase name="test_c2_fallback_retains_original_scope_typed_failures_and_saved_diagnostics with data set #17" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="644" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="11" time="0.033284"/>
+          <testcase name="test_c2_fallback_retains_original_scope_typed_failures_and_saved_diagnostics with data set #18" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="644" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="4" time="0.029279"/>
+          <testcase name="test_c2_fallback_retains_original_scope_typed_failures_and_saved_diagnostics with data set #19" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="644" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="4" time="0.030557"/>
+          <testcase name="test_c2_fallback_retains_original_scope_typed_failures_and_saved_diagnostics with data set #20" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="644" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="4" time="0.029975"/>
+          <testcase name="test_c2_fallback_retains_original_scope_typed_failures_and_saved_diagnostics with data set #21" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="644" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="4" time="0.029358"/>
+          <testcase name="test_c2_fallback_retains_original_scope_typed_failures_and_saved_diagnostics with data set #22" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="644" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="4" time="0.031343"/>
+          <testcase name="test_c2_fallback_retains_original_scope_typed_failures_and_saved_diagnostics with data set #23" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="644" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="4" time="0.029465"/>
+        </testsuite>
+        <testsuite name="Tests\Feature\EvidenceNeedsRetrievalTest::test_cross_service_mixed_conversation_uses_real_python_fusion_and_generation_contract" tests="3" assertions="0" errors="0" failures="0" skipped="3" time="0.033620">
+          <testcase name="test_cross_service_mixed_conversation_uses_real_python_fusion_and_generation_contract with data set #0" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="815" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="0" time="0.010898">
+            <skipped/>
+          </testcase>
+          <testcase name="test_cross_service_mixed_conversation_uses_real_python_fusion_and_generation_contract with data set #1" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="815" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="0" time="0.012377">
+            <skipped/>
+          </testcase>
+          <testcase name="test_cross_service_mixed_conversation_uses_real_python_fusion_and_generation_contract with data set #2" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="815" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="0" time="0.010345">
+            <skipped/>
+          </testcase>
+        </testsuite>
+        <testcase name="test_duration_context_never_filters_dates_and_adjacent_periods_select_real_versions" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="969" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="12" time="0.028390"/>
+        <testcase name="test_disputed_recipient_is_context_not_a_location_or_tenant_permission" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="1047" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="17" time="0.033713"/>
+        <testcase name="test_disputed_claim_without_authorised_evidence_stays_no_answer" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="1090" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="3" time="0.018643"/>
+        <testsuite name="Tests\Feature\EvidenceNeedsRetrievalTest::test_breadth_resolves_universal_direct_and_inherited_snapshots" tests="3" assertions="15" errors="0" failures="0" skipped="0" time="0.064643">
+          <testcase name="test_breadth_resolves_universal_direct_and_inherited_snapshots with data set #0" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="1117" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="5" time="0.021380"/>
+          <testcase name="test_breadth_resolves_universal_direct_and_inherited_snapshots with data set #1" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="1117" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="5" time="0.021009"/>
+          <testcase name="test_breadth_resolves_universal_direct_and_inherited_snapshots with data set #2" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="1117" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="5" time="0.022254"/>
+        </testsuite>
+        <testcase name="test_breadth_scope_fact_lists_the_full_sealed_snapshot_without_operational_chunks" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="1145" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="11" time="0.027628"/>
+        <testsuite name="Tests\Feature\EvidenceNeedsRetrievalTest::test_scope_facts_use_real_resolver_and_never_dispatch_or_read_operational_chunks" tests="4" assertions="36" errors="0" failures="0" skipped="0" time="0.102912">
+          <testcase name="test_scope_facts_use_real_resolver_and_never_dispatch_or_read_operational_chunks with data set #0" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="1181" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="9" time="0.027259"/>
+          <testcase name="test_scope_facts_use_real_resolver_and_never_dispatch_or_read_operational_chunks with data set #1" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="1181" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="9" time="0.024894"/>
+          <testcase name="test_scope_facts_use_real_resolver_and_never_dispatch_or_read_operational_chunks with data set #2" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="1181" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="9" time="0.026717"/>
+          <testcase name="test_scope_facts_use_real_resolver_and_never_dispatch_or_read_operational_chunks with data set #3" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="1181" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="9" time="0.024043"/>
+        </testsuite>
+        <testcase name="test_scope_location_alias_and_singular_or_plural_qualifiers_resolve_without_cross_workspace_guessing" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="1219" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="29" time="0.049878"/>
+        <testcase name="test_scope_adversarial_framing_is_fixed_and_persists_a_real_snapshot_citation_without_a_provider" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="1260" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="13" time="0.028972"/>
+        <testsuite name="Tests\Feature\EvidenceNeedsRetrievalTest::test_scope_only_conversation_publishes_with_a_zero_cost_local_receipt" tests="2" assertions="24" errors="0" failures="0" skipped="0" time="0.068319">
+          <testcase name="test_scope_only_conversation_publishes_with_a_zero_cost_local_receipt with data set #0" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="1288" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="12" time="0.033374"/>
+          <testcase name="test_scope_only_conversation_publishes_with_a_zero_cost_local_receipt with data set #1" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="1288" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="12" time="0.034945"/>
+        </testsuite>
+        <testcase name="test_scope_and_operational_answer_are_isolated_through_generation_and_persistence" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="1333" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="13" time="0.024472"/>
+        <testsuite name="Tests\Feature\EvidenceNeedsRetrievalTest::test_unavailable_scope_record_publishes_controlled_no_answer" tests="2" assertions="14" errors="0" failures="0" skipped="0" time="0.063687">
+          <testcase name="test_unavailable_scope_record_publishes_controlled_no_answer with data set #0" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="1392" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="7" time="0.027256"/>
+          <testcase name="test_unavailable_scope_record_publishes_controlled_no_answer with data set #1" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="1392" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="7" time="0.036431"/>
+        </testsuite>
+        <testsuite name="Tests\Feature\EvidenceNeedsRetrievalTest::test_ambiguous_scope_subject_still_clarifies" tests="2" assertions="8" errors="0" failures="0" skipped="0" time="0.034478">
+          <testcase name="test_ambiguous_scope_subject_still_clarifies with data set #0" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="1433" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="4" time="0.017011"/>
+          <testcase name="test_ambiguous_scope_subject_still_clarifies with data set #1" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="1433" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="4" time="0.017467"/>
+        </testsuite>
+        <testsuite name="Tests\Feature\EvidenceNeedsRetrievalTest::test_scope_enquiry_preserves_access_authority_and_snapshot_prerequisites" tests="7" assertions="21" errors="0" failures="0" skipped="0" time="0.130658">
+          <testcase name="test_scope_enquiry_preserves_access_authority_and_snapshot_prerequisites with data set #0" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="1455" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="3" time="0.020104"/>
+          <testcase name="test_scope_enquiry_preserves_access_authority_and_snapshot_prerequisites with data set #1" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="1455" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="3" time="0.018880"/>
+          <testcase name="test_scope_enquiry_preserves_access_authority_and_snapshot_prerequisites with data set #2" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="1455" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="3" time="0.017909"/>
+          <testcase name="test_scope_enquiry_preserves_access_authority_and_snapshot_prerequisites with data set #3" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="1455" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="3" time="0.017682"/>
+          <testcase name="test_scope_enquiry_preserves_access_authority_and_snapshot_prerequisites with data set #4" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="1455" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="3" time="0.019245"/>
+          <testcase name="test_scope_enquiry_preserves_access_authority_and_snapshot_prerequisites with data set #5" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="1455" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="3" time="0.018853"/>
+          <testcase name="test_scope_enquiry_preserves_access_authority_and_snapshot_prerequisites with data set #6" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="1455" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="3" time="0.017984"/>
+        </testsuite>
+        <testcase name="test_scope_fact_publication_rechecks_corpus_and_source_identity" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="1484" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="2" time="0.017846"/>
+        <testsuite name="Tests\Feature\EvidenceNeedsRetrievalTest::test_historical_scope_uses_the_selected_versions_snapshot_not_the_current_one" tests="2" assertions="14" errors="0" failures="0" skipped="0" time="0.041972">
+          <testcase name="test_historical_scope_uses_the_selected_versions_snapshot_not_the_current_one with data set #0" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="1506" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="5" time="0.020615"/>
+          <testcase name="test_historical_scope_uses_the_selected_versions_snapshot_not_the_current_one with data set #1" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="1506" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="9" time="0.021357"/>
+        </testsuite>
+        <testcase name="test_verified_single_version_previous_need_is_not_an_ambiguous_reference" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="1537" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="8" time="0.025698"/>
+        <testcase name="test_june_pair_is_march_june_while_ordinary_comparison_is_june_september_and_support_remains_current" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="1569" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="4" time="0.027217"/>
+        <testcase name="test_multiple_transitions_require_clarification_and_missing_history_is_not_fabricated" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="1587" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="2" time="0.025589"/>
+        <testcase name="test_named_scope_drops_foreign_locations_but_accepts_registered_location_qualifiers" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="1601" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="4" time="0.018689"/>
+        <testcase name="test_ambiguous_location_candidates_do_not_block_needs_retrieval" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="1623" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="3" time="0.016461"/>
+        <testcase name="test_unidentified_home_reference_and_generic_policy_question_both_stay_unscoped" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="1646" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="4" time="0.021067"/>
+        <testcase name="test_reference_identity_provenance_distinguishes_organisation_titles_and_places" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="1683" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="28" time="0.029417"/>
+        <testcase name="test_non_site_identity_survives_production_retrieval_to_coverage_disclosure" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="1735" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="27" time="0.040632"/>
+        <testcase name="test_workspace_identity_and_unlisted_oakfield_outreach_do_not_narrow" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="1784" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="15" time="0.034649"/>
+        <testcase name="test_ungrounded_this_record_asks_for_record_without_changing_site_or_generic_paths" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="1869" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="4" time="0.015523"/>
+        <testcase name="test_bound_subject_cannot_borrow_unrelated_history_and_support_stays_available" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="1894" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="5" time="0.024247"/>
+        <testcase name="test_topical_current_scope_remains_broad_but_named_binding_remains_exclusive" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="1917" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="3" time="0.026430"/>
+        <testsuite name="Tests\Feature\EvidenceNeedsRetrievalTest::test_topic_only_compare_selects_an_authorised_current_family_before_historical_search" tests="5" assertions="88" errors="0" failures="0" skipped="0" time="0.270523">
+          <testcase name="test_topic_only_compare_selects_an_authorised_current_family_before_historical_search with data set #0" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="1943" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="22" time="0.071108"/>
+          <testcase name="test_topic_only_compare_selects_an_authorised_current_family_before_historical_search with data set #1" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="1943" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="17" time="0.065415"/>
+          <testcase name="test_topic_only_compare_selects_an_authorised_current_family_before_historical_search with data set #2" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="1943" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="17" time="0.054091"/>
+          <testcase name="test_topic_only_compare_selects_an_authorised_current_family_before_historical_search with data set #3" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="1943" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="17" time="0.043997"/>
+          <testcase name="test_topic_only_compare_selects_an_authorised_current_family_before_historical_search with data set #4" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="1943" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="15" time="0.035913"/>
+        </testsuite>
+        <testcase name="test_topical_discovery_ineligible_is_logged_without_provider_work" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="2039" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="4" time="0.015459"/>
+        <testcase name="test_case_nine_shape_cannot_search_an_unrelated_2023_version_pair" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="2056" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="6" time="0.031371"/>
+        <testcase name="test_external_ownership_is_an_unavailable_need_not_a_location_clarification" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="2114" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="3" time="0.019850"/>
+        <testcase name="test_bound_family_cannot_cross_workspace_even_after_planning" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="2131" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="1" time="0.019975"/>
+        <testcase name="test_capacity_overflow_is_a_displayable_limit_not_user_ambiguity" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="2153" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="5" time="0.013274"/>
+        <testsuite name="Tests\Feature\EvidenceNeedsRetrievalTest::test_real_retrieval_action_dispatches_each_need_and_rechecks_final_authority" tests="5" assertions="116" errors="0" failures="0" skipped="0" time="0.224796">
+          <testcase name="test_real_retrieval_action_dispatches_each_need_and_rechecks_final_authority with data set #0" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="2175" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="20" time="0.046594"/>
+          <testcase name="test_real_retrieval_action_dispatches_each_need_and_rechecks_final_authority with data set #1" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="2175" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="11" time="0.034523"/>
+          <testcase name="test_real_retrieval_action_dispatches_each_need_and_rechecks_final_authority with data set #2" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="2175" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="20" time="0.041870"/>
+          <testcase name="test_real_retrieval_action_dispatches_each_need_and_rechecks_final_authority with data set #3" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="2175" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="31" time="0.048348"/>
+          <testcase name="test_real_retrieval_action_dispatches_each_need_and_rechecks_final_authority with data set #4" file="/app/tests/Feature/EvidenceNeedsRetrievalTest.php" line="2175" class="Tests\Feature\EvidenceNeedsRetrievalTest" classname="Tests.Feature.EvidenceNeedsRetrievalTest" assertions="34" time="0.053461"/>
+        </testsuite>
+      </testsuite>
+      <testsuite name="Tests\Feature\GroundedGenerationFoundationTest" file="/app/tests/Feature/GroundedGenerationFoundationTest.php" tests="25" assertions="38" errors="0" failures="0" skipped="0" time="0.205274">
+        <testcase name="test_physical_shared_coverage_allocates_assembles_validates_persists_and_reloads_without_borrowing" file="/app/tests/Feature/GroundedGenerationFoundationTest.php" line="55" class="Tests\Feature\GroundedGenerationFoundationTest" classname="Tests.Feature.GroundedGenerationFoundationTest" assertions="9" time="0.015655"/>
+        <testsuite name="Tests\Feature\GroundedGenerationFoundationTest::test_v2_consumer_validates_shared_coverage_and_derives_status" tests="23" assertions="23" errors="0" failures="0" skipped="0" time="0.177756">
+          <testcase name="test_v2_consumer_validates_shared_coverage_and_derives_status with data set &quot;all-supported&quot;" file="/app/tests/Feature/GroundedGenerationFoundationTest.php" line="510" class="Tests\Feature\GroundedGenerationFoundationTest" classname="Tests.Feature.GroundedGenerationFoundationTest" assertions="1" time="0.008326"/>
+          <testcase name="test_v2_consumer_validates_shared_coverage_and_derives_status with data set &quot;qualified-separate-needs&quot;" file="/app/tests/Feature/GroundedGenerationFoundationTest.php" line="510" class="Tests\Feature\GroundedGenerationFoundationTest" classname="Tests.Feature.GroundedGenerationFoundationTest" assertions="1" time="0.008156"/>
+          <testcase name="test_v2_consumer_validates_shared_coverage_and_derives_status with data set &quot;partial-is-not-supported&quot;" file="/app/tests/Feature/GroundedGenerationFoundationTest.php" line="510" class="Tests\Feature\GroundedGenerationFoundationTest" classname="Tests.Feature.GroundedGenerationFoundationTest" assertions="1" time="0.007891"/>
+          <testcase name="test_v2_consumer_validates_shared_coverage_and_derives_status with data set &quot;all-unsupported&quot;" file="/app/tests/Feature/GroundedGenerationFoundationTest.php" line="510" class="Tests\Feature\GroundedGenerationFoundationTest" classname="Tests.Feature.GroundedGenerationFoundationTest" assertions="1" time="0.007796"/>
+          <testcase name="test_v2_consumer_validates_shared_coverage_and_derives_status with data set &quot;unknown-need&quot;" file="/app/tests/Feature/GroundedGenerationFoundationTest.php" line="510" class="Tests\Feature\GroundedGenerationFoundationTest" classname="Tests.Feature.GroundedGenerationFoundationTest" assertions="1" time="0.007643"/>
+          <testcase name="test_v2_consumer_validates_shared_coverage_and_derives_status with data set &quot;duplicate-need&quot;" file="/app/tests/Feature/GroundedGenerationFoundationTest.php" line="510" class="Tests\Feature\GroundedGenerationFoundationTest" classname="Tests.Feature.GroundedGenerationFoundationTest" assertions="1" time="0.007489"/>
+          <testcase name="test_v2_consumer_validates_shared_coverage_and_derives_status with data set &quot;missing-need&quot;" file="/app/tests/Feature/GroundedGenerationFoundationTest.php" line="510" class="Tests\Feature\GroundedGenerationFoundationTest" classname="Tests.Feature.GroundedGenerationFoundationTest" assertions="1" time="0.007680"/>
+          <testcase name="test_v2_consumer_validates_shared_coverage_and_derives_status with data set &quot;empty-need&quot;" file="/app/tests/Feature/GroundedGenerationFoundationTest.php" line="510" class="Tests\Feature\GroundedGenerationFoundationTest" classname="Tests.Feature.GroundedGenerationFoundationTest" assertions="1" time="0.007650"/>
+          <testcase name="test_v2_consumer_validates_shared_coverage_and_derives_status with data set &quot;negative-index&quot;" file="/app/tests/Feature/GroundedGenerationFoundationTest.php" line="510" class="Tests\Feature\GroundedGenerationFoundationTest" classname="Tests.Feature.GroundedGenerationFoundationTest" assertions="1" time="0.007782"/>
+          <testcase name="test_v2_consumer_validates_shared_coverage_and_derives_status with data set &quot;out-of-range&quot;" file="/app/tests/Feature/GroundedGenerationFoundationTest.php" line="510" class="Tests\Feature\GroundedGenerationFoundationTest" classname="Tests.Feature.GroundedGenerationFoundationTest" assertions="1" time="0.007632"/>
+          <testcase name="test_v2_consumer_validates_shared_coverage_and_derives_status with data set &quot;duplicate-reference&quot;" file="/app/tests/Feature/GroundedGenerationFoundationTest.php" line="510" class="Tests\Feature\GroundedGenerationFoundationTest" classname="Tests.Feature.GroundedGenerationFoundationTest" assertions="1" time="0.007433"/>
+          <testcase name="test_v2_consumer_validates_shared_coverage_and_derives_status with data set &quot;boolean-index&quot;" file="/app/tests/Feature/GroundedGenerationFoundationTest.php" line="510" class="Tests\Feature\GroundedGenerationFoundationTest" classname="Tests.Feature.GroundedGenerationFoundationTest" assertions="1" time="0.007322"/>
+          <testcase name="test_v2_consumer_validates_shared_coverage_and_derives_status with data set &quot;string-index&quot;" file="/app/tests/Feature/GroundedGenerationFoundationTest.php" line="510" class="Tests\Feature\GroundedGenerationFoundationTest" classname="Tests.Feature.GroundedGenerationFoundationTest" assertions="1" time="0.007424"/>
+          <testcase name="test_v2_consumer_validates_shared_coverage_and_derives_status with data set &quot;float-index&quot;" file="/app/tests/Feature/GroundedGenerationFoundationTest.php" line="510" class="Tests\Feature\GroundedGenerationFoundationTest" classname="Tests.Feature.GroundedGenerationFoundationTest" assertions="1" time="0.007513"/>
+          <testcase name="test_v2_consumer_validates_shared_coverage_and_derives_status with data set &quot;unmapped-answer&quot;" file="/app/tests/Feature/GroundedGenerationFoundationTest.php" line="510" class="Tests\Feature\GroundedGenerationFoundationTest" classname="Tests.Feature.GroundedGenerationFoundationTest" assertions="1" time="0.007630"/>
+          <testcase name="test_v2_consumer_validates_shared_coverage_and_derives_status with data set &quot;unmapped-gap&quot;" file="/app/tests/Feature/GroundedGenerationFoundationTest.php" line="510" class="Tests\Feature\GroundedGenerationFoundationTest" classname="Tests.Feature.GroundedGenerationFoundationTest" assertions="1" time="0.007478"/>
+          <testcase name="test_v2_consumer_validates_shared_coverage_and_derives_status with data set &quot;model-status-forbidden&quot;" file="/app/tests/Feature/GroundedGenerationFoundationTest.php" line="510" class="Tests\Feature\GroundedGenerationFoundationTest" classname="Tests.Feature.GroundedGenerationFoundationTest" assertions="1" time="0.007499"/>
+          <testcase name="test_v2_consumer_validates_shared_coverage_and_derives_status with data set &quot;model-text-forbidden&quot;" file="/app/tests/Feature/GroundedGenerationFoundationTest.php" line="510" class="Tests\Feature\GroundedGenerationFoundationTest" classname="Tests.Feature.GroundedGenerationFoundationTest" assertions="1" time="0.007732"/>
+          <testcase name="test_v2_consumer_validates_shared_coverage_and_derives_status with data set &quot;contradictory-outcome&quot;" file="/app/tests/Feature/GroundedGenerationFoundationTest.php" line="510" class="Tests\Feature\GroundedGenerationFoundationTest" classname="Tests.Feature.GroundedGenerationFoundationTest" assertions="1" time="0.007300"/>
+          <testcase name="test_v2_consumer_validates_shared_coverage_and_derives_status with data set &quot;invalid-request-need&quot;" file="/app/tests/Feature/GroundedGenerationFoundationTest.php" line="510" class="Tests\Feature\GroundedGenerationFoundationTest" classname="Tests.Feature.GroundedGenerationFoundationTest" assertions="1" time="0.009294"/>
+          <testcase name="test_v2_consumer_validates_shared_coverage_and_derives_status with data set &quot;unknown-request-need&quot;" file="/app/tests/Feature/GroundedGenerationFoundationTest.php" line="510" class="Tests\Feature\GroundedGenerationFoundationTest" classname="Tests.Feature.GroundedGenerationFoundationTest" assertions="1" time="0.007606"/>
+          <testcase name="test_v2_consumer_validates_shared_coverage_and_derives_status with data set &quot;missing-gap-reference&quot;" file="/app/tests/Feature/GroundedGenerationFoundationTest.php" line="510" class="Tests\Feature\GroundedGenerationFoundationTest" classname="Tests.Feature.GroundedGenerationFoundationTest" assertions="1" time="0.007610"/>
+          <testcase name="test_v2_consumer_validates_shared_coverage_and_derives_status with data set &quot;model-order-does-not-change-request-order&quot;" file="/app/tests/Feature/GroundedGenerationFoundationTest.php" line="510" class="Tests\Feature\GroundedGenerationFoundationTest" classname="Tests.Feature.GroundedGenerationFoundationTest" assertions="1" time="0.007871"/>
+        </testsuite>
+        <testcase name="test_v2_coverage_persists_with_the_authoritative_text_and_citation" file="/app/tests/Feature/GroundedGenerationFoundationTest.php" line="521" class="Tests\Feature\GroundedGenerationFoundationTest" classname="Tests.Feature.GroundedGenerationFoundationTest" assertions="6" time="0.011862"/>
+      </testsuite>
+      <testsuite name="Tests\Feature\R28ProductionPathDiagnosticTest" file="/app/tests/Feature/R28ProductionPathDiagnosticTest.php" tests="1" assertions="1" errors="0" failures="0" skipped="0" time="0.007942">
+        <testcase name="test_selection_coverage_export_is_bounded_counts_only" file="/app/tests/Feature/R28ProductionPathDiagnosticTest.php" line="24" class="Tests\Feature\R28ProductionPathDiagnosticTest" classname="Tests.Feature.R28ProductionPathDiagnosticTest" assertions="1" time="0.007942"/>
+      </testsuite>
+    </testsuite>
+  </testsuite>
+</testsuites>

@@ -33,6 +33,31 @@ class GenerationEvidence(ImmutableModel):
     applicability_context: dict[str, object]
     side: RetrievalSide
 
+    def for_need(self, need_id: str):
+        associations = self.temporal_authority.get("validated_need_associations")
+        if associations is None:
+            return self if self.temporal_authority.get("need_id") == need_id else None
+        if not isinstance(associations, dict) or need_id not in associations:
+            return None
+        association = associations[need_id]
+        if not isinstance(association, dict) or set(association) != {
+            "temporal_authority",
+            "applicability_context",
+            "side",
+        }:
+            raise ValueError("invalid receiving-need association")
+        authority = association["temporal_authority"]
+        if (
+            not isinstance(authority, dict)
+            or authority.get("need_id") != need_id
+            or any(
+                authority.get(key) != self.temporal_authority.get(key)
+                for key in ("document_family_id", "document_version_id")
+            )
+        ):
+            raise ValueError("shared physical identity mismatch")
+        return GenerationEvidence.model_validate({**self.model_dump(), **association})
+
 
 class GenerationConstraints(ImmutableModel):
     context_policy_version: BoundedText

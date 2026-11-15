@@ -42,9 +42,12 @@ MODEL = "gpt-5-mini"
 CONTRACT_VERSION = "generation-result-v1"
 ADAPTER_VERSION = "openai-responses-v3-claim-type"
 NEEDS_CONTRACT_VERSION = "generation-result-v3"
-NEEDS_PROMPT_VERSION = "grounded-generation-needs-v13"
-NEEDS_ADAPTER_VERSION = "openai-responses-needs-v5"
+NEEDS_PROMPT_VERSION = "grounded-generation-needs-v14"
+NEEDS_ADAPTER_VERSION = "openai-responses-needs-v6"
 NEEDS_INSTRUCTIONS = """
+In v6 a physical passage can have validated_need_associations. Use only the
+receiving need's own authority, applicability and side from that map. Shared text
+does not share authority. Proposed allocation support is not proof of answerability.
 Answer directly with an evidence-supported statement. If an answer part starts with
 Yes or No, join that word to its immediate justification in the SAME sentence using
 only a comma, colon or em-dash: "Yes, ...", "No: ...", or "No — ...".
@@ -407,15 +410,15 @@ class OpenAIGenerator:
             self.profile.adapter_version,
         ) != (NEEDS_CONTRACT_VERSION, NEEDS_PROMPT_VERSION, NEEDS_ADAPTER_VERSION):
             raise ValueError("needs generation requires the exact versioned profile")
-        if request.contract_version in (4, 5):
+        if request.contract_version in (4, 5, 6):
             from copy import copy
 
             temporal = copy(self)
             temporal.profile = replace(
                 self.profile,
                 contract_version=f"generation-result-v{request.contract_version}",
-                prompt_version="grounded-generation-temporal-v4",
-                adapter_version="openai-responses-temporal-v4",
+                prompt_version="grounded-generation-temporal-v5",
+                adapter_version="openai-responses-temporal-v5",
             )
             return temporal._generate(request.legacy_request(), request)
         with trace.get_tracer("dolved.python.generation").start_as_current_span(
@@ -443,7 +446,7 @@ class OpenAIGenerator:
 
             output_model = OpenAIGenerationNeedsOutput
             temporal_instructions = ""
-            if needs_request.contract_version in (4, 5):
+            if needs_request.contract_version in (4, 5, 6):
                 from app.generation.needs_output import (
                     OpenAIGenerationTemporalAssociationOutput,
                     OpenAIGenerationTemporalOutput,
@@ -455,7 +458,7 @@ class OpenAIGenerator:
 
                 output_model = OpenAIGenerationTemporalOutput
                 temporal_instructions = TEMPORAL_INSTRUCTIONS
-                if needs_request.contract_version == 5:
+                if needs_request.contract_version >= 5:
                     output_model = OpenAIGenerationTemporalAssociationOutput
                     temporal_instructions = TEMPORAL_ASSOCIATION_INSTRUCTIONS
             rendered = replace(
@@ -555,6 +558,7 @@ class OpenAIGenerator:
                         )
                         from app.generation.support_review import (
                             SUPPORT_INSTRUCTIONS,
+                            SUPPORT_REVIEW_OUTPUT_TOKENS,
                             SUPPORT_REVIEW_VERSION,
                             SourceSupportReview,
                             validate_support,
@@ -594,7 +598,7 @@ class OpenAIGenerator:
                                         owners[link.need_id],
                                     )
                         conditional_obligation_guard(needs_request, provider_output)
-                        if needs_request.contract_version in (4, 5):
+                        if needs_request.contract_version in (4, 5, 6):
                             from app.generation.temporal_targets import (
                                 validate_temporal_uses,
                             )
@@ -619,22 +623,12 @@ class OpenAIGenerator:
                                 + SUPPORT_INSTRUCTIONS,
                                 input=review_input(needs_request, provider_output),
                                 text_format=SourceSupportReview,
-                                max_output_tokens=1024,
+                                max_output_tokens=SUPPORT_REVIEW_OUTPUT_TOKENS,
                                 reasoning=cast(
                                     Any, {"effort": rendered.reasoning_effort}
                                 ),
                                 store=False,
                                 truncation="disabled",
-                            )
-                            raw_review = getattr(review_response, "output_parsed", None)
-                            if raw_review is None:
-                                raise EntailmentRejection(
-                                    "entailment_uncertain", 0, "review unavailable"
-                                )
-                            review = (
-                                raw_review
-                                if isinstance(raw_review, SourceSupportReview)
-                                else SourceSupportReview.model_validate(raw_review)
                             )
                             verifier_receipt = self._response_receipt(
                                 review_response, 1, review_started
@@ -668,6 +662,22 @@ class OpenAIGenerator:
                                 and isinstance(second_cost, (int, float))
                                 else None
                             )
+                            raw_review = getattr(review_response, "output_parsed", None)
+                            if (
+                                raw_review is None
+                                or getattr(review_response, "status", "completed")
+                                != "completed"
+                            ):
+                                raise EntailmentRejection(
+                                    "entailment_uncertain",
+                                    0,
+                                    "review incomplete or unavailable",
+                                )
+                            review = (
+                                raw_review
+                                if isinstance(raw_review, SourceSupportReview)
+                                else SourceSupportReview.model_validate(raw_review)
+                            )
                             checks = validate_support(
                                 needs_request, needs_output, review
                             )
@@ -684,13 +694,13 @@ class OpenAIGenerator:
                         ] = GenerationNeedsResult
                         if needs_request.contract_version == 4:
                             result_model = GenerationTemporalResult
-                        elif needs_request.contract_version == 5:
+                        elif needs_request.contract_version >= 5:
                             result_model = GenerationTemporalAssociationResult
                         needs_result = result_model.model_validate(
                             {
                                 **provider_output.model_dump(),
                                 "contract_version": needs_request.contract_version
-                                if needs_request.contract_version in (4, 5)
+                                if needs_request.contract_version in (4, 5, 6)
                                 else 3,
                                 "entailment_checks": [
                                     check.model_dump() for check in checks

@@ -1,0 +1,15 @@
+{
+  "measurement": "local tokenization, no provider call",
+  "claims": 15,
+  "needs": 3,
+  "physical_sources": 5,
+  "source_quote_characters": 8000,
+  "receipt_output_tokens": 24634,
+  "reasoning_allowance": 4096,
+  "old_ceiling": 1024,
+  "new_ceiling": 32768,
+  "fits_with_allowance": true,
+  "additional_reserved_output_per_review": 31744,
+  "additional_reserved_output_two_generation_attempts": 63488,
+  "not_a_guarantee": "Larger pathological schema-valid receipts can still exhaust the bound; incomplete output is rejected, not consumed."
+}

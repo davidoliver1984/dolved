@@ -12,7 +12,44 @@ This is the current checklist within the existing R00–R08 programme. The evide
 
 #### C1 independent review outcome and road to the full run — David, 2026-11-14
 
-**Investment activation amendment — David, 2026-11-15 08:50:42 Europe/London:**
+**Current amendment — David, 2026-11-15:** investment-cap accounting is withdrawn.
+Do not record charged/remaining allowance or gate work against the cap. David manages
+the 20 November deadline. Ordinary elapsed observations may remain in reports.
+The historical activation/accounting paragraphs below are superseded, not deleted.
+
+**Coverage implementation authorised — 2026-11-15, in progress:** implement the
+one-call selector from `repair-20261115/allocation-design.md`, with independently
+validated receiving-need associations, no retry and its six-aspect/twenty-candidate/
+five-physical-passage bounds. Source quotations and identifiers prove provenance,
+not semantic completeness. No additional live trial: first live measurement remains
+the authorised decision run. Verify the source-review receipt against its 1,024-token
+ceiling; do not claim readiness with a predictable output-contract failure. Item19
+and G3 stay open obligations. Evidence/work status is in
+`block1-remaining-verification-20261114/coverage-implementation-20261115/progress.md`.
+No publication or full-suite gate is claimed by this in-progress entry.
+
+**Review-output allowance decision — David, 2026-11-15:** approved a measured
+bounded increase, not weaker source/claim checks. Candidate review output ceiling
+32,768 replaces 1,024 within the same existing call and retry ceiling. Provider-free
+large-receipt sizing and incomplete-output rejection/accounting are required.
+Reserve an additional 31,744 output tokens per review (63,488 across two generation
+attempts) before the decision run; this is a worst-case bound, not measured spend.
+No live execution authorised by this implementation update.
+
+**Provider-free coverage increment — 2026-11-15:** implementation/evidence in
+`block1-remaining-verification-20261114/coverage-implementation-20261115/report.md`.
+The bounded selector and independently rechecked receiving associations are
+implemented, generation v6 / execution v22. Real controlled retrieval, allocation,
+assembly, ownership validation and persistence tests pass. Full failure identities
+remain exactly 38 AI / 2 Laravel, none new or resolved (raw JUnit retained).
+The large review receipt measures 24,634 tokens; 4,096 reasoning headroom fits
+32,768. This is not live reliability evidence. No provider calls or decision run.
+Item19 and G3 remain open; item26 association is distinct from allocation; item28's
+live improvement is unmeasured. Block1 HOLD, main unchanged. Historical statements
+above/below describing allocation as not yet implemented are superseded by this
+entry, not deleted. No full-package completion or decision-run readiness claimed.
+
+**Superseded investment activation amendment — David, 2026-11-15 08:50:42 Europe/London:**
 This receipt timestamp supersedes the previously proposed 16 November start.
 Allowance is five focused working days of seven hours (35 focused hours), counting
 diagnosis, implementation, testing, review, deployment preparation and reporting.

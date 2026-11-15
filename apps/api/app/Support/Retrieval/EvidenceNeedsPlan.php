@@ -19,6 +19,7 @@ final readonly class EvidenceNeedsPlan
         public array $value,
         public ClassifierLineage $lineage,
         public PlannerUsage $usage,
+        public array $userTurns,
     ) {}
 
     public static function fromArray(array $value, array $turns, array $lineage, array $usage, ?string $evaluatedAt = null): self
@@ -36,7 +37,7 @@ final readonly class EvidenceNeedsPlan
             throw new InvalidArgumentException('Needs planner identity does not match its contract or usage.');
         }
 
-        return new self($value, $identity, $observation);
+        return new self($value, $identity, $observation, $turns);
     }
 
     /** Historical plans retain their stored representation; v4 execution is extractive. */

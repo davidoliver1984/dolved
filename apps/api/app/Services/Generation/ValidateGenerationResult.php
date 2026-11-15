@@ -20,13 +20,14 @@ final class ValidateGenerationResult
         if ($request->evidenceNeeds !== [] && array_column($request->evidenceNeeds, 'need_id') !== $needIds) {
             throw new GenerationException('Generation result needs differ from the assembled request.');
         }
-        $temporal = $request->toArray()['contract_version'] === 5;
+        $version = $request->toArray()['contract_version'];
+        $temporal = $version >= 5;
         $uses = $temporal ? ($payload['temporal_uses'] ?? null) : [];
         if ($temporal && ! is_array($uses)) {
             throw new GenerationException('Temporal answer-use coverage is invalid.');
         }
         if (! is_array($uses) || ! $this->hasExactKeys($payload, ['contract_version', 'outcome', 'answer_parts', 'unsupported_aspects', 'insufficiency_reason', 'usage', 'aspect_links', 'entailment_checks', ...($temporal ? ['temporal_uses'] : [])])
-            || ($payload['contract_version'] ?? null) !== ($temporal ? 5 : 3) || ! is_array($payload['aspect_links'])
+            || ($payload['contract_version'] ?? null) !== ($temporal ? $version : 3) || ! is_array($payload['aspect_links'])
             || ! is_array($payload['entailment_checks']) || ! is_array($payload['answer_parts'])) {
             throw new GenerationException('The needs generation result schema is invalid.');
         }
@@ -49,6 +50,11 @@ final class ValidateGenerationResult
         try {
             $statuses = AspectCoverage::derive($result, $needIds, $links);
             $context = $temporal ? (new ValidateTemporalAnswerUse)->handle($request, $result->answerParts, $links, $uses, associationScoped: true) : [];
+            if ($version === 6) {
+                $context['evidence_associations'] = array_column(array_map(fn ($item) => [
+                    'handle' => $item->evidenceId, 'associations' => $item->temporalAuthority['validated_need_associations'] ?? [],
+                ], $request->evidence), 'associations', 'handle');
+            }
             if ($request->evidenceNeeds !== []) {
                 $owners = array_column($request->evidenceNeeds, 'evidence_ids', 'need_id');
                 foreach ($links as $link) {

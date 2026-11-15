@@ -56,7 +56,7 @@ final class ValidateTemporalAnswerUse
                 throw new GenerationException('Temporal answer reference mismatch.');
             }
             foreach ($handles as $handle) {
-                $item = $evidence->get($handle);
+                $item = $evidence->get($handle)?->forNeed($use['need_id']);
                 $authority = $item?->temporalAuthority ?? [];
                 $version = collect($target['versions'])->firstWhere('version_id', $authority['document_version_id'] ?? null);
                 if (($authority['need_id'] ?? null) !== $use['need_id']

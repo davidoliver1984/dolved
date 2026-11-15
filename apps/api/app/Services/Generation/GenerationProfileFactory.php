@@ -30,7 +30,9 @@ final class GenerationProfileFactory
 
     private function needsIdentity(): array
     {
-        return ['execution_version' => 'bounded-needs-slice-v21',
+        return ['execution_version' => 'bounded-needs-slice-v22',
+            'coverage_selection' => 'grounded-coverage-selection-v1',
+            'support_review_output_tokens' => 32768,
             'scope_renderer' => 'scope-fact-renderer-v2',
             'scope_answer_contract' => 'scope-composed-answer-v2',
             'planner_contract' => 'evidence-needs-plan-v3',
@@ -65,7 +67,7 @@ final class GenerationProfileFactory
         $base = $this->configured();
 
         return new GenerationProfile($base->provider, $base->model, 'generation-result-v3',
-            'grounded-generation-needs-v13', 'openai-responses-needs-v5',
+            'grounded-generation-needs-v14', 'openai-responses-needs-v6',
             GenerationDeliveryMode::CompleteResultOnly, $base->qualityAffectingConfiguration);
     }
 

@@ -9,6 +9,7 @@ use App\Enums\RequestedEvidenceType;
 use App\Enums\RetrievalClarificationSource;
 use App\Enums\RetrievalOutcome;
 use App\Enums\RetrievalTemporalMode;
+use App\Exceptions\CoverageSelectionFailure;
 use App\Exceptions\RetrievalException;
 use App\Exceptions\RetrievalExecutionException;
 use App\Exceptions\TopicalFamilySelectionRejected;
@@ -16,6 +17,7 @@ use App\Models\Document;
 use App\Models\DocumentChunk;
 use App\Models\DocumentExtractionProjectionElement;
 use App\Models\EvidenceThresholdPolicy;
+use App\Services\Retrieval\CoverageSelectionClient;
 use App\Services\Retrieval\EligibilityResolver;
 use App\Services\Retrieval\ResolveEvidenceThresholdPolicy;
 use App\Services\Retrieval\RetrievalClient;
@@ -23,6 +25,7 @@ use App\Services\Retrieval\TemporalEvidenceAlternatives;
 use App\Support\Documents\DocumentAuthorityTimeline;
 use App\Support\Retrieval\ApplicabilityScopeFact;
 use App\Support\Retrieval\AuthorisedKnowledgeScope;
+use App\Support\Retrieval\CoverageAllocation;
 use App\Support\Retrieval\EligibleRetrievalScope;
 use App\Support\Retrieval\EvidenceNeedsPlan;
 use App\Support\Retrieval\ExplicitTemporalReferences;
@@ -261,6 +264,61 @@ final readonly class RetrieveWorkspaceEvidence
                 lineage: $result->lineage);
         }
         $selection = (new NeedsEvidenceSelection)->selectWithCoverage($needs, $results);
+        $coverageProposal = ['status' => 'not_attempted', 'reason' => 'no_candidates'];
+        try {
+            if ($selection['candidates'] !== [] && $plan->value['schema_version'] === 'evidence-needs-plan-v4') {
+                $qualified = $this->coverageCandidates($authorised, $needs, $plans, $results, $evaluatedAt);
+                if (count($qualified) > 20) {
+                    $coverageProposal = ['status' => 'unavailable', 'reason' => 'candidate_capacity'];
+                } else {
+                    $requested = array_values(array_map(fn ($need) => ['need_id' => $need['need_id'],
+                        'question_span' => $need['question_span']['quote'],
+                        'context' => array_column($need['context_spans'] ?? [], 'quote'), 'operation' => $need['operation'],
+                        'authority' => $need['authority'], 'fact_reference' => $need['fact_reference']],
+                        array_filter($needs, fn ($need) => $need['operation'] !== 'scope_enquiry')));
+                    $wire = array_map(fn ($c) => array_intersect_key($c, array_flip(['candidate_id', 'text', 'associations']))
+                        + ['family_id' => $c['candidate']['document_family_id'], 'document_id' => $c['candidate']['document_id'],
+                            'title' => $c['candidate']['document_title']], $qualified);
+                    $coverageProposal = app(CoverageSelectionClient::class)
+                        ->select($authorised->workspace, $requested, $wire, $deadline, $plan->userTurns);
+                    $usage[] = $coverageProposal['usage'];
+                    // Optional unavailability cannot preserve a grant that changed
+                    // while the call was in flight either.
+                    if ($qualified !== $this->coverageCandidates($authorised, $needs, $plans, $results, $evaluatedAt)) {
+                        throw new CoverageSelectionFailure('coverage_authority_changed', true);
+                    }
+                    if ($coverageProposal['status'] === 'proposed') {
+                        $allocated = (new CoverageAllocation)->allocate($requested, $qualified, $coverageProposal['proposal']);
+                        // Recheck after the optional provider call. A changed grant is
+                        // an integrity failure, never permission to keep old ownership.
+                        if ($qualified !== $this->coverageCandidates($authorised, $needs, $plans, $results, $evaluatedAt)) {
+                            throw new CoverageSelectionFailure('coverage_authority_changed', true);
+                        }
+                        $byId = array_column($qualified, null, 'candidate_id');
+                        $allocated['selected'] = (new CoverageAllocation)->fillFromExisting(
+                            $allocated['selected'], $selection['candidates'], $needs, $qualified);
+                        $selection['candidates'] = array_map(function ($item) use ($byId) {
+                            $source = $byId[$item['candidate_id']];
+                            $associations = array_intersect_key($source['validated_associations'], array_flip($item['associations']));
+                            $first = reset($associations);
+
+                            return [...$source['candidate'], ...$first, 'validated_associations' => $associations];
+                        }, $allocated['selected']);
+                        $coverageProposal['allocation'] = $allocated;
+                        $selection['coverage'] = (new NeedsEvidenceSelection)->selectWithCoverage($needs, $results, $selection['candidates'])['coverage'];
+                    }
+                }
+            }
+        } catch (CoverageSelectionFailure $failure) {
+            $record = ['status' => 'rejected', 'reason' => $failure->reason, 'run_stop_required' => $failure->runStopRequired,
+                'proposal_consumed' => false, 'usage' => $failure->usage];
+            $observe?->__invoke('coverage_selection', $record);
+
+            return new RetrievalResult($failure->runStopRequired ? RetrievalOutcome::RetrievalFailed : RetrievalOutcome::InsufficientEvidence,
+                reason: $failure->reason, lineage: ['coverage_selection' => $record],
+                usage: [...$usage, ...($failure->usage === [] ? [] : [$failure->usage])]);
+        }
+        $observe?->__invoke('coverage_selection', $coverageProposal);
         $selected = $selection['candidates'];
         $coverage = [];
         foreach ($needs as $need) {
@@ -270,8 +328,9 @@ final readonly class RetrieveWorkspaceEvidence
             if (isset($need['temporal_targets'])) {
                 foreach ($need['temporal_targets'] as &$target) {
                     if ($target['status'] === 'searched' && ! array_any($selected,
-                        fn ($candidate) => $candidate['need_id'] === $id
-                            && in_array($target['target_id'], $candidate['temporal_target_ids'] ?? [], true))) {
+                        fn ($candidate) => in_array($target['target_id'],
+                            $candidate['validated_associations'][$id.':primary']['temporal_target_ids']
+                                ?? ($candidate['need_id'] === $id ? ($candidate['temporal_target_ids'] ?? []) : []), true))) {
                         $target['status'] = array_any($result->candidates,
                             fn ($candidate) => in_array($target['target_id'], $candidate['temporal_target_ids'] ?? [], true))
                             ? 'capacity_limited' : 'filtered';
@@ -287,7 +346,8 @@ final readonly class RetrieveWorkspaceEvidence
                 'selection_coverage' => $selection['coverage'][$id],
                 ...(isset($scopeFacts[$id]) ? ['scope_fact' => $scopeFacts[$id]->value] : []),
                 'retrieval_reason' => $result->reason,
-                'selected_chunk_ids' => array_column(array_values(array_filter($selected, fn ($c) => $c['need_id'] === $id)), 'chunk_id'),
+                'selected_chunk_ids' => array_column(array_values(array_filter($selected, fn ($c) => $c['need_id'] === $id
+                    || isset($c['validated_associations'][$id.':primary']) || isset($c['validated_associations'][$id.':comparison']))), 'chunk_id'),
                 'resolved_temporal_authority' => $result->resolvedTemporalAuthority,
                 'resolved_applicability_location' => $result->resolvedApplicabilityLocation];
         }
@@ -298,12 +358,68 @@ final readonly class RetrieveWorkspaceEvidence
             $selected, reason: $selected === [] && $coverage !== []
                 && count(array_filter($coverage, fn ($need) => $need['retrieval_reason'] === 'no_previous_version')) === count($coverage)
                     ? 'no_previous_version' : null,
-            lineage: ['planner' => $plan->lineage->toArray(), 'evidence_selection' => 'bounded-needs-k5-v3',
+            lineage: ['planner' => $plan->lineage->toArray(), 'evidence_selection' => 'bounded-needs-k5-v4',
                 'temporal_alternatives' => ['version' => 'bounded-temporal-targets-v1',
                     'additional_search_lanes' => $temporal['additional_search_lanes']],
                 'topical_discovery_work' => $discoveryWork,
                 'selection_coverage' => $selection['coverage'],
+                'coverage_selection' => $coverageProposal,
                 'needs' => array_map(fn ($r) => $r->lineage, $results)], usage: $usage, evidenceNeeds: $coverage);
+    }
+
+    /** Independently authorise each receiving association; no search or score change. */
+    private function coverageCandidates(AuthorisedKnowledgeScope $scope, array $needs, array $plans,
+        array $results, CarbonImmutable $at): array
+    {
+        if (! $scope->workspace->newQuery()->whereKey($scope->workspace->id)
+            ->where('active_workspace_corpus_generation_id', $scope->activeCorpusGeneration?->id)->exists()) {
+            throw new CoverageSelectionFailure('coverage_corpus_changed', true);
+        }
+        $pool = [];
+        foreach ($results as $result) {
+            foreach ($result->candidates as $candidate) {
+                $id = $candidate['chunk_id'];
+                if (isset($pool[$id]) && ($pool[$id]['document_id'] !== $candidate['document_id']
+                    || $pool[$id]['chunk_text'] !== $candidate['chunk_text'])) {
+                    throw new CoverageSelectionFailure('coverage_candidate_integrity', true);
+                }
+                if (! isset($pool[$id]) || $candidate['rank'] < $pool[$id]['rank']) {
+                    $pool[$id] = $candidate;
+                }
+            }
+        }
+        $qualified = [];
+        foreach ($needs as $need) {
+            if ($need['operation'] === 'scope_enquiry') {
+                continue;
+            }
+            $eligible = $this->eligibility->handle($scope, $plans[$need['need_id']], $at);
+            $ids = $eligible->canSearch() ? $eligible->documentPublicIdsBySide : [];
+            if (isset($need['temporal_targets'])) {
+                $ids = ['primary' => collect($need['temporal_targets'])->filter(fn ($t) => $t['status'] === 'searched')
+                    ->flatMap(fn ($t) => app(TemporalEvidenceAlternatives::class)->recheckTarget($scope, $plans[$need['need_id']], $t, $at))
+                    ->unique()->values()->all()];
+            }
+            foreach ($ids as $side => $versions) {
+                $offered = array_map(fn ($c) => [...$c, 'side' => $side], array_values($pool));
+                foreach ($this->hydrateAndRecheck($offered, [$side => $versions], $scope) as $candidate) {
+                    if ($candidate['chunk_text'] !== $pool[$candidate['chunk_id']]['chunk_text']) {
+                        throw new CoverageSelectionFailure('coverage_source_changed', true);
+                    }
+                    $id = $candidate['chunk_id'];
+                    $association = $need['need_id'].':'.$side;
+                    $qualified[$id] ??= ['candidate_id' => $id, 'text' => $candidate['chunk_text'],
+                        'rank' => $candidate['rank'], 'candidate' => $candidate, 'associations' => [], 'validated_associations' => []];
+                    $qualified[$id]['associations'][] = $association;
+                    $qualified[$id]['validated_associations'][$association] = ['need_id' => $need['need_id'], 'side' => $side,
+                        'temporal_target_ids' => array_column(array_values(array_filter($need['temporal_targets'] ?? [],
+                            fn ($t) => $t['status'] === 'searched' && in_array($candidate['document_id'], array_column($t['versions'], 'version_id'), true))), 'target_id')];
+                }
+            }
+        }
+        ksort($qualified);
+
+        return array_values($qualified);
     }
 
     /**
