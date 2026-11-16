@@ -19,7 +19,7 @@ describe("LoginPage", () => {
   it("renders login for a signed-out visitor", async () => {
     currentUserMock.mockResolvedValue(null);
 
-    const page = await LoginPage();
+    const page = await LoginPage({});
 
     expect(page.type.name).toBe("AuthForm");
     expect(page.props).toEqual({ mode: "login" });
@@ -59,7 +59,7 @@ describe("LoginPage", () => {
       email_verified_at: null,
     });
 
-    await LoginPage();
+    await LoginPage({});
 
     expect(redirectMock).toHaveBeenCalledWith("/verify-email");
   });
@@ -72,8 +72,15 @@ describe("LoginPage", () => {
       email_verified_at: "2026-08-19T12:00:00.000000Z",
     });
 
-    await LoginPage();
+    await LoginPage({});
 
     expect(redirectMock).toHaveBeenCalledWith("/app");
+  });
+
+  it("accepts Next's promised empty search parameters without changing login", async () => {
+    currentUserMock.mockResolvedValue(null);
+    const page = await LoginPage({ searchParams: Promise.resolve({}) });
+    expect(page.props).toEqual({ mode: "login" });
+    expect(redirectMock).not.toHaveBeenCalled();
   });
 });

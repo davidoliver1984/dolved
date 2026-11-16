@@ -5,7 +5,7 @@ import { isPlatformOperationsPath } from "@/lib/platform-operations";
 
 type Props = { searchParams?: Promise<{ next?: string }> };
 
-export default async function LoginPage({ searchParams = Promise.resolve({}) }: Props = {}) {
+export default async function LoginPage({ searchParams = Promise.resolve({}) }: Props) {
   const { next } = await searchParams;
   const platformEntry = isPlatformOperationsPath(next);
   const user = await currentUser();
