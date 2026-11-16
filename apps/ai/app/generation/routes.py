@@ -28,6 +28,26 @@ router = APIRouter(
 )
 
 
+@router.post("/current-policy-answer")
+async def current_policy_answer(request: Request) -> JSONResponse:
+    from app.generation.current_policy import CurrentRequest, generate
+
+    body = await authenticate(
+        request, "generation.current-policy-answer", get_settings()
+    )
+    try:
+        incoming = CurrentRequest.model_validate_json(body)
+    except ValueError as exception:
+        raise HTTPException(422, "Invalid current-policy request.") from exception
+    if str(incoming.workspace_id) != request.headers.get(
+        "X-Retrieval-Caller-Workspace-ID"
+    ) or str(incoming.request_id) != request.headers.get(
+        "X-Retrieval-Caller-Request-ID"
+    ):
+        raise HTTPException(401, "Signed identity does not match body.")
+    return JSONResponse(generate(incoming, get_settings()))
+
+
 class UnconfiguredGenerator:
     def generate(self, request: GenerationRequest) -> GenerationResult:
         raise GenerationProviderFailure(

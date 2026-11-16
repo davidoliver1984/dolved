@@ -125,8 +125,9 @@ final class CurrentPolicyScope
                 'current_policy' => 'admitted', 'mixed' => 'partial_scope', 'history' => 'scope_declined', 'unclear' => 'ambiguity',
             };
 
-            return ['version' => 'current-policy-disposition-v1', 'need_id' => $need['need_id'], 'status' => $status,
+            return ['version' => 'current-policy-disposition-v2', 'need_id' => $need['need_id'], 'status' => $status,
                 'reason' => $need['scope_error'] ?? null,
+                'affected_spans' => $status === 'admitted' ? [] : ($kind === 'mixed' ? $need['history_spans'] : [$need['question_span']]),
                 'declined_spans' => $kind === 'mixed' ? $need['history_spans'] : ($kind === 'history' ? [$need['question_span']] : []),
                 'message' => match ($status) {
                     'partial_scope', 'scope_declined' => self::DECLINE,

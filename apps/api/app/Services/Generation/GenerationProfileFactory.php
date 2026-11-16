@@ -82,7 +82,19 @@ final class GenerationProfileFactory
     public function currentPolicyPin(): array
     {
         return ['product_profile' => 'current-policy-pool-v1',
-            'execution_version' => 'current-policy-stop1-v1',
+            'execution_version' => 'current-policy-stop2-v1',
+            'generation_contract' => 'current-policy-answer-v1',
+            'generation_prompt' => 'current-policy-pool-generation-v1',
+            'generation_adapter' => 'current-policy-responses-v1',
+            'generation_provider' => config('generation.provider'),
+            'generation_model' => config('generation.model'),
+            'generation_output_tokens' => 4096,
+            'generation_max_requests' => 1,
+            'generation_max_retries' => 0,
+            'generation_reasoning_effort' => config('generation.quality_affecting_configuration.reasoning_effort'),
+            'generation_source_characters' => 60000,
+            'generation_request_units' => 120000,
+            'generation_framing_units' => 4096,
             'planner_contract' => 'current-policy-needs-v1',
             'planner_prompt' => 'current-policy-scope-v1',
             'planner_adapter' => 'structured-current-policy-v1',
@@ -92,7 +104,7 @@ final class GenerationProfileFactory
             'context_turn_limit' => config('conversation.context_turn_limit'),
             'context_max_characters' => config('conversation.context_max_characters'),
             'candidate_k' => config('conversation.candidate_k'),
-            'scope_disposition' => 'current-policy-disposition-v1'];
+            'scope_disposition' => 'current-policy-disposition-v2'];
     }
 
     public function validateCurrentPolicyPin(array $pin): void

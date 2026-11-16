@@ -1,0 +1,204 @@
+{
+  "$defs": {
+    "Association": {
+      "additionalProperties": false,
+      "properties": {
+        "need_id": {
+          "pattern": "^n[1-3]$",
+          "title": "Need Id",
+          "type": "string"
+        },
+        "authority": {
+          "const": "current",
+          "title": "Authority",
+          "type": "string"
+        },
+        "evaluated_at": {
+          "title": "Evaluated At",
+          "type": "string"
+        },
+        "location_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Location Id"
+        }
+      },
+      "required": [
+        "need_id",
+        "authority",
+        "evaluated_at",
+        "location_id"
+      ],
+      "title": "Association",
+      "type": "object"
+    },
+    "Source": {
+      "additionalProperties": false,
+      "properties": {
+        "evidence_id": {
+          "pattern": "^ev-[0-9]{2}$",
+          "title": "Evidence Id",
+          "type": "string"
+        },
+        "chunk_id": {
+          "format": "uuid",
+          "title": "Chunk Id",
+          "type": "string"
+        },
+        "document_id": {
+          "format": "uuid",
+          "title": "Document Id",
+          "type": "string"
+        },
+        "family_id": {
+          "format": "uuid",
+          "title": "Family Id",
+          "type": "string"
+        },
+        "title": {
+          "title": "Title",
+          "type": "string"
+        },
+        "text": {
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "effective_from": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Effective From"
+        },
+        "authority_start": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Authority Start"
+        },
+        "authority_end_exclusive": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Authority End Exclusive"
+        },
+        "status": {
+          "title": "Status",
+          "type": "string"
+        },
+        "applicability": {
+          "additionalProperties": true,
+          "title": "Applicability",
+          "type": "object"
+        },
+        "associations": {
+          "items": {
+            "$ref": "#/$defs/Association"
+          },
+          "maxItems": 3,
+          "minItems": 1,
+          "title": "Associations",
+          "type": "array"
+        }
+      },
+      "required": [
+        "evidence_id",
+        "chunk_id",
+        "document_id",
+        "family_id",
+        "title",
+        "text",
+        "effective_from",
+        "authority_start",
+        "authority_end_exclusive",
+        "status",
+        "applicability",
+        "associations"
+      ],
+      "title": "Source",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "contract_version": {
+      "const": "current-policy-answer-v1",
+      "default": "current-policy-answer-v1",
+      "title": "Contract Version",
+      "type": "string"
+    },
+    "request_id": {
+      "format": "uuid",
+      "title": "Request Id",
+      "type": "string"
+    },
+    "workspace_id": {
+      "format": "uuid",
+      "title": "Workspace Id",
+      "type": "string"
+    },
+    "question": {
+      "maxLength": 8000,
+      "minLength": 1,
+      "title": "Question",
+      "type": "string"
+    },
+    "admitted_requests": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 3,
+      "minItems": 1,
+      "title": "Admitted Requests",
+      "type": "array"
+    },
+    "limitations": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Limitations",
+      "type": "array"
+    },
+    "sources": {
+      "items": {
+        "$ref": "#/$defs/Source"
+      },
+      "maxItems": 15,
+      "minItems": 1,
+      "title": "Sources",
+      "type": "array"
+    }
+  },
+  "required": [
+    "request_id",
+    "workspace_id",
+    "question",
+    "admitted_requests",
+    "limitations",
+    "sources"
+  ],
+  "title": "CurrentRequest",
+  "type": "object"
+}

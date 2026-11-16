@@ -2,7 +2,7 @@
 
 ## Status
 
-Proposed. David authorised bounded implementation on 16 November 2026; acceptance of this ADR is reserved for Stop 1 review. The original decision gate remains FAILED and its repair programme STOPPED. This is a separate product direction. Adapted from the Phase 0 draft; its six-unit/new-storage recommendations are superseded by the approved clarification.
+Accepted by David, 16 November 2026, in the conditional Stop 1 acceptance of commit `912dc8dd9661210f106c47e8ee9d771c4c5ae05c`. Stop 1 requires affected-part disclosure and relative-calendar corrections; architecture acceptance does not waive those corrections or authorise live execution. Previously Proposed on 16 November 2026 for Stop 1 review. The original decision gate remains FAILED and its repair programme STOPPED. This is a separate product direction. Adapted from the Phase 0 draft; its six-unit/new-storage recommendations are superseded by the approved clarification.
 
 ## Date
 
@@ -12,7 +12,7 @@ Proposed. David authorised bounded implementation on 16 November 2026; acceptanc
 
 Development experiments suggest useful question-level pooling but do not establish production reliability. Document authority does not fully express requested information scope. A current document may describe history, and a single need may contain both current and historical requests. Presentation currently has several competing projections of persisted answer parts and notices.
 
-Preserve ADR-0002 service responsibilities, ADR-0005 authentication, ADR-0006 tenancy, ADR-0017 authority, ADR-0021 ranking, ADR-0024 durable conversations and ADR-0039 scope facts. This proposes profile-scoped exceptions to ADR-0018/0022/0038 interpretation and ADR-0023 generation ownership/presentation, not global removal of legacy paths.
+Preserve ADR-0002 service responsibilities, ADR-0005 authentication, ADR-0006 tenancy, ADR-0017 authority, ADR-0021 ranking, ADR-0024 durable conversations and ADR-0039 scope facts. This establishes profile-scoped exceptions to ADR-0018/0022/0038 interpretation and ADR-0023 generation ownership/presentation, not global removal of legacy paths.
 
 ## Decision
 
@@ -37,3 +37,7 @@ The approved clarification rejects six universal requested units and a new respo
 Coordinated Python/PHP schemas, validation, profile pins and tests are required. Date-bearing current questions must not be declined automatically. Partial execution must not weaken applicability or source authority. Malformed scope is distinct from genuine ambiguity, absence of evidence, capacity and execution failure. Existing model judgments can still be wrong; no provider-free test establishes semantic reliability.
 
 No provider calls, rollout or pilot readiness is authorised by implementation. Frozen acceptance remains: 42 fresh answerable questions, at least 40 complete, at most two honestly incomplete and zero materially wrong; all 20 controls and six regressions separately pass, with actual web/reload evidence. These future gates do not reinterpret the original failure.
+
+## Implementation record — Stop 2
+
+The 16 November backend increment supplies the callable current-policy service, signed generation contract and existing-message transaction. It also corrects Stop 1 affected-part disclosure and PHP relative-calendar canonicalisation. See `contracts/http/current-policy-answer/v1/README.md` for saved-text/citation and typed-outcome boundaries. Delivery remains blocked until Stop 3 integrates saved text; no presentation parity or live semantic correctness is claimed. A dated-current request mislabelled historical remains an explicit quality risk, not grounds to relabel authority or weaken validation.

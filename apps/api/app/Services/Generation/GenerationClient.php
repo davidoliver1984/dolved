@@ -17,6 +17,7 @@ use App\Telemetry\TraceContextHeaders;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
 use JsonException;
+use Opis\JsonSchema\Validator;
 
 final readonly class GenerationClient
 {
@@ -24,6 +25,85 @@ final readonly class GenerationClient
         private RetrievalCallSigner $signer,
         private TraceContextHeaders $traceContext,
     ) {}
+
+    /** Dedicated one-request profile: no legacy retry/reviewer/streaming path. */
+    public function currentPolicy(Workspace $workspace, array $payload): array
+    {
+        $body = json_encode($payload, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+        $path = '/api/internal/retrieval/generation/current-policy-answer';
+        $headers = $this->signer->headers('POST', $path, $body, $workspace->public_id, 'generation.current-policy-answer', $payload['request_id']) + $this->traceContext->current();
+        try {
+            $response = Http::timeout(min(120, (float) config('retrieval.timeout_seconds')))
+                ->withHeaders($headers)->withBody($body, 'application/json')
+                ->post(rtrim((string) config('retrieval.ai_url'), '/').$path);
+        } catch (ConnectionException $exception) {
+            // Dispatch may have happened: retain one physical-request liability, never retry.
+            return ['status' => 'failed', 'reason' => 'service_transport', 'usage' => ['request_count' => 1,
+                'retry_count' => 0, 'cost_usd' => null, 'cost_basis' => 'unknown_dispatch']];
+        }
+        if ($response->status() === 401 || $response->status() === 403) {
+            throw new GenerationServiceAuthenticationException(false);
+        }
+        $value = $response->json();
+        if (! $response->successful() || ! is_array($value)
+            || ($value['contract_version'] ?? null) !== 'current-policy-answer-v1'
+            || ($value['request_id'] ?? null) !== $payload['request_id']) {
+            throw new GenerationException('Current-policy service envelope is invalid.');
+        }
+        $status = $value['status'] ?? null;
+        $usage = $value['usage'] ?? null;
+        $expectedIdentity = ['provider' => config('generation.provider'), 'model' => config('generation.model'),
+            'prompt' => 'current-policy-pool-generation-v1', 'adapter' => 'current-policy-responses-v1',
+            'reasoning_effort' => config('generation.quality_affecting_configuration.reasoning_effort'),
+            'max_output_tokens' => 4096, 'max_retries' => 0];
+        $actualIdentity = $value['identity'] ?? [];
+        if (is_array($actualIdentity)) {
+            ksort($actualIdentity);
+        }
+        ksort($expectedIdentity);
+        if ($actualIdentity !== $expectedIdentity) {
+            throw new GenerationException('Current-policy generation identity mismatch.');
+        }
+        if (! in_array($status, ['completed', 'capacity', 'failed'], true) || ! is_array($usage)
+            || ! in_array($usage['request_count'] ?? null, [0, 1], true) || ($usage['retry_count'] ?? null) !== 0) {
+            throw new GenerationException('Current-policy receipt is invalid.');
+        }
+        if ($status === 'completed') {
+            $schema = json_decode(file_get_contents(base_path('../../contracts/http/current-policy-answer/v1/output.schema.json')), flags: JSON_THROW_ON_ERROR);
+            $checked = (new Validator)->validate(json_decode(json_encode($value['result'] ?? null, JSON_THROW_ON_ERROR)), $schema);
+            if (! $checked->isValid()) {
+                throw new GenerationException('Current-policy output contract is invalid.');
+            }
+            $result = $value['result'];
+            if (($result['outcome'] === 'insufficient_evidence') !== ($result['answer_parts'] === [])
+                || ($result['outcome'] === 'answered') !== ($result['unsupported_aspects'] === [])) {
+                throw new GenerationException('Current-policy output disposition is inconsistent.');
+            }
+            $handles = array_column($payload['sources'], 'evidence_id');
+            foreach ($result['unsupported_aspects'] as $gap) {
+                if (trim($gap) === '' || mb_strlen($gap) > 8000) {
+                    throw new GenerationException('Invalid current-policy disclosure.');
+                }
+            }
+            foreach ($result['answer_parts'] as $part) {
+                if (trim($part['text']) === '' || count($part['evidence_ids']) !== count(array_unique($part['evidence_ids']))
+                    || array_diff($part['evidence_ids'], $handles) !== []) {
+                    throw new GenerationException('Current-policy citation is outside the supplied pool.');
+                }
+            }
+        } elseif ($status === 'failed') {
+            if (in_array($value['reason'] ?? null, ['provider_authentication', 'provider_authorisation'], true)) {
+                throw new GenerationServiceAuthenticationException(false);
+            }
+            if (! in_array($value['reason'] ?? null, ['unconfigured', 'provider_unavailable', 'incomplete_output', 'invalid_output'], true)) {
+                throw new GenerationException('Unknown current-policy failure.');
+            }
+        } elseif (($usage['request_count'] ?? null) !== 0) {
+            throw new GenerationException('Capacity response must precede dispatch.');
+        }
+
+        return $value;
+    }
 
     /** @return array<string, mixed> */
     public function generate(Workspace $workspace, GenerationRequest $request): array

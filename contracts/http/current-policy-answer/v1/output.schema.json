@@ -1,0 +1,65 @@
+{
+  "$defs": {
+    "Part": {
+      "additionalProperties": false,
+      "properties": {
+        "text": {
+          "maxLength": 8000,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "evidence_ids": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 15,
+          "minItems": 1,
+          "title": "Evidence Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "text",
+        "evidence_ids"
+      ],
+      "title": "Part",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "outcome": {
+      "enum": [
+        "answered",
+        "qualified",
+        "insufficient_evidence"
+      ],
+      "title": "Outcome",
+      "type": "string"
+    },
+    "answer_parts": {
+      "items": {
+        "$ref": "#/$defs/Part"
+      },
+      "maxItems": 30,
+      "title": "Answer Parts",
+      "type": "array"
+    },
+    "unsupported_aspects": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 12,
+      "title": "Unsupported Aspects",
+      "type": "array"
+    }
+  },
+  "required": [
+    "outcome",
+    "answer_parts",
+    "unsupported_aspects"
+  ],
+  "title": "Output",
+  "type": "object"
+}

@@ -1,5 +1,7 @@
 # Current-policy needs v1
 
+Application disposition identity is `current-policy-disposition-v2`. Every non-admitted disposition includes `affected_spans`: validated historical partitions for mixed requests, otherwise the independently validated base question span (including ambiguity and dependent quarantine). Malformed scope annotation text is never used for disclosure. The planner wire schema is unchanged. PHP recomputes relative calendar values before validation, using the pinned London evaluation time, without changing authority kind or original wording.
+
 Signed retrieval.plan-needs protocol, request envelope version 3, server-owned product_profile=current-policy-pool-v1. Legacy envelope 2/plan v4 is unchanged. Python producer and Laravel consumer share the plan/response schemas and examples in this directory.
 
 Planner identity: current-policy-needs-v1 / current-policy-scope-v1 / structured-current-policy-v1. Two total planner attempts, same interpretation check, no additional model call. Provider schema excludes application-owned scope_error; response schema includes its closed quarantine reasons. Base validation always precedes local recovery.

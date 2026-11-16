@@ -25,7 +25,8 @@ final class PersistGeneratedAnswer
     {
         $hasNeeds = $result->aspectLinks !== [];
         $scopeComposed = in_array(($fingerprint['snapshot']['contract_version'] ?? null),
-            ['scope-composed-answer-v1', 'scope-composed-answer-v2'], true);
+            ['scope-composed-answer-v1', 'scope-composed-answer-v2'], true)
+            || (($fingerprint['snapshot']['contract_version'] ?? null) === 'current-policy-answer-v1' && $result->scopeFacts !== []);
         if ($scopeComposed !== ($result->scopeFacts !== [])) {
             throw new GenerationException('Scope facts require their dedicated composed-answer contract.');
         }

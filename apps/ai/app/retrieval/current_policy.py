@@ -216,7 +216,12 @@ def dispositions(plan: CurrentPolicyPlan) -> list[dict]:
         result.append(
             {
                 "need_id": need.need_id,
-                "version": "current-policy-disposition-v1",
+                "version": "current-policy-disposition-v2",
+                "affected_spans": []
+                if kind == "current_policy" and not need.scope_error
+                else [s.model_dump() for s in need.history_spans]
+                if kind == "mixed"
+                else [need.question_span.model_dump()],
                 "status": "interpretation_failure"
                 if need.scope_error
                 else {

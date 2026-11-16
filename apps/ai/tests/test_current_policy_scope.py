@@ -57,6 +57,9 @@ def test_bad_annotations_retry_then_quarantine_not_current(mutation):
     result = parse(value, recover=True)
     assert result.needs[0].requested_information is None
     assert dispositions(result)[0]["status"] == "interpretation_failure"
+    assert dispositions(result)[0]["affected_spans"] == [
+        value["needs"][0]["question_span"]
+    ]
 
 
 @pytest.mark.parametrize(
@@ -123,6 +126,53 @@ def test_non_current_dispositions_are_not_evidence_absence(kind, status):
         requested_information=kind, current_spans=[], history_spans=[]
     )
     assert dispositions(parse(value))[0]["status"] == status
+    assert dispositions(parse(value))[0]["affected_spans"] == [
+        value["needs"][0]["question_span"]
+    ]
+
+
+def test_malformed_scope_quarantines_dependent_but_keeps_independent_base_disclosures():
+    value = deepcopy(FIXTURE["plan"])
+    value["needs"][0]["current_spans"] = [
+        {"turn_id": "u1", "quote": "invented annotation"}
+    ]
+    turns = [UserTurn(**t) for t in FIXTURE["turns"]]
+    for index, question in [
+        (2, "Who approves that choice?"),
+        (3, "Where are replacement badges requested?"),
+    ]:
+        turn = f"u{index}"
+        n = deepcopy(value["needs"][0])
+        n.update(
+            need_id=f"n{index}",
+            question_span={"turn_id": turn, "quote": question},
+            operation="retrieve",
+            authority={
+                "kind": "current",
+                "value": None,
+                "precision": "none",
+                "source": None,
+            },
+            supports_need_id="n1" if index == 2 else None,
+            requested_information="current_policy",
+            current_spans=[],
+            history_spans=[],
+        )
+        value["needs"].append(n)
+        value["bindings"].append({**value["bindings"][0], "need_id": f"n{index}"})
+        turns.append(UserTurn(turn_id=turn, text=question))
+    plan = parse_policy_plan(
+        value, tuple(turns), (), "2026-11-16T12:00:00Z", recover=True
+    )
+    rows = dispositions(plan)
+    assert [r["status"] for r in rows] == [
+        "interpretation_failure",
+        "interpretation_failure",
+        "admitted",
+    ]
+    assert rows[1]["reason"] == "dependent_scope"
+    assert rows[1]["affected_spans"] == [value["needs"][1]["question_span"]]
+    assert "invented annotation" not in json.dumps(rows)
 
 
 def test_provider_schema_does_not_allow_application_quarantine():
@@ -219,3 +269,80 @@ def test_real_bounded_adapter_uses_second_attempt_and_keeps_independent_need(
         "admitted",
     ]
     assert result.lineage.contract_schema_version == "current-policy-needs-v1"
+
+
+@pytest.mark.parametrize(
+    "question,quote,expected",
+    [
+        (
+            "I will inspect equipment this year. Which current checks apply?",
+            "this year",
+            "2026",
+        ),
+        (
+            "An incident happened last month. What is the reporting rule now?",
+            "last month",
+            "2026-03",
+        ),
+    ],
+)
+def test_current_policy_adapter_canonicalizes_relative_fact_without_reinterpreting_authority(
+    monkeypatch, question, quote, expected
+):
+    import httpx
+    from pydantic import SecretStr
+
+    from app.retrieval.current_policy_planner import CurrentPolicyPlanner
+
+    value = deepcopy(FIXTURE["plan"])
+    value["needs"][0].update(
+        question_span={"turn_id": "u1", "quote": question},
+        operation="retrieve",
+        authority={
+            "kind": "current",
+            "value": None,
+            "precision": "none",
+            "source": None,
+        },
+        fact_reference={
+            "value": "wrong arithmetic",
+            "precision": "duration",
+            "source": {"turn_id": "u1", "quote": quote},
+        },
+        requested_information="current_policy",
+        current_spans=[],
+        history_spans=[],
+    )
+    calls = []
+
+    def transport(req):
+        calls.append(req)
+        return httpx.Response(
+            200,
+            json={
+                "choices": [
+                    {"finish_reason": "stop", "message": {"content": json.dumps(value)}}
+                ],
+                "usage": {"prompt_tokens": 50, "completion_tokens": 100},
+            },
+        )
+
+    monkeypatch.setattr(
+        "app.retrieval.needs_planner.review_interpretation",
+        lambda **kwargs: {"code": "accepted", "input_tokens": 10, "output_tokens": 10},
+    )
+    planner = CurrentPolicyPlanner(
+        api_url="https://invalid.test",
+        api_key=SecretStr("fake"),
+        provider_name="openai",
+        model="test-model",
+        timeout_seconds=1,
+        client=httpx.Client(transport=httpx.MockTransport(transport)),
+    )
+    result = planner.plan_needs(
+        (UserTurn(turn_id="u1", text=question),), evaluated_at="2026-03-31T23:30:00Z"
+    )
+    assert result.plan.needs[0].fact_reference.value == expected
+    assert result.plan.needs[0].authority.kind == "current"
+    assert result.plan.needs[0].question_span.quote == question
+    assert len(calls) == 1

@@ -26,6 +26,7 @@ use App\Support\Documents\DocumentAuthorityTimeline;
 use App\Support\Retrieval\ApplicabilityScopeFact;
 use App\Support\Retrieval\AuthorisedKnowledgeScope;
 use App\Support\Retrieval\CoverageAllocation;
+use App\Support\Retrieval\CurrentPolicyScope;
 use App\Support\Retrieval\EligibleRetrievalScope;
 use App\Support\Retrieval\EvidenceNeedsPlan;
 use App\Support\Retrieval\ExplicitTemporalReferences;
@@ -58,6 +59,54 @@ final readonly class RetrieveWorkspaceEvidence
             CarbonImmutable::now(),
             observe: $observe,
         );
+    }
+
+    /** ADR-0040: no historical alternatives, comparison routing or coverage selector.
+     * @return array<string, RetrievalResult|ApplicabilityScopeFact>
+     */
+    public function handleCurrentPolicy(AuthorisedKnowledgeScope $scope, EvidenceNeedsPlan $plan, int $candidateK, CarbonImmutable $at, ?callable $observe = null): array
+    {
+        if ($plan->value['schema_version'] !== CurrentPolicyScope::CONTRACT || count($plan->executionNeeds()) > 3) {
+            throw new \InvalidArgumentException('Invalid current-policy retrieval plan.');
+        }
+        $results = [];
+        foreach ($plan->executionNeeds() as $need) {
+            $lane = $plan->retrievalPlan($need['need_id']);
+            if ($lane->temporalMode !== RetrievalTemporalMode::Current || $need['operation'] === 'compare') {
+                throw new \InvalidArgumentException('Current-policy lane escaped current authority.');
+            }
+            if ($need['operation'] === 'scope_enquiry') {
+                $fact = $this->eligibility->scopeFact($scope, $lane, $at);
+                $results[$need['need_id']] = $fact instanceof ApplicabilityScopeFact ? $fact
+                    : new RetrievalResult($fact->outcome, reason: $fact->reason, clarificationQuestion: $fact->clarificationQuestion);
+            } else {
+                $results[$need['need_id']] = $this->execute($scope, $lane->query, $candidateK, $at,
+                    observe: $observe === null ? null : fn ($stage, $value) => $observe('need.'.$need['need_id'].'.'.$stage, $value),
+                    planOverride: $lane, recordPlannerUsage: false, selectionLimit: 5);
+            }
+        }
+
+        return $results;
+    }
+
+    /** Assembly/persistence recheck; never drop, substitute or reselect a source. */
+    public function recheckCurrentPolicy(AuthorisedKnowledgeScope $scope, RetrievalPlan $plan, array $candidates, CarbonImmutable $at): void
+    {
+        if ($plan->temporalMode !== RetrievalTemporalMode::Current) {
+            throw new \InvalidArgumentException('Current source recheck requires current authority.');
+        }
+        $eligible = $this->eligibility->handle($scope, $plan, $at);
+        $fresh = $this->hydrateAndRecheck($candidates, $eligible->canSearch() ? $eligible->documentPublicIdsBySide : [], $scope);
+        if (count($fresh) !== count($candidates)) {
+            throw new RetrievalException('Current-policy evidence is no longer eligible.');
+        }
+        foreach ($fresh as $index => $item) {
+            foreach (['chunk_id', 'document_id', 'document_family_id', 'chunk_text', 'provenance'] as $key) {
+                if (($candidates[$index][$key] ?? null) !== $item[$key] || $item['side'] !== 'primary') {
+                    throw new RetrievalException('Current-policy source identity changed.');
+                }
+            }
+        }
     }
 
     /** Uses the same search, fusion, reranker and final eligibility checks for each need. */
@@ -703,6 +752,7 @@ final readonly class RetrieveWorkspaceEvidence
         ?callable $observe = null,
         ?RetrievalPlan $planOverride = null,
         bool $recordPlannerUsage = true,
+        ?int $selectionLimit = null,
     ): RetrievalResult {
         $currentStage = 'transport_orchestration';
         $usage = [];
@@ -764,6 +814,9 @@ final readonly class RetrieveWorkspaceEvidence
             $policy = $denseOnly || $corpus->sparse_space_generation_id === null
                 ? null
                 : ($policyOverride ?? $this->policies->handle($corpus));
+            if ($selectionLimit !== null && $policy === null) {
+                throw new RetrievalException('Current-policy pooling requires an active threshold policy.');
+            }
             $currentStage = 'transport_orchestration';
             $search = $this->client->search(
                 $authorised->workspace,
@@ -902,7 +955,7 @@ final readonly class RetrieveWorkspaceEvidence
                 return new RetrievalResult(RetrievalOutcome::ComparisonScopeIncomplete, usage: $usage);
             }
             $accepted = $qualified->groupBy('side')->flatMap(
-                fn ($sideCandidates) => $sideCandidates->take($policy->final_evidence_k)
+                fn ($sideCandidates) => $sideCandidates->take($selectionLimit ?? $policy->final_evidence_k)
             )->sortBy('rank')->values()->all();
             $observe?->__invoke('final_evidence', $accepted);
 
