@@ -12,6 +12,9 @@ final class GenerationProfileFactory
 {
     public function needsPin(string $workspacePublicId): ?array
     {
+        if (in_array($workspacePublicId, config('conversation.current_policy_workspace_ids', []), true)) {
+            return $this->currentPolicyPin();
+        }
         if (! in_array($workspacePublicId, config('conversation.needs_workspace_ids', []), true)) {
             return null;
         }
@@ -21,6 +24,10 @@ final class GenerationProfileFactory
 
     public function pinnedNeeds(array $pin): GenerationProfile
     {
+        if (($pin['product_profile'] ?? null) === 'current-policy-pool-v1') {
+            $this->validateCurrentPolicyPin($pin);
+            throw new GenerationException('Current-policy execution is not enabled until its product pipeline is complete.');
+        }
         if ($this->canonical($pin) !== $this->canonical($this->needsIdentity())) {
             throw new GenerationException('The pinned needs execution profile no longer matches deployment configuration.');
         }
@@ -70,6 +77,29 @@ final class GenerationProfileFactory
         return new GenerationProfile($base->provider, $base->model, 'generation-result-v3',
             'grounded-generation-needs-v15', 'openai-responses-needs-v7',
             GenerationDeliveryMode::CompleteResultOnly, $base->qualityAffectingConfiguration);
+    }
+
+    public function currentPolicyPin(): array
+    {
+        return ['product_profile' => 'current-policy-pool-v1',
+            'execution_version' => 'current-policy-stop1-v1',
+            'planner_contract' => 'current-policy-needs-v1',
+            'planner_prompt' => 'current-policy-scope-v1',
+            'planner_adapter' => 'structured-current-policy-v1',
+            'planner_provider' => config('retrieval.planner.provider'),
+            'planner_model' => config('retrieval.planner.model'),
+            'context_policy' => config('conversation.context_policy_version'),
+            'context_turn_limit' => config('conversation.context_turn_limit'),
+            'context_max_characters' => config('conversation.context_max_characters'),
+            'candidate_k' => config('conversation.candidate_k'),
+            'scope_disposition' => 'current-policy-disposition-v1'];
+    }
+
+    public function validateCurrentPolicyPin(array $pin): void
+    {
+        if ($this->canonical($pin) !== $this->canonical($this->currentPolicyPin())) {
+            throw new GenerationException('The pinned current-policy profile no longer matches deployment configuration.');
+        }
     }
 
     public function configured(): GenerationProfile

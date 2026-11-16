@@ -1,6 +1,8 @@
 <?php
 
 return [
+    // Server-controlled, default-off. Execution stays blocked until the pipeline is complete.
+    'current_policy_workspace_ids' => array_values(array_filter(array_map('trim', explode(',', (string) env('CONVERSATION_CURRENT_POLICY_WORKSPACE_IDS', ''))))),
     // Explicit workspace opt-in for new submissions only. Empty preserves v1.
     'needs_workspace_ids' => array_values(array_filter(array_map('trim', explode(',', (string) env('CONVERSATION_NEEDS_WORKSPACE_IDS', ''))))),
     'context_policy_version' => 'bounded-completed-turns-v1',

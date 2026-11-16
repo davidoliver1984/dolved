@@ -1,0 +1,95 @@
+{
+  "contract_version": 3,
+  "request_id": "11111111-1111-4111-8111-111111111111",
+  "plan": {
+    "schema_version": "current-policy-needs-v1",
+    "decision": "plan",
+    "clarification": null,
+    "needs": [
+      {
+        "need_id": "n1",
+        "aspect": "diagnostic only",
+        "central": true,
+        "question_span": {
+          "turn_id": "u1",
+          "quote": "What protective gloves are required now, and what changed in the earlier edition?"
+        },
+        "context_spans": [],
+        "operation": "compare",
+        "authority": {
+          "kind": "previous",
+          "value": "earlier edition",
+          "precision": "named",
+          "source": {
+            "turn_id": "u1",
+            "quote": "earlier edition"
+          }
+        },
+        "fact_reference": null,
+        "applicability": {
+          "kind": "generic",
+          "source": null
+        },
+        "claim_under_test": null,
+        "scope_question": null,
+        "supports_need_id": null,
+        "requested_information": "mixed",
+        "current_spans": [
+          {
+            "turn_id": "u1",
+            "quote": "What protective gloves are required now"
+          }
+        ],
+        "history_spans": [
+          {
+            "turn_id": "u1",
+            "quote": "what changed in the earlier edition?"
+          }
+        ],
+        "scope_error": null
+      }
+    ],
+    "bindings": [
+      {
+        "need_id": "n1",
+        "subject_status": "topic",
+        "family_ids": [],
+        "ownership": "authorised_workspace",
+        "ownership_source": null
+      }
+    ]
+  },
+  "classifier_lineage": {
+    "provider": "openai",
+    "model": "test-model",
+    "contract_schema_version": "current-policy-needs-v1",
+    "prompt_version": "current-policy-scope-v1",
+    "adapter_version": "structured-current-policy-v1",
+    "fingerprint": "51596fd20d1725329648d6de19b7cee769d1cf2c9ee78a69a83115aa18960e98"
+  },
+  "usage": {
+    "stage": "planner",
+    "provider": "openai",
+    "model": "test-model",
+    "execution": "local",
+    "request_count": 0,
+    "retry_count": 0,
+    "provider_attempt_count": null,
+    "provider_retry_count": null,
+    "outer_attempt_count": null,
+    "outer_retry_count": null,
+    "rate_limit_event_count": null,
+    "retry_delays": [],
+    "first_provider_attempt_at": null,
+    "final_provider_success_at": null,
+    "provider_retry_elapsed_ms": null,
+    "input_tokens": 0,
+    "cached_input_tokens": 0,
+    "output_tokens": 0,
+    "latency_ms": 0.0,
+    "cost_basis": "zero_cost_local",
+    "cost_usd": 0.0,
+    "pricing_snapshot": null,
+    "validation_attempts": []
+  }
+}

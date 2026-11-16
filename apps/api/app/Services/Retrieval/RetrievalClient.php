@@ -17,6 +17,8 @@ use App\Models\SparseEmbeddingProfile;
 use App\Models\SparseSpaceGeneration;
 use App\Models\Workspace;
 use App\Models\WorkspaceCorpusGeneration;
+use App\Services\Generation\GenerationProfileFactory;
+use App\Support\Retrieval\CurrentPolicyScope;
 use App\Support\Retrieval\EligibleRetrievalScope;
 use App\Support\Retrieval\EvidenceNeedsPlan;
 use App\Support\Retrieval\PlannerUsage;
@@ -73,8 +75,12 @@ final readonly class RetrievalClient
     }
 
     /** @param list<array{turn_id: string, text: string}> $userTurns Authorised user history only. */
-    public function planNeeds(Workspace $workspace, array $userTurns, CarbonImmutable $evaluatedAt): EvidenceNeedsPlan
+    public function planNeeds(Workspace $workspace, array $userTurns, CarbonImmutable $evaluatedAt, ?array $productPin = null): EvidenceNeedsPlan
     {
+        $pilot = $productPin !== null;
+        if ($pilot) {
+            app(GenerationProfileFactory::class)->validateCurrentPolicyPin($productPin);
+        }
         $catalogue = DocumentFamily::query()->where('workspace_id', $workspace->id)
             ->whereNull('tombstoned_at')->orderBy('public_id')->limit(501)
             ->get(['public_id', 'name'])->map(fn ($family) => [
@@ -87,17 +93,26 @@ final readonly class RetrievalClient
                 'catalogue_bound_exceeded', null, 0, false);
         }
         $response = $this->call('/api/internal/retrieval/plan-needs', 'retrieval.plan-needs', $workspace, [
-            'contract_version' => 2,
+            'contract_version' => $pilot ? 3 : 2,
+            ...($pilot ? ['product_profile' => 'current-policy-pool-v1'] : []),
             'workspace_id' => $workspace->public_id,
             'user_turns' => $userTurns,
             'evaluated_at' => $evaluatedAt->toIso8601String(),
             'catalogue' => $catalogue,
         ]);
         try {
-            if ($response->json('contract_version') !== 2
+            if ($response->json('contract_version') !== ($pilot ? 3 : 2)
                 || ! is_array($response->json('plan')) || ! is_array($response->json('classifier_lineage'))
                 || ! is_array($response->json('usage'))) {
                 throw new InvalidArgumentException('Invalid needs response envelope.');
+            }
+            if ($pilot) {
+                EvidenceNeedsPlan::validateWireShape($response->json(), 'response');
+                $base = CurrentPolicyScope::base($response->json('plan'));
+                EvidenceNeedsPlan::validateCatalogue($base, $catalogue, $userTurns);
+
+                return EvidenceNeedsPlan::fromArray($response->json('plan'), $userTurns,
+                    $response->json('classifier_lineage'), $response->json('usage'), $evaluatedAt->toIso8601String());
             }
             EvidenceNeedsPlan::validateWireShape($response->json(), 'response');
             if ($response->json('plan.schema_version') !== 'evidence-needs-plan-v4') {

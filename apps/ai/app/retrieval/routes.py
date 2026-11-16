@@ -1,3 +1,4 @@
+import json
 import logging
 import time
 from datetime import datetime
@@ -32,6 +33,8 @@ from app.retrieval.corpus_rebuild import (
     CorpusVerificationRequest,
     CorpusVerificationResult,
 )
+from app.retrieval.current_policy import CurrentPolicyRequest, CurrentPolicyResponse
+from app.retrieval.current_policy_planner import CurrentPolicyPlanner
 from app.retrieval.deterministic import CatalogueRetrievalPlanner
 from app.retrieval.failures import RetrievalExecutionError
 from app.retrieval.models import (
@@ -41,7 +44,7 @@ from app.retrieval.models import (
     SearchRequest,
     SearchResponse,
 )
-from app.retrieval.needs import NeedsOperationUsage, NeedsPlanRequest, NeedsPlanResponse
+from app.retrieval.needs import NeedsPlanRequest, NeedsPlanResponse
 from app.retrieval.needs_planner import (
     NeedsValidationFailure,
     StructuredChatNeedsPlanner,
@@ -224,15 +227,22 @@ async def plan_retrieval(
     )
 
 
-@router.post("/plan-needs", response_model=NeedsPlanResponse)
+@router.post("/plan-needs", response_model=NeedsPlanResponse | CurrentPolicyResponse)
 async def plan_evidence_needs(
     request: Request,
     planner: Annotated[StructuredChatNeedsPlanner, Depends(needs_planner_dependency)],
-) -> NeedsPlanResponse:
+) -> NeedsPlanResponse | CurrentPolicyResponse:
     body = await authenticate(request, "retrieval.plan-needs", get_settings())
     try:
-        incoming = NeedsPlanRequest.model_validate_json(body)
-    except ValueError as exception:
+        decoded = json.loads(body)
+        if not isinstance(decoded, dict):
+            raise TypeError("invalid request envelope")
+        incoming: NeedsPlanRequest | CurrentPolicyRequest
+        if decoded.get("contract_version") == 3:
+            incoming = CurrentPolicyRequest.model_validate_json(body)
+        else:
+            incoming = NeedsPlanRequest.model_validate_json(body)
+    except (ValueError, TypeError) as exception:
         raise HTTPException(
             status.HTTP_422_UNPROCESSABLE_CONTENT, "Invalid needs request."
         ) from exception
@@ -246,6 +256,16 @@ async def plan_evidence_needs(
         )
     try:
         from app.evaluation_capture import capture_scope
+
+        if isinstance(incoming, CurrentPolicyRequest):
+            settings = get_settings()
+            planner = CurrentPolicyPlanner(
+                api_url=settings.retrieval_planner_api_url,
+                api_key=settings.retrieval_planner_api_key,
+                provider_name=settings.retrieval_planner_provider,
+                model=settings.retrieval_planner_model,
+                timeout_seconds=settings.retrieval_planner_timeout_seconds,
+            )
 
         with capture_scope(
             get_settings(), incoming.workspace_id, incoming.request_id, "planner"
@@ -275,11 +295,18 @@ async def plan_evidence_needs(
                 "validation_attempts": exception.validation_attempts,
             },
         ) from exception
-    return NeedsPlanResponse(
-        request_id=incoming.request_id,
-        plan=result.plan,
-        classifier_lineage=result.lineage,
-        usage=NeedsOperationUsage.model_validate(result.usage.model_dump()),
+    response_type = (
+        CurrentPolicyResponse
+        if isinstance(incoming, CurrentPolicyRequest)
+        else NeedsPlanResponse
+    )
+    return response_type.model_validate(
+        {
+            "request_id": incoming.request_id,
+            "plan": result.plan.model_dump(mode="json"),
+            "classifier_lineage": result.lineage.model_dump(mode="json"),
+            "usage": result.usage.model_dump(mode="json"),
+        }
     )
 
 

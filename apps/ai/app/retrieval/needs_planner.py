@@ -484,6 +484,7 @@ class NeedsValidationFailure(RetrievalPlanningError):
         )
         # Static invariants only. Never serialise exception text, input, context or URLs.
         reasons = {
+            "invalid scope annotation": "scope_annotation_invalid",
             "every need requires exactly one catalogue binding": "binding_coverage",
             "family identity was not supplied by the authorised catalogue": "unknown_family",
             "ownership reference is not grounded": "ownership_grounding",
@@ -581,6 +582,7 @@ class NeedsValidationFailure(RetrievalPlanningError):
 class StructuredChatNeedsPlanner(StructuredChatRetrievalPlanner):
     # Combined reasoning + visible completion budget; not a visible-output guarantee.
     MAX_OUTPUT_TOKENS = 25000
+    CURRENT_POLICY = False
 
     def __init__(
         self,
@@ -616,6 +618,7 @@ class StructuredChatNeedsPlanner(StructuredChatRetrievalPlanner):
 
         feedback: dict[str, str] | None = None
         for number in (1, 2):
+            self._scope_recovery = number == 2
             planner_begin(number)
             started = time.perf_counter()
             try:
@@ -774,6 +777,10 @@ class StructuredChatNeedsPlanner(StructuredChatRetrievalPlanner):
         if not turns or len({t.turn_id for t in turns}) != len(turns):
             raise RetrievalPlanningError("invalid authorised user turns")
         output_schema = provider_needs_schema(catalogue)
+        if self.CURRENT_POLICY:
+            from app.retrieval.current_policy_planner import policy_schema
+
+            output_schema = policy_schema(catalogue)
         started = time.perf_counter()
         try:
             request = self._client.build_request(
@@ -787,7 +794,7 @@ class StructuredChatNeedsPlanner(StructuredChatRetrievalPlanner):
                     "messages": [
                         {
                             "role": "system",
-                            "content": PROMPT
+                            "content": self.planner_prompt()
                             + "\nEvaluated at: "
                             + evaluated_at
                             + "\nApplication-resolved relative calendar periods (start inclusive, end exclusive; interval wire values have inclusive last days): "
@@ -933,8 +940,19 @@ class StructuredChatNeedsPlanner(StructuredChatRetrievalPlanner):
                     decoded, turns, evaluated_at
                 )
                 planner_validator_input(validator_input)
-                plan = EvidenceNeedsPlan.model_validate(validator_input)
-            if plan.schema_version != "evidence-needs-plan-v4":
+                if self.CURRENT_POLICY:
+                    from app.retrieval.current_policy import parse_policy_plan
+
+                    plan = parse_policy_plan(
+                        validator_input,
+                        turns,
+                        catalogue,
+                        evaluated_at,
+                        recover=self._scope_recovery,
+                    )
+                else:
+                    plan = EvidenceNeedsPlan.model_validate(validator_input)
+            if plan.schema_version != self.lineage().contract_schema_version:
                 raise ValueError("new execution requires extractive request contract")
             validation_stage = "grounding"
             plan.validate_grounding(
@@ -972,3 +990,6 @@ class StructuredChatNeedsPlanner(StructuredChatRetrievalPlanner):
                 pricing_snapshot=None,
             ),
         )
+
+    def planner_prompt(self) -> str:
+        return PROMPT

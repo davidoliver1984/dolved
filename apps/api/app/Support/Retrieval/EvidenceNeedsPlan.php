@@ -24,6 +24,20 @@ final readonly class EvidenceNeedsPlan
 
     public static function fromArray(array $value, array $turns, array $lineage, array $usage, ?string $evaluatedAt = null): self
     {
+        if (($value['schema_version'] ?? null) === CurrentPolicyScope::CONTRACT) {
+            self::validateWireShape($value, 'plan');
+            CurrentPolicyScope::validate($value, $turns, $evaluatedAt);
+            $identity = ClassifierLineage::fromArray($lineage);
+            $observation = PlannerUsage::fromArray($usage);
+            if ($identity->contractSchemaVersion !== CurrentPolicyScope::CONTRACT
+                || $identity->promptVersion !== 'current-policy-scope-v1'
+                || $identity->adapterVersion !== 'structured-current-policy-v1'
+                || $identity->provider !== $observation->provider || $identity->model !== $observation->model) {
+                throw new InvalidArgumentException('Current-policy identity mismatch.');
+            }
+
+            return new self($value, $identity, $observation, $turns);
+        }
         $value = RelativeCalendar::canonicalize($value, $turns, $evaluatedAt);
         self::validate($value, $turns, $evaluatedAt);
         $identity = ClassifierLineage::fromArray($lineage);
@@ -43,6 +57,9 @@ final readonly class EvidenceNeedsPlan
     /** Historical plans retain their stored representation; v4 execution is extractive. */
     public function executionNeeds(): array
     {
+        if ($this->value['schema_version'] === CurrentPolicyScope::CONTRACT) {
+            return CurrentPolicyScope::executionNeeds($this->value);
+        }
         if ($this->value['schema_version'] !== 'evidence-needs-plan-v4') {
             return $this->value['needs'];
         }
@@ -290,7 +307,10 @@ final readonly class EvidenceNeedsPlan
             throw new InvalidArgumentException('Unknown needs contract.');
         }
         $version = ($value['schema_version'] ?? $value['plan']['schema_version'] ?? null) === 'evidence-needs-plan-v4' ? 'v4' : 'v3';
-        $schema = json_decode((string) file_get_contents('/contracts/http/retrieval-needs/'.$version.'/'.$name.'.schema.json'), flags: JSON_THROW_ON_ERROR);
+        $path = ($value['schema_version'] ?? $value['plan']['schema_version'] ?? null) === CurrentPolicyScope::CONTRACT
+            ? '/contracts/http/current-policy-needs/v1/'.$name.'.schema.json'
+            : '/contracts/http/retrieval-needs/'.$version.'/'.$name.'.schema.json';
+        $schema = json_decode((string) file_get_contents($path), flags: JSON_THROW_ON_ERROR);
         $data = json_decode(json_encode($value, JSON_THROW_ON_ERROR), flags: JSON_THROW_ON_ERROR);
         if (! (new Validator)->validate($data, $schema)->isValid()) {
             throw new InvalidArgumentException('Invalid evidence needs shape.');

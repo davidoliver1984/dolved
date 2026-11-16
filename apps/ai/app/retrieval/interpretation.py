@@ -20,6 +20,7 @@ class InterpretationCitation(ImmutableModel):
     plan_field: (
         Literal[
             "aspect",
+            "requested_information",
             "operation",
             "scope_question",
             "authority.kind",
@@ -224,7 +225,22 @@ def review_interpretation(
                 "reasoning_effort": "low",
                 "max_completion_tokens": 4096,
                 "messages": [
-                    {"role": "system", "content": INSTRUCTIONS},
+                    {
+                        "role": "system",
+                        "content": INSTRUCTIONS
+                        + (
+                            "\nFor current-policy-needs-v1, also check requested_information and mixed "
+                            "partitions against the question. Past policy, introduction, change explanation "
+                            "and version comparison are history, even in current sources. Event records "
+                            "and current rules with background dates are in scope. Mixed must preserve "
+                            "current clauses and explicitly decline historical clauses; that decline is "
+                            "not an omission. An application scope_error quarantines an unresolved "
+                            "annotation; do not reinterpret it as current or invent a correction. "
+                            "Cite requested_information for a wrong scope label."
+                            if plan.schema_version == "current-policy-needs-v1"
+                            else ""
+                        ),
+                    },
                     {
                         "role": "user",
                         "content": json.dumps(
