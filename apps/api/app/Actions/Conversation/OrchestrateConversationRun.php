@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Actions\Conversation;
 
+use App\Actions\Generation\AnswerCurrentPolicyMessage;
 use App\Actions\Generation\GenerateGroundedAnswer;
 use App\Actions\Generation\PersistGeneratedAnswer;
 use App\Actions\Retrieval\RetrieveWorkspaceEvidence;
@@ -66,12 +67,15 @@ final readonly class OrchestrateConversationRun
         private ChatDeliveryEventRecorder $events,
         private RecordWorkspaceUsage $usageRecorder,
         private RetrievalClient $retrievalClient,
+        private AnswerCurrentPolicyMessage $currentPolicy,
     ) {}
 
     /** @param null|callable(string, mixed): void $observe */
     public function handle(int $runId, ?callable $observe = null): void
     {
         $stage = GenerationRunStatus::Queued;
+        $needsProfile = null;
+        $evaluatedAt = CarbonImmutable::now();
         try {
             $run = $this->begin($runId);
             if ($run === null) {
@@ -81,6 +85,21 @@ final readonly class OrchestrateConversationRun
             $stage = GenerationRunStatus::Contextualising;
             $userMessage = $run->userMessage;
             $workspace = $run->conversation->workspace;
+            if (($run->needs_profile['product_profile'] ?? null) === 'current-policy-pool-v1') {
+                $this->profiles->validateCurrentPolicyPin($run->needs_profile);
+                $run->update(['delivery_mode' => 'complete_result_only', 'generation_endpoint' => 'generation.current-policy-answer']);
+                $this->currentPolicy->handle($userMessage, $run->needs_profile, $evaluatedAt, $observe,
+                    function (string $next) use ($run, &$stage): void {
+                        $stage = GenerationRunStatus::from($next);
+                        if (! $this->transition($run, $stage)) {
+                            throw new GenerationCancelled;
+                        }
+                    },
+                    fn (): bool => $this->lockCompletableRun($run) !== null,
+                    fn (Message $message) => $this->completeCurrentPolicy($run, $message), $run->id);
+
+                return;
+            }
             $needsProfile = $run->needs_profile === null ? null : $this->profiles->pinnedNeeds($run->needs_profile);
             $history = $this->history->forMessage($userMessage);
             $request = new ContextualisationRequest(
@@ -190,7 +209,7 @@ final readonly class OrchestrateConversationRun
                     'validation_attempts' => $exception->validationAttempts,
                 ],
             ];
-            if ($needsProfile !== null
+            if (($needsProfile !== null || ($run->needs_profile['product_profile'] ?? null) === 'current-policy-pool-v1')
                 && $exception->category === 'invalid_grounded_needs_plan'
                 && ! $exception->systemic
                 && $exception->providerStatus === 200
@@ -233,6 +252,39 @@ final readonly class OrchestrateConversationRun
             $this->fail($runId, GenerationRunFailureCode::InternalFailure,
                 [...$priorUsage, 'internal_failure' => $diagnostic]);
         }
+    }
+
+    /** Called inside the same transaction that saves the final message and citations. */
+    private function completeCurrentPolicy(GenerationRun $run, Message $message): void
+    {
+        $answer = $message->generatedAnswer;
+        $status = match ($message->kind) {
+            MessageKind::Clarification => GenerationRunStatus::ClarificationRequired,
+            MessageKind::NoAnswer => GenerationRunStatus::RetrievalNoAnswer,
+            default => GenerationRunStatus::Completed,
+        };
+        $receipt = $answer->temporal_context['current_policy'];
+        $run->update(['status' => $status, 'assistant_message_id' => $message->id,
+            'generation_fingerprint' => $answer->generation_fingerprint,
+            'usage' => ['current_policy' => $receipt], 'completed_at' => now()]);
+        $entries = [$receipt['planner_usage']];
+        foreach ($receipt['retrieval'] as $lane) {
+            $entries = [...$entries, ...($lane['usage'] ?? [])];
+        }
+        if (($receipt['generation']['usage']['request_count'] ?? 0) > 0) {
+            $entries[] = $this->normalisedUsage($receipt['generation']['usage'], 'generation', $answer->provider, $answer->model);
+        }
+        $this->usageRecorder->usage($run->workspace_id, 'generation_run', $run->public_id, $entries);
+        $this->usageRecorder->activity($run->workspace_id, 'run_outcome', $run->public_id, $status->value);
+        $this->events->record($run, $status === GenerationRunStatus::ClarificationRequired
+            ? ChatStreamEventType::ClarificationRequired : ChatStreamEventType::AnswerCompleted, [
+                'message_id' => $message->public_id, 'answer_id' => $answer->public_id,
+                'presentation' => 'saved-message-v1', 'kind' => $message->kind->value,
+                'outcome' => $answer->outcome->value, 'text' => $message->display_text,
+                'citations' => $answer->answerParts->flatMap->evidenceSnapshots->unique('id')
+                    ->map(fn ($snapshot) => ['id' => $snapshot->public_id])->values()->all(),
+                'scope_citations' => $answer->scope_facts ?? [],
+            ]);
     }
 
     private function begin(int $runId): ?GenerationRun

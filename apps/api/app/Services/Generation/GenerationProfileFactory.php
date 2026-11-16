@@ -82,7 +82,7 @@ final class GenerationProfileFactory
     public function currentPolicyPin(): array
     {
         return ['product_profile' => 'current-policy-pool-v1',
-            'execution_version' => 'current-policy-stop2-v1',
+            'execution_version' => 'current-policy-stop3-v1',
             'generation_contract' => 'current-policy-answer-v1',
             'generation_prompt' => 'current-policy-pool-generation-v1',
             'generation_adapter' => 'current-policy-responses-v1',

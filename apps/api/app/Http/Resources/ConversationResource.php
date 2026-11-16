@@ -7,6 +7,7 @@ namespace App\Http\Resources;
 use App\Enums\ChatStreamEventType;
 use App\Enums\DocumentStatus;
 use App\Enums\GenerationRunStatus;
+use App\Models\Document;
 use App\Models\EvidenceSnapshot;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -39,6 +40,7 @@ class ConversationResource extends JsonResource
                 'status' => $run->status->value,
                 'failure_code' => $run->failure_code?->value,
                 'delivery_mode' => $run->delivery_mode,
+                'presentation' => ($run->needs_profile['product_profile'] ?? null) === 'current-policy-pool-v1' ? 'saved-message-v1' : null,
                 'retryable' => $run->status->isRetryEligible(),
                 'provisional_content_retracted' => $run->status === GenerationRunStatus::Failed
                     && $run->relationLoaded('deliveryEvents')
@@ -46,7 +48,24 @@ class ConversationResource extends JsonResource
                         'event_type',
                         ChatStreamEventType::AnswerPartAcceptedForDisplay,
                     ),
-                'answer' => $run->relationLoaded('generatedAnswer') && $run->generatedAnswer !== null ? [
+                'answer' => $run->relationLoaded('generatedAnswer') && $run->generatedAnswer !== null ? ($run->generatedAnswer->contract_version === 'current-policy-answer-v1' ? [
+                    'id' => $run->generatedAnswer->public_id,
+                    'outcome' => $run->generatedAnswer->outcome->value,
+                    'presentation' => 'saved-message-v1',
+                    'text' => $run->assistantMessage->display_text,
+                    'scope_citations' => array_map(function (array $fact) use ($request): array {
+                        $document = Document::where('workspace_id', $this->workspace_id)
+                            ->where('public_id', $fact['document_version_id'])->first();
+                        $available = $document !== null && $request->user()?->can('view', $document) === true
+                            && ! in_array($document->status, [DocumentStatus::Deleting, DocumentStatus::Deleted], true);
+
+                        return [...$fact, 'source_route' => $available
+                            ? sprintf('/app/workspaces/%s/documents/%s', $this->workspace->public_id, $document->public_id) : null,
+                            'source_state' => $available ? 'available' : 'unavailable'];
+                    }, $run->generatedAnswer->scope_facts ?? []),
+                    'citations' => $run->generatedAnswer->answerParts->flatMap->evidenceSnapshots->unique('id')
+                        ->map(fn (EvidenceSnapshot $snapshot): array => $this->citation($request, $snapshot))->values()->all(),
+                ] : [
                     'id' => $run->generatedAnswer->public_id,
                     'outcome' => $run->generatedAnswer->outcome->value,
                     'scope_citations' => $run->generatedAnswer->scope_facts ?? [],
@@ -59,7 +78,7 @@ class ConversationResource extends JsonResource
                             ->map(fn (EvidenceSnapshot $snapshot): array => $this->citation($request, $snapshot))
                             ->all(),
                     ])->all(),
-                ] : null,
+                ]) : null,
                 'created_at' => $run->created_at?->toIso8601String(),
                 'completed_at' => $run->completed_at?->toIso8601String(),
             ])->all()),

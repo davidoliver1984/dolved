@@ -52,6 +52,10 @@ class GeneratedAnswer extends Model
 
     public function renderedText(): string
     {
+        if ($this->contract_version === 'current-policy-answer-v1') {
+            return $this->assistantMessage?->display_text
+                ?? throw new \LogicException('Current-policy answers require their canonical saved message.');
+        }
         if ($this->outcome === GenerationOutcome::InsufficientEvidence) {
             return (string) $this->insufficiency_reason;
         }

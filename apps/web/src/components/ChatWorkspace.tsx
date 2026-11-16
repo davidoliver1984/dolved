@@ -132,7 +132,7 @@ function CitationEvidence({ citation, index }: Readonly<{ citation: Citation; in
     : "Source unavailable";
 
   return (
-    <li className="grid gap-2">
+    <li className="grid gap-2" data-citation-id={citation.id}>
       <CitationButton
         aria-expanded={open}
         aria-label={`${label}, ${open ? "hide" : "show"} source evidence`}
@@ -480,13 +480,25 @@ export function ChatWorkspace({
           ) : null}
           {active?.messages?.map((message) => {
             const run = runsByMessage.get(message.id);
+            const savedPresentation = run?.presentation === "saved-message-v1" || run?.answer?.presentation === "saved-message-v1";
             const parts = run
               ? completedParts[run.id] ?? run.answer?.parts
               : undefined;
             return (
               <Card className={message.role === "user" ? "ml-auto w-fit max-w-[85%] border-brand/30 bg-brand/10 p-4" : "max-w-[92%] p-4"} key={message.id}>
                 <div className="mb-2 flex items-center gap-2"><p className="text-xs font-bold uppercase tracking-[0.12em] text-foreground-muted">{message.role === "user" ? "You" : "Dolved"}</p>{run?.answer?.outcome ? <StatusBadge status={run.answer.outcome === "answered" ? "success" : "warning"}>{run.answer.outcome.replaceAll("_", " ")}</StatusBadge> : null}</div>
-                {parts?.length ? parts.map((part, index) => (
+                {savedPresentation ? <>
+                  <p className="whitespace-pre-wrap leading-7" data-canonical-answer>{message.text}</p>
+                  {run?.answer?.citations?.length ? <ol aria-label="Answer sources" className="mt-3 flex flex-wrap gap-2">
+                    {run.answer.citations.map((citation, index) => <CitationEvidence citation={citation} index={index} key={citation.id} />)}
+                  </ol> : null}
+                  {run?.answer?.scope_citations?.map((citation) => <details className="mt-3" key={citation.snapshot_digest}>
+                    <summary>Recorded applicability: {citation.policy_title}</summary>
+                    <p>Recorded scope: {citation.snapshot.scope}</p>
+                    <p>Document version: {citation.document_version_id}</p>
+                    {citation.source_route ? <a href={citation.source_route}>Open source version</a> : <p>Source unavailable</p>}
+                  </details>)}
+                </> : parts?.length ? parts.map((part, index) => (
                   <div className="grid gap-3" key={part.id ?? `${message.id}-${index}`}>
                     <p>{part.text}</p>
                     {part.citations.length ? (
@@ -503,8 +515,8 @@ export function ChatWorkspace({
                     ) : null}
                   </div>
                 )) : <p className="leading-7">{message.text}</p>}
-                {run?.answer?.insufficiency_reason ? <Notice className="mt-3" tone="warning">{run.answer.insufficiency_reason}</Notice> : null}
-                {run?.answer?.unsupported_aspects.length ? <p className="mt-3 text-sm text-foreground-muted">Not established by the available evidence: {run.answer.unsupported_aspects.join(", ")}</p> : null}
+                {!savedPresentation && run?.answer?.insufficiency_reason ? <Notice className="mt-3" tone="warning">{run.answer.insufficiency_reason}</Notice> : null}
+                {!savedPresentation && run?.answer?.unsupported_aspects?.length ? <p className="mt-3 text-sm text-foreground-muted">Not established by the available evidence: {run.answer.unsupported_aspects.join(", ")}</p> : null}
               </Card>
             );
           })}

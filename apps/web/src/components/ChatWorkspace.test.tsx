@@ -122,6 +122,32 @@ function services() {
 }
 
 describe("ChatWorkspace", () => {
+  it("renders canonical saved pilot text once with citations and no competing parts or notices", async () => {
+    const fixture = services();
+    const saved = "Wear gloves.\n\nUnanswered or unconfirmed parts\n\n- Earlier policy is outside current policy scope.\n- Location coverage not established for Cedar outreach.\n<script>not executable</script>";
+    fixture.completed.messages![1].text = saved;
+    const answer = fixture.completed.runs![0].answer!;
+    answer.presentation = "saved-message-v1";
+    answer.text = saved;
+    answer.citations = answer.parts![0].citations;
+    answer.parts = [{ id: "ignored", text: "COMPETING RAW TEXT", citations: [] }];
+    answer.unsupported_aspects = ["DUPLICATE NOTICE"];
+    answer.insufficiency_reason = "DUPLICATE FAILURE";
+    fixture.api.get.mockResolvedValue(fixture.completed);
+    const view = render(<ChatWorkspace initialConversationId="conversation-1" services={fixture.api} workspaceId="workspace-1" workspaceName="Care" />);
+    await waitFor(() => expect(view.container.querySelector("[data-canonical-answer]")?.textContent).toBe(saved));
+    expect(view.container.querySelectorAll("[data-canonical-answer]")).toHaveLength(1);
+    expect(screen.queryByText("COMPETING RAW TEXT")).toBeNull();
+    expect(screen.queryByText("DUPLICATE NOTICE")).toBeNull();
+    expect(screen.queryByText("DUPLICATE FAILURE")).toBeNull();
+    expect(view.container.querySelector("script")).toBeNull();
+    expect(screen.getByRole("list", { name: "Answer sources" })).toBeTruthy();
+    expect(fixture.api.send).not.toHaveBeenCalled();
+    view.unmount();
+    const reloaded = render(<ChatWorkspace initialConversationId="conversation-1" services={fixture.api} workspaceId="workspace-1" workspaceName="Care" />);
+    await waitFor(() => expect(reloaded.container.querySelector("[data-canonical-answer]")?.textContent).toBe(saved));
+    expect(fixture.api.send).not.toHaveBeenCalled();
+  });
   it("creates a conversation, sends with Enter and renders streamed grounded citations", async () => {
     const harness = services();
     const user = userEvent.setup();

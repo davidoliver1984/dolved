@@ -1,5 +1,15 @@
 # RAG Platform Implementation Guide
 
+## 2026-11-16 — Current-policy pilot Stop 3
+
+Approved delivery integration on the isolated pilot branch, from Stop 2 `81451026333e59d6c58e6cbeea41551671586761`; no live activation, push or main merge. See `docs/journal/2026-11-16-current-policy-stop3.md` and `contracts/http/current-policy-answer/v1/README.md` for the saved-message delivery contract. Orchestration retains existing claim/lock semantics; final persistence, completion and event are atomic. API/SSE/reload and actual ChatWorkspace consume saved text once. No selector, review call, ownership gate, retry, migration or new response model.
+
+Verification used the approved no-egress Compose project, tracked read-only engineering corpus, existing Qdrant image and approved disposable PostgreSQL 18 tmpfs instance. Installed Chromium used fresh profiles and loopback-only endpoints. `race.php` exercises four separate-process races; `browser-check.mjs` records DOM, screenshots, page requests, SSE where observed and exact reload parity. The synthetic executable runner uses actual authenticated UI submission and persisted-run export, not a parallel retrieval script. Its manifest schema is the released questions-only shape.
+
+Commands actually run: full offline Pytest with JUnit; Laravel `artisan test --log-junit` (restoring PHPUnit environment, 512 MB test-process memory after a failure-report renderer exhaustion); full Vitest with JUnit; root `make -k format-check`, `lint`, `typecheck`, `ps`, `test-telemetry`, `test-postgres-role-topology` with Compose explicitly set to the isolated project; focused PHP/web tests and stdlib runner tests. Exact baseline failure identities and intermediate attempts are retained in the Stop 3 evidence package, not represented as a green repository suite.
+
+Evidence and final source/runner identities: `~/Desktop/dolved-experiments/current-policy-pilot-20261116/implementation/stop-3/approved-implementation-01/`. No operational authorisation or 68-item dispatch. This is a controlled product integration, not a semantic-quality or readiness pass; release-time bindings and explicit verification limits remain in the handoff.
+
 ## 2026-11-12 — Block 1 reference identity checkpoint
 
 Repair `279cebe` distinguishes own-workspace organisation identities and whole authorised family titles from unresolved sites, preserving exact site/alias precedence and carrying the distinction into coverage disclosure. No model/prompt, ranking, authority or blocking-gate change. [Evidence and every criterion](docs/evaluation/r28-s04/r06-governed-evidence/R28-R07-BLOCK1-REFERENCE-BINDING-20261112-01/report.md): six once-only answers; organisation paths live-exercised twice, registered/unregistered controls retained. Both title inputs used generic applicability: title matching remains provider-free only. Nonmatching ROPA wording remains open. One justified checker retry, zero false flags; unchanged full-suite failure sets (38 AI/2 Laravel), raw XML retained. Block 1 holds, not pilot readiness. The unregistered-site answer's definite lead versus disclosure is separately recorded in Block 3; no inline fix or additional run.

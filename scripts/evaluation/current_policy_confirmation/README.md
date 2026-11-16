@@ -1,0 +1,19 @@
+# Stop 3 confirmation boundary
+
+No live authority, sealed inputs, credentials, provider prices or operational bindings are included here. USD 300 is only a proposed future ceiling.
+
+`runner.py BINDING.json` verifies the frozen source/harness files, exact commit, mounted-runtime command and deadline before each item. It accepts the released shape exactly: `schema_version`, `package_id`, `note`, `evaluated_at_assumption`, `items[{id,utterance}]`. Operational execution requires 68 items, preserving order without cohort/category labels. Grading assigns cohorts later.
+
+The binding must supply: manifest path/hash; exact source commit and file hashes; mounted verification argv; actor/workspace/corpus/pinned-profile preflight expectation per item; existing product UI path and login identity; actual preflight/export argv; deadline; fresh output destination; maximum planning (including intrinsic calls), retrieval (including retries) and generation liability per item; pricing and reviewer-context hashes; and a separately approved authorisation bound to the binding hash. Never put login passwords in the binding/evidence; provide the browser password privately at execution. Source and deployed-runtime identities are different checks.
+
+Real callbacks are connected: `preflight.php` invokes authorised scope construction and profile selection; `browser-check.mjs` submits once using the actual ChatWorkspace UI and existing idempotency API; `capture.php` reads that resulting run under actor/workspace scope. Browser completion and reload text/citation UUIDs are checked against saved output. A browser/capture uncertainty retains liability and halts, never resubmits. A new directory plus exclusive start and authorisation-consumption markers prevent accidental replay.
+
+Accounting reserves the entire permitted item liability before browser dispatch, retaining it even when usage is missing. Raw per-stage usage receipts are preserved without adding nested receipts to parent totals. This deliberately conservative implementation does **not** release reservation based on partial receipts or claim a measured actual-spend total; future release must supply defensible maximums for all physical attempts. It cannot run if total maximum exceeds the supplied ceiling. Typed, non-systemic completed planner-contract rejection is a recorded item outcome; unknown, authority/integrity, cancelled or uncertain failure stops. Per-item verification includes the overall deadline; the browser checks it before submission and during bounded waits.
+
+## Controlled development proof
+
+`controlled.php` and `race.php` refuse anything except the disposable test PostgreSQL host. The former binds existing backend test fixtures to Laravel's HTTP fake boundary and runs the real authenticated HTTP kernel, synchronous queue job, orchestration and persistence; no provider credential or call exists. The latter launches separate PHP workers against PostgreSQL for four explicit races. Neither file is registered in application routes/providers.
+
+`browser/` mounts the actual ChatWorkspace, services and application CSS in a standalone Vite shell using installed packages. It is not proof of the full Next server/layout or production deployment. `loopback-relay.mjs` forwards only the two loopback ports to the isolated Docker services when Docker Desktop cannot publish ports on an internal network; it does not relax network isolation. Browser profiles are new/temporary and removed; non-loopback page requests fail and are recorded.
+
+Development manifests use the identical released schema and only synthetic controlled questions. The development record binds its parent commit plus changed-tree hashes explicitly. The final source freeze/local commit is published separately. Running these files does not authorise live spending or enable a client workspace.

@@ -28,7 +28,7 @@ use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
-/** Backend boundary only. Stop 3 must explicitly wire delivery to saved display_text. */
+/** Compose and save once; orchestration supplies its existing run-lock boundary. */
 final readonly class AnswerCurrentPolicyMessage
 {
     public function __construct(private BuildAuthorisedKnowledgeScope $authorise,
@@ -37,12 +37,13 @@ final readonly class AnswerCurrentPolicyMessage
         private CurrentPolicyPool $pool, private GenerationClient $generation,
         private GenerationFingerprint $fingerprints, private PersistGeneratedAnswer $persistence) {}
 
-    public function handle(Message $userMessage, array $pin, CarbonImmutable $at, ?callable $observe = null): Message
+    public function handle(Message $userMessage, array $pin, CarbonImmutable $at, ?callable $observe = null,
+        ?callable $stage = null, ?callable $beforePersist = null, ?callable $afterPersist = null, ?int $runId = null): ?Message
     {
         $this->profiles->validateCurrentPolicyPin($pin);
         $userMessage = $userMessage->fresh(['conversation.workspace', 'createdBy']);
         if ($userMessage->role !== MessageRole::User || $userMessage->createdBy === null
-            || $this->profiles->needsPin($userMessage->conversation->workspace->public_id) !== $pin) {
+            || ($this->profiles->needsPin($userMessage->conversation->workspace->public_id)['product_profile'] ?? null) !== 'current-policy-pool-v1') {
             throw new GenerationException('Current-policy profile is not enabled for this message.');
         }
         if ($userMessage->conversation->messages()->where('in_reply_to_message_id', $userMessage->id)->exists()) {
@@ -53,6 +54,7 @@ final readonly class AnswerCurrentPolicyMessage
         $turns[] = ['turn_id' => 'user-'.$userMessage->ordinal, 'text' => $userMessage->display_text];
         $plan = $this->planner->planNeeds($scope->workspace, $turns, $at, $pin);
         $observe?->__invoke('needs_plan', $plan->value);
+        $stage?->__invoke('retrieving');
         $results = $plan->value['decision'] === 'plan'
             ? $this->retrieval->handleCurrentPolicy($scope, $plan, $pin['candidate_k'], $at, $observe) : [];
         $pool = $this->pool->assemble($scope, $plan, $results, $at);
@@ -78,6 +80,7 @@ final readonly class AnswerCurrentPolicyMessage
         $receipt = ['status' => $capacity === null ? 'not_requested' : 'capacity', 'capacity' => $capacity, 'usage' => ['request_count' => 0, 'retry_count' => 0]];
         $parts = [];
         if ($pool['sources'] !== []) {
+            $stage?->__invoke('generating');
             $receipt = $this->generation->currentPolicy($scope->workspace, [
                 'contract_version' => 'current-policy-answer-v1', 'request_id' => $requestId,
                 'workspace_id' => $scope->workspace->public_id, 'question' => $userMessage->display_text,
@@ -126,7 +129,10 @@ final readonly class AnswerCurrentPolicyMessage
         $messageKind = $outcome !== GenerationOutcome::InsufficientEvidence ? MessageKind::GroundedAnswer
             : ($unhandled !== [] && array_all($unhandled, fn ($d) => $d['status'] === 'ambiguity') ? MessageKind::Clarification : MessageKind::NoAnswer);
 
-        return DB::transaction(function () use ($userMessage, $scope, $plan, $results, $at, $text, $messageKind, $request, $result, $fingerprint) {
+        return DB::transaction(function () use ($userMessage, $scope, $plan, $results, $at, $text, $messageKind, $request, $result, $fingerprint, $beforePersist, $afterPersist, $runId) {
+            if ($beforePersist !== null && $beforePersist() === false) {
+                return null;
+            }
             $fresh = $this->authorise->handle($scope->user, $scope->workspace->public_id);
             if ($fresh->activeCorpusGeneration?->public_id !== $scope->activeCorpusGeneration?->public_id) {
                 throw new GenerationException('Corpus generation changed before persistence.');
@@ -144,9 +150,11 @@ final readonly class AnswerCurrentPolicyMessage
                 'conversation_id' => $conversation->id, 'ordinal' => $conversation->messages()->max('ordinal') + 1,
                 'role' => MessageRole::Assistant, 'kind' => $messageKind,
                 'display_text' => $text, 'in_reply_to_message_id' => $userMessage->id, 'created_by_user_id' => null]);
-            $this->persistence->handle($fresh, $userMessage->display_text, $request->requestId, $request, $result, $fingerprint, $message->id);
+            $this->persistence->handle($fresh, $userMessage->display_text, $request->requestId, $request, $result, $fingerprint, $message->id, $runId);
+            $message->load('generatedAnswer.answerParts.evidenceSnapshots');
+            $afterPersist?->__invoke($message);
 
-            return $message->load('generatedAnswer.answerParts.evidenceSnapshots');
+            return $message;
         });
     }
 

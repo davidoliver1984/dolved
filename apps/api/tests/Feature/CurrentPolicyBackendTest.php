@@ -3,7 +3,10 @@
 namespace Tests\Feature;
 
 use App\Actions\Conversation\CreateConversation;
+use App\Actions\Conversation\OrchestrateConversationRun;
+use App\Actions\Conversation\SubmitConversationMessage;
 use App\Actions\Generation\AnswerCurrentPolicyMessage;
+use App\Enums\DocumentStatus;
 use App\Enums\MessageRole;
 use App\Enums\WorkspaceRole;
 use App\Exceptions\GenerationException;
@@ -13,6 +16,7 @@ use App\Models\EmbeddingProfile;
 use App\Models\EmbeddingSpaceGeneration;
 use App\Models\EvidenceThresholdPolicy;
 use App\Models\GeneratedAnswer;
+use App\Models\GenerationRun;
 use App\Models\IngestionEventClaim;
 use App\Models\Message;
 use App\Models\SparseEmbeddingProfile;
@@ -25,10 +29,12 @@ use App\Models\WorkspaceMembership;
 use App\Services\Generation\GenerationProfileFactory;
 use Carbon\CarbonImmutable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\Client\Factory;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Str;
 use PHPUnit\Framework\AssertionFailedError;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -42,9 +48,97 @@ class CurrentPolicyBackendTest extends TestCase
 
     private array $payloads = [];
 
+    public static function deliveryOutcomes(): array
+    {
+        return [...self::outcomes(), ['scope_fact'], ['all_history'], ['all_unclear']];
+    }
+
+    #[DataProvider('deliveryOutcomes')]
+    public function test_authenticated_submission_claim_final_event_and_reload_use_one_saved_answer(string $mode): void
+    {
+        Queue::fake();
+        CarbonImmutable::setTestNow('2026-11-16T12:00:00Z');
+        [$initial, $pin] = $this->fixture($mode);
+        $user = $initial->createdBy;
+        $conversation = $initial->conversation;
+        $question = $initial->display_text;
+        $initial->delete();
+        $path = '/api/workspaces/'.$conversation->workspace->public_id.'/conversations/'.$conversation->public_id;
+        $body = ['message' => $question, 'idempotency_key' => (string) Str::uuid()];
+        $id = $this->actingAs($user)->postJson($path.'/messages', $body)->assertAccepted()->json('data.run_id');
+        $this->postJson($path.'/messages', $body)->assertAccepted()->assertJsonPath('data.run_id', $id);
+        $run = GenerationRun::where('public_id', $id)->firstOrFail();
+        $this->assertSame($pin, $run->needs_profile);
+        app(OrchestrateConversationRun::class)->handle($run->id);
+        $run->refresh();
+        $this->assertNotSame('failed', $run->status->value, json_encode($run->usage));
+        $count = count($this->calls);
+        app(OrchestrateConversationRun::class)->handle($run->id);
+        $this->assertCount($count, $this->calls);
+        $this->assertSame(1, Message::where('role', 'assistant')->count());
+        $saved = $run->assistantMessage;
+        $this->assertSame($saved->display_text, $run->generatedAnswer->fresh()->renderedText());
+        $data = $this->getJson($path)->assertOk()->json('data');
+        $answer = $data['runs'][0]['answer'];
+        $this->assertSame('saved-message-v1', $answer['presentation']);
+        $this->assertSame($saved->display_text, $answer['text']);
+        $this->assertArrayNotHasKey('parts', $answer);
+        $this->assertArrayNotHasKey('unsupported_aspects', $answer);
+        if ($mode === 'location') {
+            $this->assertSame(1, substr_count($saved->display_text, 'General guidance does not establish coverage of that location.'));
+            $this->assertStringContainsString('Cedar outreach', $saved->display_text);
+        }
+        $event = $run->deliveryEvents()->where('event_type', $mode === 'all_unclear' ? 'clarification_required' : 'answer_completed')->firstOrFail();
+        $this->assertSame($saved->display_text, $event->safe_payload['text']);
+        $this->assertSame(array_column($answer['citations'], 'id'), array_column($event->safe_payload['citations'], 'id'));
+        $this->assertFalse($run->deliveryEvents()->where('event_type', 'answer_part_accepted_for_display')->exists());
+        $this->assertSame($data, $this->getJson($path)->assertOk()->json('data'));
+        $this->assertCount($count, $this->calls);
+        if ($mode === 'completed') {
+            $snapshot = $run->generatedAnswer->answerParts->first()->evidenceSnapshots->first();
+            $snapshot->document->forceFill(['status' => DocumentStatus::Deleted])->save();
+            $removed = $this->getJson($path)->assertOk()->json('data.runs.0.answer');
+            $this->assertSame($saved->display_text, $removed['text']);
+            $this->assertSame('removed', $removed['citations'][0]['source_state']);
+            $this->assertNull($removed['citations'][0]['source_route']);
+            $this->assertSame($snapshot->public_id, $removed['citations'][0]['id']);
+            $this->assertCount($count, $this->calls);
+        }
+        WorkspaceMembership::where('workspace_id', $conversation->workspace_id)->delete();
+        $this->getJson($path)->assertNotFound();
+        CarbonImmutable::setTestNow();
+    }
+
     public static function outcomes(): array
     {
-        return array_map(fn ($v) => [$v], ['completed', 'capacity', 'invalid_output', 'incomplete_output', 'unavailable', 'source_capacity', 'partial_unavailable', 'partial_timeout']);
+        return array_map(fn ($v) => [$v], ['completed', 'capacity', 'invalid_output', 'incomplete_output', 'unavailable', 'source_capacity', 'partial_unavailable', 'partial_timeout', 'location']);
+    }
+
+    public function test_current_profile_planner_rejection_is_honest_saved_interpretation_failure_without_generation(): void
+    {
+        Queue::fake();
+        [$initial] = $this->fixture('completed');
+        $conversation = $initial->conversation;
+        $user = $initial->createdBy;
+        $question = $initial->display_text;
+        $initial->delete();
+        Http::swap(new Factory);
+        Http::preventStrayRequests();
+        Http::fake(fn () => Http::response(['detail' => [
+            'code' => 'retrieval_planning_failed', 'category' => 'invalid_grounded_needs_plan',
+            'provider_status' => 200, 'attempt_count' => 2, 'systemic' => false,
+            'validation' => ['stage' => 'grounding', 'field' => 'needs.0.question_span', 'code' => 'question_span_grounding'],
+            'completion' => ['finish_reason' => 'stop', 'input_tokens' => 120, 'output_tokens' => 90, 'reasoning_tokens' => 50],
+        ]], 503));
+        $run = app(SubmitConversationMessage::class)->handle($conversation, $user, $question, (string) Str::uuid());
+        app(OrchestrateConversationRun::class)->handle($run->id);
+        $run->refresh();
+        $this->assertSame('retrieval_no_answer', $run->status->value);
+        $this->assertSame('interpretation_failed', $run->retrievalOutcomeSnapshot->outcome->value);
+        $this->assertStringContainsString("couldn't interpret", $run->assistantMessage->display_text);
+        $this->assertNull($run->failure_code);
+        $this->assertDatabaseCount('generated_answers', 0);
+        Http::assertSentCount(1);
     }
 
     #[DataProvider('outcomes')]
@@ -64,10 +158,10 @@ class CurrentPolicyBackendTest extends TestCase
         foreach ($this->calls as $path) {
             $this->assertDoesNotMatchRegularExpression('/coverage-selection|compare-family|answer-needs|\/stream$/', $path);
         }
-        if (in_array($mode, ['completed', 'partial_unavailable', 'partial_timeout'], true)) {
+        if (in_array($mode, ['completed', 'partial_unavailable', 'partial_timeout', 'location'], true)) {
             $payload = $this->payloads[0];
             $this->assertCount(5, $payload['sources']);
-            $this->assertSame($mode === 'completed' ? ['n1', 'n2'] : ['n1'], array_column($payload['sources'][0]['associations'], 'need_id'));
+            $this->assertSame(in_array($mode, ['completed', 'location'], true) ? ['n1', 'n2'] : ['n1'], array_column($payload['sources'][0]['associations'], 'need_id'));
             $this->assertSame([$document->public_id], array_values(array_unique(array_column($payload['sources'], 'document_id'))));
             $this->assertStringNotContainsString('earlier edition', implode(' ', $payload['admitted_requests']));
             $this->assertStringContainsString('Wear gloves', $fresh->display_text);
@@ -207,7 +301,9 @@ class CurrentPolicyBackendTest extends TestCase
         $policy = EvidenceThresholdPolicy::factory()->active()->create(['embedding_profile_fingerprint' => $dense->fingerprint,
             'sparse_profile_fingerprint' => $sparse->fingerprint, 'final_evidence_k' => 2]);
         $generation = WorkspaceCorpusGeneration::factory()->active()->create(['workspace_id' => $workspace->id,
-            'embedding_space_generation_id' => $space->id, 'sparse_space_generation_id' => $sparseSpace->id, 'verified_at' => now()]);
+            'embedding_space_generation_id' => $space->id, 'sparse_space_generation_id' => $sparseSpace->id,
+            'expected_point_count' => $mode === 'fifteen' ? 16 : 8,
+            'point_manifest_digest' => hash('sha256', 'controlled-current-policy-fixture'), 'verified_at' => now()]);
         $workspace->active_workspace_corpus_generation_id = $generation->id;
         $workspace->save();
         $old = Document::factory()->indexed()->approved()->create(['workspace_id' => $workspace->id, 'effective_from' => '2025-01-01', 'approved_at' => '2025-01-01']);
@@ -243,6 +339,10 @@ class CurrentPolicyBackendTest extends TestCase
             'operation' => 'retrieve', 'authority' => ['kind' => 'current', 'value' => null, 'precision' => 'none', 'source' => null],
             'requested_information' => 'current_policy', 'current_spans' => [], 'history_spans' => []];
         $response['plan']['needs'][] = $second;
+        if ($mode === 'location') {
+            $response['plan']['needs'][1]['question_span']['quote'] = 'Who checks the equipment at Cedar outreach?';
+            $response['plan']['needs'][1]['applicability'] = ['kind' => 'named', 'source' => ['turn_id' => 'user-1', 'quote' => 'Cedar outreach']];
+        }
         $response['plan']['needs'][] = [...$second, 'need_id' => 'n3', 'question_span' => ['turn_id' => 'user-1', 'quote' => 'Which arrangement do you mean?'], 'requested_information' => 'unclear'];
         $response['plan']['bindings'] = array_map(fn ($id) => ['need_id' => $id, 'subject_status' => 'topic', 'family_ids' => [], 'ownership' => 'authorised_workspace', 'ownership_source' => null], ['n1', 'n2', 'n3']);
         if (in_array($mode, ['all_history', 'all_unclear'], true)) {

@@ -18,6 +18,7 @@ export type ConversationRun = {
   status: string;
   failure_code: string | null;
   delivery_mode: string;
+  presentation?: "saved-message-v1" | null;
   retryable: boolean;
   provisional_content_retracted: boolean;
   answer?: GroundedAnswer | null;
@@ -47,9 +48,14 @@ export type GroundedAnswerPart = {
 export type GroundedAnswer = {
   id: string;
   outcome: string;
-  unsupported_aspects: string[];
-  insufficiency_reason: string | null;
-  parts: GroundedAnswerPart[];
+  presentation?: "saved-message-v1";
+  text?: string;
+  citations?: GroundedCitation[];
+  scope_citations?: Array<{ snapshot_digest: string; policy_title: string; document_version_id: string;
+    snapshot: { scope: string }; source_route: string | null; source_state: string }>;
+  unsupported_aspects?: string[];
+  insufficiency_reason?: string | null;
+  parts?: GroundedAnswerPart[];
 };
 
 export type Conversation = {
