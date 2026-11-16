@@ -122,6 +122,76 @@ function services() {
 }
 
 describe("ChatWorkspace", () => {
+  it("observes an existing pending pilot run after route remount without sending again", async () => {
+    const fixture = services();
+    const pending = structuredClone(fixture.completed);
+    pending.messages = pending.messages!.slice(0,1);
+    Object.assign(pending.runs![0], { presentation: "saved-message-v1", status: "generating", completed_at: null, assistant_message_id: null, answer: null });
+    fixture.completed.runs![0].presentation = "saved-message-v1";
+    fixture.api.get.mockResolvedValueOnce(pending).mockResolvedValue(fixture.completed);
+    const view = render(<ChatWorkspace initialConversationId="conversation-1" services={fixture.api} workspaceId="workspace-1" workspaceName="Care" />);
+    await waitFor(() => expect(fixture.api.subscribe).toHaveBeenCalledOnce());
+    expect(view.container.querySelector('[data-chat-pending="true"]')).not.toBeNull();
+    fixture.emit({ sequence: 4, type: "answer_completed", provisional: false, payload: {} });
+    await waitFor(() => expect(view.container.querySelector('[data-completion-path="sse"]')).not.toBeNull());
+    expect(screen.getByRole("status").textContent).toBe("Answer complete.");
+    expect(fixture.api.send).not.toHaveBeenCalled();
+  });
+
+  it("does not navigate a newly created conversation until submission has a receipt", async () => {
+    const fixture = services();
+    let resolveSend!: (receipt: {run_id: string; status: string}) => void;
+    fixture.api.send.mockImplementation(()=>new Promise((resolve)=>{resolveSend=resolve;}));
+    const navigate=vi.fn();
+    render(<ChatWorkspace initialConversationId={null} onConversationCreated={navigate} services={fixture.api} workspaceId="workspace-1" workspaceName="Care" />);
+    const input=await screen.findByLabelText("Ask a question");
+    fireEvent.change(input,{target:{value:"What is the procedure?"}});fireEvent.keyDown(input,{key:"Enter"});
+    await waitFor(()=>expect(fixture.api.send).toHaveBeenCalledOnce());
+    expect(navigate).not.toHaveBeenCalled();
+    resolveSend({run_id:"run-1",status:"queued"});
+    await waitFor(()=>expect(navigate).toHaveBeenCalledExactlyOnceWith("conversation-1"));
+  });
+  it.each(["History is outside this pilot's scope.", "The request exceeds answer capacity; nothing was truncated.", "The answer could not be generated safely."])("omits legacy outcome badge for saved presentation: %s", async (text) => {
+    const fixture = services();
+    fixture.completed.messages![1].text = text;
+    fixture.completed.runs![0].answer = { id: "answer-1", outcome: "insufficient_evidence", presentation: "saved-message-v1", text, citations: [] };
+    fixture.api.get.mockResolvedValue(fixture.completed);
+    render(<ChatWorkspace initialConversationId="conversation-1" services={fixture.api} workspaceId="workspace-1" workspaceName="Care" />);
+    expect(await screen.findByText(text)).toBeTruthy();
+    expect(screen.queryByText("insufficient evidence")).toBeNull();
+    expect(screen.getByRole("status").textContent).toBe("Answer complete.");
+  });
+
+  it("settles a completed persisted submission without waiting for a missed SSE event or resending", async () => {
+    const fixture = services();
+    fixture.completed.runs![0].presentation = "saved-message-v1";
+    fixture.api.get.mockResolvedValue(fixture.completed);
+    const view = render(<ChatWorkspace initialConversationId={null} services={fixture.api} workspaceId="workspace-1" workspaceName="Care" />);
+    const input = await screen.findByLabelText("Ask a question");
+    fireEvent.change(input, { target: { value: "What is the current procedure?" } });
+    fireEvent.keyDown(input, { key: "Enter" });
+    await waitFor(() => expect(view.container.querySelector('[data-completion-path="persisted_state"]')).not.toBeNull());
+    expect(screen.queryByText("Sending your question…")).toBeNull();
+    expect(screen.getByRole("status").textContent).toBe("Answer complete.");
+    expect(fixture.api.send).toHaveBeenCalledOnce();
+    expect(fixture.api.subscribe).not.toHaveBeenCalled();
+  });
+
+  it("settles from persisted recovery after a lost terminal event and ignores late progress", async () => {
+    const fixture = services();
+    fixture.completed.runs![0].presentation = "saved-message-v1";
+    const view = render(<ChatWorkspace initialConversationId={null} services={fixture.api} workspaceId="workspace-1" workspaceName="Care" />);
+    const input = await screen.findByLabelText("Ask a question");
+    fireEvent.change(input, { target: { value: "What is the current procedure?" } });
+    fireEvent.keyDown(input, { key: "Enter" });
+    await waitFor(() => expect(fixture.api.subscribe).toHaveBeenCalledOnce());
+    fixture.disconnect();
+    await waitFor(() => expect(view.container.querySelector('[data-completion-path="persisted_recovery"]')).not.toBeNull());
+    fixture.emit({ sequence: 1, type: "run_progress", provisional: false, payload: {stage:"retrieving"} });
+    expect(screen.getByRole("status").textContent).toBe("Answer complete.");
+    expect(view.container.querySelector('[data-chat-pending="false"]')).not.toBeNull();
+    expect(fixture.api.send).toHaveBeenCalledOnce();
+  });
   it("renders canonical saved pilot text once with citations and no competing parts or notices", async () => {
     const fixture = services();
     const saved = "Wear gloves.\n\nUnanswered or unconfirmed parts\n\n- Earlier policy is outside current policy scope.\n- Location coverage not established for Cedar outreach.\n<script>not executable</script>";

@@ -107,7 +107,8 @@ def execute(binding):
         reserve(ledger,item['id'],sum(Decimal(v) for v in stages.values()),Decimal(binding['ceiling_usd']))
         durable(destination/'ledger.json',ledger)
         input_path=destination/(item['id']+'-browser-input.json')
-        durable(input_path, {**bound['browser_context'],'id':item['id'],'utterance':item['utterance']},True)
+        durable(input_path, {**bound['browser_context'],'id':item['id'],'utterance':item['utterance'],
+                             'run_timeout_seconds':bound['expected_preflight']['run_timeout_seconds']},True)
         output=destination/item['id']
         try:
             subprocess.run(['node', str(Path(__file__).with_name('browser-check.mjs')),str(output),str(input_path)], check=True,

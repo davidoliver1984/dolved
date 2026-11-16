@@ -200,6 +200,32 @@ export function ChatWorkspace({
   const transcript = useRef<HTMLDivElement>(null);
   const questionInput = useRef<HTMLTextAreaElement>(null);
   const provisionalPartsRef = useRef<AnswerPart[]>([]);
+  const mounted = useRef(true);
+  useEffect(() => {
+    mounted.current = true;
+    return () => { mounted.current = false; };
+  }, []);
+  const settledRun = useRef<string | null>(null);
+  const [completion, setCompletion] = useState<{ runId: string; path: string } | null>(null);
+
+  const settleSavedRun = useCallback((conversation: Conversation, runId: string, path: string) => {
+    const run = conversation.runs?.find((candidate) => candidate.id === runId);
+    if (!run || (run.presentation !== "saved-message-v1" && run.answer?.presentation !== "saved-message-v1")
+      || !["completed", "retrieval_no_answer", "clarification_required"].includes(run.status)
+      || !conversation.messages?.some((message) => message.id === run.assistant_message_id)) return false;
+    settledRun.current = runId;
+    setActive(conversation);
+    setBusy(false);
+    setProgress(null);
+    setError(null);
+    setProvisionalParts([]);
+    provisionalPartsRef.current = [];
+    setCompletedParts({});
+    setAnnouncement(run.status === "clarification_required" ? "Clarification required." : "Answer complete.");
+    setCompletion({ runId, path });
+    unsubscribe.current?.();
+    return true;
+  }, []);
 
   const refreshList = useCallback(async () => {
     const items = await services.list(workspaceId);
@@ -223,47 +249,27 @@ export function ChatWorkspace({
   );
 
   useEffect(() => {
-    let current = true;
-    void services
-      .list(workspaceId)
-      .then(async (items) => {
-        if (current) {
-          setConversations(items);
-          const selectedId = initialConversationId === undefined
-            ? items[0]?.id
-            : initialConversationId;
-          if (selectedId) {
-            setActive(await services.get(workspaceId, selectedId));
-          } else {
-            setActive(null);
-          }
-        }
-      })
-      .catch((caught) => current && setError(firstError(caught)))
-      .finally(() => current && setLoading(false));
-    return () => {
-      current = false;
-      unsubscribe.current?.();
-    };
-  }, [initialConversationId, refreshList, services, workspaceId]);
-
-  useEffect(() => {
     if (transcript.current) {
       transcript.current.scrollTop = transcript.current.scrollHeight;
     }
   }, [active?.messages, provisionalParts]);
 
   const finishRun = useCallback(
-    async (conversationId: string) => {
+    async (conversationId: string, runId: string) => {
+      const saved = await services.get(workspaceId, conversationId);
+      if (settleSavedRun(saved, runId, "sse")) {
+        await refreshList();
+        return;
+      }
       setBusy(false);
       setProgress(null);
       setProvisionalParts([]);
       provisionalPartsRef.current = [];
-      setActive(await services.get(workspaceId, conversationId));
+      setActive(saved);
       setCompletedParts({});
       await refreshList();
     },
-    [refreshList, services, workspaceId],
+    [refreshList, services, settleSavedRun, workspaceId],
   );
 
   const watchRun = useCallback(
@@ -274,6 +280,7 @@ export function ChatWorkspace({
         conversationId,
         runId,
         (event) => {
+          if (settledRun.current === runId) return;
           if (event.type === "run_progress") {
             const stage = String(event.payload.stage ?? "");
             const label = progressLabels[stage] ?? "Working on your answer…";
@@ -296,7 +303,7 @@ export function ChatWorkspace({
               [runId]: eventParts(event),
             }));
             setAnnouncement(event.type === "clarification_required" ? "Clarification required." : "Answer complete.");
-            void finishRun(conversationId).catch((caught) =>
+            void finishRun(conversationId, runId).catch((caught) =>
               setError(firstError(caught)),
             );
           } else if (event.type === "run_failed") {
@@ -306,13 +313,13 @@ export function ChatWorkspace({
               : timeoutFailureCodes.has(failureCode)
                 ? "Answer attempt timed out."
                 : "Answer could not be completed.");
-            void finishRun(conversationId).catch((caught) =>
+            void finishRun(conversationId, runId).catch((caught) =>
               setError(firstError(caught)),
             );
           } else if (event.type === "run_cancelled") {
             setError("Answer generation was cancelled. Your question remains in the conversation.");
             setAnnouncement("Answer generation cancelled.");
-            void finishRun(conversationId).catch((caught) =>
+            void finishRun(conversationId, runId).catch((caught) =>
               setError(firstError(caught)),
             );
           } else if (event.type === "authorization_revoked") {
@@ -326,14 +333,43 @@ export function ChatWorkspace({
           }
         },
         () => {
+          if (settledRun.current === runId) return;
+          void services.get(workspaceId, conversationId).then((saved) => {
+            settleSavedRun(saved, runId, "persisted_recovery");
+          }).catch((caught) => setError(firstError(caught)));
           setError("The live update connection was interrupted. Your conversation is safe and the connection is retrying.");
           setProgress("Reconnecting to live updates…");
           setAnnouncement("Live updates interrupted. Reconnecting.");
         },
       );
     },
-    [finishRun, services, workspaceId],
+    [finishRun, services, settleSavedRun, workspaceId],
   );
+
+  useEffect(() => {
+    let current = true;
+    void services.list(workspaceId).then(async (items) => {
+      if (!current) return;
+      setConversations(items);
+      const selectedId = initialConversationId === undefined ? items[0]?.id : initialConversationId;
+      if (!selectedId) { setActive(null); return; }
+      const saved = await services.get(workspaceId, selectedId);
+      if (!current) return;
+      setActive(saved);
+      const latest = saved.runs?.at(-1);
+      if (latest && !settleSavedRun(saved, latest.id, "persisted_state")
+        && latest.presentation === "saved-message-v1"
+        && ["queued", "contextualising", "retrieving", "generating"].includes(latest.status)) {
+        setBusy(true);
+        const label = progressLabels[latest.status] ?? "Working on your answer…";
+        setProgress(label);
+        setAnnouncement(label);
+        watchRun(selectedId, latest.id);
+      }
+    }).catch((caught) => current && setError(firstError(caught)))
+      .finally(() => current && setLoading(false));
+    return () => { current = false; unsubscribe.current?.(); };
+  }, [initialConversationId, services, settleSavedRun, watchRun, workspaceId]);
 
   const newConversation = async () => {
     setBusy(true);
@@ -356,15 +392,19 @@ export function ChatWorkspace({
     setBusy(true);
     setError(null);
     setProgress("Sending your question…");
+    unsubscribe.current?.();
+    settledRun.current = null;
+    setCompletion(null);
     setAnnouncement("Sending your question.");
     setProvisionalParts([]);
     provisionalPartsRef.current = [];
     try {
       let conversation = active;
+      let created = false;
       if (!conversation) {
         conversation = await services.create(workspaceId);
         setActive({ ...conversation, messages: [], runs: [] });
-        onConversationCreated?.(conversation.id);
+        created = true;
       }
       const receipt = await services.send(
         workspaceId,
@@ -372,9 +412,13 @@ export function ChatWorkspace({
         message,
         idempotencyKey(),
       );
+      if (created) onConversationCreated?.(conversation.id);
+      if (!mounted.current) return;
       setDraft("");
-      setActive(await services.get(workspaceId, conversation.id));
-      watchRun(conversation.id, receipt.run_id);
+      const saved = await services.get(workspaceId, conversation.id);
+      if (!mounted.current) return;
+      setActive(saved);
+      if (!settleSavedRun(saved, receipt.run_id, "persisted_state")) watchRun(conversation.id, receipt.run_id);
     } catch (caught) {
       setBusy(false);
       setProgress(null);
@@ -436,7 +480,7 @@ export function ChatWorkspace({
   const failedRuns = (active?.runs ?? []).filter((run) => run.status === "failed");
 
   return (
-    <section className={showConversationNavigation ? "grid min-h-[42rem] overflow-hidden rounded-xl border border-border bg-card lg:grid-cols-[18rem_1fr]" : "grid min-h-[42rem]"} aria-labelledby="chat-heading">
+    <section data-chat-pending={busy} data-chat-progress={progress ?? ""} data-completion-run={completion?.runId} data-completion-path={completion?.path} className={showConversationNavigation ? "grid min-h-[42rem] overflow-hidden rounded-xl border border-border bg-card lg:grid-cols-[18rem_1fr]" : "grid min-h-[42rem]"} aria-labelledby="chat-heading">
       {showConversationNavigation ? <aside className="border-r border-border bg-surface-raised p-4" aria-label="Conversations">
         <div className="flex items-start justify-between gap-3">
           <div>
@@ -472,7 +516,7 @@ export function ChatWorkspace({
       <div className="grid min-h-0 grid-rows-[auto_1fr_auto_auto] gap-4">
         {!showConversationNavigation ? <header className="mb-5"><p className="text-sm font-bold uppercase tracking-[0.14em] text-brand">Grounded chat</p><h1 className="mt-2 text-3xl font-semibold" id="chat-heading">Ask {workspaceName}</h1><p className="mt-2 text-sm text-foreground-muted">Answers use only evidence eligible for this workspace and question.</p></header> : null}
         {searchableDocumentCount !== undefined ? <KnowledgeReadinessPanel onAsk={focusQuestion} onChooseQuestion={chooseQuestion} searchableDocumentCount={searchableDocumentCount} starterQuestions={starterQuestions} workspaceId={workspaceId} /> : null}
-        <p aria-atomic="true" aria-live="polite" className="sr-only" role="status">{announcement}</p>
+        <p data-chat-announcement aria-atomic="true" aria-live="polite" className="sr-only" role="status">{announcement}</p>
         <div aria-busy={loading} className="grid min-h-96 content-start gap-4 overflow-y-auto rounded-xl border border-border bg-surface p-4 sm:p-6" ref={transcript}>
           {loading ? <div aria-label="Loading conversation" className="grid gap-4"><Skeleton className="h-20 w-3/4" /><Skeleton className="ml-auto h-16 w-2/3" /><Skeleton className="h-28 w-4/5" /></div> : null}
           {!loading && !(active?.messages?.length) ? (
@@ -486,7 +530,7 @@ export function ChatWorkspace({
               : undefined;
             return (
               <Card className={message.role === "user" ? "ml-auto w-fit max-w-[85%] border-brand/30 bg-brand/10 p-4" : "max-w-[92%] p-4"} key={message.id}>
-                <div className="mb-2 flex items-center gap-2"><p className="text-xs font-bold uppercase tracking-[0.12em] text-foreground-muted">{message.role === "user" ? "You" : "Dolved"}</p>{run?.answer?.outcome ? <StatusBadge status={run.answer.outcome === "answered" ? "success" : "warning"}>{run.answer.outcome.replaceAll("_", " ")}</StatusBadge> : null}</div>
+                <div className="mb-2 flex items-center gap-2"><p className="text-xs font-bold uppercase tracking-[0.12em] text-foreground-muted">{message.role === "user" ? "You" : "Dolved"}</p>{!savedPresentation && run?.answer?.outcome ? <StatusBadge status={run.answer.outcome === "answered" ? "success" : "warning"}>{run.answer.outcome.replaceAll("_", " ")}</StatusBadge> : null}</div>
                 {savedPresentation ? <>
                   <p className="whitespace-pre-wrap leading-7" data-canonical-answer>{message.text}</p>
                   {run?.answer?.citations?.length ? <ol aria-label="Answer sources" className="mt-3 flex flex-wrap gap-2">

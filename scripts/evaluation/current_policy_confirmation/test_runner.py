@@ -60,10 +60,10 @@ class RunnerTests(unittest.TestCase):
             manifest.write_text(json.dumps({'items':[{'id':'D1','utterance':'Synthetic question'}], 'evaluated_at_assumption':'fixed'}))
             binding={'provider_free':True,'manifest':str(manifest),'manifest_sha256':runner.digest(manifest),
                      'deadline_epoch':9999999999,
-                     'destination':str(root/'run'),'ceiling_usd':'10','preflight_command':['controlled'], 'items':{'D1':{'actor':'test','expected_preflight':{},'maximum_liability_by_stage':{
+                     'destination':str(root/'run'),'ceiling_usd':'10','preflight_command':['controlled'], 'items':{'D1':{'actor':'test','expected_preflight':{'run_timeout_seconds':900},'maximum_liability_by_stage':{
                          'planning_including_intrinsic_calls':'1','retrieval_including_retries':'2','generation':'3'},
                          'browser_context':{'controlled':True,'workspace':'test'}}}}
-            with patch('runner.verify'),patch('runner.subprocess.run',side_effect=[SimpleNamespace(stdout='{}'),RuntimeError('controlled stop')]):
+            with patch('runner.verify'),patch('runner.subprocess.run',side_effect=[SimpleNamespace(stdout='{"run_timeout_seconds":900}'),RuntimeError('controlled stop')]):
                 with self.assertRaises(RuntimeError):runner.execute(binding)
                 row=json.loads((root/'run/ledger.json').read_text())[0]
                 self.assertEqual(row['liability_usd'],'6')

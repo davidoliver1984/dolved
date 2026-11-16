@@ -8,7 +8,10 @@ if (! app()->environment('testing') || config('database.connections.pgsql.host')
     throw new RuntimeException('Disposable test database required.');
 }
 config(['queue.connections.conversation.driver' => 'sync']);
-Carbon\CarbonImmutable::setTestNow('2026-11-16T12:00:00Z');
+// Match the existing product Compose contract used by Next's cookie allowlist.
+config(['session.cookie' => 'rag-platform-session']);
+// The HTTP fixture uses the real clock: frozen past time would expire browser
+// session cookies before the test starts. Source fixtures remain current.
 $file = '/tmp/stop3-fixtures.json';
 if (PHP_SAPI === 'cli' && ($argv[1] ?? '') === 'seed') {
     $fixtures = [];
@@ -42,7 +45,11 @@ if (PHP_SAPI === 'cli' && ($argv[1] ?? '') === 'describe') {
 }
 config(['conversation.current_policy_workspace_ids' => array_column($fixtures, 'workspace')]);
 $request = Illuminate\Http\Request::capture();
-$fixture = collect($fixtures)->first(fn ($f) => str_contains($request->path(), $f['workspace']));
+$fixture = collect($fixtures)->first(fn ($f) => PHP_SAPI === 'cli' && ($argv[1] ?? '') === 'execute'
+    ? $f['workspace'] === ($argv[3] ?? null) : str_contains($request->path(), $f['workspace']));
+// Standalone disposable fixture only: one-shot job delivery, not a running worker.
+$async = ($fixture['async'] ?? false) === true;
+if ($async) { Illuminate\Support\Facades\Queue::fake(); }
 Illuminate\Support\Facades\Http::preventStrayRequests();
 $indices = [];
 Illuminate\Support\Facades\Http::fake(function ($r) use ($fixture, &$indices) {
@@ -53,14 +60,26 @@ Illuminate\Support\Facades\Http::fake(function ($r) use ($fixture, &$indices) {
     if (! isset($matches[$index])) {
         throw new RuntimeException('Unexpected controlled provider request.');
     }
-    file_put_contents('/tmp/stop3-provider-boundary.ndjson', json_encode(['workspace' => $fixture['workspace'], 'path' => $path])."\n", FILE_APPEND | LOCK_EX);
+    file_put_contents('/tmp/stop3-provider-boundary.ndjson', json_encode(['workspace' => $fixture['workspace'], 'path' => $path,
+        'run_id' => PHP_SAPI === 'cli' && ($GLOBALS['argv'][1] ?? '') === 'execute' ? (int) $GLOBALS['argv'][2] : null])."\n", FILE_APPEND | LOCK_EX);
+    if (str_ends_with($path, '/current-policy-answer')) { usleep((int) ($fixture['delay_ms'] ?? 0) * 1000); }
     $body = $matches[$index]['body'];
     if (isset($body['request_id'])) {
         $body['request_id'] = $r->data()['request_id'];
     }
     return Illuminate\Support\Facades\Http::response($body, $matches[$index]['status']);
 });
+if (PHP_SAPI === 'cli' && ($argv[1] ?? '') === 'execute') {
+    app(App\Actions\Conversation\OrchestrateConversationRun::class)->handle((int) $argv[2]);
+    exit;
+}
 $kernel = $app->make(Illuminate\Contracts\Http\Kernel::class);
 $response = $kernel->handle($request);
+if ($async && $request->isMethod('post') && str_ends_with($request->path(), '/messages') && $response->getStatusCode() === 202) {
+    $publicId = json_decode($response->getContent(), true)['data']['run_id'];
+    $run = App\Models\GenerationRun::where('public_id', $publicId)->firstOrFail();
+    $command = escapeshellarg(PHP_BINARY).' '.escapeshellarg(__FILE__).' execute '.(int) $run->id.' '.escapeshellarg($fixture['workspace']).' > /tmp/stop3a-job-'.(int) $run->id.'.log 2>&1 &';
+    exec($command);
+}
 $response->send();
 $kernel->terminate($request, $response);
