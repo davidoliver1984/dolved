@@ -5,11 +5,17 @@ declare(strict_types=1);
 // Future release only: read-only mount this directory; separate bound writable
 // evidence journal + health paths. Never registered in the serving application.
 require '/app/vendor/autoload.php';
-require __DIR__.'/worker_observer.php';
 $config = json_decode(file_get_contents($argv[1]), true, flags: JSON_THROW_ON_ERROR);
 if (($config['workspace_id'] ?? null) !== '5323cd6b-8b7a-40f9-98b0-9413c75f643e' || count($argv) !== 2) {
     throw new RuntimeException('observer evaluation boundary');
 }
+if (array_keys($config['source_files'] ?? []) !== ['observed_worker.php', 'worker_observer.php']) {
+    throw new RuntimeException('observer source binding');
+}
+foreach ($config['source_files'] as $name => $digest) {
+    if (hash_file('sha256', __DIR__.'/'.$name) !== $digest) { throw new RuntimeException('observer mounted source drift'); }
+}
+require __DIR__.'/worker_observer.php';
 $app = require '/app/bootstrap/app.php';
 $kernel = $app->make(Illuminate\Contracts\Console\Kernel::class);
 $kernel->bootstrap();

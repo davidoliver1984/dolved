@@ -328,3 +328,24 @@ def verify_shutdown(spec, destination, save):
             fail('shutdown_unreconciled_capture')
         unchanged(last['verified_journal_inventory'], hashes(rows))
     save(Path(destination)/'observer-shutdown.json', {'worker_stop_verified': True, 'journal': hashes(rows), 'capture': hashes(caps)}, True)
+
+
+def verify_startup(spec, deadline, destination, save):
+    """No reservation/submission before a complete, healthy worker start."""
+    until = min(deadline, time.time() + 5)
+    last = 'missing_worker_start'
+    stable = None
+    while time.time() < until:
+        try:
+            rows, jobs, requests, active, stopped = journal(spec)
+            if jobs or requests or active is not None or stopped or len(rows) != 1 or inventory(spec['capture']):
+                fail('unexpected_startup_activity')
+            current = hashes(rows)
+            if current == stable:
+                save(Path(destination)/'observer-startup.json', {'worker_start_verified': True, 'journal': current, 'before_item_reservation': True}, True)
+                return
+            stable = current
+        except Pending as error:
+            last = error.code; stable = None
+        time.sleep(min(.05, max(0, until - time.time())))
+    raise CaptureError(last)

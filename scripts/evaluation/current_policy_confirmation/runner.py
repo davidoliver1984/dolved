@@ -88,6 +88,18 @@ def safe_item_outcome(saved):
 def prepare_destination(binding):
     """Retain reviewed Phase A files; never erase operational state."""
     destination = Path(binding['destination'])
+    if binding.get('prepared_empty_destination'):
+        spec = binding.get('native_capture') or {}
+        names = {'capture','observer-journal','observer-health'}
+        if destination.is_symlink() or destination.resolve() != destination or not destination.is_dir():
+            raise ValueError('invalid prepared operational destination')
+        if {p.name for p in destination.iterdir()} != names:
+            raise ValueError('prior or unexpected operational state')
+        for key,name in [('capture','capture'),('journal','observer-journal'),('health','observer-health')]:
+            p=destination/name
+            if Path(spec.get(key,'')) != p or p.is_symlink() or not p.is_dir() or any(p.iterdir()):
+                raise ValueError('native operational directories not fresh')
+        return destination
     if not binding.get('preparation_files'):
         destination.mkdir(exist_ok=False)
         return destination
@@ -154,6 +166,13 @@ def execute(binding):
         durable(destination/'worker-timing.json',{'worker_start_epoch':started,'deadline_epoch':binding['deadline_epoch']},True)
         try:
             subprocess.run(binding['worker_start_command'],check=True)
+            if binding.get('native_capture'):
+                from native_capture import verify_startup
+                try:
+                    verify_startup(binding['native_capture'], binding['deadline_epoch'], destination, durable)
+                except Exception as error:
+                    durable(destination/'observer-startup-halt.json', {'code':getattr(error,'code','observer_startup_failure')}, True)
+                    raise
             execute_items(binding,manifest,destination)
         finally:
             subprocess.run(binding['worker_stop_command'],check=True)

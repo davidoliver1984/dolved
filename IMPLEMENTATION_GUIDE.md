@@ -16855,3 +16855,48 @@ Nine actual Laravel-event fixture shapes passed, comparing unchanged requests an
 responses;15 focused Python reconciler tests passed in disposable network-none
 containers. No provider or evaluation-worker call. Correction committed separately
 before one-S1 integration preparation; no application or retry-policy change.
+
+### 2026-11-17 — One-S1 observer integration preparation (no live execution)
+
+Prepared `observer-integration-01/` under the external current-policy pilot package.
+The unchanged S1 is selected from the hash-verified smoke-01 input; no expectations
+or sealed material are used. The separate empty-receipt correction is 4060806.
+Application e014ff9 and its runtime manifest aa51e4a0…195bf remain unchanged.
+
+Harness additions bind the real observed-worker console entrypoint, read-only
+observer sources/config, and separate writable journal/health directories. The
+wrapper verifies both observer source hashes before bootstrap. Resolved commands
+exclude governance queues; future-worker inspection does not create a worker.
+After any later authorised start, actual image/environment/mounts and the complete
+healthy startup journal must verify before item reservation or submission. The
+startup wait is at most five seconds within, not added to, the overall deadline.
+Separate empty operational directories are accepted without moving preparation
+files into execution evidence. Existing one-use, liability and shutdown checks
+remain; all native captures require exact journal/receipt attribution.
+
+43 focused Python harness tests pass in a disposable network-none container,
+including actual Laravel-hook journal reconciliation, empty-boundary recovery
+halts, count 1 versus 0/2, startup ordering, mount/queue negatives and cleanup.
+Nine actual Laravel-hook shapes were verified for the separate correction.
+Three PHP syntax checks and the existing browser deadline tests pass. Actual
+Next.js read-only login/workspace and persisted-conversation reload checks pass;
+zero questions submitted. This is not live worker/AI-writer integration evidence.
+No unrelated application suite was rerun.
+
+Only AI was recreated to move capture into the fresh package. The sparse cache
+was copied and hash-verified first, restored with its permissions, then loaded
+offline with network denial: zero network attempts and zero encoded questions.
+API/web remain unchanged. Context/index and adapter v2/v3 checks pass; all 17
+governance jobs are unchanged, the conversation queue is empty and consumers are
+stopped. Temporary cache staging was removed after successful restoration.
+
+One-item liability recomputes to USD2.27768288 against the proposed USD5 ceiling.
+Proposed release bounds: 30 minutes from worker start, 20 from first submission,
+900-second backend plus 15-second delivery allowance, calendar cutoff
+2026-12-31 23:59 Europe/London. No clock is started during preparation. The reviewed
+host-awake wrapper is bound for later execution only; it cannot protect against
+lid closure, power loss or authorise a run. The final external Phase A report and
+checksums bind the local tooling commit, runtime, deployment and future worker.
+No provider calls, operational authorisation, worker start, push or merge.
+Stop for narrow review and David's explicit one-use release. Sealed confirmation
+remains blocked on live integration plus its separate neutral attestations/release.
