@@ -57,6 +57,10 @@ PLAN_KEYS = frozenset(
         "at",
         "decision",
         "schema_version",
+        "requested_information",
+        "current_spans",
+        "history_spans",
+        "supports_need_id",
     }
 )
 GENERATION_KEYS = frozenset(
@@ -111,6 +115,8 @@ class Capture:
     normalized: int | None = None
     relation_normalized: int | None = None
     events: int = 0
+    scope_events: list = field(default_factory=list)
+    scope_events_truncated: bool = False
     invocation_id: str = field(default_factory=lambda: str(uuid4()))
 
     def write(self, event: dict):
@@ -132,6 +138,8 @@ class Capture:
         if len(data) > 131072:
             record["proposed"] = None
             record["validator_input"] = None
+            record["scope_diagnostics"] = []
+            record["scope_diagnostics_truncated"] = True
             record["unavailable"] = ["proposal_exceeded_capture_bound"]
             data = json.dumps(record).encode()
         try:
@@ -191,6 +199,76 @@ def planner_begin(attempt):
         capture.validator_input = None
         capture.normalized = None
         capture.relation_normalized = None
+        capture.scope_events = []
+        capture.scope_events_truncated = False
+
+
+def scope_diagnostic(
+    stage,
+    outcome,
+    need=None,
+    *,
+    reason=None,
+    path=None,
+    parsed=False,
+    errors=(),
+    origin=None,
+    roots=(),
+):
+    """Observe existing validation only; no new validation or application result."""
+    if not (capture := _ACTIVE.get()):
+        return
+    if len(capture.scope_events) >= 32:
+        capture.scope_events_truncated = True
+        return
+    row = {
+        "stage": stage,
+        "outcome": outcome,
+        "reason": reason,
+        "field": _text(path, 200) if path else None,
+        "need_id": _text(str(need.get("need_id")), 100) if need else None,
+        "originating_need_id": _text(origin, 100) if origin else None,
+        "root_need_ids": [_text(x, 100) for x in sorted(roots)[:3]],
+    }
+    if need is not None:
+        fields = {}
+        invalid_fields = {str(e["loc"][0]) for e in errors if e.get("loc")}
+        for key in (
+            "requested_information",
+            "current_spans",
+            "history_spans",
+            "question_span",
+            "context_spans",
+            "supports_need_id",
+        ):
+            value = need.get(key)
+            safe = _allow(value, PLAN_KEYS)
+            state = (
+                "absent"
+                if key not in need
+                else "null"
+                if value is None
+                else "malformed"
+                if key in invalid_fields
+                else "validly_parsed"
+                if parsed
+                else "not_validated"
+            )
+            fields[key] = {
+                "state": state,
+                "value": safe,
+                "bounded_or_redacted": safe != value,
+            }
+        row["fields"] = fields
+        row["schema_errors"] = [
+            {
+                "code": _text(str(e["type"]), 100),
+                "field": _text(".".join(str(x) for x in e["loc"]), 200),
+            }
+            for e in errors[:16]
+        ]
+        row["schema_errors_truncated"] = len(errors) > 16
+    capture.scope_events.append(row)
 
 
 def planner_proposal(decoded):
@@ -219,6 +297,16 @@ def relation_normalized(count):
 
 def planner_end(status, validation=None):
     if capture := _ACTIVE.get():
+        if (
+            status == "rejected"
+            and capture.scope_events
+            and capture.scope_events[-1]["outcome"] == "started"
+        ):
+            capture.scope_events[-1] = {
+                **capture.scope_events[-1],
+                "outcome": "failed",
+                "validation": safe_validation(validation),
+            }
         capture.write(
             {
                 "status": status,
@@ -227,6 +315,8 @@ def planner_end(status, validation=None):
                 if status == "rejected"
                 else None,
                 "validation": safe_validation(validation),
+                "scope_diagnostics": capture.scope_events,
+                "scope_diagnostics_truncated": capture.scope_events_truncated,
                 "explanation": "Planner validation rejected the proposed fields."
                 if status == "rejected"
                 else None,

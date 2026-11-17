@@ -1,5 +1,29 @@
 # RAG Platform Implementation Guide
 
+## 2026-11-17 — Smoke-02 S2 scope diagnosis (provider-free)
+
+Smoke-02 remains failed. From executed HEAD `388bf12`, S2's two recovered needs
+both carry direct `invalid_scope`, not dependency-derived quarantine. Original
+scope annotations were excluded from retained capture, so the exact invariant
+cannot be reconstructed. Neither proposed model-output hypothesis is established.
+
+Extended existing evaluation-only planner capture with per-attempt scope field
+states, closed validator reasons/stages, and direct/dependency recovery provenance.
+Validation predicates, order, external errors, prompts and retry limits remain
+unchanged. No product fix or deployment. API/AI bind-mount these sources: a later
+coordinated deployment and new freeze are required before any execution.
+
+Focused isolated `--network none` pytest comparison: 35 baseline tests passed;
+54 final tests passed, failure identities both empty. Capture-on/off real planner
+transport fixtures preserve complete results, payloads and retry counts. Scoped
+Ruff lint/format passed after correcting new import/closure warnings; original
+logs retained. No unrelated full suites were run and no live calls were made.
+
+Evidence: `~/Desktop/dolved-experiments/current-policy-pilot-20261116/smoke-02-scope-diagnostics-01/`.
+No changes to generation, citation presentation or speculative qualification
+lists; those reviewer observations remain separate. Stop for review. No later
+live diagnostic authority, smoke-03 or sealed confirmation is prepared.
+
 ## 2026-11-17 — Smoke-02 deployment and Phase A preparation
 
 David authorised preparation only. Correction `47d86fd` is deployed to the

@@ -5,6 +5,7 @@ from typing import Literal
 
 from pydantic import Field, ValidationError
 
+from app.evaluation_capture import scope_diagnostic
 from app.retrieval.needs import (
     CatalogueFamily,
     EvidenceNeed,
@@ -169,27 +170,108 @@ def parse_policy_plan(
     recover: bool,
 ) -> CurrentPolicyPlan:
     # All base, identity, provenance and reference checks precede local recovery.
+    scope_diagnostic("base_schema", "started")
     base = base_plan(value)
+    scope_diagnostic("base_schema", "accepted")
+    scope_diagnostic("base_grounding", "started")
     base.validate_grounding(turns, require_order=False, evaluated_at=evaluated_at)
+    scope_diagnostic("base_grounding", "accepted")
+    scope_diagnostic("base_catalogue", "started")
     base.validate_catalogue(catalogue, turns)
+    scope_diagnostic("base_catalogue", "accepted")
+    scope_diagnostic("base_execution", "started")
     base.execution_plan()
+    scope_diagnostic("base_execution", "accepted")
     parsed = deepcopy(value)
     invalid = set()
+    origins = {}
     for need in parsed["needs"]:
         if "scope_error" in need:
+            scope_diagnostic(
+                "scope_integrity",
+                "rejected",
+                need,
+                reason="provider_scope_error",
+                path="scope_error",
+            )
             raise ValueError("provider cannot assert application scope disposition")
+        scope_parsed = False
         try:
-            validate_scope(CurrentPolicyNeed.model_validate(need))
-        except ValidationError, ValueError:
+            validated = CurrentPolicyNeed.model_validate(need)
+            scope_parsed = True
+            validate_scope(validated)
+        except (ValidationError, ValueError) as error:
+            errors = (
+                error.errors(include_input=False, include_context=False)
+                if isinstance(error, ValidationError)
+                else []
+            )
+            rules = {
+                "invalid scope annotation": (
+                    "scope_annotation_missing",
+                    "requested_information",
+                ),
+                "partition only permitted for mixed scope": (
+                    "non_mixed_partition",
+                    "current_spans.history_spans",
+                ),
+                "current request has incompatible authority": (
+                    "current_authority_incompatible",
+                    "authority.operation",
+                ),
+                "mixed scope requires both partitions": (
+                    "mixed_partition_missing",
+                    "current_spans.history_spans",
+                ),
+                "partition capacity exceeded": (
+                    "partition_capacity",
+                    "current_spans.history_spans",
+                ),
+                "partition must identify one exact clause": (
+                    "partition_not_exact_clause",
+                    "current_spans.history_spans",
+                ),
+                "duplicate or overlapping clauses": (
+                    "partition_overlap",
+                    "current_spans.history_spans",
+                ),
+                "historical clause in current context": (
+                    "history_in_current_context",
+                    "context_spans",
+                ),
+                "current projection loses grounded restriction": (
+                    "projection_loses_restriction",
+                    "applicability.fact_reference.claim_under_test",
+                ),
+            }
+            reason, path = (
+                ("scope_field_schema", "scope_fields")
+                if errors
+                else rules.get(
+                    str(error), ("scope_invariant_unavailable", "scope_fields")
+                )
+            )
+            scope_diagnostic(
+                "scope_fields" if errors else "scope_annotation",
+                "quarantined_direct" if recover else "rejected",
+                need,
+                reason=reason,
+                path=path,
+                parsed=scope_parsed,
+                errors=errors,
+            )
             if not recover:
                 raise ValueError("invalid scope annotation") from None
             invalid.add(need["need_id"])
+            origins[need["need_id"]] = {need["need_id"]}
             need.update(
                 requested_information=None,
                 current_spans=[],
                 history_spans=[],
                 scope_error="invalid_scope",
             )
+        else:
+            scope_diagnostic("scope_annotation", "accepted", need, parsed=True)
     # Never recover a need whose interpretation depends on a quarantined neighbour.
     changed = True
     while changed:
@@ -199,6 +281,17 @@ def parse_policy_plan(
                 if not recover:
                     raise ValueError("dependent invalid scope")
                 invalid.add(need["need_id"])
+                origins[need["need_id"]] = origins[need["supports_need_id"]]
+                scope_diagnostic(
+                    "scope_dependency",
+                    "quarantined_dependency",
+                    need,
+                    reason="prerequisite_quarantined",
+                    path="supports_need_id",
+                    parsed=True,
+                    origin=need["supports_need_id"],
+                    roots=origins[need["need_id"]],
+                )
                 need.update(
                     requested_information=None,
                     current_spans=[],
@@ -206,7 +299,10 @@ def parse_policy_plan(
                     scope_error="dependent_scope",
                 )
                 changed = True
-    return CurrentPolicyPlan.model_validate(parsed)
+    scope_diagnostic("recovery_schema" if recover else "final_schema", "started")
+    result = CurrentPolicyPlan.model_validate(parsed)
+    scope_diagnostic("recovery_schema" if recover else "final_schema", "accepted")
+    return result
 
 
 def dispositions(plan: CurrentPolicyPlan) -> list[dict]:
