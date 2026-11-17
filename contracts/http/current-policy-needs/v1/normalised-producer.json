@@ -50,8 +50,8 @@
       "model": "test",
       "contract_schema_version": "current-policy-needs-v1",
       "prompt_version": "current-policy-scope-v1",
-      "adapter_version": "structured-current-policy-v2",
-      "fingerprint": "3498238de716ecc214399a8dd1f5f840efe05a6eeca6ee69a8e801ef57d5822c"
+      "adapter_version": "structured-current-policy-v3",
+      "fingerprint": "deddc80af87dc60fe88bb3926c9ee3ef72878eca64ad42ad9f2f0f837e4f18d9"
     },
     "usage": {
       "stage": "planner",
@@ -154,8 +154,8 @@
       "model": "test",
       "contract_schema_version": "current-policy-needs-v1",
       "prompt_version": "current-policy-scope-v1",
-      "adapter_version": "structured-current-policy-v2",
-      "fingerprint": "3498238de716ecc214399a8dd1f5f840efe05a6eeca6ee69a8e801ef57d5822c"
+      "adapter_version": "structured-current-policy-v3",
+      "fingerprint": "deddc80af87dc60fe88bb3926c9ee3ef72878eca64ad42ad9f2f0f837e4f18d9"
     },
     "usage": {
       "stage": "planner",
@@ -294,8 +294,8 @@
       "model": "test",
       "contract_schema_version": "current-policy-needs-v1",
       "prompt_version": "current-policy-scope-v1",
-      "adapter_version": "structured-current-policy-v2",
-      "fingerprint": "3498238de716ecc214399a8dd1f5f840efe05a6eeca6ee69a8e801ef57d5822c"
+      "adapter_version": "structured-current-policy-v3",
+      "fingerprint": "deddc80af87dc60fe88bb3926c9ee3ef72878eca64ad42ad9f2f0f837e4f18d9"
     },
     "usage": {
       "stage": "planner",
@@ -415,8 +415,8 @@
       "model": "test",
       "contract_schema_version": "current-policy-needs-v1",
       "prompt_version": "current-policy-scope-v1",
-      "adapter_version": "structured-current-policy-v2",
-      "fingerprint": "3498238de716ecc214399a8dd1f5f840efe05a6eeca6ee69a8e801ef57d5822c"
+      "adapter_version": "structured-current-policy-v3",
+      "fingerprint": "deddc80af87dc60fe88bb3926c9ee3ef72878eca64ad42ad9f2f0f837e4f18d9"
     },
     "usage": {
       "stage": "planner",

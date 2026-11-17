@@ -1,5 +1,29 @@
 # RAG Platform Implementation Guide
 
+## 2026-11-17 — Scope coverage tightening and smoke-03 preparation boundary
+
+David approved tightening redundant-span clearing to complete lexical coverage.
+Original offsets are retained; only str.isspace or Unicode P* punctuation may be
+uncovered. Symbols, letters, digits, marks and format controls prevent clearing.
+The bounded refused/lexical_content_uncovered diagnostic preserves original fields
+and external non_mixed_partition behaviour. Adapter v3 is coordinated across Python,
+PHP and active fixtures; no prompt, schema, authority or retry change.
+
+Focused provider-free verification: 83 Python cases, 12 PHP cases and nine exporter/
+control tests pass. Seven reconstructed retained envelopes pass; D1-R1 attempt 2
+and D2-R1 attempt 2 retain rejection, with existing recovery. These are not complete
+original producer outputs or live checker acceptance. The previous full-suite
+evidence remains unchanged. David reports the reviewer independently reran the
+three additional Laravel storage-error cases successfully; that is reviewer-reported,
+not a Codex rerun. No full-suite rerun is claimed for this narrow tightening.
+
+Smoke-03 Phase A evidence is published separately at
+`~/Desktop/dolved-experiments/current-policy-pilot-20261116/smoke-03/`. The package
+records actual deployment/cache/readiness/freeze results, including any halt; this
+entry does not predeclare deployment success. Same six questions and criteria,
+no worker, provider call, question or operational authorisation. Smoke-02 remains
+FAILED. Review and explicit Phase B approval are required before execution.
+
 ## 2026-11-17 — Bounded redundant scope normalisation (provider-free)
 
 From `abfccd3a44ae88cae1f2d5a49de8ddeb626517e0`, canonicalise only matching

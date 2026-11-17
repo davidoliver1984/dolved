@@ -42,9 +42,7 @@ def parse(v, turns, recover=False):
 
 
 @pytest.mark.parametrize("kind", ["current_policy", "history"])
-@pytest.mark.parametrize(
-    "quote", [None, "inspection register", "Who signs the inspection register today?"]
-)
+@pytest.mark.parametrize("quote", [None, "Who signs the inspection register today?"])
 def test_only_matching_list_changes(kind, quote, tmp_path, monkeypatch):
     v, turns = sample(kind)
     field = "current_spans" if kind == "current_policy" else "history_spans"
@@ -203,7 +201,8 @@ def test_independent_normalised_need_survives_cross_need_grounding_and_dependenc
 def test_normalisation_capture_scope_and_multiple_spans(tmp_path, monkeypatch, mode):
     v, turns = sample()
     v["needs"][0]["current_spans"] = [
-        {"turn_id": "u1", "quote": q} for q in ("Who signs", "inspection register")
+        {"turn_id": "u1", "quote": q}
+        for q in ("Who signs the", "inspection register today")
     ]
     with capture.capture_scope(
         settings(tmp_path, monkeypatch, mode != "disabled"),
@@ -225,6 +224,53 @@ def test_normalisation_capture_scope_and_multiple_spans(tmp_path, monkeypatch, m
             ]
             == 2
         )
+
+
+@pytest.mark.parametrize("kind", ["current_policy", "history"])
+@pytest.mark.parametrize(
+    "text,quotes,accepted",
+    [
+        ("Who approves checks?", ["Who approves checks?"], True),
+        ("Who approves — and who records?", ["Who approves", "and who records"], True),
+        ("(Who approves)\t;\n[who records]！", ["Who approves", "who records"], True),
+        ("Who approves urgent checks?", ["Who approves", "checks"], False),
+        ("Who approves 2026 checks?", ["Who approves", "checks"], False),
+        ("Who approves + checks?", ["Who approves", "checks"], False),
+        ("Who approves £ checks?", ["Who approves", "checks"], False),
+        (
+            "Who approves checks now and who did before?",
+            ["Who approves checks now"],
+            False,
+        ),
+        ("Who approves\u200bchecks?", ["Who approves", "checks"], False),
+    ],
+)
+def test_complete_lexical_coverage_only(
+    kind, text, quotes, accepted, tmp_path, monkeypatch
+):
+    v, turns = sample(kind, text)
+    field = "current_spans" if kind == "current_policy" else "history_spans"
+    v["needs"][0][field] = [{"turn_id": "u1", "quote": q} for q in quotes]
+    original = deepcopy(v)
+    with capture.capture_scope(
+        settings(tmp_path, monkeypatch), capture.WORKSPACE, str(uuid4()), "planner"
+    ):
+        capture.planner_begin(1)
+        if accepted:
+            p = parse(v, turns)
+            assert getattr(p.needs[0], field) == ()
+        else:
+            with pytest.raises(ValueError, match="invalid scope annotation"):
+                parse(v, turns)
+        capture.planner_end("accepted" if accepted else "rejected")
+    assert v == original
+    events = json.loads(next(tmp_path.glob("*.json")).read_text())["scope_diagnostics"]
+    if not accepted:
+        refusal = next(e for e in events if e["reason"] == "lexical_content_uncovered")
+        assert refusal["outcome"] == "refused"
+        assert refusal["fields"][field]["value"] == original["needs"][0][field]
+        assert events[-1]["reason"] == "non_mixed_partition"
+        assert parse(v, turns, True).needs[0].scope_error == "invalid_scope"
 
 
 def produce(v, turns, monkeypatch):

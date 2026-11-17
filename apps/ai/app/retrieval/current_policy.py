@@ -1,5 +1,6 @@
 """Current-policy scope projection; does not resolve authority or answerability."""
 
+import unicodedata
 from copy import deepcopy
 from typing import Literal
 
@@ -19,7 +20,7 @@ from app.retrieval.needs import (
 
 CONTRACT = "current-policy-needs-v1"
 PROMPT_VERSION = "current-policy-scope-v1"
-ADAPTER_VERSION = "structured-current-policy-v2"
+ADAPTER_VERSION = "structured-current-policy-v3"
 SCOPE_FIELDS = {
     "requested_information",
     "current_spans",
@@ -189,6 +190,24 @@ def canonical_scope(need: CurrentPolicyNeed) -> tuple[CurrentPolicyNeed, str | N
         if any(start < b and a < end for a, b in intervals):
             return need, None
         intervals.append((start, end))
+    # Offsets refer to the unchanged original text. Only Unicode whitespace
+    # (str.isspace) and Unicode punctuation (General_Category P*) may be gaps.
+    # Letters, numbers, symbols, marks and format/control characters must be covered.
+    if any(
+        not any(start <= i < end for start, end in intervals)
+        and not character.isspace()
+        and not unicodedata.category(character).startswith("P")
+        for i, character in enumerate(text)
+    ):
+        scope_diagnostic(
+            "scope_normalisation",
+            "refused",
+            need.model_dump(mode="json"),
+            reason="lexical_content_uncovered",
+            path=field,
+            parsed=True,
+        )
+        return need, None
     return need.model_copy(update={field: ()}), field
 
 

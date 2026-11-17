@@ -64,8 +64,8 @@
     "model": "test-model",
     "contract_schema_version": "current-policy-needs-v1",
     "prompt_version": "current-policy-scope-v1",
-    "adapter_version": "structured-current-policy-v2",
-    "fingerprint": "30d08843ac7f3f3756de0fd0463d2f1b1f46d668ed133f5a66ebc506f0f8a46f"
+    "adapter_version": "structured-current-policy-v3",
+    "fingerprint": "6775867e7fa189695607cd178a3274402770550f22965ec996a9ee8bdce8f800"
   },
   "usage": {
     "stage": "planner",
