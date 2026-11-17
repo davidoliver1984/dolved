@@ -1,5 +1,37 @@
 # RAG Platform Implementation Guide
 
+## 2026-11-17 — Planner-only scope diagnostic Phase A
+
+Prepared the fixed six-question/18-invocation development diagnostic from
+diagnostics commit `89268fd21f2c8fa108db9a74e645716303e8f8ee`. Smoke-02 remains
+failed. No question/provider call, worker or operational authority was created.
+
+Standalone preparation tooling calls the real signed `RetrievalClient::planNeeds`
+with the server profile and authorised context, then stops before downstream work.
+It reuses durable records, exclusive consumption and reservation helpers. Scope
+capture must reconcile per native attempt; incomplete/uncertain records halt.
+
+API/AI were coherently recreated with explicit no-dependency/no-build/no-pull
+operations after sparse-cache backup/hash verification. Restored cache loaded
+offline in the new serving AI with zero networking and question encoding.
+Capture points to a new package; web was not changed or exercised, workers stay
+stopped. Migration status was read-only with no pending migrations.
+
+Provider-free evidence: nine runner/capture tests; actual Laravel signed boundary
+test (26 assertions) with no downstream calls or conversation/usage persistence;
+54 AI scope/capture tests. The initial PHP fixture lacked hybrid verification
+metadata; corrected only that synthetic fixture and preserved its failure log.
+No full-suite claim. Fresh conservative reservation is USD 18.589824 for all 18
+slots, below USD 25. Proposed calendar cutoff: 2026-11-20 18:00 Europe/London;
+first-dispatch 60-minute clock remains unset until separately authorised execution.
+The initial USD 13.263552 estimate used the API body bound for planner input;
+the final bound instead reserves the full same-model context for the complete
+planner prompt, retaining the earlier calculation as superseded evidence.
+
+Evidence and final release hashes:
+`~/Desktop/dolved-experiments/current-policy-pilot-20261116/planner-scope-diagnostic-01/`.
+Stop for narrow review and David's Phase B release. No scope fixes or smoke rerun.
+
 ## 2026-11-17 — Smoke-02 S2 scope diagnosis (provider-free)
 
 Smoke-02 remains failed. From executed HEAD `388bf12`, S2's two recovered needs
