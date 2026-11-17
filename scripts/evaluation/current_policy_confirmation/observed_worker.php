@@ -1,0 +1,33 @@
+<?php
+
+declare(strict_types=1);
+
+// Future release only: read-only mount this directory; separate bound writable
+// evidence journal + health paths. Never registered in the serving application.
+require '/app/vendor/autoload.php';
+require __DIR__.'/worker_observer.php';
+$config = json_decode(file_get_contents($argv[1]), true, flags: JSON_THROW_ON_ERROR);
+if (($config['workspace_id'] ?? null) !== '5323cd6b-8b7a-40f9-98b0-9413c75f643e' || count($argv) !== 2) {
+    throw new RuntimeException('observer evaluation boundary');
+}
+$app = require '/app/bootstrap/app.php';
+$kernel = $app->make(Illuminate\Contracts\Console\Kernel::class);
+$kernel->bootstrap();
+$observer = new EvaluationWorkerObserver($config, static function ($job) use ($config): array {
+    $payload = $job->payload();
+    if (($payload['data']['commandName'] ?? null) !== App\Jobs\ExecuteGenerationRun::class) {
+        throw new RuntimeException('non-conversation job');
+    }
+    $command = @unserialize($payload['data']['command'], ['allowed_classes' => [App\Jobs\ExecuteGenerationRun::class]]);
+    if (! $command instanceof App\Jobs\ExecuteGenerationRun) { throw new RuntimeException('job class'); }
+    $workspace = App\Models\Workspace::query()->where('public_id', $config['workspace_id'])->firstOrFail(['id', 'public_id']);
+    $run = App\Models\GenerationRun::query()->where('workspace_id', $workspace->id)->findOrFail($command->generationRunId);
+    return ['run_id' => $run->public_id, 'workspace_id' => $workspace->public_id, 'status' => $run->status->value];
+});
+$observer->register($app->make(Illuminate\Contracts\Events\Dispatcher::class));
+register_shutdown_function(fn () => $observer->stop());
+$input = new Symfony\Component\Console\Input\ArgvInput(EvaluationWorkerObserver::workerArguments());
+$status = $kernel->handle($input, new Symfony\Component\Console\Output\ConsoleOutput);
+$kernel->terminate($input, $status);
+$observer->stop();
+exit($status);

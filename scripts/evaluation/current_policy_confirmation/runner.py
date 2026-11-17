@@ -26,6 +26,8 @@ def durable(path, value, exclusive=False):
 
 
 def verify(binding, manifest):
+    if binding.get('require_native_capture') and not binding.get('native_capture'):
+        raise ValueError('required native capture observer not bound')
     if digest(binding['manifest']) != binding['manifest_sha256']:
         raise ValueError('manifest drift')
     if set(manifest) != {'schema_version', 'package_id', 'note', 'evaluated_at_assumption', 'items'}:
@@ -90,6 +92,12 @@ def prepare_destination(binding):
         destination.mkdir(exist_ok=False)
         return destination
     allowed = set(binding['preparation_files']) | {'binding.json'}
+    empty_native_directories = {'capture'}
+    if binding.get('native_capture'):
+        for key, name in [('journal','observer-journal'),('health','observer-health'),('capture','capture')]:
+            if Path(binding['native_capture'][key]) != destination/name:
+                raise ValueError('native capture evidence path must be explicitly bound inside destination')
+            empty_native_directories.add(name)
     if binding.get('preparation_checksums'):
         manifest = destination/binding['preparation_checksums']
         entries=dict((n,h) for h,n in (line.split('  ',1) for line in manifest.read_text().splitlines()))
@@ -105,7 +113,7 @@ def prepare_destination(binding):
         name = str(path.relative_to(destination))
         if path.is_symlink() or (path.is_file() and name not in allowed):
             raise ValueError('prior or unbound operational state: '+name)
-        if path.is_dir() and name != 'capture' and not any(n.startswith(name+'/') for n in allowed):
+        if path.is_dir() and name not in empty_native_directories and not any(n.startswith(name+'/') for n in allowed):
             raise ValueError('prior or unbound operational directory: '+name)
     return destination
 
@@ -149,6 +157,13 @@ def execute(binding):
             execute_items(binding,manifest,destination)
         finally:
             subprocess.run(binding['worker_stop_command'],check=True)
+            if binding.get('native_capture'):
+                from native_capture import verify_shutdown
+                try:
+                    verify_shutdown(binding['native_capture'], destination, durable)
+                except Exception as error:
+                    durable(destination/'observer-shutdown-halt.json', {'code':getattr(error,'code','observer_shutdown_failure')}, True)
+                    raise
     else:
         execute_items(binding,manifest,destination)
 
@@ -156,6 +171,10 @@ def execute(binding):
 def execute_items(binding,manifest,destination):
     ledger=[]
     conversation_ids=set()
+    native = None
+    if binding.get('native_capture'):
+        from native_capture import Reconciler
+        native = Reconciler(binding['native_capture'], destination, durable)
     for item in manifest['items']:
         verify(binding, manifest)
         bound = binding['items'][item['id']]
@@ -167,6 +186,12 @@ def execute_items(binding,manifest,destination):
         if set(stages) != {'planning_including_intrinsic_calls', 'retrieval_including_retries', 'generation'}:
             raise ValueError('incomplete attempt reservation')
         require_item_window(binding)
+        if native:
+            try:
+                native.before(item['id'])
+            except Exception as error:
+                durable(destination/(item['id']+'-native-halt.json'), {'code':getattr(error,'code','observer_read_failure'),'before_dispatch':True}, True)
+                raise
         reserve(ledger,item['id'],sum(Decimal(v) for v in stages.values()),Decimal(binding['ceiling_usd']))
         durable(destination/'ledger.json',ledger)
         input_path=destination/(item['id']+'-browser-input.json')
@@ -195,6 +220,9 @@ def execute_items(binding,manifest,destination):
                 raise ValueError('persistence/browser integrity mismatch')
             if saved['needs_profile'] != bound['expected_preflight']['profile']:
                 raise ValueError('executed profile drift')
+            if native:
+                observed_deadline = min(binding['deadline_epoch'], records[0]['timing']['submitted_at_ms']/1000 + bound['expected_preflight']['run_timeout_seconds'] + 15)
+                native.after(item['id'], public['id'], saved, observed_deadline)
             if not safe_item_outcome(saved):
                 raise ValueError('typed failure requires halt or cannot be safely classified')
             # Keep full maximum if any stage lacks complete, independently attributable usage.
@@ -203,9 +231,13 @@ def execute_items(binding,manifest,destination):
             durable(destination/'ledger.json',ledger)
         except Exception as error:
             ledger[-1].update(state='halt_uncertain_or_failed_capture',failure_type=type(error).__name__)
+            if native:
+                durable(destination/(item['id']+'-native-halt.json'), {'code':getattr(error,'code','observation_or_dispatch_failure'),'before_dispatch':False}, True)
             durable(destination/'ledger.json',ledger)
             raise
     verify(binding,manifest)
+    if native:
+        native.finish()
     durable(destination/'completed.json',{'items':len(ledger),'provider_free':binding['provider_free']},True)
 
 

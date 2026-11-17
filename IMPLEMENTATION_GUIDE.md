@@ -16795,3 +16795,47 @@ Superseding evidence: external sealed-confirmation-01-capture-review-01/.
 Original blocker evidence remains intact. No sealed inputs/assessments, provider
 calls, worker starts, authorisations, push or merge. Confirmation remains blocked
 on exact capture attribution and the previously listed release prerequisites.
+
+### 2026-11-17 — Harness-only native observer and reconciler (not deployed)
+
+David's subsequent bounded authorisation starts at 2fff5c7d48b4f47435543aae676c12ccd6ac0241.
+Added an evaluation console wrapper and observational Laravel queue/HTTP listeners,
+with exact run/request association, bounded allowlisted append-only durable journal,
+separate health marker and terminal-completeness checks. No service provider,
+application client, usage/persistence contract, prompt, retry or model changed.
+The future worker remains restricted to conversation-generation, tries1/timeout900.
+Native request IDs are unchanged; invocation IDs come only from the AI captures.
+
+Integrated a bidirectional ID/receipt reconciler before next-item dispatch and
+after owned-worker cleanup. Captures and journal inventory are immutable between
+items. Every planner response's native attempts require matching records; optional
+scope/dedup and successful generation without diagnostics remain legitimate.
+Unknown/foreign/missing/corrupt/late files or observer failure halt with original
+outcome and full liability retained. A5-second local observation maximum is capped
+by existing submission/backend/delivery and overall deadlines, never added to them.
+Host-awake wrapper and proposed23h/22h limits are unchanged.
+
+Provider-free evidence uses actual Laravel Worker::runNextJob and real HTTP events,
+production signer with synthetic credentials, controlled HTTP responses and6
+synthetic jobs per scenario: observer off/on, listener failure and journal failure.
+Requests, signatures/bodies, responses, exception classes and job outcomes match;
+17 unrelated synthetic governance jobs per scenario remain untouched. No evaluation
+database was used. Additional actual-event negatives cover overlap, foreign scope,
+unknown terminal, no active request and interrupted shutdown. PHP syntax checks pass.
+The first test failure (directly throwing in Http::fake bypassed ConnectionFailed)
+is preserved; corrected to Laravel Factory::failedConnection, not a product change.
+
+35 Python tests pass, including actual PHP journal→Python reconciliation, native
+attempt/capture negatives and actual runner substitute-dispatch halt/accounting.
+Actual hook journals are paired with explicitly synthetic native files in the
+bridge test; no live AI writer, browser or actual evaluation database lookup was
+exercised. No full-suite/live-integration/quality-readiness claim. App runtime hash
+stays aa51e4a07403d6fd360c94c82ce88fdaa89ceb3d5815d4e97872e4813fb195bf.
+
+External checksummed evidence: sealed-confirmation-01-observer-01/. Serving
+containers/configs/capture/cache unchanged; consumers stopped, temporary tests
+removed after evidence copy. Proposed liability USD154.88243584/ceiling300 unchanged.
+No released questions, assessments, provider calls, deployment or authority.
+Recommend a separately frozen/authorised single existing development-question
+integration check before confirmation release; no execution approved or started.
+Neutral source/index/context attestations and final release remain separate.

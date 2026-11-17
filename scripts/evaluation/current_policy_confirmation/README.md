@@ -62,3 +62,55 @@ Assertions last for execution lifetime; `-s` applies on AC power. Keep the host
 powered and available: lid closure, shutdown, power loss and all suspension
 cannot be prevented or guaranteed against. The 20h41m figure sums conservative
 per-item allowances and is not a runtime prediction.
+
+## Native observer increment (provider-free; not deployed)
+
+The preceding method stop is preserved as history. `observed_worker.php` now boots
+the existing console kernel, registers `worker_observer.php`, and invokes exactly
+`queue:work conversation --queue=conversation-generation --tries=1 --timeout=900`.
+It does not inherit other queues. Future integration must mount the harness and
+config read-only and separate fresh journal/health evidence directories writable
+by the worker; no serving mount/config change has occurred. The config binds
+execution UUID, worker-instance UUID, authorised workspace, exact AI origin and
+journal/health paths. The wrapper permits only the authorised evaluation workspace.
+
+JobProcessing resolves only ExecuteGenerationRun, queries its run within the
+bound workspace, then HTTP events observe—not replace—the production request ID.
+Other endpoint bodies/headers are not journalled. The allowlist is sequence/hash,
+execution/worker/workspace/job/run IDs, request ID, endpoint/derived purpose/stage,
+HTTP status/closed transport category, native attempt number/status, generation
+status/closed reason and job/worker terminal state. No raw question, passage,
+header, signature, response body or exception text. Native invocation UUIDs exist
+in the AI files, not the HTTP receipts; require exactly one invocation group per
+distinct observed request and compare each attempt to that response receipt.
+
+Each journal record is exclusively created, flushed/fsynced and chained to the
+prior file hash. Listener errors never escape into application execution; they
+poison observation and clear active context, attempt an independent health marker,
+and prevent trustworthy completion. Shared disk/power failures may defeat both
+writes: missing start/response/job/worker terminals also halt the runner. This is
+not a guarantee of power-loss-proof evidence or a claim that every failure logs.
+
+`native_capture.py` refuses foreign/unsupported/ambiguous records and changed,
+disappeared, late or extra files. Before reservation it verifies the prior exact
+inventory and no unclosed job. After persistence it joins exact run/job/request
+IDs, response receipts and captured invocation/attempt sequences, and saves an
+exclusive per-item manifest. Missing required planner/rejection records halt;
+successful generation needs no diagnostic sidecar, and dedup/scope events remain
+conditional. Outer planner requests (maximum2) may each have native attempts1–2;
+there is no two-file item ceiling. Generation remains maximum1 request.
+
+The native writer is synchronous before the AI HTTP response but non-atomic at
+its final filename. Post-response reconciliation polls for complete parseable
+stable records for at most5 seconds, capped by BOTH existing original submission
++900+15 seconds and overall deadline. No clock is reset and no file is repaired.
+Two matching inventories supplement IDs/receipts; arrival times are not identity.
+Transport/pre-boundary failures remain operational halts, not invented missing
+planner diagnostics. Shutdown requires the worker stop record after owned cleanup.
+
+Later bindings must set `require_native_capture=true`, bind `native_capture`
+paths/IDs, all observer sources and worker mounts, and retain the full guard.
+No operational binding or authority is supplied by this increment. Historical
+smoke-04 aggregate agreement remains non-attributable; no replay manufactures IDs.
+See the new external `sealed-confirmation-01-observer-01/` report for actual tests,
+remaining live boundary and the recommendation-only development integration check.
