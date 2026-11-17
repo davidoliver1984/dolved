@@ -35,3 +35,30 @@ Capture requires the correct completed run, exact canonical saved text, ordered 
 Controlled asynchronous development fixtures use one-shot orchestration processes against disposable PostgreSQL and HTTP fakes, not production/evaluation queue workers. Delays are synthetic and are not provider-latency measurements. No sealed inputs or provider calls are needed for these checks.
 
 Development manifests use the identical released schema and only synthetic controlled questions. The development record binds its parent commit plus changed-tree hashes explicitly. The final source freeze/local commit is published separately. Running these files does not authorise live spending or enable a client workspace.
+
+## Sealed preparation: native capture boundary (2026-11-17)
+
+Confirmation remains blocked. Directory arrival order is not exact attribution:
+the current worker/queue guard does not exclude other authenticated callers of
+the workspace. The AI writer closes synchronously before its HTTP response, but
+uses exclusive creation at the final filename, not atomic rename; a concurrent
+reader can observe a partial write. Terminal browser state alone is not the
+required HTTP completion/capture reconciliation proof.
+
+Laravel exposes RequestSending/ResponseReceived/ConnectionFailed events. They
+run inside the calling worker process, not this host runner or capture.php's
+separate export process. No such listener is currently registered. An exact
+prospective approach would need an evaluation-only worker bootstrap, bounded
+run-to-request/response journal and evidence-only write path, followed by real
+hook and runner-integrated tests. This is a remaining boundary to resolve, not
+implemented instrumentation, and does not require adding IDs to application
+persistence. No snapshot-based reconciliation has been substituted.
+
+`host_awake.py` is preparation-only until a final `EXECUTION_RELEASE` binding
+hashes caffeinate, the interpreter and the exact commands.py execute argv. It
+execs `/usr/bin/caffeinate -i -s` in utility mode, with no retry or permanent
+power-setting change. It does not create authority or bypass runner checks.
+Assertions last for execution lifetime; `-s` applies on AC power. Keep the host
+powered and available: lid closure, shutdown, power loss and all suspension
+cannot be prevented or guaranteed against. The 20h41m figure sums conservative
+per-item allowances and is not a runtime prediction.

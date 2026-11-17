@@ -16757,3 +16757,41 @@ API/web code stays deployed unchanged. Report/freeze there records actual checks
 and remaining mechanical release prerequisites. No approved operational authority,
 worker start or confirmation execution in Phase A. Outstanding wording, omissions,
 citation and production-font decisions are untouched.
+
+### 2026-11-17 — Native-capture attribution investigation: still blocked
+
+Started at tooling 898501fc5fc3a183dd63f26c98d7bd0c9ce66c4f with only the same
+three untracked Python cache directories. Application e014ff9 remains unchanged.
+The authorised stop condition applies: existing snapshot controls do not establish
+exclusive workspace execution. One queue worker/empty queue cannot rule out other
+clients. No timestamps or question meaning were used to manufacture correlation.
+
+Existing Laravel HTTP events expose exact request IDs and response receipts, but
+only inside the calling process. The frozen worker is bare php artisan queue:work;
+no evaluation listener/bootstrap or evidence journal is installed. The smallest
+prospective requirement is a harness-only worker observer bootstrap with a bound
+evidence write path and job/run association, not application persistence changes.
+That worker-entrypoint/write-path boundary remains for narrow review; no listener,
+deployment, capture destination or application instrumentation changed here.
+
+Smoke-04 has seven planner sidecars in six invocation groups (five single accepted
+attempts and one rejected/accepted pair), matching aggregate persisted receipt
+counts. None of the planner request IDs appears in persisted item exports. This
+is aggregate consistency, not six exact per-item attributions or retrospective
+proof of exclusive execution. The writer closes before the AI response, writes
+directly to the final exclusive filename (not atomic rename), and silently
+ignores diagnostic OSError. Required absence therefore cannot be dismissed.
+
+Independent authorised preparation: added a hash-bound caffeinate utility wrapper
+and three mock-only tests; corrected deadline prose in a new draft binding while
+preserving the original checksummed draft. Numeric limits unchanged: 82,800s
+worker /79,200s first submission, proposed calendar cutoff unchanged. 21 harness
+tests passed in a disposable read-only network-none AI image (no credentials).
+The new native-reconciliation integration/negative matrix is NOT implemented or
+claimed passed. No full-suite, production-path reconciliation or awake-runtime
+claim. Budget remains proposed USD154.88243584 against USD300; no spending.
+
+Superseding evidence: external sealed-confirmation-01-capture-review-01/.
+Original blocker evidence remains intact. No sealed inputs/assessments, provider
+calls, worker starts, authorisations, push or merge. Confirmation remains blocked
+on exact capture attribution and the previously listed release prerequisites.
