@@ -23,6 +23,7 @@ let observeWait=async()=>{};
 const until = async fn => { while(true){checkDeadline();await observeWait();const v=await fn();checkDeadline();if(v)return v;await wait(Math.min(250,Math.max(0,deadline-Date.now())));} };
 let socket; const requests=[]; const errors=[]; const records=[]; const events=[];
 let lastBackend=null;let lastBrowser=null;let timing=null;let suppressSse=false;
+let webOrigin='http://127.0.0.1:38430',apiOrigin='http://127.0.0.1:38431';
 try {
   const port = await until(async()=>{try{return (await readFile(path.join(profile,'DevToolsActivePort'),'utf8')).split('\n')[0]}catch{return null}});
   const target = await (await fetch(`http://127.0.0.1:${port}/json/new?about:blank`, {method:'PUT'})).json();
@@ -52,27 +53,35 @@ try {
   const capture=()=>evaluate(`({url:location.href,text:document.querySelector('[data-canonical-answer]')?.textContent??null,count:document.querySelectorAll('[data-canonical-answer]').length,citations:[...document.querySelectorAll('[data-citation-id]')].map(x=>x.dataset.citationId),runId:document.querySelector('[data-completion-run]')?.dataset.completionRun,path:document.querySelector('[data-completion-path]')?.dataset.completionPath,pending:document.querySelector('[data-chat-pending]')?.dataset.chatPending,progress:document.querySelector('[data-chat-progress]')?.dataset.chatProgress,announcement:document.querySelector('[data-chat-announcement]')?.textContent,dom:document.body?.innerHTML??null})`);
   observeWait=async()=>{lastBrowser=await capture();};
   const api=async (endpoint,method='GET',body=null)=>evaluate(`(async()=>{
-    const base='http://127.0.0.1:38431';
+    const base=${JSON.stringify(apiOrigin)};
     await fetch(base+'/sanctum/csrf-cookie',{credentials:'include'});
     const token=document.cookie.split('; ').find(x=>x.startsWith('XSRF-TOKEN='))?.slice(11);
     const r=await fetch(base+${JSON.stringify(endpoint)},{method:${JSON.stringify(method)},credentials:'include',headers:{Accept:'application/json','Content-Type':'application/json',...(token?{'X-XSRF-TOKEN':decodeURIComponent(token)}:{})},body:${JSON.stringify(body===null?null:JSON.stringify(body))}});
     return {status:r.status,body:r.status===204?null:await r.json()};})()`);
   const fixtures=process.argv[3] ? [JSON.parse(await readFile(process.argv[3],'utf8'))] : JSON.parse(await readFile('/private/tmp/stop3-fixtures.json','utf8'));
   for(const fixture of fixtures){
+    webOrigin=fixture.web_origin??'http://127.0.0.1:38430';
+    apiOrigin=fixture.api_origin??'http://127.0.0.1:38431';
+    for(const origin of [webOrigin,apiOrigin]){const u=new URL(origin);if(!['localhost','127.0.0.1','[::1]'].includes(u.hostname)||u.origin!==origin)throw Error('Bound loopback origin required');}
     suppressSse=fixture.controlled===true && fixture.suppress_sse===true;
     deadline=Math.min(Date.now()+120000,overallDeadline);
-    await send('Page.navigate',{url:'http://127.0.0.1:38430/login'});
-    await until(()=>evaluate('location.origin === "http://127.0.0.1:38430" && document.readyState === "complete"'));
+    await send('Page.navigate',{url:webOrigin+'/login'});
+    await until(()=>evaluate('location.origin === '+JSON.stringify(webOrigin)+' && document.readyState === "complete"'));
     await api('/api/auth/logout','POST');
     const password=process.env.CURRENT_POLICY_CONFIRMATION_PASSWORD ?? ((!process.argv[3] || fixture.controlled===true) ? 'disposable-test-only' : null);
     if(!password)throw Error('Release-bound test/user credentials not supplied');
     const login=await api('/api/auth/login','POST',{email:fixture.email,password});
     if(login.status!==204 && login.status!==200)throw Error(`Login failed: ${login.status}`);
     if(!fixture.web_path)throw Error('Actual application route must be release-bound');
-    const loadBefore=loaded; await send('Page.navigate',{url:`http://127.0.0.1:38430${fixture.web_path}`}); await until(()=>loaded>loadBefore);
+    if(fixture.fresh_conversation===true&&fixture.web_path!==`/app/workspaces/${fixture.workspace}`)throw Error('Existing new-conversation route required');
+    const beforeList=fixture.fresh_conversation===true?await api(`/api/workspaces/${fixture.workspace}/conversations`):null;
+    if(beforeList&&beforeList.status!==200)throw Error('Cannot verify fresh conversation');
+    const priorIds=(beforeList?.body?.data??[]).map(x=>x.id);
+    const loadBefore=loaded; await send('Page.navigate',{url:webOrigin+fixture.web_path}); await until(()=>loaded>loadBefore);
     // SSR markup is not proof of hydration. Wait for the component's real
     // initial persisted read, then for React to acknowledge the typed draft.
     await until(()=>evaluate('!!document.querySelector("textarea") && !!document.querySelector("[aria-labelledby=chat-heading] [aria-busy=false]")'));
+    if(fixture.fresh_conversation===true&&await evaluate('document.querySelectorAll("[data-canonical-answer]").length!==0'))throw Error('New-conversation route contains a prior answer');
     await evaluate(`document.querySelector('textarea').focus()`);
     await send('Input.insertText',{text:fixture.utterance});
     await until(()=>evaluate('document.querySelector("textarea")?.form?.querySelector("button[type=submit]")?.disabled === false'));
@@ -85,7 +94,18 @@ try {
     const conversation=await until(()=>evaluate('new URLSearchParams(location.search).get("conversation") || location.pathname.match(/conversations\\/([^/]+)/)?.[1]'));
     const backend=await until(async()=>{lastBrowser=await capture();const r=await api(`/api/workspaces/${fixture.workspace}/conversations/${conversation}`);lastBackend=r;return ['completed','retrieval_no_answer','clarification_required','failed','cancelled'].includes(r.body?.data?.runs?.at(-1)?.status)?r:null;});
     const publicRun=backend.body.data.runs.at(-1);
-    if(['failed','cancelled'].includes(publicRun.status))throw Error(`Recorded terminal failure: ${publicRun.status}`);
+    const messages=backend.body.data.messages??[];
+    const userMessages=messages.filter(m=>m.role==='user');
+    const assistantMessages=messages.filter(m=>m.role==='assistant');
+    const contextProof={conversation_id:conversation,prior_ids:priorIds,user_message_count:userMessages.length,assistant_message_count:assistantMessages.length,run_count:backend.body.data.runs.length};
+    if(fixture.fresh_conversation===true&&(priorIds.includes(conversation)||userMessages.length!==1||userMessages[0].text!==fixture.utterance||backend.body.data.runs.length!==1))throw Error('Fresh single-turn context violated');
+    await writeFile(path.join(output,'context-proof.json'),JSON.stringify(contextProof,null,2));
+    if(['failed','cancelled'].includes(publicRun.status)){
+      records.push({id:fixture.id,backend:backend.body,completed:{text:messages.find(m=>m.id===publicRun.assistant_message_id)?.text??null},timing,terminal_failure:true,contextProof});
+      await writeFile(path.join(output,'records.json'),JSON.stringify(records,null,2));
+      continue;
+    }
+    if(fixture.fresh_conversation===true&&publicRun.assistant_message_id&&assistantMessages.length!==1)throw Error('Saved response message count mismatch');
     const answer=publicRun.answer;
     const savedText=backend.body.data.messages.find(m=>m.id===publicRun.assistant_message_id)?.text??null;
     const completed=await until(async()=>{lastBrowser=await capture();return settledPresentation(lastBrowser,publicRun,savedText,(answer?.citations??[]).map(c=>c.id))?lastBrowser:null;});

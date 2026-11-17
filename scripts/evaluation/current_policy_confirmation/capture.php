@@ -1,8 +1,9 @@
 <?php
 
 // Read-only product receipt export. Called only with release-bound actor/workspace/run IDs.
-require '/workspace/apps/api/vendor/autoload.php';
-$app = require '/workspace/apps/api/bootstrap/app.php';
+$root = getenv('CURRENT_POLICY_APP_ROOT') ?: '/workspace/apps/api';
+require $root.'/vendor/autoload.php';
+$app = require $root.'/bootstrap/app.php';
 $app->make(Illuminate\Contracts\Console\Kernel::class)->bootstrap();
 $input = json_decode(stream_get_contents(STDIN), true, flags: JSON_THROW_ON_ERROR);
 $user = App\Models\User::where('public_id', $input['actor'])->firstOrFail();
