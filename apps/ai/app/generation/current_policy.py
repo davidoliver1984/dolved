@@ -6,8 +6,10 @@ from typing import Final, Literal
 from uuid import UUID
 
 import openai
-from pydantic import Field, model_validator
+from pydantic import Field, ValidationError, model_validator
+from pydantic_core import PydanticCustomError
 
+from app.evaluation_capture import capture_scope, current_policy_rejected
 from app.extraction.models import ImmutableModel
 from app.settings import Settings
 
@@ -82,14 +84,14 @@ class Output(ImmutableModel):
 
     @model_validator(mode="after")
     def coherent(self):
-        if (self.outcome == "insufficient_evidence") != (not self.answer_parts):
-            raise ValueError("outcome/parts mismatch")
-        if (self.outcome == "answered") != (not self.unsupported_aspects):
-            raise ValueError("outcome/disclosure mismatch")
+        # The model label is diagnostic. Laravel derives the saved outcome from
+        # parts, scope facts and disclosures, not this redundant self-assessment.
+        if not self.answer_parts and not self.unsupported_aspects:
+            raise PydanticCustomError("empty_content", "No answer or disclosure")
         if any(not gap.strip() or len(gap) > 8000 for gap in self.unsupported_aspects):
-            raise ValueError("invalid gap")
+            raise PydanticCustomError("invalid_disclosure", "Invalid disclosure")
         if any(not part.text.strip() for part in self.answer_parts):
-            raise ValueError("empty answer part")
+            raise PydanticCustomError("empty_content", "Empty answer part")
         return self
 
     def validate_membership(self, request: CurrentRequest):
@@ -138,6 +140,13 @@ def request_units(payload: dict) -> int:
 
 
 def generate(request: CurrentRequest, settings: Settings, *, client=None) -> dict:
+    with capture_scope(
+        settings, request.workspace_id, request.request_id, "current_policy_generation"
+    ):
+        return _generate(request, settings, client=client)
+
+
+def _generate(request: CurrentRequest, settings: Settings, *, client=None) -> dict:
     payload = render(request, settings)
     units = request_units(payload)
     envelope = {
@@ -163,6 +172,7 @@ def generate(request: CurrentRequest, settings: Settings, *, client=None) -> dic
         "output_tokens": None,
         "cost_usd": None,
         "cost_basis": "unavailable",
+        "pricing_snapshot": None,
         "latency_ms": 0.0,
     }
     if sum(len(s.text) for s in request.sources) > 60000 or units > MAX_REQUEST:
@@ -204,7 +214,8 @@ def generate(request: CurrentRequest, settings: Settings, *, client=None) -> dic
                 or 0
             )
             usage.update(
-                cost_basis=settings.generation_pricing_snapshot,
+                cost_basis="estimated",
+                pricing_snapshot=settings.generation_pricing_snapshot,
                 cost_usd=(
                     (receipt.input_tokens - cached)
                     * settings.generation_input_cost_per_million_tokens_usd
@@ -216,6 +227,7 @@ def generate(request: CurrentRequest, settings: Settings, *, client=None) -> dic
                 / 1_000_000,
             )
         if response.status != "completed":
+            current_policy_rejected(response, "completion", "incomplete_output")
             return {
                 **envelope,
                 "status": "failed",
@@ -226,7 +238,29 @@ def generate(request: CurrentRequest, settings: Settings, *, client=None) -> dic
             result = Output.model_validate_json(
                 response.output_text
             ).validate_membership(request)
-        except ValueError:
+        except ValueError as error:
+            if isinstance(error, ValidationError):
+                errors = error.errors(include_input=False, include_context=False)
+                first = errors[0]
+                kind = first["type"]
+                code = (
+                    kind
+                    if kind in {"empty_content", "invalid_disclosure"}
+                    else (
+                        "malformed_output"
+                        if kind == "json_invalid"
+                        else "structural_validation"
+                    )
+                )
+                field = ".".join(str(v) for v in first["loc"]) or "output"
+                stage = "output_contract"
+            else:
+                stage, code, field = (
+                    "citation_membership",
+                    "invalid_citation_membership",
+                    "answer_parts.evidence_ids",
+                )
+            current_policy_rejected(response, stage, code, field)
             return {
                 **envelope,
                 "status": "failed",

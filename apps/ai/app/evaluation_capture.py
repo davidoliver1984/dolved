@@ -1,7 +1,8 @@
 """Opt-in, workspace-bound diagnostic sidecar; never part of application outcomes.
 
 The operator mounts only this run's evidence directory at /evaluation-evidence.
-No caller-controlled paths, exception prose, headers or provider bodies are retained.
+No caller-controlled paths, exception prose or headers are retained. Current-policy
+generation rejection may retain a bounded, redacted model-output string only.
 """
 
 import json
@@ -75,8 +76,8 @@ GENERATION_KEYS = frozenset(
 )
 
 
-def _text(value: str) -> str:
-    value = value[:4000]
+def _text(value: str, limit: int = 4000) -> str:
+    value = value[:limit]
     value = re.sub(r"(?i)\b(?:bearer|basic)\s+\S+", "[REDACTED]", value)
     value = re.sub(r"\b(?:sk-|AKIA)[A-Za-z0-9_-]+", "[REDACTED]", value)
     value = re.sub(
@@ -301,5 +302,49 @@ def generation_rejected(attempt, parsed, validation, exception=None):
                 "unavailable": []
                 if isinstance(parsed, dict)
                 else ["parsed_generation_output"],
+            }
+        )
+
+
+def current_policy_rejected(response, stage, code, field="output"):
+    """Sidecar only: never return raw output or diagnostics to the API caller."""
+    if capture := _ACTIVE.get():
+        raw = getattr(response, "output_text", None)
+        status = getattr(response, "status", None)
+        details = getattr(response, "incomplete_details", None)
+        reason = getattr(details, "reason", None)
+        capture.attempt = 1
+        capture.write(
+            {
+                "status": "rejected",
+                "validation": safe_validation(
+                    {"stage": stage, "field": field, "code": code}
+                ),
+                "completion": {
+                    "status": status
+                    if status
+                    in {
+                        "completed",
+                        "incomplete",
+                        "failed",
+                        "cancelled",
+                        "queued",
+                        "in_progress",
+                    }
+                    else "unavailable",
+                    "incomplete_reason": reason
+                    if reason in {"max_output_tokens", "content_filter"}
+                    else None,
+                },
+                "raw_model_output": _text(
+                    raw.encode("utf-8")[:16384].decode("utf-8", errors="ignore"), 16384
+                )
+                if isinstance(raw, str)
+                else None,
+                "raw_output_truncated": len(raw.encode("utf-8")) > 16384
+                if isinstance(raw, str)
+                else False,
+                "raw_output_redacted": True,
+                "unavailable": [] if isinstance(raw, str) else ["raw_model_output"],
             }
         )

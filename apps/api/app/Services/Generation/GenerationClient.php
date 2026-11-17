@@ -39,7 +39,7 @@ final readonly class GenerationClient
         } catch (ConnectionException $exception) {
             // Dispatch may have happened: retain one physical-request liability, never retry.
             return ['status' => 'failed', 'reason' => 'service_transport', 'usage' => ['request_count' => 1,
-                'retry_count' => 0, 'cost_usd' => null, 'cost_basis' => 'unknown_dispatch']];
+                'retry_count' => 0, 'cost_usd' => null, 'cost_basis' => 'unavailable', 'pricing_snapshot' => null]];
         }
         if ($response->status() === 401 || $response->status() === 403) {
             throw new GenerationServiceAuthenticationException(false);
@@ -75,9 +75,10 @@ final readonly class GenerationClient
                 throw new GenerationException('Current-policy output contract is invalid.');
             }
             $result = $value['result'];
-            if (($result['outcome'] === 'insufficient_evidence') !== ($result['answer_parts'] === [])
-                || ($result['outcome'] === 'answered') !== ($result['unsupported_aspects'] === [])) {
-                throw new GenerationException('Current-policy output disposition is inconsistent.');
+            // The model label is diagnostic only; composition derives the saved
+            // outcome from actual parts, facts and all explicit disclosures.
+            if ($result['answer_parts'] === [] && $result['unsupported_aspects'] === []) {
+                throw new GenerationException('Current-policy output has no content or disclosure.');
             }
             $handles = array_column($payload['sources'], 'evidence_id');
             foreach ($result['unsupported_aspects'] as $gap) {

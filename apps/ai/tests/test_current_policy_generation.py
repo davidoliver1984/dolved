@@ -109,14 +109,14 @@ def test_one_call_no_reviewer_question_pool_citation_membership():
 
 
 @pytest.mark.parametrize(
-    "mode", ["truncated", "foreign_citation", "inconsistent", "transport"]
+    "mode", ["truncated", "foreign_citation", "empty", "transport"]
 )
 def test_failure_is_recorded_and_never_retried(mode):
     o = output()
     if mode == "foreign_citation":
         o["answer_parts"][0]["evidence_ids"] = ["ev-02"]
-    if mode == "inconsistent":
-        o["outcome"] = "qualified"
+    if mode == "empty":
+        o["answer_parts"][0]["text"] = " "
     c = client_for(
         o,
         status="incomplete" if mode == "truncated" else "completed",

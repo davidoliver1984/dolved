@@ -1,0 +1,162 @@
+{
+  "supported": {
+    "contract_version": "current-policy-answer-v1",
+    "identity": {
+      "provider": "openai",
+      "model": "gpt-5-mini",
+      "prompt": "current-policy-pool-generation-v1",
+      "adapter": "current-policy-responses-v1",
+      "reasoning_effort": "low",
+      "max_output_tokens": 4096,
+      "max_retries": 0
+    },
+    "status": "completed",
+    "result": {
+      "outcome": "answered",
+      "answer_parts": [
+        {
+          "text": "Wear gloves.",
+          "evidence_ids": [
+            "ev-01"
+          ]
+        }
+      ],
+      "unsupported_aspects": []
+    },
+    "usage": {
+      "stage": "current_policy_generation",
+      "provider": "openai",
+      "model": "gpt-5-mini",
+      "request_count": 1,
+      "retry_count": 0,
+      "input_tokens": 100,
+      "output_tokens": 30,
+      "cost_usd": 8.275e-05,
+      "cost_basis": "estimated",
+      "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19"
+    }
+  },
+  "limitations": {
+    "contract_version": "current-policy-answer-v1",
+    "identity": {
+      "provider": "openai",
+      "model": "gpt-5-mini",
+      "prompt": "current-policy-pool-generation-v1",
+      "adapter": "current-policy-responses-v1",
+      "reasoning_effort": "low",
+      "max_output_tokens": 4096,
+      "max_retries": 0
+    },
+    "status": "completed",
+    "result": {
+      "outcome": "answered",
+      "answer_parts": [
+        {
+          "text": "Wear gloves.",
+          "evidence_ids": [
+            "ev-01"
+          ]
+        }
+      ],
+      "unsupported_aspects": [
+        "The checker role is not established."
+      ]
+    },
+    "usage": {
+      "stage": "current_policy_generation",
+      "provider": "openai",
+      "model": "gpt-5-mini",
+      "request_count": 1,
+      "retry_count": 0,
+      "input_tokens": 100,
+      "output_tokens": 30,
+      "cost_usd": 8.275e-05,
+      "cost_basis": "estimated",
+      "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19"
+    }
+  },
+  "invalid_citation": {
+    "contract_version": "current-policy-answer-v1",
+    "identity": {
+      "provider": "openai",
+      "model": "gpt-5-mini",
+      "prompt": "current-policy-pool-generation-v1",
+      "adapter": "current-policy-responses-v1",
+      "reasoning_effort": "low",
+      "max_output_tokens": 4096,
+      "max_retries": 0
+    },
+    "status": "failed",
+    "reason": "invalid_output",
+    "usage": {
+      "stage": "current_policy_generation",
+      "provider": "openai",
+      "model": "gpt-5-mini",
+      "request_count": 1,
+      "retry_count": 0,
+      "input_tokens": 100,
+      "output_tokens": 30,
+      "cost_usd": 8.275e-05,
+      "cost_basis": "estimated",
+      "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19"
+    }
+  },
+  "empty": {
+    "contract_version": "current-policy-answer-v1",
+    "identity": {
+      "provider": "openai",
+      "model": "gpt-5-mini",
+      "prompt": "current-policy-pool-generation-v1",
+      "adapter": "current-policy-responses-v1",
+      "reasoning_effort": "low",
+      "max_output_tokens": 4096,
+      "max_retries": 0
+    },
+    "status": "failed",
+    "reason": "invalid_output",
+    "usage": {
+      "stage": "current_policy_generation",
+      "provider": "openai",
+      "model": "gpt-5-mini",
+      "request_count": 1,
+      "retry_count": 0,
+      "input_tokens": 100,
+      "output_tokens": 30,
+      "cost_usd": 8.275e-05,
+      "cost_basis": "estimated",
+      "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19"
+    }
+  },
+  "no_support": {
+    "contract_version": "current-policy-answer-v1",
+    "identity": {
+      "provider": "openai",
+      "model": "gpt-5-mini",
+      "prompt": "current-policy-pool-generation-v1",
+      "adapter": "current-policy-responses-v1",
+      "reasoning_effort": "low",
+      "max_output_tokens": 4096,
+      "max_retries": 0
+    },
+    "status": "completed",
+    "result": {
+      "outcome": "answered",
+      "answer_parts": [],
+      "unsupported_aspects": [
+        "The checker role is not established."
+      ]
+    },
+    "usage": {
+      "stage": "current_policy_generation",
+      "provider": "openai",
+      "model": "gpt-5-mini",
+      "request_count": 1,
+      "retry_count": 0,
+      "input_tokens": 100,
+      "output_tokens": 30,
+      "cost_usd": 8.275e-05,
+      "cost_basis": "estimated",
+      "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19"
+    }
+  }
+}

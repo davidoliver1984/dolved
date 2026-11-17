@@ -18,11 +18,15 @@ Before generation, Python serializes the **complete provider request**, includin
 
 Response envelope: `contract_version`, `request_id`, pinned `identity` (provider/model/prompt/adapter/reasoning/output/retry limits), `status`, `usage`, plus:
 
-- `completed`: `result` matching output schema; Python and PHP both validate shape, disposition consistency, non-empty text and citation membership/uniqueness.
+- `completed`: `result` matching output schema; Python and PHP both validate shape, non-empty content/disclosures and citation membership/uniqueness. The model's `outcome` enum is retained as diagnostic data, not a veto or saved-outcome authority. Laravel independently derives insufficient/qualified/answered from actual parts, deterministic scope facts and every explicit gap/disposition.
 - `capacity`: `request_units`, zero provider requests. PHP source-capacity rejection also precedes generation.
 - `failed`: closed reason (`unconfigured`, `provider_unavailable`, `provider_authentication`, `provider_authorisation`, `incomplete_output`, `invalid_output`). No retry. Service transport failure preserves unknown-dispatch liability; authentication, unknown envelope/identity and integrity failures propagate fail-closed.
 
 Usage retains physical request/retry counts, tokens, latency and configured-price estimate when available. Missing provider usage/cost is null, not zero. Typed provider timeout/connection/rate-limit/invalid-response failures at existing provider retrieval stages may leave independently supported neighbours answerable, with an explicit failed-part disposition. Unknown, infrastructure/authority/integrity failures are not converted to evidence absence or partial success. Existing attempted work remains in retrieval receipts.
+
+Estimated generation usage uses `cost_basis=estimated` and the configured identifier in `pricing_snapshot`, matching the shared recorder convention. Missing usage and service-transport uncertainty use `unavailable` with null cost/snapshot, retaining the attempted request count and `service_transport` reason. Recorder validation is not relaxed.
+
+When the existing evaluation capture is explicitly enabled for its fixed evaluation workspace, a rejected current-policy response writes only to that mounted evidence directory: closed validation stage/code/field, allowlisted completion status, and up to 16,384 UTF-8 bytes of redacted raw model text (truncation explicitly recorded). No raw text or new diagnostic fields enter the HTTP receipt, database, ordinary log or user response. Capture is off by default; I/O failure never alters decisions or creates retries. These diagnostics cannot reconstruct smoke-01's discarded response.
 
 ## Saved result consumed by Stop 3
 

@@ -26,9 +26,12 @@ use App\Models\Workspace;
 use App\Models\WorkspaceCorpusGeneration;
 use App\Models\WorkspaceCorpusGenerationChunk;
 use App\Models\WorkspaceMembership;
+use App\Models\WorkspaceUsageEvent;
 use App\Services\Generation\GenerationProfileFactory;
+use App\Support\Usage\RecordWorkspaceUsage;
 use Carbon\CarbonImmutable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\Factory;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\DB;
@@ -48,9 +51,131 @@ class CurrentPolicyBackendTest extends TestCase
 
     private array $payloads = [];
 
+    private ?string $producedReceipt = null;
+
+    public static function producedReceiptCases(): array
+    {
+        return [['supported', 'completed', 'answered'], ['limitations', 'completed', 'qualified'],
+            ['no_support', 'retrieval_no_answer', 'insufficient_evidence'],
+            ['invalid_citation', 'retrieval_no_answer', 'insufficient_evidence'],
+            ['empty', 'retrieval_no_answer', 'insufficient_evidence'], ['malformed_usage', 'failed', null]];
+    }
+
+    #[DataProvider('producedReceiptCases')]
+    public function test_python_adapter_receipt_completes_real_transaction_and_bad_usage_rolls_it_back(string $receipt, string $status, ?string $outcome): void
+    {
+        Queue::fake();
+        $this->producedReceipt = $receipt;
+        [$initial] = $this->fixture('current_only');
+        $conversation = $initial->conversation;
+        $user = $initial->createdBy;
+        $question = $initial->display_text;
+        $initial->delete();
+        $run = app(SubmitConversationMessage::class)->handle($conversation, $user, $question, (string) Str::uuid());
+        app(OrchestrateConversationRun::class)->handle($run->id);
+        $run->refresh();
+        $this->assertSame($status, $run->status->value, json_encode($run->usage));
+        if ($receipt === 'malformed_usage') {
+            $this->assertSame('internal_failure', $run->failure_code->value);
+            $this->assertSame('The workspace usage entry is invalid.', $run->usage['internal_failure']['message']);
+            $this->assertDatabaseCount('generated_answers', 0);
+            $this->assertDatabaseCount('evidence_snapshots', 0);
+            $this->assertDatabaseCount('workspace_usage_events', 0);
+            $this->assertSame(0, Message::where('role', 'assistant')->count());
+            $this->assertSame(0, $run->deliveryEvents()->where('event_type', 'answer_completed')->count());
+
+            return;
+        }
+        $answer = $run->generatedAnswer->fresh();
+        $this->assertSame($outcome, $answer->outcome->value);
+        $this->assertSame(1, Message::where('role', 'assistant')->count());
+        $this->assertSame(1, $run->deliveryEvents()->where('event_type', 'answer_completed')->count());
+        $this->assertSame($run->assistantMessage->display_text, $answer->renderedText());
+        $usage = WorkspaceUsageEvent::where('scope_public_id', $run->public_id)->where('operation_kind', 'generation')->sole();
+        $this->assertSame('estimated', $usage->cost_basis);
+        $this->assertSame('openai-gpt-5-mini-pricing-2026-08-19', $usage->pricing_snapshot);
+        $this->assertEqualsWithDelta(0.00008275, (float) $usage->cost_usd, 0.00000001);
+        if (in_array($receipt, ['supported', 'limitations'], true)) {
+            $this->assertCount(1, $answer->evidenceSnapshots);
+            $this->assertStringContainsString('Wear gloves.', $answer->renderedText());
+        }
+        if (in_array($receipt, ['limitations', 'no_support'], true)) {
+            // Python accepted the model's answered label, but persistence derives
+            // qualified/no-answer and never hides the actual unsupported portion.
+            $this->assertSame('answered', $answer->temporal_context['current_policy']['generation']['result']['outcome']);
+            $this->assertStringContainsString('The checker role is not established.', $answer->renderedText());
+        }
+        if (in_array($receipt, ['invalid_citation', 'empty'], true)) {
+            $this->assertCount(0, $answer->evidenceSnapshots);
+            $this->assertStringContainsString('could not be generated safely', $answer->renderedText());
+        }
+    }
+
     public static function deliveryOutcomes(): array
     {
         return [...self::outcomes(), ['scope_fact'], ['all_history'], ['all_unclear']];
+    }
+
+    public function test_retained_s1_receipts_against_actual_recorder_contract(): void
+    {
+        $rows = json_decode(file_get_contents(base_path('tests/Fixtures/current-policy-smoke01-usage.json')), true, flags: JSON_THROW_ON_ERROR)['receipts'];
+        $recorder = app(RecordWorkspaceUsage::class);
+        $validate = new \ReflectionMethod($recorder, 'validate');
+        foreach ($rows as $stage => $usage) {
+            if ($stage === 'interpretation_checker') {
+                // This genuinely retained nested receipt has no stage/execution;
+                // production accounts it inside the planner aggregate, not twice.
+                $this->assertArrayNotHasKey('stage', $usage);
+                $this->assertArrayNotHasKey('execution', $usage);
+                try {
+                    $validate->invoke($recorder, $usage);
+                    $this->fail('Nested checker receipt accepted as a standalone ledger entry.');
+                } catch (\InvalidArgumentException $error) {
+                    $this->assertSame('The workspace usage entry is invalid.', $error->getMessage());
+                }
+                $this->assertGreaterThanOrEqual($usage['request_count'], $rows['planner']['request_count']);
+
+                continue;
+            }
+            if ($stage === 'generation') {
+                $usage = (new \ReflectionMethod(OrchestrateConversationRun::class, 'normalisedUsage'))
+                    ->invoke(app(OrchestrateConversationRun::class), $usage, 'generation', $usage['provider'], $usage['model']);
+                try {
+                    $validate->invoke($recorder, $usage);
+                    $this->fail('Historical malformed generation usage accepted.');
+                } catch (\InvalidArgumentException $error) {
+                    $this->assertSame('The workspace usage entry is invalid.', $error->getMessage());
+                }
+
+                continue;
+            }
+            $validate->invoke($recorder, $usage);
+            $this->addToAssertionCount(1);
+        }
+    }
+
+    public function test_optional_generation_transport_failure_keeps_liability_and_completes_honest_disclosure(): void
+    {
+        Queue::fake();
+        $this->producedReceipt = 'service_transport';
+        [$initial] = $this->fixture('current_only');
+        $conversation = $initial->conversation;
+        $user = $initial->createdBy;
+        $question = $initial->display_text;
+        $initial->delete();
+        $run = app(SubmitConversationMessage::class)->handle($conversation, $user, $question, (string) Str::uuid());
+        app(OrchestrateConversationRun::class)->handle($run->id);
+        $run->refresh();
+        $this->assertSame('retrieval_no_answer', $run->status->value);
+        $this->assertStringContainsString('could not be generated safely', $run->assistantMessage->display_text);
+        $receipt = $run->usage['current_policy']['generation'];
+        $this->assertSame('service_transport', $receipt['reason']);
+        $this->assertSame(1, $receipt['usage']['request_count']);
+        $this->assertSame(0, $receipt['usage']['retry_count']);
+        $usage = WorkspaceUsageEvent::where('scope_public_id', $run->public_id)->where('operation_kind', 'generation')->sole();
+        $this->assertSame('unavailable', $usage->cost_basis);
+        $this->assertNull($usage->cost_usd);
+        $this->assertSame(1, count($this->payloads));
     }
 
     #[DataProvider('deliveryOutcomes')]
@@ -345,6 +470,10 @@ class CurrentPolicyBackendTest extends TestCase
         }
         $response['plan']['needs'][] = [...$second, 'need_id' => 'n3', 'question_span' => ['turn_id' => 'user-1', 'quote' => 'Which arrangement do you mean?'], 'requested_information' => 'unclear'];
         $response['plan']['bindings'] = array_map(fn ($id) => ['need_id' => $id, 'subject_status' => 'topic', 'family_ids' => [], 'ownership' => 'authorised_workspace', 'ownership_source' => null], ['n1', 'n2', 'n3']);
+        if ($mode === 'current_only') {
+            $response['plan']['needs'] = [[...$second, 'need_id' => 'n1']];
+            $response['plan']['bindings'] = [$response['plan']['bindings'][0]];
+        }
         if (in_array($mode, ['all_history', 'all_unclear'], true)) {
             foreach ($response['plan']['needs'] as &$need) {
                 $need['requested_information'] = $mode === 'all_history' ? 'history' : 'unclear';
@@ -410,6 +539,21 @@ class CurrentPolicyBackendTest extends TestCase
             }
             $this->assertStringEndsWith('/current-policy-answer', $r->url());
             $this->payloads[] = $b;
+            if ($this->producedReceipt !== null) {
+                if ($this->producedReceipt === 'service_transport') {
+                    throw new ConnectionException('Controlled transport unavailable');
+                }
+                $rows = json_decode(file_get_contents('/contracts/http/current-policy-answer/v1/controlled-adapter-receipts.json'), true, flags: JSON_THROW_ON_ERROR);
+                $receipt = $rows[$this->producedReceipt === 'malformed_usage' ? 'supported' : $this->producedReceipt];
+                // Only request correlation is supplied by this controlled transport;
+                // usage, result and identity are the real Python adapter output.
+                $receipt['request_id'] = $b['request_id'];
+                if ($this->producedReceipt === 'malformed_usage') {
+                    $receipt['usage']['cost_basis'] = $receipt['usage']['pricing_snapshot'];
+                }
+
+                return Http::response($receipt);
+            }
             if ($mode === 'changed_source') {
                 DB::table('document_chunks')->where('id', $chunks[0]->id)->update(['text' => 'changed']);
             }

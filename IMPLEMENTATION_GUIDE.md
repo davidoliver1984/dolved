@@ -1,5 +1,31 @@
 # RAG Platform Implementation Guide
 
+## 2026-11-17 — Smoke-01 provider-free integration correction
+
+Smoke-01 remains failed and its authorisation consumed; no question was retried.
+Starting application commit `2537ea2cd825b361cc9702789f98c1866b0696e1`. Corrected
+current-policy generation usage to the existing estimated/pricing_snapshot convention,
+including the directly related PHP transport receipt's unavailable basis. The recorder,
+rates and request/retry limits remain unchanged. Real SDK mock-transport output is
+checked byte-for-data against a shared fixture and consumed by actual Laravel
+orchestration/usage/persistence tests; malformed usage still atomically rolls back.
+
+Removed only the duplicated model-outcome consistency veto: saved outcome is already
+derived from actual parts, scope facts and disclosures. Added bounded workspace-scoped
+evaluation-only raw rejection capture. S1's original rejection cause is unrecoverable;
+no synthetic test is claimed to explain it. Added an offline sparse-cache loading
+preflight; no model, index or corpus change. See
+`docs/evaluation/current-policy-smoke-correction-20261117.md` for smoke-02 prerequisites.
+
+Verification: full isolated suites retain exactly 144 AI, 63 Laravel and 1 web failure
+identities, with no added/resolved identities. Raw JUnit and focused tests are in
+`~/Desktop/dolved-experiments/current-policy-pilot-20261116/smoke-01-correction-01/`.
+Repository format/lint/type commands were run against only the disposable internal
+test project; unchanged issues remain recorded, not described as green. The sparse
+model loaded from copied existing cache with all network attempts denied. No provider
+call, worker start, deployment, push, main merge or additional workspace activation.
+The six reviewed uncommitted smoke-harness files remain outside the repair commit.
+
 ## 2026-11-16 — Current-policy pilot Stop 3
 
 Approved delivery integration on the isolated pilot branch, from Stop 2 `81451026333e59d6c58e6cbeea41551671586761`; no live activation, push or main merge. See `docs/journal/2026-11-16-current-policy-stop3.md` and `contracts/http/current-policy-answer/v1/README.md` for the saved-message delivery contract. Orchestration retains existing claim/lock semantics; final persistence, completion and event are atomic. API/SSE/reload and actual ChatWorkspace consume saved text once. No selector, review call, ownership gate, retry, migration or new response model.
