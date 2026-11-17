@@ -1,5 +1,26 @@
 # RAG Platform Implementation Guide
 
+## 2026-11-17 — Smoke-03 exact mount-equivalence harness correction
+
+Application remains `d3a760f22f7d565702e0efb5ab371d5f8d773031`. David authorised
+only two additional Docker Desktop spellings: the exact pilot API /app and
+contracts /contracts bind sources, optionally prefixed once by /host_mnt. The
+hashed binding names these exact paths and access modes; the separate corpus
+exception remains. Type, destination, access mode, full API configuration and
+inside-container runtime content must still match. No generic path stripping.
+
+The host smoke adapter is retained as a tracked template, delegating only its
+mount check to mount_guard.py. Provider-free tests cover exact/equivalent paths,
+wrong worktree/destination/access/type, duplicate prefix, unlisted equivalence,
+extra mount, tampered binding and content mismatch. Original blocked evidence
+is untouched. Superseding Phase A records live under smoke-03/phase-a-02, with
+the existing deployed smoke-03/run/capture destination unchanged (no redeploy).
+The final report there records actual re-verification and release hashes; no
+operational authority, question or worker is created by this preparation.
+The reservation remains USD 13.66609728: full 400,000-token planner-input liability
+rather than smoke-02's 104,096 units, at unchanged rates/physical limits.
+Smoke-02 remains FAILED; review and David's explicit Phase B release are required.
+
 ## 2026-11-17 — Scope coverage tightening and smoke-03 preparation boundary
 
 David approved tightening redundant-span clearing to complete lexical coverage.
