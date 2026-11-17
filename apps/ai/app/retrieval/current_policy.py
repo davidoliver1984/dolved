@@ -19,7 +19,7 @@ from app.retrieval.needs import (
 
 CONTRACT = "current-policy-needs-v1"
 PROMPT_VERSION = "current-policy-scope-v1"
-ADAPTER_VERSION = "structured-current-policy-v1"
+ADAPTER_VERSION = "structured-current-policy-v2"
 SCOPE_FIELDS = {
     "requested_information",
     "current_spans",
@@ -161,6 +161,37 @@ def validate_scope(need: CurrentPolicyNeed) -> None:
             raise ValueError("current projection loses grounded restriction")
 
 
+def canonical_scope(need: CurrentPolicyNeed) -> tuple[CurrentPolicyNeed, str | None]:
+    """Clear only locally grounded, redundant annotations; never reinterpret scope."""
+    field = {
+        "current_policy": "current_spans",
+        "history": "history_spans",
+    }.get(need.requested_information or "")
+    if field is None:
+        return need, None
+    matching = getattr(need, field)
+    opposite = need.history_spans if field == "current_spans" else need.current_spans
+    if not matching or opposite:
+        return need, None
+    # Refusal deliberately leaves the original annotation for the existing check.
+    if sum(len(s.quote) for s in matching) > 8000:
+        return need, None
+    intervals: list[tuple[int, int]] = []
+    text = need.question_span.quote
+    for span in matching:
+        if not span.quote or span.turn_id != need.question_span.turn_id:
+            return need, None
+        start = text.find(span.quote)
+        # Search from start+1 so overlapping occurrences are ambiguous too.
+        if start < 0 or text.find(span.quote, start + 1) >= 0:
+            return need, None
+        end = start + len(span.quote)
+        if any(start < b and a < end for a, b in intervals):
+            return need, None
+        intervals.append((start, end))
+    return need.model_copy(update={field: ()}), field
+
+
 def parse_policy_plan(
     value: dict,
     turns: tuple[UserTurn, ...],
@@ -199,6 +230,18 @@ def parse_policy_plan(
         try:
             validated = CurrentPolicyNeed.model_validate(need)
             scope_parsed = True
+            validated, cleared = canonical_scope(validated)
+            if cleared is not None:
+                scope_diagnostic(
+                    "scope_normalisation",
+                    "normalised",
+                    need,
+                    reason="redundant_matching_partition",
+                    path=cleared,
+                    parsed=True,
+                    cleared_count=len(need[cleared]),
+                )
+                need[cleared] = []
             validate_scope(validated)
         except (ValidationError, ValueError) as error:
             errors = (

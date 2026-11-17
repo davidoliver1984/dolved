@@ -53,7 +53,16 @@ class CaptureAdapterTests(unittest.TestCase):
                                     if mode == "foreign"
                                     else "authorised",
                                     "stage": "planner",
-                                    "scope_diagnostics": [],
+                                    "scope_diagnostics": [
+                                        {
+                                            "stage": "scope_normalisation",
+                                            "outcome": "normalised",
+                                            "reason": "redundant_matching_partition",
+                                            "need_id": "n1",
+                                            "field": "current_spans",
+                                            "cleared_span_count": 2,
+                                        }
+                                    ],
                                     "scope_diagnostics_truncated": mode == "truncated",
                                     "attempt": n,
                                     "status": "accepted" if n == 2 else "rejected",
@@ -64,9 +73,16 @@ class CaptureAdapterTests(unittest.TestCase):
 
                 with patch.object(commands.subprocess, "run", fake):
                     if mode == "valid":
+                        exported = commands.dispatch(b, req, 3600, "test")
                         self.assertEqual(
-                            len(commands.dispatch(b, req, 3600, "test")["captures"]), 2
+                            len(exported["captures"]), 2
                         )
+                        for record in exported["captures"]:
+                            stored = Path(record["path"])
+                            self.assertEqual(commands.digest(stored), record["sha256"])
+                            event = json.loads(stored.read_text())["scope_diagnostics"][0]
+                            self.assertEqual(event["cleared_span_count"], 2)
+                            self.assertEqual(event["reason"], "redundant_matching_partition")
                     else:
                         with self.assertRaises(AssertionError):
                             commands.dispatch(b, req, 3600, "test")

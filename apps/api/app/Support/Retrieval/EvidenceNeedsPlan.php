@@ -32,7 +32,7 @@ final readonly class EvidenceNeedsPlan
             $observation = PlannerUsage::fromArray($usage);
             if ($identity->contractSchemaVersion !== CurrentPolicyScope::CONTRACT
                 || $identity->promptVersion !== 'current-policy-scope-v1'
-                || $identity->adapterVersion !== 'structured-current-policy-v1'
+                || $identity->adapterVersion !== 'structured-current-policy-v2'
                 || $identity->provider !== $observation->provider || $identity->model !== $observation->model) {
                 throw new InvalidArgumentException('Current-policy identity mismatch.');
             }

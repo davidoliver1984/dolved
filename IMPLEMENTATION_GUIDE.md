@@ -1,5 +1,41 @@
 # RAG Platform Implementation Guide
 
+## 2026-11-17 — Bounded redundant scope normalisation (provider-free)
+
+From `abfccd3a44ae88cae1f2d5a49de8ddeb626517e0`, canonicalise only matching
+non-mixed span lists whose clauses are uniquely grounded within the need's own
+question span/turn, within existing bounds and without overlap. Opposite-side,
+unclear, malformed, ambiguous and cross-need annotations retain rejection.
+All later authority, interpretation and dependency checks remain. Original scope
+annotations/counts survive in bounded evaluation events; no ordinary-log change.
+
+Python adapter lineage is now structured-current-policy-v2, with coordinated PHP
+identity pin and active example fingerprint. Wire schema, prompt and strict PHP
+scope predicates are unchanged. Controlled Python transport produces the shared
+normalised-producer fixture, which the actual PHP EvidenceNeedsPlan consumer
+revalidates. Historical evidence and fixtures are not rewritten.
+
+Nine captured attempts now pass parsing/recovery with explicit reconstructed
+envelopes: missing diagnostic aspect/clarification/ownership fields are labelled
+synthetic. This does not prove original-plan or live checker acceptance. D3's
+later interpretation rejection and D6's date-precision observation remain separate.
+
+Verification: 67 focused Python tests, 12 focused PHP cases and nine existing
+exporter/control tests pass. Full isolated suites: 144 AI failures (unchanged),
+66 Laravel failures/errors (63 retained plus three test-storage directory errors),
+one web failure (unchanged). No resolved baseline failure. The first PHP run
+exhausted JUnit memory; initial evidence and the later 512M test run are retained.
+The three additional PHP errors are listed exactly in the evidence report and
+must not be represented as a zero-new-failure result. Repository make -k
+format-check/lint/typecheck/ps used only the disposable internal test project;
+existing formatting/lint and eight MyPy failures remain. No unrelated fixes.
+
+Evidence: `~/Desktop/dolved-experiments/current-policy-pilot-20261116/scope-normalisation-01/`.
+API/AI worktree mounts see these edits; no request, reload, deployment, worker or
+provider call was made. A future smoke-03 requires separate approval, coordinated
+API/AI deployment/new freeze, same six development questions and unchanged criteria.
+Smoke-02 remains FAILED. Stop for narrow review; no live acceptance/readiness claim.
+
 ## 2026-11-17 — Planner-only scope diagnostic Phase A
 
 Prepared the fixed six-question/18-invocation development diagnostic from

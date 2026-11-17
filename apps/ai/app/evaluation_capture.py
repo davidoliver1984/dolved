@@ -214,6 +214,7 @@ def scope_diagnostic(
     errors=(),
     origin=None,
     roots=(),
+    cleared_count=None,
 ):
     """Observe existing validation only; no new validation or application result."""
     if not (capture := _ACTIVE.get()):
@@ -230,6 +231,8 @@ def scope_diagnostic(
         "originating_need_id": _text(origin, 100) if origin else None,
         "root_need_ids": [_text(x, 100) for x in sorted(roots)[:3]],
     }
+    if cleared_count is not None:
+        row["cleared_span_count"] = max(0, min(4, int(cleared_count)))
     if need is not None:
         fields = {}
         invalid_fields = {str(e["loc"][0]) for e in errors if e.get("loc")}

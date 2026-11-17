@@ -97,7 +97,7 @@ final class GenerationProfileFactory
             'generation_framing_units' => 4096,
             'planner_contract' => 'current-policy-needs-v1',
             'planner_prompt' => 'current-policy-scope-v1',
-            'planner_adapter' => 'structured-current-policy-v1',
+            'planner_adapter' => 'structured-current-policy-v2',
             'planner_provider' => config('retrieval.planner.provider'),
             'planner_model' => config('retrieval.planner.model'),
             'context_policy' => config('conversation.context_policy_version'),
