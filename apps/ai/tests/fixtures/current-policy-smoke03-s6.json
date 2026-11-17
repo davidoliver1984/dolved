@@ -1,0 +1,225 @@
+{
+  "provenance": {
+    "capture_path": "/Users/davidoliver/Desktop/dolved-experiments/current-policy-pilot-20261116/smoke-03/run/capture/a86cfca9-bd1b-49ab-88ee-e1e0964b3675-2e28863d-3d1f-4ad1-81c4-7c873437b5d8.json",
+    "capture_sha256": "ca0ecc8a0e02208727686e8ba53d52d3eab778fb1db40c01cdf365c5aa950e80",
+    "persisted_path": "/Users/davidoliver/Desktop/dolved-experiments/current-policy-pilot-20261116/smoke-03/phase-a-02/run/S6/persisted.json",
+    "persisted_sha256": "7272c8a1ec262093a4ee5d6223f12696c31037240244bca24df54b191ad1ae85",
+    "raw_output_truncated": false,
+    "raw_output_redacted": true,
+    "reconstruction": "Original raw_model_output string, completion status, request/workspace IDs and usage retained. Request reconstructed from saved question/plan/pool and exact candidate chunk_text (wire request not retained). SDK HTTP envelope id/timestamp and token-detail fields controlled; PHP database uses isolated synthetic catalogue identities with these source texts, not the evaluation database."
+  },
+  "raw": "{\n  \"outcome\": \"answered\",\n  \"answer_parts\": [\n    {\n      \"text\": \"Who signs it: The assessment must be recorded in writing and \u201csigned and dated by the competent person who completed it.\u201d\",\n      \"evidence_ids\": [\n        \"ev-01\",\n        \"ev-03\"\n      ]\n    },\n    {\n      \"text\": \"Who to share it with: Communicate the assessment\u2019s findings and any control measures to every member of staff involved in the activity (not just file it centrally). The current version must also be readily accessible to staff at the point of the activity.\",\n      \"evidence_ids\": [\n        \"ev-01\",\n        \"ev-02\",\n        \"ev-02\"\n      ]\n    },\n    {\n      \"text\": \"How often it must be reviewed: Review the assessment at least annually, and sooner following an incident, a near miss, or any change to the activity, the people involved, or the environment. (The Health and Safety Policy Statement cross\u2011references the same annual-or-sooner requirement.)\",\n      \"evidence_ids\": [\n        \"ev-01\",\n        \"ev-04\"\n      ]\n    }\n  ],\n  \"unsupported_aspects\": []\n}",
+  "completion_status": "completed",
+  "validation": {
+    "stage": "citation_membership",
+    "field": "answer_parts.evidence_ids",
+    "code": "invalid_citation_membership"
+  },
+  "request": {
+    "contract_version": "current-policy-answer-v1",
+    "request_id": "a86cfca9-bd1b-49ab-88ee-e1e0964b3675",
+    "workspace_id": "5323cd6b-8b7a-40f9-98b0-9413c75f643e",
+    "question": "I'm writing a risk assessment for a resident day trip. Who needs to sign it, who do I share it with, and how often must it be reviewed?",
+    "admitted_requests": [
+      "Who needs to sign it,",
+      "who do I share it with,",
+      "and how often must it be reviewed?"
+    ],
+    "limitations": [],
+    "sources": [
+      {
+        "title": "Risk Assessment Procedure",
+        "status": "approved",
+        "chunk_id": "ddc7b0ba-f5c8-573f-a781-a3e9471e3539",
+        "family_id": "11a69fab-e05d-4ba1-801c-b75c6ced51d6",
+        "document_id": "91e7dd31-68df-48e0-9899-22220b656c49",
+        "evidence_id": "ev-01",
+        "associations": [
+          {
+            "need_id": "n1",
+            "authority": "current",
+            "location_id": null,
+            "evaluated_at": "2026-11-17T17:32:00+00:00"
+          },
+          {
+            "need_id": "n2",
+            "authority": "current",
+            "location_id": null,
+            "evaluated_at": "2026-11-17T17:32:00+00:00"
+          },
+          {
+            "need_id": "n3",
+            "authority": "current",
+            "location_id": null,
+            "evaluated_at": "2026-11-17T17:32:00+00:00"
+          }
+        ],
+        "applicability": {
+          "scope": "universal",
+          "locations": []
+        },
+        "effective_from": "2025-08-01T00:00:00+00:00",
+        "authority_start": "2025-08-01T00:00:00+00:00",
+        "authority_end_exclusive": null,
+        "text": " supported, visitors, contractors \u2014 considering anyone with a particular vulnerability specifically.\n\nEvaluate the existing controls already in place and whether they are adequate, recording the residual risk honestly rather than understating it.\n\nIdentify any further control measure needed to reduce the risk to an acceptable level, recording it with a named owner and a target date.\n\nRecord the assessment in writing, in the standard Alderbridge format, signed and dated by the competent person who completed it.\n\nCommunicate the assessment's findings and any control measure to every member of staff involved in the activity, not only file it centrally.\n\nReview the assessment at least annually, or sooner following an incident, a near miss, or any change to the activity, the people involved, or the environment.\n\nExceptions and professional judgement\n\nWhere an entirely new, unforeseen activity arises with no existing assessment (for example, a one-off event), a brief, proportionate assessment is completed before the activity begins, even if less formally documented than a standing assessment, rather than the activity proceeding with no risk consideration at all simply because no template already exists for it.\n\nLocal and regional variations\n\nThe risk assessment methodology and format are standardised across every site; what varies locally is the content of a site's own specific assessments, reflecting its own building, activities and resident group.\n\nInteraction with other Alderbridge policies\n\nThis procedure underpins the Health and Safety Policy Statement's wider framework, and the specific risk assessment types referenced throughout other policies \u2014 the moving and handling risk assessment, the fire risk assessment, the individual pregnancy risk assessment \u2014 all follow this procedure's own core methodology, applied to their specific subject matter.\n\nWorked example\n\nA worked example illustrates proportionate assessment. Introducing a new outdoor sensory garden activity at Harbour View prompts a risk assessment considering uneven ground, weather exposure, and supervision ratios; rather than an exhaustive, generic template, the assessment focuses specifically on the real hazards this particular activity and this particular resident group present, resulting in three practical control measures (non-slip pathway matting, a weather-check-before-starting rule, and a minimum two-staff supervision ratio) rather than a long, generic list of theoretical hazards that do not genuinely apply to this specific activity."
+      },
+      {
+        "title": "Risk Assessment Procedure",
+        "status": "approved",
+        "chunk_id": "eed70827-1f96-56ba-913a-2804e8c723a9",
+        "family_id": "11a69fab-e05d-4ba1-801c-b75c6ced51d6",
+        "document_id": "91e7dd31-68df-48e0-9899-22220b656c49",
+        "evidence_id": "ev-02",
+        "associations": [
+          {
+            "need_id": "n1",
+            "authority": "current",
+            "location_id": null,
+            "evaluated_at": "2026-11-17T17:32:00+00:00"
+          },
+          {
+            "need_id": "n2",
+            "authority": "current",
+            "location_id": null,
+            "evaluated_at": "2026-11-17T17:32:00+00:00"
+          },
+          {
+            "need_id": "n3",
+            "authority": "current",
+            "location_id": null,
+            "evaluated_at": "2026-11-17T17:32:00+00:00"
+          }
+        ],
+        "applicability": {
+          "scope": "universal",
+          "locations": []
+        },
+        "effective_from": "2025-08-01T00:00:00+00:00",
+        "authority_start": "2025-08-01T00:00:00+00:00",
+        "authority_end_exclusive": null,
+        "text": " on the real hazards this particular activity and this particular resident group present, resulting in three practical control measures (non-slip pathway matting, a weather-check-before-starting rule, and a minimum two-staff supervision ratio) rather than a long, generic list of theoretical hazards that do not genuinely apply to this specific activity.\n\nFrequently asked questions\n\n**Who decides if a risk assessment needs a specialist rather than the registered manager?** The registered manager makes this judgement based on the complexity and nature of the risk, escalating to the Health and Safety Lead where genuinely unsure. **What if staff disagree with a control measure a risk assessment specifies?** They raise it with the registered manager or the competent person who completed the assessment; a risk assessment is reviewed and can be corrected, but is not simply ignored informally by an individual member of staff who disagrees with it. **How is a risk assessment different from a care plan?** A risk assessment addresses a hazard to anyone potentially affected by an activity; a care plan addresses an individual person's own specific needs and preferences \u2014 the two are related but distinct, and some individual risks (for example, an individual moving and handling risk assessment) sit at the intersection of both.\n\nTraining and competency\n\nRegistered managers and deputies complete risk assessment training covering the methodology this procedure sets out, and any member of staff completing a specialist assessment (for example, fire risk) holds the relevant additional qualification for that specific area.\n\nMonitoring and compliance\n\nThe Health and Safety Lead reviews a sample of risk assessments across sites quarterly for quality and currency, and any site with a significant number of overdue reviews is supported with a targeted catch-up plan.\n\nRecord keeping and retention\n\nRisk assessments are retained per the Records Retention Schedule, with the current version readily accessible to staff at the point of the activity it covers, not filed away separately from day-to-day practice.\n\nApproval and review history\n\nThis procedure was originally approved by the Chief Executive on 1 August 2025 and is scheduled for its next full review on 1 August 2026.\n\nAppendix: the five steps at a glance\n\nFor quick reference: identify hazards; identify who might be harmed; evaluate existing controls and residual risk; identify further action needed; record, communicate and review."
+      },
+      {
+        "title": "Risk Assessment Procedure",
+        "status": "approved",
+        "chunk_id": "16f8e24c-5db7-5586-a998-aabd9b6d2aee",
+        "family_id": "11a69fab-e05d-4ba1-801c-b75c6ced51d6",
+        "document_id": "91e7dd31-68df-48e0-9899-22220b656c49",
+        "evidence_id": "ev-03",
+        "associations": [
+          {
+            "need_id": "n1",
+            "authority": "current",
+            "location_id": null,
+            "evaluated_at": "2026-11-17T17:32:00+00:00"
+          },
+          {
+            "need_id": "n2",
+            "authority": "current",
+            "location_id": null,
+            "evaluated_at": "2026-11-17T17:32:00+00:00"
+          },
+          {
+            "need_id": "n3",
+            "authority": "current",
+            "location_id": null,
+            "evaluated_at": "2026-11-17T17:32:00+00:00"
+          }
+        ],
+        "applicability": {
+          "scope": "universal",
+          "locations": []
+        },
+        "effective_from": "2025-08-01T00:00:00+00:00",
+        "authority_start": "2025-08-01T00:00:00+00:00",
+        "authority_end_exclusive": null,
+        "text": "Risk Assessment Procedure\n\nPurpose and scope\n\nThis procedure sets out how Alderbridge Care Group identifies, assesses and controls risk across every activity, from a routine task to a significant change in how a site operates. It applies to every site, every activity, and every person who could be affected \u2014 staff, people supported, visitors and contractors.\n\nPolicy statement\n\nA risk assessment is treated as a genuinely useful working tool that shapes how a task is actually done, not a paperwork exercise completed once and then filed away unread; this procedure is designed around that principle at every stage.\n\nDefinitions\n\n**Hazard** anything with the potential to cause harm. **Risk** the likelihood and severity of harm actually occurring from a hazard. **Control measure** an action taken to reduce a risk to an acceptable level. **Competent person** someone with sufficient training, knowledge and experience to complete a risk assessment for a given activity. **Suitable and sufficient** the legal standard a risk assessment must meet \u2014 genuinely proportionate to the risk, not exhaustive for its own sake.\n\nRoles and responsibilities\n\n**The registered manager** ensures every significant activity at their site has a current risk assessment and that staff are aware of its content. **A competent person** (which may be the registered manager, a trained deputy, or an external specialist for a complex risk) completes the assessment itself. **Every member of staff** follows the control measures a risk assessment specifies and reports any concern that a control is not working in practice.\n\nIdentify the hazards present in the activity being assessed, walking through it in practice rather than relying on assumption alone.\n\nIdentify who might be harmed and how \u2014 staff, people supported, visitors, contractors \u2014 considering anyone with a particular vulnerability specifically.\n\nEvaluate the existing controls already in place and whether they are adequate, recording the residual risk honestly rather than understating it.\n\nIdentify any further control measure needed to reduce the risk to an acceptable level, recording it with a named owner and a target date."
+      },
+      {
+        "title": "Health and Safety Policy Statement",
+        "status": "approved",
+        "chunk_id": "ecfbd1e9-e86f-501f-a548-dfbf2e843c93",
+        "family_id": "dc683002-12cc-4d46-be53-70915a038fa3",
+        "document_id": "43de6006-c103-4433-bc93-f7abf4b81d37",
+        "evidence_id": "ev-04",
+        "associations": [
+          {
+            "need_id": "n1",
+            "authority": "current",
+            "location_id": null,
+            "evaluated_at": "2026-11-17T17:32:00+00:00"
+          },
+          {
+            "need_id": "n2",
+            "authority": "current",
+            "location_id": null,
+            "evaluated_at": "2026-11-17T17:32:00+00:00"
+          },
+          {
+            "need_id": "n3",
+            "authority": "current",
+            "location_id": null,
+            "evaluated_at": "2026-11-17T17:32:00+00:00"
+          }
+        ],
+        "applicability": {
+          "scope": "universal",
+          "locations": []
+        },
+        "effective_from": "2026-01-06T00:00:00+00:00",
+        "authority_start": "2026-01-06T00:00:00+00:00",
+        "authority_end_exclusive": null,
+        "text": "\nand Dangerous Occurrences Regulations, under which certain serious incidents must be reported to the\nHealth and Safety Executive. **Competent person** someone with sufficient training, knowledge and\nexperience to carry out a specific health and safety task, which is not the same as simply being willing to\ndo it.\n\nOrganisation and roles\n\n**The Chief Executive** holds overall, ultimate responsibility for health and safety across Alderbridge Care\nGroup, and personally receives the quarterly health and safety report. **The Health and Safety Lead**, a\ndedicated role reporting to the Chief Executive, coordinates policy, training and incident trend analysis\nacross all sites. **Each registered manager** is responsible for health and safety at their own site day to\nday, including ensuring risk assessments are current and staff are trained. **A nominated site health and\nsafety representative** at each site supports the registered manager, conducts routine walk-round checks,\nand is a point of contact for any staff concern. **Every employee** has a personal legal duty to take\nreasonable care of their own health and safety and that of others affected by what they do, and to\ncooperate with Alderbridge in meeting its own duties.\n\n1. Risk assessments are completed for every significant activity before it begins, reviewed annually or\nsooner following an incident or a change, per the Risk Assessment Procedure.\n\n2. Every new starter completes a health and safety induction covering fire exits, first aid provision, the\naccident and incident reporting process, and any activity-specific risk (for example, lone working or manual\nhandling) relevant to their role.\n\n3. Every accident, incident and near miss is reported using the Accident and Incident Report Form,\nregardless of whether it appears minor, so that patterns can be identified before a more serious incident\noccurs.\n\n4. A RIDDOR-reportable incident is escalated to the Health and Safety Lead immediately and reported to\nthe Health and Safety Executive within the statutory timescale.\n\n5. Equipment used in care delivery (hoists, slings, wheelchairs) is inspected on the schedule set out in the\nEquipment Inspection Schedule, and taken out of use immediately if a fault is found, never used pending a\nlater scheduled check.\n\nAlderbridge Care Group | Uncontrolled if printed | Confidential \u2014 internal use only"
+      },
+      {
+        "title": "Risk Assessment Procedure",
+        "status": "approved",
+        "chunk_id": "561c5c99-10f9-5937-ab60-0ebc1cb47c91",
+        "family_id": "11a69fab-e05d-4ba1-801c-b75c6ced51d6",
+        "document_id": "91e7dd31-68df-48e0-9899-22220b656c49",
+        "evidence_id": "ev-05",
+        "associations": [
+          {
+            "need_id": "n1",
+            "authority": "current",
+            "location_id": null,
+            "evaluated_at": "2026-11-17T17:32:00+00:00"
+          },
+          {
+            "need_id": "n2",
+            "authority": "current",
+            "location_id": null,
+            "evaluated_at": "2026-11-17T17:32:00+00:00"
+          },
+          {
+            "need_id": "n3",
+            "authority": "current",
+            "location_id": null,
+            "evaluated_at": "2026-11-17T17:32:00+00:00"
+          }
+        ],
+        "applicability": {
+          "scope": "universal",
+          "locations": []
+        },
+        "effective_from": "2025-08-01T00:00:00+00:00",
+        "authority_start": "2025-08-01T00:00:00+00:00",
+        "authority_end_exclusive": null,
+        "text": " on 1 August 2025 and is scheduled for its next full review on 1 August 2026.\n\nAppendix: the five steps at a glance\n\nFor quick reference: identify hazards; identify who might be harmed; evaluate existing controls and residual risk; identify further action needed; record, communicate and review.\n\nAssessing risk for a person with fluctuating needs\n\nWhere a person's needs fluctuate significantly (for example, a condition with good and bad days), the risk assessment records the range of presentation rather than a single snapshot, and staff are trained to recognise which end of that range they are seeing on a given day so the correct control measure is applied at the right time rather than a single fixed approach being used regardless of how the person actually presents that day.\n\nRisk assessment for one-off events and visits\n\nA one-off event (a fundraising open day, an external visit) receives its own proportionate risk assessment covering the event's specific hazards, completed with enough lead time to put any necessary control in place, rather than being run under a standing, unrelated risk assessment that does not actually address what is different about the event.\n\nWhen a risk assessment reveals a risk that cannot be adequately controlled\n\nWhere an assessment finds a risk that cannot be reduced to an acceptable level with any available control, the activity does not proceed in that form; the registered manager and, where relevant, the Health and Safety Lead consider whether the activity can be modified to remove the unacceptable element, or whether it should not proceed at all, rather than proceeding regardless because stopping the activity feels operationally inconvenient."
+      }
+    ]
+  },
+  "retained_usage": {
+    "model": "gpt-5-mini",
+    "stage": "current_policy_generation",
+    "cost_usd": 0.00193275,
+    "provider": "openai",
+    "cost_basis": "estimated",
+    "latency_ms": 7337.437545000284,
+    "retry_count": 0,
+    "input_tokens": 4067,
+    "output_tokens": 458,
+    "request_count": 1,
+    "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19"
+  }
+}

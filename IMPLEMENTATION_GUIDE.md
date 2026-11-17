@@ -16685,3 +16685,39 @@ When a planned decision changes:
 5. Ensure commands, documentation and actual behaviour remain aligned.
 
 Do not create a new implementation guide merely because implementation has moved to another phase.
+# 2026-11-17 — Exact within-part citation canonicalisation; smoke-04 preparation
+
+David authorised only duplicate evidence-ID canonicalisation and provider-free
+verification, followed by smoke-04 Phase A deployment/preparation. Starting HEAD
+ba513c99052d4ee1344f4fddb3b2f38acdcf6aa3; only three pre-existing untracked Python
+cache directories. Smoke-01/02/03 remain FAILED; no live fix claim.
+
+The retained S6 rejection (capture SHA-256
+ca0ecc8a0e02208727686e8ba53d52d3eab778fb1db40c01cdf365c5aa950e80)
+was citation_membership/invalid_citation_membership. Part index 1 repeated ev-02.
+Python validates the original shape/size/content first, canonicalises exact IDs
+on a copy per part in first-occurrence order, then checks membership. Raw response
+is unchanged. Unknown/malformed/empty IDs and all unrelated negatives still fail.
+The sidecar exports original/canonical bounded redacted text plus per-part counts;
+capture remains workspace-scoped/default-off and I/O failure is nonfatal.
+
+Producer adapter is current-policy-responses-v2. PHP changes only coordinate the
+consumer/profile/fingerprint identity; strict duplicate/membership checks remain.
+Schema and prompts are unchanged. Historical receipts are not rewritten.
+
+Provider-free verification: 106 focused Python tests passed; 44 Laravel cases,
+730 assertions, no failures (Artisan warnings retained; direct PHPUnit S6 replay
+passed without warnings). Ruff and scoped Pint checks passed. The initial Python
+command referenced a nonexistent test_current_policy.py and collected no tests;
+corrected filenames and both evidence files are retained. No full-suite claim.
+S6 uses exact captured model text; request reconstructed from saved question,
+plan/pool/candidate text. SDK metadata and isolated PHP catalogue identities are
+controlled, not claimed original. Retained token counts reproduce the receipt
+cost; one generation request, zero retry. Exact text, canonical result, evidence,
+usage and one completion persist through real Laravel orchestration.
+
+Correction evidence: external current-policy-pilot-20261116/citation-normalisation-01/.
+Smoke-04 Phase A report/release identities will be in the fresh smoke-04/ package;
+no execution or operational authorisation is included. Outstanding separate
+decisions: duplicate history-decline wording, prose handles, speculative gaps,
+citation usability and production-font rollout. One passing S2 is not a rate.

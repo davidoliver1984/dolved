@@ -124,7 +124,7 @@ final readonly class AnswerCurrentPolicyMessage
                     return $s;
                 }, $pool['sources'])]]);
         $fingerprint = $this->fingerprints->make((string) config('generation.provider'), (string) config('generation.model'),
-            'current-policy-answer-v1', 'current-policy-pool-generation-v1', 'current-policy-responses-v1', ['profile' => $pin]);
+            'current-policy-answer-v1', 'current-policy-pool-generation-v1', 'current-policy-responses-v2', ['profile' => $pin]);
         $unhandled = array_values(array_filter($pool['dispositions'], fn ($d) => $d['status'] !== 'admitted'));
         $messageKind = $outcome !== GenerationOutcome::InsufficientEvidence ? MessageKind::GroundedAnswer
             : ($unhandled !== [] && array_all($unhandled, fn ($d) => $d['status'] === 'ambiguity') ? MessageKind::Clarification : MessageKind::NoAnswer);

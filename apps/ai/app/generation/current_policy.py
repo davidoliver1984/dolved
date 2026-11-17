@@ -9,13 +9,17 @@ import openai
 from pydantic import Field, ValidationError, model_validator
 from pydantic_core import PydanticCustomError
 
-from app.evaluation_capture import capture_scope, current_policy_rejected
+from app.evaluation_capture import (
+    capture_scope,
+    current_policy_citations_normalized,
+    current_policy_rejected,
+)
 from app.extraction.models import ImmutableModel
 from app.settings import Settings
 
 CONTRACT: Final = "current-policy-answer-v1"
 PROMPT = "current-policy-pool-generation-v1"
-ADAPTER = "current-policy-responses-v1"
+ADAPTER = "current-policy-responses-v2"
 FRAMING = 4096
 MAX_REQUEST = 120000
 INSTRUCTIONS = """Answer only the admitted current requests, using the supplied authorised
@@ -103,6 +107,18 @@ class Output(ImmutableModel):
             ):
                 raise ValueError("invalid citation membership")
         return self
+
+    def canonical_citations(self):
+        """Only structurally validated IDs; never mutate the provider response."""
+        parts = []
+        changes = []
+        for index, part in enumerate(self.answer_parts):
+            ids = tuple(dict.fromkeys(part.evidence_ids))
+            removed = len(part.evidence_ids) - len(ids)
+            parts.append(part.model_copy(update={"evidence_ids": ids}))
+            if removed:
+                changes.append({"part_index": index, "removed_count": removed})
+        return self.model_copy(update={"answer_parts": tuple(parts)}), changes
 
 
 def render(request: CurrentRequest, settings: Settings) -> dict:
@@ -235,9 +251,11 @@ def _generate(request: CurrentRequest, settings: Settings, *, client=None) -> di
                 "usage": usage,
             }
         try:
-            result = Output.model_validate_json(
-                response.output_text
-            ).validate_membership(request)
+            parsed = Output.model_validate_json(response.output_text)
+            result, changes = parsed.canonical_citations()
+            if changes:
+                current_policy_citations_normalized(response, result, changes)
+            result.validate_membership(request)
         except ValueError as error:
             if isinstance(error, ValidationError):
                 errors = error.errors(include_input=False, include_context=False)

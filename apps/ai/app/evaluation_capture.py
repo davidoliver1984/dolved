@@ -399,6 +399,35 @@ def generation_rejected(attempt, parsed, validation, exception=None):
         )
 
 
+def current_policy_citations_normalized(response, canonical, changes):
+    """Bounded sidecar, not a claim of membership or semantic correctness."""
+    if capture := _ACTIVE.get():
+        raw = response.output_text
+        canonical_text = canonical.model_dump_json()
+        capture.attempt = 1
+        capture.write(
+            {
+                "status": "normalised",
+                "reason": "exact_duplicate_evidence_ids",
+                "citation_normalisation": changes,
+                "raw_model_output": _text(
+                    raw.encode("utf-8")[:16384].decode("utf-8", errors="ignore"), 16384
+                ),
+                "canonical_output": _text(
+                    canonical_text.encode("utf-8")[:16384].decode(
+                        "utf-8", errors="ignore"
+                    ),
+                    16384,
+                ),
+                "raw_output_truncated": len(raw.encode("utf-8")) > 16384,
+                "canonical_output_truncated": len(canonical_text.encode("utf-8"))
+                > 16384,
+                "raw_output_redacted": True,
+                "membership_validation": "not_yet_checked",
+            }
+        )
+
+
 def current_policy_rejected(response, stage, code, field="output"):
     """Sidecar only: never return raw output or diagnostics to the API caller."""
     if capture := _ACTIVE.get():

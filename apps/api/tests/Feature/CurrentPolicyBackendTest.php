@@ -53,6 +53,32 @@ class CurrentPolicyBackendTest extends TestCase
 
     private ?string $producedReceipt = null;
 
+    public function test_s6_python_canonical_receipt_completes_and_persists_without_extra_generation(): void
+    {
+        Queue::fake();
+        $this->producedReceipt = 'smoke03_s6';
+        [$initial] = $this->fixture('current_only');
+        $conversation = $initial->conversation;
+        $user = $initial->createdBy;
+        $question = $initial->display_text;
+        $initial->delete();
+        $run = app(SubmitConversationMessage::class)->handle($conversation, $user, $question, (string) Str::uuid());
+        app(OrchestrateConversationRun::class)->handle($run->id);
+        $run->refresh();
+        $this->assertSame('completed', $run->status->value);
+        $this->assertCount(1, $this->payloads);
+        $expected = json_decode(file_get_contents('/contracts/http/current-policy-answer/v1/smoke03-s6-canonical-receipt.json'), true, flags: JSON_THROW_ON_ERROR);
+        $answer = $run->generatedAnswer->fresh();
+        $this->assertSame($expected['result'], $answer->temporal_context['current_policy']['generation']['result']);
+        $this->assertSame($expected['usage'], $answer->temporal_context['current_policy']['generation']['usage']);
+        $this->assertSame(implode("\n\n", array_column($expected['result']['answer_parts'], 'text')), $answer->renderedText());
+        $this->assertCount(4, $answer->evidenceSnapshots);
+        $this->assertSame(1, $run->deliveryEvents()->where('event_type', 'answer_completed')->count());
+        $this->assertSame(1, Message::where('role', 'assistant')->count());
+        $usage = WorkspaceUsageEvent::where('scope_public_id', $run->public_id)->where('operation_kind', 'generation')->sole();
+        $this->assertEqualsWithDelta($expected['usage']['cost_usd'], (float) $usage->cost_usd, 0.00000001);
+    }
+
     public static function producedReceiptCases(): array
     {
         return [['supported', 'completed', 'answered'], ['limitations', 'completed', 'qualified'],
@@ -303,7 +329,7 @@ class CurrentPolicyBackendTest extends TestCase
 
     public static function violations(): array
     {
-        return [['invalid_citation'], ['changed_source'], ['membership_revoked']];
+        return [['invalid_citation'], ['duplicate_citation'], ['stale_generation_identity'], ['changed_source'], ['membership_revoked']];
     }
 
     #[DataProvider('violations')]
@@ -440,6 +466,11 @@ class CurrentPolicyBackendTest extends TestCase
             $claim = IngestionEventClaim::factory()->create(['workspace_id' => $doc->workspace_id, 'document_id' => $doc->id]);
             for ($i = 1; $i <= ($doc->id === $document->id ? ($mode === 'fifteen' ? 15 : 7) : 1); $i++) {
                 $text = in_array($mode, ['source_capacity', 'capacity_and_unavailable'], true) ? str_repeat('a', 12001) : 'Wear gloves. Inspect weekly. Passage '.$i;
+                if ($this->producedReceipt === 'smoke03_s6' && $doc->id === $document->id) {
+                    // Isolated catalogue identities, exact retained source text.
+                    $fixture = json_decode(file_get_contents(base_path('../ai/tests/fixtures/current-policy-smoke03-s6.json')), true, flags: JSON_THROW_ON_ERROR);
+                    $text = $fixture['request']['sources'][$i - 1]['text'] ?? $text;
+                }
                 $chunk = DocumentChunk::factory()->create(['workspace_id' => $doc->workspace_id, 'document_id' => $doc->id,
                     'ingestion_event_claim_id' => $claim->id, 'ordinal' => $i, 'text' => $text, 'content_digest' => hash('sha256', $text)]);
                 if ($doc->workspace_id === $workspace->id) {
@@ -544,7 +575,9 @@ class CurrentPolicyBackendTest extends TestCase
                     throw new ConnectionException('Controlled transport unavailable');
                 }
                 $rows = json_decode(file_get_contents('/contracts/http/current-policy-answer/v1/controlled-adapter-receipts.json'), true, flags: JSON_THROW_ON_ERROR);
-                $receipt = $rows[$this->producedReceipt === 'malformed_usage' ? 'supported' : $this->producedReceipt];
+                $receipt = $this->producedReceipt === 'smoke03_s6'
+                    ? json_decode(file_get_contents('/contracts/http/current-policy-answer/v1/smoke03-s6-canonical-receipt.json'), true, flags: JSON_THROW_ON_ERROR)
+                    : $rows[$this->producedReceipt === 'malformed_usage' ? 'supported' : $this->producedReceipt];
                 // Only request correlation is supplied by this controlled transport;
                 // usage, result and identity are the real Python adapter output.
                 $receipt['request_id'] = $b['request_id'];
@@ -562,7 +595,7 @@ class CurrentPolicyBackendTest extends TestCase
             }
             $base = ['contract_version' => 'current-policy-answer-v1', 'request_id' => $b['request_id'],
                 'identity' => ['provider' => config('generation.provider'), 'model' => config('generation.model'),
-                    'prompt' => 'current-policy-pool-generation-v1', 'adapter' => 'current-policy-responses-v1',
+                    'prompt' => 'current-policy-pool-generation-v1', 'adapter' => 'current-policy-responses-v2',
                     'reasoning_effort' => config('generation.quality_affecting_configuration.reasoning_effort'), 'max_output_tokens' => 4096, 'max_retries' => 0],
                 'usage' => ['request_count' => $mode === 'capacity' ? 0 : 1, 'retry_count' => 0]];
             if (in_array($mode, ['invalid_output', 'incomplete_output'], true)) {
@@ -570,6 +603,13 @@ class CurrentPolicyBackendTest extends TestCase
             }
             if ($mode === 'capacity') {
                 return Http::response([...$base, 'status' => 'capacity', 'request_units' => 120001]);
+            }
+            if ($mode === 'stale_generation_identity') {
+                $base['identity']['adapter'] = 'current-policy-responses-v1';
+            }
+            if ($mode === 'duplicate_citation') {
+                return Http::response([...$base, 'status' => 'completed', 'result' => ['outcome' => 'answered',
+                    'answer_parts' => [['text' => 'Wear gloves.', 'evidence_ids' => ['ev-01', 'ev-01']]], 'unsupported_aspects' => []]]);
             }
 
             return Http::response([...$base, 'status' => 'completed', 'result' => ['outcome' => 'qualified',

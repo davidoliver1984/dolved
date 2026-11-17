@@ -13,7 +13,7 @@ from app.generation.current_policy import generate
 from tests.test_current_policy_generation import output, request, settings
 
 
-def transport_client(raw, status="completed", usage=True):
+def transport_client(raw, status="completed", usage=True, token_counts=None):
     calls = []
 
     def respond(incoming):
@@ -41,13 +41,16 @@ def transport_client(raw, status="completed", usage=True):
                         ],
                     }
                 ],
-                "usage": {
-                    "input_tokens": 100,
-                    "output_tokens": 30,
-                    "total_tokens": 130,
-                    "input_tokens_details": {"cached_tokens": 10},
-                    "output_tokens_details": {"reasoning_tokens": 5},
-                }
+                "usage": (
+                    token_counts
+                    or {
+                        "input_tokens": 100,
+                        "output_tokens": 30,
+                        "total_tokens": 130,
+                        "input_tokens_details": {"cached_tokens": 10},
+                        "output_tokens_details": {"reasoning_tokens": 5},
+                    }
+                )
                 if usage
                 else None,
             },

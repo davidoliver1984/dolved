@@ -53,7 +53,7 @@ final readonly class GenerationClient
         $status = $value['status'] ?? null;
         $usage = $value['usage'] ?? null;
         $expectedIdentity = ['provider' => config('generation.provider'), 'model' => config('generation.model'),
-            'prompt' => 'current-policy-pool-generation-v1', 'adapter' => 'current-policy-responses-v1',
+            'prompt' => 'current-policy-pool-generation-v1', 'adapter' => 'current-policy-responses-v2',
             'reasoning_effort' => config('generation.quality_affecting_configuration.reasoning_effort'),
             'max_output_tokens' => 4096, 'max_retries' => 0];
         $actualIdentity = $value['identity'] ?? [];

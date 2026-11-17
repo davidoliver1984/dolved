@@ -1,0 +1,52 @@
+{
+  "contract_version": "current-policy-answer-v1",
+  "identity": {
+    "provider": "openai",
+    "model": "gpt-5-mini",
+    "prompt": "current-policy-pool-generation-v1",
+    "adapter": "current-policy-responses-v2",
+    "reasoning_effort": "low",
+    "max_output_tokens": 4096,
+    "max_retries": 0
+  },
+  "status": "completed",
+  "result": {
+    "outcome": "answered",
+    "answer_parts": [
+      {
+        "text": "Who signs it: The assessment must be recorded in writing and \u201csigned and dated by the competent person who completed it.\u201d",
+        "evidence_ids": [
+          "ev-01",
+          "ev-03"
+        ]
+      },
+      {
+        "text": "Who to share it with: Communicate the assessment\u2019s findings and any control measures to every member of staff involved in the activity (not just file it centrally). The current version must also be readily accessible to staff at the point of the activity.",
+        "evidence_ids": [
+          "ev-01",
+          "ev-02"
+        ]
+      },
+      {
+        "text": "How often it must be reviewed: Review the assessment at least annually, and sooner following an incident, a near miss, or any change to the activity, the people involved, or the environment. (The Health and Safety Policy Statement cross\u2011references the same annual-or-sooner requirement.)",
+        "evidence_ids": [
+          "ev-01",
+          "ev-04"
+        ]
+      }
+    ],
+    "unsupported_aspects": []
+  },
+  "usage": {
+    "stage": "current_policy_generation",
+    "provider": "openai",
+    "model": "gpt-5-mini",
+    "request_count": 1,
+    "retry_count": 0,
+    "input_tokens": 4067,
+    "output_tokens": 458,
+    "cost_usd": 0.00193275,
+    "cost_basis": "estimated",
+    "pricing_snapshot": "openai-gpt-5-mini-pricing-2026-08-19"
+  }
+}

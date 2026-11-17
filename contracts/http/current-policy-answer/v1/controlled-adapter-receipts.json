@@ -5,7 +5,7 @@
       "provider": "openai",
       "model": "gpt-5-mini",
       "prompt": "current-policy-pool-generation-v1",
-      "adapter": "current-policy-responses-v1",
+      "adapter": "current-policy-responses-v2",
       "reasoning_effort": "low",
       "max_output_tokens": 4096,
       "max_retries": 0
@@ -42,7 +42,7 @@
       "provider": "openai",
       "model": "gpt-5-mini",
       "prompt": "current-policy-pool-generation-v1",
-      "adapter": "current-policy-responses-v1",
+      "adapter": "current-policy-responses-v2",
       "reasoning_effort": "low",
       "max_output_tokens": 4096,
       "max_retries": 0
@@ -81,7 +81,7 @@
       "provider": "openai",
       "model": "gpt-5-mini",
       "prompt": "current-policy-pool-generation-v1",
-      "adapter": "current-policy-responses-v1",
+      "adapter": "current-policy-responses-v2",
       "reasoning_effort": "low",
       "max_output_tokens": 4096,
       "max_retries": 0
@@ -107,7 +107,7 @@
       "provider": "openai",
       "model": "gpt-5-mini",
       "prompt": "current-policy-pool-generation-v1",
-      "adapter": "current-policy-responses-v1",
+      "adapter": "current-policy-responses-v2",
       "reasoning_effort": "low",
       "max_output_tokens": 4096,
       "max_retries": 0
@@ -133,7 +133,7 @@
       "provider": "openai",
       "model": "gpt-5-mini",
       "prompt": "current-policy-pool-generation-v1",
-      "adapter": "current-policy-responses-v1",
+      "adapter": "current-policy-responses-v2",
       "reasoning_effort": "low",
       "max_output_tokens": 4096,
       "max_retries": 0

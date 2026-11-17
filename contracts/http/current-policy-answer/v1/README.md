@@ -1,5 +1,22 @@
 # Current-policy answer v1 — Stop 2 backend
 
+## Adapter lineage: exact citation canonicalisation (2026-11-17)
+
+`current-policy-responses-v2` structurally validates the complete response first,
+including the original per-part 15-ID bound, then removes exact duplicate evidence
+IDs within each part on a canonical copy, preserving first occurrence order.
+Membership is checked afterwards; unknown IDs, malformed/empty lists and all other
+invalid output remain invalid. IDs shared by different parts remain. The JSON
+schema and prompt are unchanged. PHP pins v2 and still strictly rejects duplicates
+in canonical receipts. Historical v1 receipts are not rewritten.
+
+Opt-in evaluation capture retains a bounded `exact_duplicate_evidence_ids` event,
+zero-based part indices and removal counts, separate redacted original/canonical
+output strings (each at most 16,384 UTF-8 bytes, with truncation flags). It records
+normalisation before membership validation, not acceptance or entailment. No raw
+output or diagnostic count is placed in ordinary logs, HTTP results or persistence.
+The scoped sidecar itself is the export artifact; I/O failure remains nonfatal.
+
 ADR-0040. Default-off, server-selected `current-policy-pool-v1`. This is not the legacy generation contract and does not fabricate aspect ownership. `AnswerCurrentPolicyMessage` is the backend entry point; existing conversation delivery still refuses this profile until Stop 3. No user-facing API resource, SSE or web integration is included here.
 
 ## Retrieval and context

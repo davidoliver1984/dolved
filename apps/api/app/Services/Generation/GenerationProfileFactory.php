@@ -85,7 +85,7 @@ final class GenerationProfileFactory
             'execution_version' => 'current-policy-stop3-v1',
             'generation_contract' => 'current-policy-answer-v1',
             'generation_prompt' => 'current-policy-pool-generation-v1',
-            'generation_adapter' => 'current-policy-responses-v1',
+            'generation_adapter' => 'current-policy-responses-v2',
             'generation_provider' => config('generation.provider'),
             'generation_model' => config('generation.model'),
             'generation_output_tokens' => 4096,
