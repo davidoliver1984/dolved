@@ -59,6 +59,15 @@ def reserve(ledger, item, maximum, ceiling):
     ledger.append({'id':item,'started_at':time.time(),'liability_usd':str(maximum),'state':'reserved_before_dispatch'})
 
 
+def require_item_window(binding):
+    """Confirmation-only bound; never reset any existing clock."""
+    minimum = binding.get('minimum_item_window_seconds', 0)
+    if type(minimum) is not int or minimum < 0:
+        raise ValueError('invalid minimum item window')
+    if binding['deadline_epoch'] - time.time() < minimum:
+        raise ValueError('insufficient remaining item window before dispatch')
+
+
 def safe_item_outcome(saved):
     generation = ((saved.get('answer') or {}).get('temporal_context') or {}).get('current_policy', {}).get('generation') or {}
     if generation.get('status') == 'failed' and generation.get('reason') not in {'invalid_output','incomplete_output'}:
@@ -157,6 +166,7 @@ def execute_items(binding,manifest,destination):
         stages = bound['maximum_liability_by_stage']
         if set(stages) != {'planning_including_intrinsic_calls', 'retrieval_including_retries', 'generation'}:
             raise ValueError('incomplete attempt reservation')
+        require_item_window(binding)
         reserve(ledger,item['id'],sum(Decimal(v) for v in stages.values()),Decimal(binding['ceiling_usd']))
         durable(destination/'ledger.json',ledger)
         input_path=destination/(item['id']+'-browser-input.json')

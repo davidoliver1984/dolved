@@ -16721,3 +16721,39 @@ Smoke-04 Phase A report/release identities will be in the fresh smoke-04/ packag
 no execution or operational authorisation is included. Outstanding separate
 decisions: duplicate history-decline wording, prose handles, speculative gaps,
 citation usability and production-font rollout. One passing S2 is not a rate.
+
+## 2026-11-17 — Sealed confirmation Phase A preparation only
+
+David reports independent smoke-04 PASS: five pass, S2 honestly incomplete, none
+fail. This is reviewer-reported development compatibility, not our grading or a
+reliability/readiness claim. S6 accessibility was treated as ancillary to the
+explicit three-part requirement. Retention of that interpretation is conditional
+on accessibility not being explicitly mandatory in the frozen criteria; no
+expectation/assessment was accessed or rewritten. The stricter alternative counts
+S6 incomplete too and would exceed the one-permitted-incomplete smoke rule.
+Smoke-01/02/03 remain FAILED. Confirmation measures completeness without tuning.
+
+Prepare exactly 68 with synthetic manifests only; declared questions hash
+9c4e3aab666d18932fe31a53b6f511f487a30b54e7593b0d94d0b1f7260bb99e
+is unverified until formal release. Neutral source/index and control-site-context
+attestations remain required; no sealed/question/expectation access. No application
+or prompt change. Existing runner count and typed conservative halt policy remain.
+Only an optional minimum_item_window_seconds check is added before reservation/
+dispatch; existing clocks never reset. Synthetic tests cover 67/68/69, preserved
+68-item order/fresh-context payload, reservation and expiry; existing one-use,
+drift, failure-retention and cleanup checks remain.
+
+Proposed minimum remaining allowance 1,095 seconds = 120 browser setup + 900
+backend + 15 delivery + 60 evidence/verification allowance. Last term is a planning
+margin, not a guaranteed bound on host/infra work. 68 serial allowances = 74,460
+seconds (20h41m). Propose worker 23h / first-submission 22h, calendar ceiling
+2026-12-31 23:59 Europe/London. Release must approve these; expiry halts, never
+resumes/replaces items. At most USD154.88243584 reserved (68 ×2.27768288), proposed
+ceiling300, not spending authority or invoice. No pricing/production-limit change.
+
+Fresh external package: current-policy-pilot-20261116/sealed-confirmation-01/.
+Only capture mount may require AI recreation with approved cache preservation;
+API/web code stays deployed unchanged. Report/freeze there records actual checks
+and remaining mechanical release prerequisites. No approved operational authority,
+worker start or confirmation execution in Phase A. Outstanding wording, omissions,
+citation and production-font decisions are untouched.
