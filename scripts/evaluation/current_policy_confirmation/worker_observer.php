@@ -169,11 +169,22 @@ final class EvaluationWorkerObserver
             || (isset($v['request_id']) && $v['request_id'] !== $id['request_id'])) { throw new RuntimeException('response identity'); }
         $row = ['kind' => 'request_end', 'http_status' => $event->response->status(), 'transport' => 'response'] + $id;
         if ($id['stage'] === 'planner') {
-            $attempts = $v['usage']['validation_attempts'] ?? $v['detail']['validation_attempts'] ?? null;
+            $receipt = is_array($v['usage'] ?? null) && array_key_exists('validation_attempts', $v['usage']) ? $v['usage'] : (is_array($v['detail'] ?? null) ? $v['detail'] : []);
+            $hasAttempts = array_key_exists('validation_attempts', $receipt);
+            $attempts = $receipt['validation_attempts'] ?? null;
+            $failure = is_array($v['detail'] ?? null) ? $v['detail'] : [];
+            $category = $failure['category'] ?? null;
+            $row['failure_category'] = in_array($category, ['transport_error', 'provider_authentication', 'provider_quota', 'provider_rate_limit', 'provider_unavailable', 'provider_request_rejected'], true) ? $category : null;
+            $row['provider_status'] = is_int($failure['provider_status'] ?? null) && $failure['provider_status'] >= 100 && $failure['provider_status'] <= 599 ? $failure['provider_status'] : null;
+            $row['systemic'] = is_bool($failure['systemic'] ?? null) ? $failure['systemic'] : null;
+            $row['reported_attempt_count'] = is_int($failure['attempt_count'] ?? null) && $failure['attempt_count'] >= 0 && $failure['attempt_count'] <= 2 ? $failure['attempt_count'] : null;
             $row['attempts'] = null;
-            if ($attempts !== null) {
-                if (! is_array($attempts) || ! array_is_list($attempts) || count($attempts) > 2 || $attempts === []) { throw new RuntimeException('attempt shape'); }
+            $row['attempt_receipt_state'] = 'missing';
+            if ($hasAttempts) {
+                if (! is_array($attempts) || ! array_is_list($attempts) || count($attempts) > 2) { throw new RuntimeException('attempt shape'); }
+                if ($attempts === [] && ($event->response->status() !== 503 || $row['failure_category'] === null || $row['systemic'] === null)) { throw new RuntimeException('invalid empty attempt boundary'); }
                 $row['attempts'] = [];
+                $row['attempt_receipt_state'] = $attempts === [] ? 'observed_empty' : 'observed_list';
                 foreach ($attempts as $i => $a) {
                     if (($a['attempt'] ?? null) !== $i + 1 || ! in_array($a['status'] ?? null, ['accepted', 'rejected'], true)) { throw new RuntimeException('attempt receipt'); }
                     $row['attempts'][] = ['attempt' => $a['attempt'], 'status' => $a['status']];

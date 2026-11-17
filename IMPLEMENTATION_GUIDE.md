@@ -16839,3 +16839,19 @@ No released questions, assessments, provider calls, deployment or authority.
 Recommend a separately frozen/authorised single existing development-question
 integration check before confirmation release; no execution approved or started.
 Neutral source/index/context attestations and final release remain separate.
+
+### 2026-11-17 — Observer pre-validation empty receipt correction
+
+Started from88c2db86be308bb4f48bca4b15b0ac1f6eb4980c; application e014 unchanged.
+Harness-only: HTTP503 with a closed provider/transport failure category and typed
+systemic flag may record validation_attempts=[] as observed_empty. Missing fields
+remain missing/null in the journal; explicit null, scalar/object, oversized or
+invalid receipts poison observation. HTTP success with an empty list is not valid
+execution. Bounded provider status/category/systemic/reported-attempt fields are
+retained, never raw error text. Reconciliation still halts with
+planner_boundary_or_receipts_unavailable even if a later outer request succeeds.
+
+Nine actual Laravel-event fixture shapes passed, comparing unchanged requests and
+responses;15 focused Python reconciler tests passed in disposable network-none
+containers. No provider or evaluation-worker call. Correction committed separately
+before one-S1 integration preparation; no application or retry-policy change.

@@ -99,7 +99,7 @@ def journal(spec):
     extra = {'worker_start': set(), 'worker_stop': set(), 'job_start': set(),
              'job_end': {'job_state', 'run_status'},
              'request_start': {'request_id', 'endpoint', 'stage', 'purpose'},
-             'request_end': {'request_id', 'endpoint', 'stage', 'purpose', 'http_status', 'transport', 'attempts', 'generation_status', 'generation_reason'}}
+             'request_end': {'request_id', 'endpoint', 'stage', 'purpose', 'http_status', 'transport', 'attempts', 'attempt_receipt_state', 'failure_category', 'provider_status', 'systemic', 'reported_attempt_count', 'generation_status', 'generation_reason'}}
     for sequence, (name, raw) in enumerate(rows.items(), 1):
         r = parsed(raw)
         if name != f'{sequence:06}.json' or type(r.get('sequence')) is not int or r.get('sequence') != sequence or r.get('previous_sha256') != previous:
