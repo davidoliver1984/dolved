@@ -1,5 +1,34 @@
 # RAG Platform Implementation Guide
 
+## 2026-11-17 — Smoke-02 deployment and Phase A preparation
+
+David authorised preparation only. Correction `47d86fd` is deployed to the
+isolated dolved-r28-s03 API/AI; reviewed six-file harness changes were committed
+separately as `172a4cb`. No application changes were made in this preparation.
+The sparse cache was copied and hash-verified before AI recreation, restored,
+then loaded in the serving container with networking denied and zero question
+encodings. `migrate:status` reported 50 applied migrations and none pending.
+Deployment used explicit `--no-deps --no-build --pull never` operations.
+
+The active 986-chunk database/index identity, application role, profile,
+threshold policy and empty conversation-generation queue were rechecked.
+Actual Next.js development-mode login/fresh-route warmup and existing S1 reload
+were read-only. No worker or question was started. Capture now points only to
+the fresh smoke-02 directory; fixture capture is kept separately.
+
+Focused checks: 12 runner tests, three deadline tests, two preparation-adapter
+tests and 45 capture/current-policy tests passed. No unrelated full suite was
+rerun. The minimal external command adapter adds offline readiness and future
+worker mount/configuration binding; execution/accounting/stop rules are unchanged.
+The conservative six-item reservation was recalculated as USD 11.89067328,
+below the proposed USD 25 ceiling. Missing receipts retain full liability.
+
+Evidence and final release identities are in
+`~/Desktop/dolved-experiments/current-policy-pilot-20261116/smoke-02/`.
+Phase B requires narrow review and David's explicit release of its new binding
+and runner hashes. No operational authorisation exists. Smoke-01 remains failed;
+Next development mode and the external-font build blocker remain limitations.
+
 ## 2026-11-17 — Smoke-01 provider-free integration correction
 
 Smoke-01 remains failed and its authorisation consumed; no question was retried.
