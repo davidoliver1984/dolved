@@ -16937,3 +16937,22 @@ Evidence and installed-framework source ordering: external observer-integration-
 The bounded harness is committed before the one permitted evaluation rehearsal;
 its separately checksummed report will record the actual result, never inferred
 from these fixtures. No application deployment, push or merge.
+
+The single evaluation rehearsal at216bdd1302f3308f1ac2d213aeb2bce40d83051a
+consumed its rehearsal-only authority and halted before readiness. Exact image,
+environment mapping, command and mount destination set matched. The started-mount
+helper compared base Source strings literally: API used /host_mnt/Users/... for
+/app and /contracts, worker used /Users/... . These are the already documented
+spellings, but this helper did not apply those equivalences. No bypass, fix or
+second rehearsal followed. Primary AssertionError was retained separately from
+cleanup Pending/missing_worker_start. No observer journal record was produced;
+the required lifecycle was not demonstrated. Worker exit143 is not a graceful
+pass, and the historical early-SIGTERM hypothesis remains unproven.
+
+Owned worker was stopped and removed, removing temporary rehearsal mounts/controls
+without changing shared volumes. Exact17 governance-job identities/payload hashes,
+conversation queue and database counts remained unchanged;871 historical files
+were hash-verified unchanged. Zero questions/providers; no item reservation or
+model-spend authority. Application, serving services and capture destination stay
+unchanged. External observer-integration-02 report records failed/unverified gates.
+Stop for review; later S1 still needs a new freeze, reservation and explicit release.
