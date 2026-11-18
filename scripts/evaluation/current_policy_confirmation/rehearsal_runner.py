@@ -55,7 +55,10 @@ def verify(b):
     from mount_guard import verify_api_mounts
     verify_api_mounts(config,api,b['base_mount_binding'],m.mounted)
     assert build_mount_spec(config,b['base_mount_binding'],b['mounts'])==b['mount_spec']
-    observed=json.loads(subprocess.check_output(m.compose()+['-f',b['override'],'config','--format','json'],cwd=b['worktree'],env=m.env()))['services'][b['service']]
+    resolved=json.loads(subprocess.check_output(m.compose()+['-f',b['override'],'config','--format','json'],cwd=b['worktree'],env=m.env()))
+    from rehearsal_compose import verify_resolved
+    verify_resolved(resolved,config,b['service'],b['command'],b['mounts'])
+    observed=resolved['services'][b['service']]
     if hashlib.sha256(json.dumps(observed,sort_keys=True).encode()).hexdigest()!=b['service_sha256']:raise ValueError('worker_configuration_drift')
     if snapshot(b)!=b['queue_snapshot']:raise ValueError('queue_drift')
     names=subprocess.check_output(['docker','ps','-a','--format','{{.Names}}'],text=True).splitlines()

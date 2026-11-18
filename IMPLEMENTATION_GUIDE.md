@@ -17001,3 +17001,24 @@ substituted. The unchanged stopped-container harness candidate is b7bc0c0; this
 is not evidence of a working real-container lifecycle. All attempted preparation
 and the exact blocker are retained in observer-integration-03. No authority, worker,
 question, provider call, push or merge; stop for David's disposition.
+
+### 2026-11-18 — Explicit private Compose extends source for integration-03
+
+David clarified continuation of the unused single rehearsal from4b44ac9230. The
+failed override/report/checksums stay unchanged. preparation-02 uses an explicit
+extends.file containing the fully resolved approved Compose model, privately
+stored outside evidence/commits (directory0700/file0600). Literal dollar signs
+are escaped for the second interpolation pass; exact resolved environment values
+are compared privately with the base/API, never printed. Only hash/safe fields
+are retained. The dedicated service clears dependencies and ports; actual installed
+Compose resolution now passes, including the complete direct dependency graph
+(depends_on, links, volumes_from and service/container namespace references).
+No worker/container was created by that check.
+
+The harness rechecks the resolved model at preflight: exact API image/environment,
+unchanged base fields, explicit added mounts, restricted entrypoint, no dependencies
+or published ports. This is the existing Compose mechanism, not another framework.
+Relevant configuration/shared-validator tests pass; prior53-test and Laravel
+lifecycle evidence is retained. No application or serving-service change. Commit
+before final freeze/consumption of the one rehearsal-only authority. Execution
+result will be reported separately without repair-and-repeat.
