@@ -16991,3 +16991,13 @@ Laravel daemon/hook/receipt fixtures pass; both PHP entrypoints reject the wrong
 mode before bootstrap. No provider, evaluation job or credential in tests.
 External evidence: observer-integration-03/tests/. Commit before the single
 authorised rehearsal; actual result will be published without repair-and-repeat.
+
+Integration-03 preparation stopped before rehearsal authority or container creation.
+The dedicated service override could not resolve `extends: api`: installed Compose
+reported service api not found in that override's extension scope. Provider-free
+53-test verification passed, but resolved-configuration preflight did not. No final
+binding/freeze was produced, and no alternate creation mechanism was silently
+substituted. The unchanged stopped-container harness candidate is b7bc0c0; this
+is not evidence of a working real-container lifecycle. All attempted preparation
+and the exact blocker are retained in observer-integration-03. No authority, worker,
+question, provider call, push or merge; stop for David's disposition.
