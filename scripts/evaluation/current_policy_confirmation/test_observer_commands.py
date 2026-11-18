@@ -28,13 +28,14 @@ class ObservedWorkerConfigurationTests(unittest.TestCase):
     def test_started_mounts_exact_bound_spellings_only(self):
         _,_,extra=self.fixture();base=[{'Destination':'/app','Type':'bind','Source':'/approved/app','RW':True}]
         worker=base+[{'Destination':t,'Type':'bind','Source':v['allowed_source_spellings'][1],'RW':not v['read_only']} for t,v in extra.items()]
-        c.verify_started_mounts(base,worker,extra)
+        spec={'/app':{'Type':'bind','RW':True,'allowed_sources':['/approved/app']},**{t:{'Type':'bind','RW':not v['read_only'],'allowed_sources':v['allowed_source_spellings']} for t,v in extra.items()}}
+        c.verify_started_mounts(spec,worker)
         for change in ['source','mode','destination']:
             x=copy.deepcopy(worker)
             if change=='source':x[-1]['Source']='/other/approved/3'
             elif change=='mode':x[-1]['RW']=not x[-1]['RW']
             else:x[-1]['Destination']='/wrong'
-            with self.assertRaises(AssertionError):c.verify_started_mounts(base,x,extra)
+            with self.assertRaises(AssertionError):c.verify_started_mounts(spec,x)
 
 
 if __name__=='__main__':unittest.main()

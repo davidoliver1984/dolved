@@ -16956,3 +16956,38 @@ were hash-verified unchanged. Zero questions/providers; no item reservation or
 model-spend authority. Application, serving services and capture destination stay
 unchanged. External observer-integration-02 report records failed/unverified gates.
 Stop for review; later S1 still needs a new freeze, reservation and explicit release.
+
+### 2026-11-18 — Shared mount semantics and stopped-container rehearsal preparation
+
+Starting32ab2b14; application e014ff9 unchanged. Integration-01/02 evidence and
+consumed authorities preserved. The harness now compiles a single exact mount
+specification from the approved Compose/binding, not raw API inspection strings.
+mount_guard verifies complete sets, types, access modes, named-volume identities
+and only the approved /app, /contracts, /r28-corpus and explicit observer spelling
+pairs. API preflight, observed-worker post-start and rehearsal preflight/create/
+post-start share these semantics. Safe static mismatches are collected together;
+content verification still runs separately inside the running container.
+
+Call sites inspected only within current_policy_confirmation: smoke_commands
+verify_api_mounts, observer_commands future_worker/worker_start, rehearsal_runner
+verify/identity_mismatches. Removed the raw API-versus-worker Source comparison.
+No general prefix/path normalisation and no wider equivalence list.
+
+The rehearsal uses a dedicated Compose service extending API, no dependency set or
+published ports. Installed Compose supports create without starting (but not a
+create --no-deps flag); the service dependency set is explicitly empty. Static
+image/command/entrypoint/environment/owner/mount and never-started-state checks
+must pass before docker start of the same inspected ID. Post-start checks add
+in-container application and observer/config content checks. Existing Looping
+veto, HTTP guard and60/30/300-second bounds remain. Rehearsal modes cannot be used
+silently by a question worker.
+
+Provider-free results:53 Python test invocations pass, including retained safe
+API/worker mounts in all four approved spelling combinations, negative identity/
+mount cases, all-mismatch collection, no-start-on-failure and same-ID start.
+Retained inspections do not contain raw environments; order tests use synthetic
+placeholders, with provenance recorded rather than pretending raw replay. Actual
+Laravel daemon/hook/receipt fixtures pass; both PHP entrypoints reject the wrong
+mode before bootstrap. No provider, evaluation job or credential in tests.
+External evidence: observer-integration-03/tests/. Commit before the single
+authorised rehearsal; actual result will be published without repair-and-repeat.

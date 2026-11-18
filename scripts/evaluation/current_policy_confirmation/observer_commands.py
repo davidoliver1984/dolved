@@ -106,6 +106,8 @@ def future_worker():
     validate_observer_service(service,observed,b['observer_worker']['mounts'])
     assert hashlib.sha256(json.dumps(observed,sort_keys=True).encode()).hexdigest()==b['observer_worker']['compose_service_sha256']
     for path,digest in b['observer_worker']['source_files'].items():assert sha(path)==digest
+    from mount_guard import build_mount_spec
+    assert build_mount_spec(config,b['future_worker'],b['observer_worker']['mounts'])==b['observer_worker']['mount_spec']
 
 
 def guard():
@@ -130,22 +132,19 @@ def worker_start():
     # Queue was empty at the guard; no item can be reserved/submitted until this
     # verification and the subsequent journal startup check both return.
     c=inspect(WORKER);api=inspect('dolved-r28-s03-api-1')
-    assert c['Image']==api['Image']
-    verify_environment(api['Config']['Env'],c['Config']['Env'])
-    assert c['Config']['Cmd']==['php','/evaluation-observer/observed_worker.php','/evaluation-observer-config/observer.json']
-    verify_started_mounts(api['Mounts'],c['Mounts'],b['observer_worker']['mounts'])
+    from mount_guard import mount_mismatches
+    errors=mount_mismatches(b['observer_worker']['mount_spec'],c['Mounts'])
+    if c['Image']!=api['Image']:errors.append('worker_image_mismatch')
+    try:verify_environment(api['Config']['Env'],c['Config']['Env'])
+    except ValueError as error:errors.append(str(error))
+    if c['Config']['Cmd']!=['php','/evaluation-observer/observed_worker.php','/evaluation-observer-config/observer.json']:errors.append('worker_command_mismatch')
+    if c['Config']['Entrypoint']!=api['Config']['Entrypoint']:errors.append('worker_entrypoint_mismatch')
+    if errors:raise ValueError(','.join(sorted(set(errors))))
 
 
-def verify_started_mounts(api_mounts, worker_mounts, extra):
-    base={m['Destination']:m for m in api_mounts};actual={m['Destination']:m for m in worker_mounts}
-    assert len(actual)==len(worker_mounts) and set(actual)==set(base)|set(extra)
-    for target,expected in base.items():
-        assert all(actual[target].get(k)==expected.get(k) for k in ['Type','Source','Destination','RW','Name'])
-    for target,expected in extra.items():
-        m=actual[target]
-        assert m['Type']=='bind' and m['RW']==(not expected['read_only'])
-        # Explicit per-entry spellings in the reviewed binding; no prefix strip.
-        assert m['Source'] in expected['allowed_source_spellings']
+def verify_started_mounts(expected_spec, worker_mounts):
+    from mount_guard import verify_mounts
+    verify_mounts(expected_spec,worker_mounts)
 
 
 def worker_stop():

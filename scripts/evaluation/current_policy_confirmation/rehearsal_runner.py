@@ -8,7 +8,8 @@ import subprocess
 import sys
 import time
 import uuid
-from observer_commands import verify_environment, verify_started_mounts
+from observer_commands import environment_map
+from mount_guard import build_mount_spec, mount_mismatches, verify_mounts
 import native_capture as nc
 from runner import durable
 
@@ -19,6 +20,29 @@ def load_adapter(b):
     m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m);return m
 def snapshot(b):
     return json.loads(subprocess.check_output(['docker','exec','-i','dolved-r28-s03-api-1','php'],input=Path(b['queue_snapshot_script']).read_bytes()))
+
+def identity_mismatches(b,c,created=False):
+    errors=[]
+    if c['Image']!=b['image']:errors.append('worker_image_mismatch')
+    if c['Config']['Cmd']!=b['command']:errors.append('worker_command_mismatch')
+    if c['Config']['Entrypoint']!=b['entrypoint']:errors.append('worker_entrypoint_mismatch')
+    if c['Config']['Labels'].get('dolved.rehearsal-owner')!=b['owner_id']:errors.append('worker_ownership_mismatch')
+    try:
+        value=hashlib.sha256(json.dumps(environment_map(c['Config']['Env']),sort_keys=True).encode()).hexdigest()
+        if value!=b['environment_sha256']:errors.append('environment_mapping_mismatch')
+    except ValueError as e:errors.append(str(e))
+    errors+=mount_mismatches(b['mount_spec'],c['Mounts'])
+    if created and (c['State']['Status']!='created' or c['State']['Running'] or not c['State']['StartedAt'].startswith('0001-')):errors.append('container_previously_started')
+    return sorted(set(errors))
+
+def start_verified(b,c,start):
+    errors=identity_mismatches(b,c,created=True)
+    if errors:raise ValueError(','.join(errors))
+    start(c['Id'])
+
+def content_check(b,container_id):
+    code='$m=json_decode(stream_get_contents(STDIN),true);foreach($m as $p=>$h){if(!is_file($p)||hash_file("sha256",$p)!==$h)exit(1);}'
+    subprocess.run(['docker','exec','-i',container_id,'php','-r',code],input=json.dumps(b['mounted_files']),text=True,capture_output=True,check=True)
 def verify(b):
     if b['purpose']!='empty_queue_lifecycle_only' or b['provider_call_allowance']!=0:raise ValueError('rehearsal_authority_boundary')
     if subprocess.check_output(['git','rev-parse','HEAD'],cwd=b['worktree'],text=True).strip()!=b['commit']:raise ValueError('harness_drift')
@@ -30,7 +54,8 @@ def verify(b):
     config=json.loads(subprocess.check_output(m.compose()+['config','--format','json'],cwd=b['worktree'],env=m.env()))
     from mount_guard import verify_api_mounts
     verify_api_mounts(config,api,b['base_mount_binding'],m.mounted)
-    observed=json.loads(subprocess.check_output(m.compose()+['-f',b['override'],'config','--format','json'],cwd=b['worktree'],env=m.env()))['services']['api']
+    assert build_mount_spec(config,b['base_mount_binding'],b['mounts'])==b['mount_spec']
+    observed=json.loads(subprocess.check_output(m.compose()+['-f',b['override'],'config','--format','json'],cwd=b['worktree'],env=m.env()))['services'][b['service']]
     if hashlib.sha256(json.dumps(observed,sort_keys=True).encode()).hexdigest()!=b['service_sha256']:raise ValueError('worker_configuration_drift')
     if snapshot(b)!=b['queue_snapshot']:raise ValueError('queue_drift')
     names=subprocess.check_output(['docker','ps','-a','--format','{{.Names}}'],text=True).splitlines()
@@ -51,16 +76,28 @@ def execute(path):
     lifecycle=root/'lifecycle';primary=None;exit_code=None
     def event(name,**v):durable(lifecycle/(name+'.json'),{'phase':name,'at':time.time(),**v},True)
     try:
-        argv=m.compose()+['-f',b['override'],'run','-d','--no-deps','--pull','never','--name',b['worker'],'--label','dolved.rehearsal-binding='+sha(path),'api',*b['command']]
+        # Dedicated service has an explicitly empty dependency set; this installed
+        # Compose create command has no --no-deps option. It never starts services.
+        argv=m.compose()+['-f',b['override'],'create','--no-recreate','--no-build','--pull','never',b['service']]
         subprocess.run(argv,cwd=b['worktree'],env=m.env(),capture_output=True,check=True,timeout=max(1,deadline-time.time()))
         c=inspect(b['worker']);event('process_created',container_id=c['Id'])
-        api=inspect('dolved-r28-s03-api-1')
-        if c['Image']!=api['Image'] or c['Config']['Cmd']!=b['command']:raise ValueError('worker_identity_drift')
-        verify_environment(api['Config']['Env'],c['Config']['Env']);verify_started_mounts(api['Mounts'],c['Mounts'],b['mounts'])
-        nc.verify_startup(b['native_capture'],min(deadline,start+60),root,durable)
+        errors=identity_mismatches(b,c,created=True);event('static_identity',mismatch_codes=errors,container_id=c['Id'],content_check='host source hashes verified; running content check pending')
+        def start_id(cid):
+            event('process_start_requested',container_id=cid)
+            subprocess.run(['docker','start',cid],capture_output=True,check=True,timeout=max(1,deadline-time.time()))
+        start_verified(b,c,start_id)
+        running=inspect(c['Id']);errors=identity_mismatches(b,running)
+        try:content_check(b,c['Id'])
+        except Exception:errors.append('mounted_content_mismatch')
+        event('post_start_identity',mismatch_codes=errors,container_id=running['Id'])
+        if errors:raise ValueError(','.join(errors))
+        # Docker's actual StartedAt anchors readiness, not the earlier create.
+        from datetime import datetime
+        process_start=datetime.fromisoformat(running['State']['StartedAt'].replace('Z','+00:00')).timestamp()
+        nc.verify_startup(b['native_capture'],min(deadline,process_start+60),root,durable)
         event('observer_started_and_loop_ready_verified')
         # Proof of the pre-pop veto, not a sleep used as evidence of readiness.
-        while time.time()<min(deadline,start+60):
+        while time.time()<min(deadline,process_start+60):
             if (lifecycle/'poll_prevented.json').is_file():break
             time.sleep(.05)
         if not (lifecycle/'poll_prevented.json').is_file() or not (lifecycle/'no_job_no_http_guard_installed.json').is_file():raise ValueError('isolation_proof_missing')
@@ -73,9 +110,9 @@ def execute(path):
         names=subprocess.check_output(['docker','ps','-a','--format','{{.Names}}'],text=True).splitlines()
         if b['worker'] in names:
             c=inspect(b['worker'])
-            if c['Config']['Labels'].get('dolved.rehearsal-binding')!=sha(path):raise ValueError('cleanup_ownership_mismatch')
+            if c['Config']['Labels'].get('dolved.rehearsal-owner')!=b['owner_id']:raise ValueError('cleanup_ownership_mismatch')
             event('stop_requested',ready=(root/'observer-startup.json').exists())
-            try:subprocess.run(['docker','stop','--timeout','30',b['worker']],capture_output=True,check=True,timeout=min(35,max(1,deadline-time.time())))
+            try:subprocess.run(['docker','stop','--timeout','30',c['Id']],capture_output=True,check=True,timeout=min(30,max(1,deadline-time.time())))
             except subprocess.TimeoutExpired:
                 subprocess.run(['docker','kill',b['worker']],capture_output=True,check=True);event('forced_termination')
             c=inspect(b['worker']);exit_code=c['State']['ExitCode'];event('process_exited',exit_code=exit_code,running=c['State']['Running'])
