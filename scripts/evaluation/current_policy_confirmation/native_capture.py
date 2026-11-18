@@ -96,7 +96,8 @@ def journal(spec):
     jobs = []
     stopped = False
     allowed_common = {'schema', 'execution_id', 'worker_id', 'workspace_id', 'sequence', 'previous_sha256', 'kind', 'job_id', 'run_id'}
-    extra = {'worker_start': set(), 'worker_stop': set(), 'job_start': set(),
+    ready = False
+    extra = {'worker_start': set(), 'worker_loop_ready': set(), 'worker_stop': set(), 'job_start': set(),
              'job_end': {'job_state', 'run_status'},
              'request_start': {'request_id', 'endpoint', 'stage', 'purpose'},
              'request_end': {'request_id', 'endpoint', 'stage', 'purpose', 'http_status', 'transport', 'attempts', 'attempt_receipt_state', 'failure_category', 'provider_status', 'systemic', 'reported_attempt_count', 'generation_status', 'generation_reason'}}
@@ -113,7 +114,13 @@ def journal(spec):
             fail('missing_worker_start')
         if kind == 'worker_start' and sequence != 1:
             fail('duplicate_worker_start')
+        if kind == 'worker_loop_ready':
+            if ready or sequence != 2 or jobs or requests:
+                fail('invalid_loop_readiness')
+            ready = True
         if kind == 'job_start':
+            if spec.get('require_loop_ready') and not ready:
+                fail('job_before_loop_readiness')
             if active is not None or not UUID.fullmatch(str(r.get('run_id', ''))) or not re.fullmatch(r'[a-zA-Z0-9-]{1,100}', str(r.get('job_id', ''))):
                 fail('job_overlap_or_identity')
             if any(j['run_id'] == r['run_id'] or j['job_id'] == r['job_id'] for j in jobs):
@@ -317,8 +324,11 @@ class Reconciler:
 
 def verify_shutdown(spec, destination, save):
     rows, jobs, requests, active, stopped = journal(spec)
+    ready = any(parsed(row)['kind'] == 'worker_loop_ready' for row in rows.values())
+    if spec.get('require_loop_ready') and not ready:
+        fail('startup_interrupted_before_loop_ready')
     if not stopped or active is not None:
-        fail('missing_worker_stop')
+        fail('ready_worker_missing_stop' if ready else 'missing_worker_stop')
     caps = inventory(spec['capture'])
     reconcile_captures(spec, caps, requests)
     previous = sorted(Path(destination).glob('*-native-attribution.json'))
@@ -331,18 +341,20 @@ def verify_shutdown(spec, destination, save):
 
 
 def verify_startup(spec, deadline, destination, save):
-    """No reservation/submission before a complete, healthy worker start."""
-    until = min(deadline, time.time() + 5)
-    last = 'missing_worker_start'
+    """Looping occurs after Laravel installs graceful signal handlers."""
+    until = min(deadline, time.time() + 60)
+    last = 'startup_incomplete_before_loop_ready'
     stable = None
     while time.time() < until:
         try:
             rows, jobs, requests, active, stopped = journal(spec)
-            if jobs or requests or active is not None or stopped or len(rows) != 1 or inventory(spec['capture']):
+            if jobs or requests or active is not None or stopped or len(rows) > 2 or inventory(spec['capture']):
                 fail('unexpected_startup_activity')
+            if len(rows) != 2 or parsed(list(rows.values())[-1])['kind'] != 'worker_loop_ready':
+                raise Pending('startup_incomplete_before_loop_ready')
             current = hashes(rows)
             if current == stable:
-                save(Path(destination)/'observer-startup.json', {'worker_start_verified': True, 'journal': current, 'before_item_reservation': True}, True)
+                save(Path(destination)/'observer-startup.json', {'worker_start_verified': True, 'loop_ready_verified': True, 'journal': current, 'before_item_reservation': True}, True)
                 return
             stable = current
         except Pending as error:

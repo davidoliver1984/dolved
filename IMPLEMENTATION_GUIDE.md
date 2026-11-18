@@ -16900,3 +16900,40 @@ checksums bind the local tooling commit, runtime, deployment and future worker.
 No provider calls, operational authorisation, worker start, push or merge.
 Stop for narrow review and David's explicit one-use release. Sealed confirmation
 remains blocked on live integration plus its separate neutral attestations/release.
+
+### 2026-11-18 — Bounded observer lifecycle correction and rehearsal boundary
+
+Started from4b7b0ec7, application e014ff9 unchanged. The failed integration-01
+authority/evidence remain immutable. Its retained evidence shows zero provider
+requests and no item reservation incurred; its conservative liability entry is not
+an observed charge or invoice audit. Early SIGTERM before handler installation is
+still only a hypothesis for the historical missing stop record.
+
+Environment comparison now parses the first equals sign, preserves empty/full
+values, rejects malformed/duplicate names, and compares exact mappings without
+ordering significance or value disclosure. Image/source/mount checks are retained.
+Worker::daemon in the installed Laravel source installs graceful signal handlers
+before Looping; that event precedes getNextJob. The observer records loop readiness
+once, in its integrity chain. Startup requires this record within60 seconds capped
+by the existing overall deadline. Startup interruption and ready-worker missing
+stop have distinct codes. Primary and cleanup failures are both retained without
+replacing the original exception. Historical journals stay readable.
+
+Rehearsal-only entrypoint/configuration installs a Looping false-return veto before
+queue connection/pop and Http::preventStrayRequests as defence in depth. Real
+bootstrap and idle daemon are retained. These controls are excluded from normal S1
+configuration; absent/mismatched rehearsal mode/source/config fails closed. The
+separate runner binds zero questions/providers, once-only authority,60-second
+startup,30-second graceful stop and five-minute overall maximum. No S1 authority
+is created. Lifecycle phase and isolation receipts are separate from native capture.
+
+Provider-free checks:46 Python tests pass; actual Laravel HTTP/job observational
+equivalence fixtures and nine receipt cases pass. A real daemon fixture reaches
+two loops with signal handlers installed, forbids Queue Factory::connection,
+blocks a controlled stray HTTP call before transport, and emits start/ready/stop
+with exit0. Four PHP syntax checks pass. Containers are disposable/network-none,
+with no credentials or evaluation data. No unrelated application suite rerun.
+Evidence and installed-framework source ordering: external observer-integration-02/tests/.
+The bounded harness is committed before the one permitted evaluation rehearsal;
+its separately checksummed report will record the actual result, never inferred
+from these fixtures. No application deployment, push or merge.

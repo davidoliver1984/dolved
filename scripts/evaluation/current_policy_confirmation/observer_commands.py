@@ -17,6 +17,23 @@ WORKER = 'dolved-r28-s03-observer-integration-01-worker'
 def sha(p): return hashlib.sha256(Path(p).read_bytes()).hexdigest()
 def inspect(name): return json.loads(subprocess.check_output(['docker','inspect',name]))[0]
 def binding(): return json.loads((ROOT/'binding.json').read_text())
+def environment_map(entries):
+    result = {}
+    if not isinstance(entries, list): raise ValueError('environment_malformed')
+    for entry in entries:
+        if not isinstance(entry, str) or '=' not in entry:
+            raise ValueError('environment_malformed')
+        name, value = entry.split('=', 1)
+        if not name or '\x00' in entry: raise ValueError('environment_malformed')
+        if name in result: raise ValueError('environment_duplicate_name')
+        result[name] = value
+    return result
+
+
+def verify_environment(expected, actual):
+    if environment_map(expected) != environment_map(actual):
+        raise ValueError('environment_mapping_mismatch')
+
 def env(): return {**os.environ,'R28_CORPUS_ROOT':'/private/tmp/dolved-r28-s03.zU3HX6/corpus/eval-corpus-v4-authoring'}
 
 
@@ -80,7 +97,7 @@ def future_worker():
     service=config['services']['api'];api=inspect('dolved-r28-s03-api-1')
     assert hashlib.sha256(json.dumps(service,sort_keys=True).encode()).hexdigest()==b['future_worker']['compose_service_sha256']
     assert service['image']==api['Image']==b['deployed_containers']['api']['image']
-    actual_env=dict(x.split('=',1) for x in api['Config']['Env'])
+    actual_env=environment_map(api['Config']['Env'])
     assert all(actual_env.get(k)==str(v) for k,v in service['environment'].items())
     sys.path.insert(0,str(WORKTREE/'scripts/evaluation/current_policy_confirmation'))
     from mount_guard import verify_api_mounts
@@ -113,7 +130,8 @@ def worker_start():
     # Queue was empty at the guard; no item can be reserved/submitted until this
     # verification and the subsequent journal startup check both return.
     c=inspect(WORKER);api=inspect('dolved-r28-s03-api-1')
-    assert c['Image']==api['Image'] and c['Config']['Env']==api['Config']['Env']
+    assert c['Image']==api['Image']
+    verify_environment(api['Config']['Env'],c['Config']['Env'])
     assert c['Config']['Cmd']==['php','/evaluation-observer/observed_worker.php','/evaluation-observer-config/observer.json']
     verify_started_mounts(api['Mounts'],c['Mounts'],b['observer_worker']['mounts'])
 

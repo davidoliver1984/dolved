@@ -16,6 +16,7 @@ final class EvaluationWorkerObserver
     private array $seen = [];
     private bool $poisoned = false;
     private bool $stopped = false;
+    private bool $ready = false;
     private ?string $lastTerminalJob = null;
 
     public function __construct(private array $config, private Closure $resolve)
@@ -39,6 +40,16 @@ final class EvaluationWorkerObserver
 
     public function register(Illuminate\Contracts\Events\Dispatcher $events): void
     {
+        $events->listen(Illuminate\Queue\Events\Looping::class, fn ($e) => $this->safe(function () use ($e) {
+            if ($this->ready) { return; }
+            if ($e->connectionName !== 'conversation' || $e->queue !== 'conversation-generation'
+                || ! function_exists('pcntl_signal_get_handler') || ! pcntl_async_signals()
+                || ! (pcntl_signal_get_handler(SIGTERM) instanceof Closure)) {
+                throw new RuntimeException('worker loop signal boundary');
+            }
+            $this->write(['kind' => 'worker_loop_ready']);
+            $this->ready = true;
+        }));
         $events->listen(Illuminate\Queue\Events\JobProcessing::class, fn ($e) => $this->safe(fn () => $this->begin($e)));
         foreach ([Illuminate\Queue\Events\JobProcessed::class => 'processed',
             Illuminate\Queue\Events\JobExceptionOccurred::class => 'exception',

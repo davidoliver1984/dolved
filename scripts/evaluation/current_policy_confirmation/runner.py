@@ -164,6 +164,7 @@ def execute(binding):
         started=time.time()
         binding={**binding,'deadline_epoch':min(binding['deadline_epoch'],started+binding['worker_window_seconds'])}
         durable(destination/'worker-timing.json',{'worker_start_epoch':started,'deadline_epoch':binding['deadline_epoch']},True)
+        primary = None
         try:
             subprocess.run(binding['worker_start_command'],check=True)
             if binding.get('native_capture'):
@@ -174,15 +175,19 @@ def execute(binding):
                     durable(destination/'observer-startup-halt.json', {'code':getattr(error,'code','observer_startup_failure')}, True)
                     raise
             execute_items(binding,manifest,destination)
+        except BaseException as error:
+            primary = error
+            durable(destination/'primary-halt.json', {'code':getattr(error,'code','worker_or_item_failure'),'error_class':type(error).__name__}, True)
+            raise
         finally:
-            subprocess.run(binding['worker_stop_command'],check=True)
-            if binding.get('native_capture'):
-                from native_capture import verify_shutdown
-                try:
+            try:
+                subprocess.run(binding['worker_stop_command'],check=True)
+                if binding.get('native_capture'):
+                    from native_capture import verify_shutdown
                     verify_shutdown(binding['native_capture'], destination, durable)
-                except Exception as error:
-                    durable(destination/'observer-shutdown-halt.json', {'code':getattr(error,'code','observer_shutdown_failure')}, True)
-                    raise
+            except Exception as error:
+                durable(destination/'observer-shutdown-halt.json', {'code':getattr(error,'code','observer_shutdown_failure'),'primary_failure_preserved':primary is not None}, True)
+                if primary is None: raise
     else:
         execute_items(binding,manifest,destination)
 

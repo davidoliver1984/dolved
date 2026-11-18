@@ -4,6 +4,10 @@ import observer_commands as c
 
 
 class ObservedWorkerConfigurationTests(unittest.TestCase):
+    def test_environment_exact_mapping(self):
+        c.verify_environment(['A=1','B=','C=a=b'],['C=a=b','B=','A=1'])
+        for entries in [['A=2','B=','C=a=b'],['A=1','B='],['A=1','B=','C=a=b','D='],['A=1','A=1'],['bad'],['=value'],[None]]:
+            with self.subTest(entries=entries),self.assertRaises(ValueError):c.verify_environment(['A=1','B=','C=a=b'],entries)
     def fixture(self):
         base={'image':'pinned','environment':{'CONTROLLED':'yes'},'command':['original'],'volumes':[{'type':'bind','source':'/approved/app','target':'/app'}]}
         mounts={t:{'source':'/approved/'+str(i),'read_only':i<2,'allowed_source_spellings':['/approved/'+str(i),'/host_mnt/approved/'+str(i)]} for i,t in enumerate(['/evaluation-observer','/evaluation-observer-config/observer.json','/observer-journal','/observer-health'])}

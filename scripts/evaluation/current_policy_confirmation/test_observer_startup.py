@@ -14,6 +14,7 @@ class StartupTests(unittest.TestCase):
     def test_startup_requires_complete_healthy_start_before_reservation(self):
         with tempfile.TemporaryDirectory() as t:
             f=Fixture(t)
+            f.row('worker_loop_ready')
             with patch('native_capture.time.sleep'):
                 nc.verify_startup(f.spec,time.time()+.1,Path(t),runner.durable)
             self.assertTrue(json.loads((Path(t)/'observer-startup.json').read_text())['before_item_reservation'])
@@ -60,6 +61,25 @@ class StartupTests(unittest.TestCase):
             with patch('runner.verify'),patch('runner.subprocess.run',side_effect=command),patch('native_capture.verify_startup',side_effect=start),patch('runner.execute_items',side_effect=items),patch('native_capture.verify_shutdown',side_effect=lambda *a:seen.append('shutdown')):
                 with self.assertRaises(RuntimeError):runner.execute(b)
             self.assertEqual(seen,['guard','start','startup','items','stop','shutdown'])
+
+    def test_primary_failure_survives_cleanup_failure(self):
+        with tempfile.TemporaryDirectory() as t:
+            root=Path(t);p=root/'manifest.json';p.write_text(json.dumps({'items':[],'evaluated_at_assumption':'fixed'}))
+            b={'provider_free':True,'manifest':str(p),'manifest_sha256':runner.digest(p),'items':{},'ceiling_usd':'5','destination':str(root/'execution'),'deadline_epoch':9999999999,'worker_window_seconds':1800,'worker_guard_command':['guard'],'worker_start_command':['start'],'worker_stop_command':['stop']}
+            def run(argv,**kw):
+                if argv[0]=='start':raise ValueError('primary-controlled')
+                if argv[0]=='stop':raise RuntimeError('cleanup-controlled')
+            with patch('runner.verify'),patch('runner.subprocess.run',side_effect=run):
+                with self.assertRaisesRegex(ValueError,'primary-controlled'):runner.execute(b)
+            self.assertTrue((root/'execution/primary-halt.json').exists())
+            self.assertTrue(json.loads((root/'execution/observer-shutdown-halt.json').read_text())['primary_failure_preserved'])
+
+    def test_distinct_startup_and_ready_shutdown_failures(self):
+        for ready,code in [(False,'startup_interrupted_before_loop_ready'),(True,'ready_worker_missing_stop')]:
+            with tempfile.TemporaryDirectory() as t:
+                f=Fixture(t);f.spec['require_loop_ready']=True
+                if ready:f.row('worker_loop_ready')
+                with self.assertRaisesRegex(nc.CaptureError,code):nc.verify_shutdown(f.spec,Path(t),runner.durable)
 
 
 if __name__=='__main__':unittest.main()
