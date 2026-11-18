@@ -17022,3 +17022,24 @@ Relevant configuration/shared-validator tests pass; prior53-test and Laravel
 lifecycle evidence is retained. No application or serving-service change. Commit
 before final freeze/consumption of the one rehearsal-only authority. Execution
 result will be reported separately without repair-and-repeat.
+
+The single rehearsal executed at3209dc68e08385409aa8dfc44b8d8868046dfc1e and
+passed its lifecycle checks. Binding31ca154ea16c19c814ba5e284639c1c686f88c3fd37fa842fe1ea1d366087446.
+Compose created the dedicated container stopped; static mismatch list was empty.
+Only that verified container ID was started. Post-start identity and in-container
+runtime/observer/config content checks passed. The journal contains exactly
+worker_start→worker_loop_ready→worker_stop with an intact hash chain; the no-job
+guard installed/poll-prevented receipts exist. Graceful exit0, no active job,
+no questions/provider requests or item/model reservation. Overall recorded
+lifecycle approximately1.07 seconds, within60/30/300-second bounds. No second start.
+
+The stopped owned container was inspected then removed. Private rendered Compose
+configuration was hash-verified then deleted; only its fingerprint/safe fields are
+retained. Exact17 governance-job rows/payload hashes/attempts/reservation state,
+conversation queue and serving services remain unchanged;1106 historical files
+verified unchanged, including the earlier integration-03 blocker. Prior53 tests
+retained;15 relevant test invocations additionally passed for this correction.
+Full report/checksums are observer-integration-03/continuation-report.md and
+continuation-checksums.sha256. No push/merge or application deployment. This proves
+idle lifecycle integration only, not S1 request/capture attribution; separate fresh
+S1 binding/reservation/release and reviewer assessment remain required. Stop.
