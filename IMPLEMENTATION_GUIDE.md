@@ -17131,3 +17131,26 @@ No application/full-suite cleanup. Evidence: observer-import-correction-05/verif
 Commit/freeze this correction before the single idle automatic-stop check. That
 check and any integration05 preparation outcome will be published separately; no
 success or release is inferred from these provider-free tests. App remains e014ff9.
+
+The one authorised automatic-stop idle check passed at
+066e44532b95265bad9d93693605bc1024e7d89c; binding
+70e82cfaab252009f39a6463dafcc06376777569e65b64b67415632abb68cd76.
+The created-stopped container passed static and post-start content checks; actual
+loop readiness and the existing pre-pop no-job/HTTP guards were evidenced. The
+corrected copied commands.py worker-stop subprocess, with the exact future S1
+interpreter/argument shape, unrelated private cwd and no PYTHONPATH, returned0.
+worker_stop, intact journal, no active job and exit0 were verified. No forced or
+manual substitute stop, question, provider call or item reservation. Overall1.397s,
+one rehearsal only. Stopped owned container/private snapshot removed;17 governance
+jobs and historical evidence unchanged. This is idle cleanup proof, not a live pass.
+
+Only after that result, observer-integration-05 was created. Normal-worker Compose
+resolution and read-only context/index/reservation checks passed. Capture moved to
+its fresh execution/capture by AI-only recreation, with verified cache copy/restore,
+offline load, zero network attempts/encoded questions and staging cleanup. API/web
+unchanged. Actual Next.js read-only warm-up passed. No future question worker or S1
+authority/start state exists. One-item reservation recomputed USD2.27768288, proposed
+ceiling USD5; timing bounds unchanged. Final identities/report are in that package.
+Stop for review: David may release one final S1 attempt. Any further harness defect
+blocks preparation/execution and requires a separate retain/simplify decision; no
+individual patch, repair-and-repeat, resume or replacement runner is authorised.
