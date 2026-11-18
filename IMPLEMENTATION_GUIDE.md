@@ -17043,3 +17043,54 @@ Full report/checksums are observer-integration-03/continuation-report.md and
 continuation-checksums.sha256. No push/merge or application deployment. This proves
 idle lifecycle integration only, not S1 request/capture attribution; separate fresh
 S1 binding/reservation/release and reviewer assessment remain required. Stop.
+
+### Observer integration 04 — normal-worker Phase A preparation (2026-11-18)
+
+David authorised preparation only for one later unchanged S1. Starting HEAD
+d5b55f124011bc5fa79fcf559e36d7b6eeb9dfbe; application remains
+e014ff9f54ec905f499038f84ed814aa2495c56b. Three pre-existing untracked Python
+cache directories are preserved. The proven integration-03 rehearsal is not repeated.
+
+The normal adapter now reuses the shared created-container identity validator,
+exact-ID start and post-start mounted-content check. A dedicated dependency-free,
+port-free Compose service explicitly extends a private resolved API snapshot. It
+uses normal observed_worker.php only: no rehearsal mode, Looping veto or outbound
+guard. The shared ownership check accepts an explicitly bound label, retaining its
+rehearsal default. Exact environment maps and independently approved mount spellings
+remain required. Static creation/start has a 120-second outer bound. Readiness is
+capped at actual Docker StartedAt +60 seconds, without extending the overall clock.
+Graceful stop records process exit and requires exit0; primary and cleanup failures
+remain separate. No application source, prompt or provider configuration changed.
+
+Provider-free verification: 61 focused Python invocations passed, followed by seven
+normal/shared-identity invocations including the added actual-start deadline test;
+real Laravel observer/empty-attempt hook fixtures and reciprocal mode refusals
+passed in no-network containers; three browser-deadline checks passed. Existing
+full-suite/rehearsal evidence is preserved, not rerun. The initial hook setup failed
+because its parent output directory was absent; that log is retained. A later
+mistyped image digest was refused with pull=never, before container creation; the
+recorded deployed digest was then used successfully. Neither was a product failure.
+
+Actual Compose resolution, read-only database/index/context checks and Next.js
+login/fresh-route warm-up passed without a question. AI alone was recreated to move
+capture to observer-integration-04/execution/capture. Cache was verified before
+recreation, restored identically and loaded offline with zero network attempts and
+zero questions; temporary staging was removed. API/web were not recreated. Normal
+worker remains uncreated; operational capture/journal/health empty; all consumers
+stopped and all17 governance-job payload/attempt/reservation identities unchanged.
+
+Read-only source tracing finds /r28-corpus only in E2E provisioning/governance
+commands and configuration, not normal answer retrieval. Its bound host/API mount
+is empty and remains unchanged; runtime evidence comes from ingested database/index
+records. This is not a promise that provisioning can run without original sources.
+
+Fresh package: ../dolved-experiments/current-policy-pilot-20261116/observer-integration-04/.
+The private resolved Compose snapshot is retained0700/0600 outside public evidence,
+hash-bound for future execution, with cleanup after completion/halt. Reservation
+recomputed USD2.27768288 for one item, proposed ceiling USD5; unknown usage retains
+full liability. Proposed limits:1800 seconds conservatively from pre-create worker
+stage,1200 from first submission,900+15 per item,1095 minimum remaining, cutoff
+2026-12-31 23:59 Europe/London. These are ceilings, not predicted runtime.
+No authority/start/ledger, S1 dispatch, provider call, additional rehearsal, push
+or merge. Final Phase A report and hashes are published in the package. Live
+job/run/request→capture→receipt attribution remains unproven pending explicit release.

@@ -8,10 +8,11 @@ import os
 from pathlib import Path
 import subprocess
 import sys
+import time
 
 ROOT = Path(__file__).resolve().parent
 WORKTREE = Path('/Users/davidoliver/Desktop/RAG-current-policy-pilot')
-WORKER = 'dolved-r28-s03-observer-integration-01-worker'
+WORKER = 'dolved-r28-s03-observer-integration-04-worker'
 
 
 def sha(p): return hashlib.sha256(Path(p).read_bytes()).hexdigest()
@@ -40,7 +41,7 @@ def env(): return {**os.environ,'R28_CORPUS_ROOT':'/private/tmp/dolved-r28-s03.z
 def compose(observer=False):
     cmd=['docker','compose','--env-file','/Users/davidoliver/Desktop/RAG/.env.r28-s03','-p','dolved-r28-s03']
     for f in ['compose.yaml','compose.e2e.yaml','compose.r28-s03.yaml',str(Path.home()/'.dolved/r28-s03/production.override.json'),str(ROOT/'smoke.override.json')]:cmd+=['-f',f]
-    if observer:cmd+=['-f',str(ROOT/'observer-worker.override.json')]
+    if observer:cmd+=['-f',str(ROOT/'observer-worker.override.yaml')]
     return cmd
 
 
@@ -94,6 +95,10 @@ def validate_observer_service(base, observed, expected_mounts):
 
 def future_worker():
     b=binding();config=json.loads(subprocess.check_output(compose()+['config','--format','json'],cwd=WORKTREE,env=env()))
+    normal=json.loads((ROOT/'observer.json').read_text())
+    assert 'mode' not in normal and 'rehearsal_lifecycle' not in normal
+    assert list(normal['source_files'])==['observed_worker.php','worker_observer.php']
+    assert b['observer_worker']['command']==['php','/evaluation-observer/observed_worker.php','/evaluation-observer-config/observer.json']
     service=config['services']['api'];api=inspect('dolved-r28-s03-api-1')
     assert hashlib.sha256(json.dumps(service,sort_keys=True).encode()).hexdigest()==b['future_worker']['compose_service_sha256']
     assert service['image']==api['Image']==b['deployed_containers']['api']['image']
@@ -102,8 +107,10 @@ def future_worker():
     sys.path.insert(0,str(WORKTREE/'scripts/evaluation/current_policy_confirmation'))
     from mount_guard import verify_api_mounts
     verify_api_mounts(config,api,b['future_worker'],mounted)
-    observed=json.loads(subprocess.check_output(compose(True)+['config','--format','json'],cwd=WORKTREE,env=env()))['services']['api']
-    validate_observer_service(service,observed,b['observer_worker']['mounts'])
+    resolved=json.loads(subprocess.check_output(compose(True)+['config','--format','json'],cwd=WORKTREE,env=env()))
+    from rehearsal_compose import verify_resolved
+    verify_resolved(resolved,config,b['observer_worker']['service'],b['observer_worker']['command'],b['observer_worker']['mounts'])
+    observed=resolved['services'][b['observer_worker']['service']]
     assert hashlib.sha256(json.dumps(observed,sort_keys=True).encode()).hexdigest()==b['observer_worker']['compose_service_sha256']
     for path,digest in b['observer_worker']['source_files'].items():assert sha(path)==digest
     from mount_guard import build_mount_spec
@@ -127,18 +134,23 @@ def worker_start():
     guard();b=binding();auth=json.loads(Path(b['authorization']).read_text())
     assert auth['binding_sha256']==sha(ROOT/'binding.json') and auth['approved'] is True
     assert Path(b['authorization']+'.consumed').is_dir() and (Path(b['destination'])/'started.json').is_file()
-    cmd=compose(True)+['run','-d','--no-deps','--pull','never','--name',WORKER,'--label','dolved.observer-binding='+sha(ROOT/'binding.json'),'api','php','/evaluation-observer/observed_worker.php','/evaluation-observer-config/observer.json']
-    subprocess.run(cmd,cwd=WORKTREE,env=env(),check=True)
-    # Queue was empty at the guard; no item can be reserved/submitted until this
-    # verification and the subsequent journal startup check both return.
-    c=inspect(WORKER);api=inspect('dolved-r28-s03-api-1')
-    from mount_guard import mount_mismatches
-    errors=mount_mismatches(b['observer_worker']['mount_spec'],c['Mounts'])
-    if c['Image']!=api['Image']:errors.append('worker_image_mismatch')
-    try:verify_environment(api['Config']['Env'],c['Config']['Env'])
-    except ValueError as error:errors.append(str(error))
-    if c['Config']['Cmd']!=['php','/evaluation-observer/observed_worker.php','/evaluation-observer-config/observer.json']:errors.append('worker_command_mismatch')
-    if c['Config']['Entrypoint']!=api['Config']['Entrypoint']:errors.append('worker_entrypoint_mismatch')
+    from rehearsal_runner import identity_mismatches, start_verified, content_check
+    from runner import durable
+    spec=b['observer_worker'];root=Path(b['destination'])
+    timing=json.loads((root/'worker-timing.json').read_text())
+    deadline=min(timing['deadline_epoch'],time.time()+120)
+    cmd=compose(True)+['create','--no-recreate','--no-build','--pull','never',spec['service']]
+    subprocess.run(cmd,cwd=WORKTREE,env=env(),check=True,timeout=max(1,deadline-time.time()))
+    c=inspect(WORKER)
+    durable(root/'worker-created.json',{'at':time.time(),'container_id':c['Id'],'mismatch_codes':identity_mismatches(spec,c,created=True),'phase':'created_not_started'},True)
+    def start_id(cid):
+        durable(root/'worker-process-start.json',{'at':time.time(),'container_id':cid},True)
+        subprocess.run(['docker','start',cid],check=True,timeout=max(1,deadline-time.time()))
+    start_verified(spec,c,start_id)
+    running=inspect(c['Id']);errors=identity_mismatches(spec,running)
+    try:content_check(spec,c['Id'])
+    except Exception:errors.append('mounted_content_mismatch')
+    durable(root/'worker-post-start.json',{'at':time.time(),'container_id':running['Id'],'mismatch_codes':errors,'actual_started_at':running['State']['StartedAt']},True)
     if errors:raise ValueError(','.join(sorted(set(errors))))
 
 
@@ -149,9 +161,17 @@ def verify_started_mounts(expected_spec, worker_mounts):
 
 def worker_stop():
     if WORKER not in subprocess.check_output(['docker','ps','-a','--format','{{.Names}}'],text=True).splitlines():return
-    c=inspect(WORKER);assert c['Config']['Labels'].get('dolved.observer-binding')==sha(ROOT/'binding.json')
-    subprocess.run(['docker','stop',WORKER],check=True)
-    assert not inspect(WORKER)['State']['Running']
+    b=binding();spec=b['observer_worker'];c=inspect(WORKER)
+    assert c['Config']['Labels'].get(spec['ownership_label'])==spec['owner_id']
+    from runner import durable
+    root=Path(b['destination']);durable(root/'worker-stop-request.json',{'at':time.time(),'container_id':c['Id']},True)
+    forced=False
+    try:subprocess.run(['docker','stop','--timeout','30',c['Id']],check=True,timeout=30)
+    except subprocess.TimeoutExpired:
+        subprocess.run(['docker','kill',c['Id']],check=True);forced=True
+    final=inspect(c['Id'])
+    durable(root/'worker-exit.json',{'at':time.time(),'running':final['State']['Running'],'exit_code':final['State']['ExitCode'],'forced':forced},True)
+    assert not forced and not final['State']['Running'] and final['State']['ExitCode']==0
 
 
 def main():

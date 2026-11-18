@@ -166,11 +166,17 @@ def execute(binding):
         durable(destination/'worker-timing.json',{'worker_start_epoch':started,'deadline_epoch':binding['deadline_epoch']},True)
         primary = None
         try:
-            subprocess.run(binding['worker_start_command'],check=True)
+            subprocess.run(binding['worker_start_command'],check=True,timeout=min(binding.get('worker_create_start_timeout_seconds',120),max(1,binding['deadline_epoch']-time.time())))
             if binding.get('native_capture'):
                 from native_capture import verify_startup
                 try:
-                    verify_startup(binding['native_capture'], binding['deadline_epoch'], destination, durable)
+                    startup_deadline=binding['deadline_epoch']
+                    post_start=destination/'worker-post-start.json'
+                    if post_start.is_file():
+                        from datetime import datetime
+                        actual=datetime.fromisoformat(json.loads(post_start.read_text())['actual_started_at'].replace('Z','+00:00')).timestamp()
+                        startup_deadline=min(startup_deadline,actual+60)
+                    verify_startup(binding['native_capture'], startup_deadline, destination, durable)
                 except Exception as error:
                     durable(destination/'observer-startup-halt.json', {'code':getattr(error,'code','observer_startup_failure')}, True)
                     raise

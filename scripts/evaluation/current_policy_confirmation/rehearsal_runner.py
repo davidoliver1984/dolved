@@ -26,7 +26,7 @@ def identity_mismatches(b,c,created=False):
     if c['Image']!=b['image']:errors.append('worker_image_mismatch')
     if c['Config']['Cmd']!=b['command']:errors.append('worker_command_mismatch')
     if c['Config']['Entrypoint']!=b['entrypoint']:errors.append('worker_entrypoint_mismatch')
-    if c['Config']['Labels'].get('dolved.rehearsal-owner')!=b['owner_id']:errors.append('worker_ownership_mismatch')
+    if c['Config']['Labels'].get(b.get('ownership_label','dolved.rehearsal-owner'))!=b['owner_id']:errors.append('worker_ownership_mismatch')
     try:
         value=hashlib.sha256(json.dumps(environment_map(c['Config']['Env']),sort_keys=True).encode()).hexdigest()
         if value!=b['environment_sha256']:errors.append('environment_mapping_mismatch')
