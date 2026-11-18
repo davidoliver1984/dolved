@@ -13,7 +13,7 @@ class NormalObserverWiringTests(unittest.TestCase):
     def test_normal_create_inspect_start_exact_id_post_content(self):
         with tempfile.TemporaryDirectory() as t:
             root=Path(t);(root/'binding.json').write_text('{}')
-            spec,c=SharedWorkerIdentityTests().fixture()
+            spec,c=SharedWorkerIdentityTests().fixture();spec['name']='synthetic-worker'
             spec['command']=['php','/evaluation-observer/observed_worker.php','/evaluation-observer-config/observer.json'];spec['ownership_label']='dolved.observer-owner';spec['service']='observer-question'
             c['Config']['Cmd']=spec['command'];c['Config']['Labels']={'dolved.observer-owner':spec['owner_id']}
             live=copy.deepcopy(c);live['State'].update(Status='running',Running=True,StartedAt='2026-11-18T08:00:00Z')

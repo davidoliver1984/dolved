@@ -115,7 +115,10 @@ def execute(path):
             c=inspect(b['worker'])
             if c['Config']['Labels'].get('dolved.rehearsal-owner')!=b['owner_id']:raise ValueError('cleanup_ownership_mismatch')
             event('stop_requested',ready=(root/'observer-startup.json').exists())
-            try:subprocess.run(['docker','stop','--timeout','30',c['Id']],capture_output=True,check=True,timeout=min(30,max(1,deadline-time.time())))
+            stop=b.get('automatic_stop_command') or ['docker','stop','--timeout','30',c['Id']]
+            # Optional release-bound command exercises the same copied standalone
+            # adapter as the question run; no fallback disguises its failure.
+            try:subprocess.run(stop,cwd=b.get('stop_cwd'),env=b.get('stop_environment'),capture_output=True,check=True,timeout=min(30,max(1,deadline-time.time())))
             except subprocess.TimeoutExpired:
                 subprocess.run(['docker','kill',b['worker']],capture_output=True,check=True);event('forced_termination')
             c=inspect(b['worker']);exit_code=c['State']['ExitCode'];event('process_exited',exit_code=exit_code,running=c['State']['Running'])

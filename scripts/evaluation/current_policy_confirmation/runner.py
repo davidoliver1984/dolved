@@ -192,7 +192,7 @@ def execute(binding):
                     from native_capture import verify_shutdown
                     verify_shutdown(binding['native_capture'], destination, durable)
             except Exception as error:
-                durable(destination/'observer-shutdown-halt.json', {'code':getattr(error,'code','observer_shutdown_failure'),'primary_failure_preserved':primary is not None}, True)
+                durable(destination/'observer-shutdown-halt.json', {'code':getattr(error,'code','observer_shutdown_failure'),'error_class':type(error).__name__,'primary_failure_preserved':primary is not None}, True)
                 if primary is None: raise
     else:
         execute_items(binding,manifest,destination)

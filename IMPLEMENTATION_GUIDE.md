@@ -17094,3 +17094,40 @@ stage,1200 from first submission,900+15 per item,1095 minimum remaining, cutoff
 No authority/start/ledger, S1 dispatch, provider call, additional rehearsal, push
 or merge. Final Phase A report and hashes are published in the package. Live
 job/run/request→capture→receipt attribution remains unproven pending explicit release.
+
+### Observer integration 04 failed cleanup; bounded correction 05 (2026-11-18)
+
+Integration04 completed one S1 and reconciled native attribution, but the separate
+worker-stop process failed importing runner.durable. Its copied adapter resolved
+dependencies only on other command routes; a parent's sys.path is not inherited.
+Necessary direct cleanup exited0 and preserved worker_stop, but the frozen sequence
+remains NOT PASSED. No retrospective combination with the idle rehearsal is valid.
+
+David authorised one import correction, subprocess tests, one provider-free idle
+automatic-stop check and integration05 preparation, then capped further repair work.
+Any newly evidenced harness blocker stops work for a separate retain/simplify decision.
+No live S1 or question authority is authorised here.
+
+The copied adapter now establishes the explicit release-bound harness source path
+before dispatching any mode. Worker identity comes from its bound configuration so
+the same stop route can test a separately owned rehearsal worker. External lifecycle
+command errors are captured rather than leaked; bounded command/error-class output
+replaces unrestricted tracebacks. Cleanup records its exception class independently
+of the original execution failure and durable item result. The existing rehearsal
+runner may invoke this exact bound automatic stop subprocess rather than direct
+Docker stop; its existing no-job/HTTP guards and lifecycle are unchanged.
+
+All eight modes (mounted,guard,readiness,preflight,capture,worker-start,worker-stop,
+execute) were invoked as fresh processes, exact bound interpreter/argument shape,
+PYTHONPATH removed, unrelated cwd and controlled external boundaries. A cwd decoy
+runner could not shadow the bound dependency. Success/previous error/cleanup error,
+absent/wrong-owner worker, malformed/missing binding and secret-sentinel cases pass.
+Host-awake was also invoked separately with a controlled bound target. The execution
+mode uses a controlled runner boundary in this matrix; real runner failure-retention
+and reconciliation assertions are covered by the62 relevant no-network tests.
+Three unittest methods cover the subprocess matrix; not merely three subprocesses.
+No application/full-suite cleanup. Evidence: observer-import-correction-05/verification.
+
+Commit/freeze this correction before the single idle automatic-stop check. That
+check and any integration05 preparation outcome will be published separately; no
+success or release is inferred from these provider-free tests. App remains e014ff9.

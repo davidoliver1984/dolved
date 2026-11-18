@@ -12,12 +12,17 @@ import time
 
 ROOT = Path(__file__).resolve().parent
 WORKTREE = Path('/Users/davidoliver/Desktop/RAG-current-policy-pilot')
-WORKER = 'dolved-r28-s03-observer-integration-04-worker'
+# This adapter is copied outside the source tree and every mode is a fresh
+# process. Resolve local and transitive imports before any branch, never via cwd
+# or an inherited PYTHONPATH. This exact source location is release-bound.
+HARNESS = WORKTREE/'scripts/evaluation/current_policy_confirmation'
+sys.path.insert(0, str(HARNESS))
 
 
 def sha(p): return hashlib.sha256(Path(p).read_bytes()).hexdigest()
 def inspect(name): return json.loads(subprocess.check_output(['docker','inspect',name]))[0]
 def binding(): return json.loads((ROOT/'binding.json').read_text())
+def worker_name(b): return b['observer_worker']['name']
 def environment_map(entries):
     result = {}
     if not isinstance(entries, list): raise ValueError('environment_malformed')
@@ -104,7 +109,6 @@ def future_worker():
     assert service['image']==api['Image']==b['deployed_containers']['api']['image']
     actual_env=environment_map(api['Config']['Env'])
     assert all(actual_env.get(k)==str(v) for k,v in service['environment'].items())
-    sys.path.insert(0,str(WORKTREE/'scripts/evaluation/current_policy_confirmation'))
     from mount_guard import verify_api_mounts
     verify_api_mounts(config,api,b['future_worker'],mounted)
     resolved=json.loads(subprocess.check_output(compose(True)+['config','--format','json'],cwd=WORKTREE,env=env()))
@@ -123,7 +127,7 @@ def guard():
     for name in names:
         c=inspect(name);command=' '.join(c['Config'].get('Cmd') or [])
         assert 'queue:work' not in command and 'observed_worker.php' not in command and 'schedule:' not in command and not any(x in name for x in ['worker','publisher','bootstrap'])
-    assert WORKER not in subprocess.check_output(['docker','ps','-a','--format','{{.Names}}'],text=True).splitlines()
+    assert worker_name(binding()) not in subprocess.check_output(['docker','ps','-a','--format','{{.Names}}'],text=True).splitlines()
     code='require "/app/vendor/autoload.php";$a=require "/app/bootstrap/app.php";$a->make(Illuminate\\Contracts\\Console\\Kernel::class)->bootstrap();Illuminate\\Support\\Facades\\DB::beginTransaction();Illuminate\\Support\\Facades\\DB::statement("SET TRANSACTION READ ONLY");echo json_encode(["queues"=>Illuminate\\Support\\Facades\\DB::table("jobs")->select("queue")->selectRaw("count(*) as count")->groupBy("queue")->get(),"config"=>config("queue.connections.conversation")]);Illuminate\\Support\\Facades\\DB::rollBack();'
     q=json.loads(subprocess.check_output(['docker','exec','dolved-r28-s03-api-1','php','-r',code],text=True))
     assert q['queues']==[{'queue':'document-governance','count':17}] and q['config']==binding()['queue_config']
@@ -140,12 +144,12 @@ def worker_start():
     timing=json.loads((root/'worker-timing.json').read_text())
     deadline=min(timing['deadline_epoch'],time.time()+120)
     cmd=compose(True)+['create','--no-recreate','--no-build','--pull','never',spec['service']]
-    subprocess.run(cmd,cwd=WORKTREE,env=env(),check=True,timeout=max(1,deadline-time.time()))
-    c=inspect(WORKER)
+    subprocess.run(cmd,cwd=WORKTREE,env=env(),check=True,capture_output=True,timeout=max(1,deadline-time.time()))
+    c=inspect(worker_name(b))
     durable(root/'worker-created.json',{'at':time.time(),'container_id':c['Id'],'mismatch_codes':identity_mismatches(spec,c,created=True),'phase':'created_not_started'},True)
     def start_id(cid):
         durable(root/'worker-process-start.json',{'at':time.time(),'container_id':cid},True)
-        subprocess.run(['docker','start',cid],check=True,timeout=max(1,deadline-time.time()))
+        subprocess.run(['docker','start',cid],check=True,capture_output=True,timeout=max(1,deadline-time.time()))
     start_verified(spec,c,start_id)
     running=inspect(c['Id']);errors=identity_mismatches(spec,running)
     try:content_check(spec,c['Id'])
@@ -160,15 +164,16 @@ def verify_started_mounts(expected_spec, worker_mounts):
 
 
 def worker_stop():
-    if WORKER not in subprocess.check_output(['docker','ps','-a','--format','{{.Names}}'],text=True).splitlines():return
-    b=binding();spec=b['observer_worker'];c=inspect(WORKER)
+    b=binding();name=worker_name(b)
+    if name not in subprocess.check_output(['docker','ps','-a','--format','{{.Names}}'],text=True).splitlines():return
+    spec=b['observer_worker'];c=inspect(name)
     assert c['Config']['Labels'].get(spec['ownership_label'])==spec['owner_id']
     from runner import durable
     root=Path(b['destination']);durable(root/'worker-stop-request.json',{'at':time.time(),'container_id':c['Id']},True)
     forced=False
-    try:subprocess.run(['docker','stop','--timeout','30',c['Id']],check=True,timeout=30)
+    try:subprocess.run(['docker','stop','--timeout','30',c['Id']],check=True,capture_output=True,timeout=30)
     except subprocess.TimeoutExpired:
-        subprocess.run(['docker','kill',c['Id']],check=True);forced=True
+        subprocess.run(['docker','kill',c['Id']],check=True,capture_output=True);forced=True
     final=inspect(c['Id'])
     durable(root/'worker-exit.json',{'at':time.time(),'running':final['State']['Running'],'exit_code':final['State']['ExitCode'],'forced':forced},True)
     assert not forced and not final['State']['Running'] and final['State']['ExitCode']==0
@@ -183,7 +188,7 @@ def main():
     elif mode=='worker-stop':worker_stop()
     elif mode in ['preflight','capture']:print(php(mode+'.php',sys.stdin.read()))
     elif mode=='execute':
-        sys.path.insert(0,str(WORKTREE/'scripts/evaluation/current_policy_confirmation'));import runner
+        import runner
         script='require "/app/vendor/autoload.php";$a=require "/app/bootstrap/app.php";$a->make(Illuminate\\Contracts\\Console\\Kernel::class)->bootstrap();$u=App\\Models\\User::where("public_id","ae454ce6-4d91-4c7e-9a40-b4750b696a6b")->firstOrFail();$p=getenv("E2E_ACCOUNT_PASSWORD");if(!$p||!Illuminate\\Support\\Facades\\Hash::check($p,$u->password))exit(2);echo $p;'
         password=subprocess.run(['docker','exec','dolved-r28-s03-api-1','php','-r',script],capture_output=True,text=True,check=True).stdout
         os.environ['CURRENT_POLICY_CONFIRMATION_PASSWORD']=password;b=binding();b['binding_sha256']=sha(ROOT/'binding.json')
@@ -192,4 +197,9 @@ def main():
     else:raise ValueError('Unknown bounded command')
 
 
-if __name__=='__main__':main()
+if __name__=='__main__':
+    try:main()
+    except Exception as error:
+        # A dependency/external failure must not leak arbitrary exception bodies.
+        print(json.dumps({'code':'observer_command_failed','error_class':type(error).__name__}),file=sys.stderr)
+        sys.exit(1)
