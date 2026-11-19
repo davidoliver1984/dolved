@@ -20,17 +20,26 @@ attach that proxy to the isolated Dolved–Dify backplane.
 
 ## Prepare the host
 
-1. Use a supported Docker Engine and Docker Compose v2.35 or later.
-2. Put this checkout and the pinned Dify checkout in separate restricted directories.
-3. Copy `.env.production.example` to a root-readable production env file for Dolved.
-4. Copy `dify.env.production.example` to Dify's `docker/.env` and replace every
+1. On a fresh Debian 13 host, copy the dedicated deployment public key and run
+   `bootstrap-debian-13.sh` as root. Review its output; it installs Docker from Docker's
+   official Debian repository, creates the `dolved` user, enables UFW/fail2ban/unattended
+   updates, creates 2 GB swap and the internal backplane, and opens only the SSH port
+   reported by `sshd` plus 80/443.
+2. Open a separate SSH session as `dolved` using the deployment key. Only after that
+   succeeds, run `harden-ssh.sh` as root to disable password and keyboard-interactive SSH.
+   It retains key-only root access for recovery.
+3. Confirm Docker Engine and Docker Compose v2.35 or later.
+4. Put this checkout and the pinned Dify checkout in separate restricted directories.
+5. Copy `.env.production.example` to a root-readable production env file for Dolved.
+6. Copy `dify.env.production.example` to Dify's `docker/.env` and replace every
    `SECURE_STORE_REQUIRED` value from secure storage. Never commit either real file.
-5. Generate `DIFY_AGENT_SERVER_SECRET_KEY` as exactly 32 random bytes encoded as
+7. Generate `DIFY_AGENT_SERVER_SECRET_KEY` as exactly 32 random bytes encoded as
    unpadded base64url. Other keys must be independently random and at least 32 bytes.
-6. Create the private shared network once: `docker network create --internal
+8. Confirm the bootstrap created the private shared network; otherwise create it once:
+   `docker network create --internal
    dolved-dify-backplane`. It is the only cross-project path from Dolved to Dify;
    both stacks retain their own default networks for required outbound traffic.
-7. Verify DNS for the dedicated Dolved, API and storage subdomains before starting Caddy.
+9. Verify DNS for the dedicated Dolved, API and storage subdomains before starting Caddy.
 
 Both Compose definitions use Docker's rotating `local` log driver with a 10 MB / five-file
 limit per container. Do not replace it with an unbounded driver in production.

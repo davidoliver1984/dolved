@@ -77,6 +77,13 @@ The dirty source checkout and historical evidence were not changed.
   reported `OOMKilled=false`, and both Dolved API and worker still reached Dify nginx over
   the private backplane. One unrelated Compose orphan was observed and deliberately left
   untouched.
+- Added Debian 13 host bootstrap and post-verification SSH hardening scripts. The bootstrap
+  is fail-fast on the OS/version and Ed25519 key, installs Docker from its official Debian
+  repository, creates the named deploy user and restricted service directories, enables
+  the current SSH port plus HTTP/HTTPS in UFW, fail2ban and unattended updates, creates
+  2 GB swap and the internal Docker backplane. Password SSH is disabled only by the
+  separate hardening script after a second key-authenticated session succeeds. Both scripts
+  pass POSIX shell syntax checks; execution awaits the delivered VPS.
 
 The full web suite has one pre-existing branding failure in frozen historical evidence.
 The host-side full Laravel suite requires repository-external mounts/configuration and is

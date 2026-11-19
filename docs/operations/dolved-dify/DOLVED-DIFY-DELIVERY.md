@@ -231,6 +231,11 @@ and returned HTTP 200 after startup; all inspected containers reported no OOM ki
 the private Dolved-to-Dify path continued to return Dify's expected redirect. This proves
 the bounded idle/startup configuration locally, not production load capacity.
 
+The Debian 13 host bootstrap is now executable and syntax-checked. It separates initial
+package/firewall/user/swap/backplane setup from SSH password hardening so the latter cannot
+run until the `dolved` Ed25519 authorized-key file exists and a second login has been
+verified operationally. Neither script has yet run on the purchased VPS.
+
 Current milestone: hosting provision and production deployment.
 
 Next action: complete the OVH account/payment handoff, provision the prepared VPS, obtain
