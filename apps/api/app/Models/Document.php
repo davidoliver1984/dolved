@@ -209,4 +209,10 @@ class Document extends Model
     {
         return $this->belongsTo(DocumentExtractionProjectionGeneration::class, 'active_extraction_projection_generation_id');
     }
+
+    /** @return HasMany<DifyDocumentBinding, $this> */
+    public function difyBindings(): HasMany
+    {
+        return $this->hasMany(DifyDocumentBinding::class);
+    }
 }

@@ -3,8 +3,10 @@
 use App\Actions\BulkOperations\ReclaimExpiredBulkAttempts;
 use App\Actions\Conversation\ReconcileStaleGenerationRuns;
 use App\Actions\Documents\DetectStuckOrFailedDocumentDeletions;
+use App\Actions\Documents\EnsureDocumentStorage;
 use App\Actions\Documents\PurgeExpiredDocumentGovernanceNotificationData;
 use App\Actions\Documents\ReclaimExpiredDocumentGovernanceEmailAttempts;
+use App\Actions\Documents\ReconcileDifyDocuments;
 use App\Actions\Documents\ScanDocumentGovernanceRemindersAndAuthorityTransitions;
 use App\Actions\Documents\SealDueDocumentGovernanceEmailDigests;
 use App\Actions\Imports\ReconcileExpiredImportPreflights;
@@ -33,6 +35,17 @@ Artisan::command('conversation:purge-expired-delivery-events', function (): void
 })->purpose('Remove bounded-retention provisional and replay delivery data');
 
 Schedule::command('conversation:purge-expired-delivery-events')->hourly()->withoutOverlapping();
+
+Artisan::command('dify:reconcile-documents', function (ReconcileDifyDocuments $reconcile): void {
+    $this->info("Dispatched {$reconcile->handle()} Dify document reconciliation jobs.");
+})->purpose('Reconcile authoritative Dolved document eligibility into the bound Dify dataset');
+
+Schedule::command('dify:reconcile-documents')->everyMinute()->withoutOverlapping();
+
+Artisan::command('documents:ensure-storage', function (EnsureDocumentStorage $ensure): void {
+    $ensure->handle();
+    $this->info('Document bucket, versioning and browser CORS verified.');
+})->purpose('Create and verify the configured durable S3-compatible document bucket');
 
 Artisan::command('workspace-invitations:expire', function (ExpireWorkspaceInvitations $expire): void {
     $this->info("Expired {$expire->handle()} workspace invitations.");

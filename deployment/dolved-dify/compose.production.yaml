@@ -1,0 +1,192 @@
+name: ${COMPOSE_PROJECT_NAME:-dolved-pilot}
+
+x-api-environment: &api-environment
+  APP_NAME: ${APP_NAME:-Dolved}
+  APP_ENV: production
+  APP_DEBUG: "false"
+  APP_KEY: ${APP_KEY:?APP_KEY is required}
+  APP_URL: https://${API_DOMAIN:?API_DOMAIN is required}
+  FRONTEND_URL: https://${DOLVED_DOMAIN:?DOLVED_DOMAIN is required}
+  CORS_ALLOWED_ORIGINS: https://${DOLVED_DOMAIN}
+  SANCTUM_STATEFUL_DOMAINS: ${DOLVED_DOMAIN}
+  SESSION_DRIVER: database
+  SESSION_DOMAIN: ${SESSION_DOMAIN:?SESSION_DOMAIN is required}
+  SESSION_SECURE_COOKIE: "true"
+  SESSION_HTTP_ONLY: "true"
+  SESSION_SAME_SITE: lax
+  AUTH_REGISTRATION_ENABLED: "false"
+  DB_CONNECTION: pgsql
+  DB_HOST: postgres
+  DB_PORT: 5432
+  DB_DATABASE: ${POSTGRES_DB:-dolved}
+  DB_USERNAME: ${POSTGRES_USER:-dolved}
+  DB_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
+  DB_QUEUE_CONNECTION: pgsql
+  QUEUE_CONNECTION: database
+  FILESYSTEM_DISK: s3
+  DOCUMENT_STORAGE_DISK: s3
+  DOCUMENT_UPLOAD_DISK: s3_uploads
+  DOCUMENT_PROCESSING_DRIVER: dify
+  AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:?AWS_ACCESS_KEY_ID is required}
+  AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:?AWS_SECRET_ACCESS_KEY is required}
+  AWS_DEFAULT_REGION: ${AWS_DEFAULT_REGION:-us-east-1}
+  AWS_BUCKET: ${DOCUMENT_UPLOAD_BUCKET:-dolved-originals}
+  AWS_ENDPOINT: http://objectstore:8333
+  AWS_UPLOAD_ENDPOINT: https://${STORAGE_DOMAIN:?STORAGE_DOMAIN is required}
+  AWS_USE_PATH_STYLE_ENDPOINT: "true"
+  DIFY_BASE_URL: http://host.docker.internal:8080
+  DIFY_APP_API_KEY: ${DIFY_APP_API_KEY:?DIFY_APP_API_KEY is required}
+  DIFY_KNOWLEDGE_API_KEY: ${DIFY_KNOWLEDGE_API_KEY:?DIFY_KNOWLEDGE_API_KEY is required}
+  DIFY_TIMEOUT_SECONDS: ${DIFY_TIMEOUT_SECONDS:-180}
+  DIFY_CONNECT_TIMEOUT_SECONDS: ${DIFY_CONNECT_TIMEOUT_SECONDS:-10}
+  DIFY_DOCUMENT_SYNC_QUEUE: document-administration
+  CONVERSATION_QUEUE: conversation-generation
+  DOCUMENT_ADMINISTRATION_QUEUE: document-administration
+  DOCUMENT_GOVERNANCE_QUEUE: document-governance
+  LOG_CHANNEL: stderr
+  OTEL_SDK_DISABLED: "true"
+  MAIL_MAILER: ${MAIL_MAILER:-smtp}
+  MAIL_HOST: ${MAIL_HOST:?MAIL_HOST is required}
+  MAIL_PORT: ${MAIL_PORT:-587}
+  MAIL_USERNAME: ${MAIL_USERNAME:?MAIL_USERNAME is required}
+  MAIL_PASSWORD: ${MAIL_PASSWORD:?MAIL_PASSWORD is required}
+  MAIL_ENCRYPTION: ${MAIL_ENCRYPTION:-tls}
+  MAIL_FROM_ADDRESS: ${MAIL_FROM_ADDRESS:?MAIL_FROM_ADDRESS is required}
+  MAIL_FROM_NAME: ${MAIL_FROM_NAME:-Dolved}
+
+x-api-service: &api-service
+  build:
+    context: ../../apps/api
+    target: production
+  image: dolved-api:${DOLVED_IMAGE_TAG:-local}
+  environment: *api-environment
+  extra_hosts:
+    - host.docker.internal:host-gateway
+  restart: unless-stopped
+
+services:
+  postgres:
+    image: postgres:18.4-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-dolved}
+      POSTGRES_USER: ${POSTGRES_USER:-dolved}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
+    volumes:
+      - postgres_data:/var/lib/postgresql
+    healthcheck:
+      test: [CMD-SHELL, "pg_isready --username=$$POSTGRES_USER --dbname=$$POSTGRES_DB"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  objectstore:
+    image: chrislusf/seaweedfs:4.53
+    entrypoint: [/bin/sh, /config/seaweedfs-entrypoint.sh]
+    environment:
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:?AWS_ACCESS_KEY_ID is required}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:?AWS_SECRET_ACCESS_KEY is required}
+    volumes:
+      - object_data:/data
+      - ./seaweedfs-entrypoint.sh:/config/seaweedfs-entrypoint.sh:ro
+    healthcheck:
+      test: [CMD, wget, --quiet, --spider, http://127.0.0.1:9333/healthz]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+    restart: unless-stopped
+
+  migrate:
+    <<: *api-service
+    command: php artisan migrate --force
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: "no"
+
+  storage-init:
+    <<: *api-service
+    command: php artisan documents:ensure-storage
+    depends_on:
+      objectstore:
+        condition: service_healthy
+    restart: "no"
+
+  api:
+    <<: *api-service
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+      storage-init:
+        condition: service_completed_successfully
+    healthcheck:
+      test: [CMD, php, -r, "exit(@file_get_contents('http://127.0.0.1/up') === false ? 1 : 0);"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  worker:
+    <<: *api-service
+    command: php artisan queue:work conversation --queue=conversation-generation,document-administration,document-governance --tries=1 --timeout=900 --sleep=1
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+      storage-init:
+        condition: service_completed_successfully
+    stop_grace_period: 30s
+
+  scheduler:
+    <<: *api-service
+    command: php artisan schedule:work
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    stop_grace_period: 20s
+
+  web:
+    build:
+      context: ../../apps/web
+      target: production
+      args:
+        NEXT_PUBLIC_API_URL: https://${API_DOMAIN:?API_DOMAIN is required}
+    image: dolved-web:${DOLVED_IMAGE_TAG:-local}
+    environment:
+      API_INTERNAL_URL: http://api
+      NEXT_PUBLIC_API_URL: https://${API_DOMAIN}
+    depends_on:
+      api:
+        condition: service_healthy
+    healthcheck:
+      test: [CMD, node, -e, "fetch('http://127.0.0.1:3000').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  caddy:
+    image: caddy:2.10.2-alpine
+    environment:
+      ACME_EMAIL: ${ACME_EMAIL:?ACME_EMAIL is required}
+      DOLVED_DOMAIN: ${DOLVED_DOMAIN:?DOLVED_DOMAIN is required}
+      API_DOMAIN: ${API_DOMAIN:?API_DOMAIN is required}
+      STORAGE_DOMAIN: ${STORAGE_DOMAIN:?STORAGE_DOMAIN is required}
+    ports:
+      - 80:80
+      - 443:443
+      - 443:443/udp
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      web:
+        condition: service_healthy
+      objectstore:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  object_data:
+  caddy_data:
+  caddy_config:

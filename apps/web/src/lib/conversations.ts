@@ -56,6 +56,24 @@ export type GroundedAnswer = {
   unsupported_aspects?: string[];
   insufficiency_reason?: string | null;
   parts?: GroundedAnswerPart[];
+  sources_retrieved?: RetrievedSource[];
+};
+
+export type RetrievedSource = {
+  id: string;
+  rank: number;
+  score: number | null;
+  document_id: string | null;
+  display_name: string;
+  source_state: "available" | "removed" | "unavailable";
+  source_route: string | null;
+  retrieved_text: string;
+};
+
+export type SiteContext = {
+  scope_key: string;
+  location_id: string | null;
+  name: string;
 };
 
 export type Conversation = {
@@ -64,6 +82,7 @@ export type Conversation = {
   status: string;
   created_at: string;
   updated_at: string;
+  site_context?: SiteContext;
   messages?: ConversationMessage[];
   runs?: ConversationRun[];
 };
@@ -87,10 +106,14 @@ export async function listConversations(
 
 export async function createConversation(
   workspaceId: string,
+  selectedLocationId: string | null = null,
 ): Promise<Conversation> {
   const response = await apiFetch<Resource<Conversation>>(
     `${workspacePath(workspaceId)}/conversations`,
-    { method: "POST" },
+    {
+      method: "POST",
+      body: JSON.stringify({ selected_location_id: selectedLocationId }),
+    },
   );
   return response.data;
 }

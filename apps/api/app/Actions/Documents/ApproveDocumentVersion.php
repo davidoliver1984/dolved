@@ -7,6 +7,7 @@ namespace App\Actions\Documents;
 use App\Enums\DocumentGovernanceEventKey;
 use App\Enums\DocumentGovernanceStatus;
 use App\Exceptions\DocumentGovernanceException;
+use App\Jobs\SyncDifyDocument;
 use App\Models\Document;
 use App\Models\User;
 use App\Support\Documents\DocumentAuthorityTimeline;
@@ -28,7 +29,7 @@ final readonly class ApproveDocumentVersion
 
     public function handle(Document $document, User $actor): Document
     {
-        return DB::transaction(function () use ($document, $actor): Document {
+        $approved = DB::transaction(function () use ($document, $actor): Document {
             [, $locked, $versions] = $this->lockLineage->handle($document);
             $this->authorizer->ordinary($actor, $locked);
 
@@ -58,5 +59,8 @@ final readonly class ApproveDocumentVersion
 
             return $locked->refresh();
         });
+        SyncDifyDocument::dispatch($approved->id);
+
+        return $approved;
     }
 }

@@ -6,6 +6,7 @@ namespace App\Actions\Documents;
 
 use App\Enums\DocumentGovernanceStatus;
 use App\Exceptions\DocumentGovernanceException;
+use App\Jobs\SyncDifyDocument;
 use App\Models\Document;
 use App\Models\User;
 use App\Support\Documents\DocumentGovernanceAuthorizer;
@@ -23,7 +24,7 @@ final readonly class WithdrawDocumentVersion
 
     public function handle(Document $document, User $actor): Document
     {
-        return DB::transaction(function () use ($document, $actor): Document {
+        $withdrawn = DB::transaction(function () use ($document, $actor): Document {
             [, $locked] = $this->lockLineage->handle($document);
             $this->authorizer->ordinary($actor, $locked);
 
@@ -39,5 +40,8 @@ final readonly class WithdrawDocumentVersion
 
             return $locked->refresh();
         });
+        SyncDifyDocument::dispatch($withdrawn->id);
+
+        return $withdrawn;
     }
 }

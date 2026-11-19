@@ -9,6 +9,7 @@ use App\Enums\DocumentStatus;
 use App\Enums\GenerationRunStatus;
 use App\Models\Document;
 use App\Models\EvidenceSnapshot;
+use App\Models\RetrievedSourceReference;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -23,6 +24,15 @@ class ConversationResource extends JsonResource
             'status' => $this->status->value,
             'created_at' => $this->created_at?->toIso8601String(),
             'updated_at' => $this->updated_at?->toIso8601String(),
+            'site_context' => $this->selectedLocation === null ? [
+                'scope_key' => 'global',
+                'location_id' => null,
+                'name' => 'Organisation-wide only',
+            ] : [
+                'scope_key' => (string) $this->selectedLocation->public_id,
+                'location_id' => (string) $this->selectedLocation->public_id,
+                'name' => $this->selectedLocation->name,
+            ],
             'messages' => $this->whenLoaded('messages', fn () => $this->messages->map(fn ($message): array => [
                 'id' => $message->public_id,
                 'ordinal' => $message->ordinal,
@@ -48,7 +58,15 @@ class ConversationResource extends JsonResource
                         'event_type',
                         ChatStreamEventType::AnswerPartAcceptedForDisplay,
                     ),
-                'answer' => $run->relationLoaded('generatedAnswer') && $run->generatedAnswer !== null ? ($run->generatedAnswer->contract_version === 'current-policy-answer-v1' ? [
+                'answer' => $run->relationLoaded('generatedAnswer') && $run->generatedAnswer !== null ? ($run->generatedAnswer->contract_version === 'dify-chatflow-answer-v1' ? [
+                    'id' => $run->generatedAnswer->public_id,
+                    'outcome' => $run->generatedAnswer->outcome->value,
+                    'presentation' => 'saved-message-v1',
+                    'text' => $run->assistantMessage->display_text,
+                    'sources_retrieved' => $run->generatedAnswer->retrievedSources
+                        ->map(fn (RetrievedSourceReference $source): array => $this->retrievedSource($request, $source))
+                        ->all(),
+                ] : ($run->generatedAnswer->contract_version === 'current-policy-answer-v1' ? [
                     'id' => $run->generatedAnswer->public_id,
                     'outcome' => $run->generatedAnswer->outcome->value,
                     'presentation' => 'saved-message-v1',
@@ -78,10 +96,36 @@ class ConversationResource extends JsonResource
                             ->map(fn (EvidenceSnapshot $snapshot): array => $this->citation($request, $snapshot))
                             ->all(),
                     ])->all(),
-                ]) : null,
+                ])) : null,
                 'created_at' => $run->created_at?->toIso8601String(),
                 'completed_at' => $run->completed_at?->toIso8601String(),
             ])->all()),
+        ];
+    }
+
+    /** @return array<string, mixed> */
+    private function retrievedSource(Request $request, RetrievedSourceReference $source): array
+    {
+        $document = $source->document;
+        $belongsToConversationWorkspace = $document !== null
+            && $document->workspace_id === $this->workspace_id;
+        $isRemoved = $belongsToConversationWorkspace
+            && $document->status === DocumentStatus::Deleted;
+        $isLive = $belongsToConversationWorkspace
+            && ! in_array($document->status, [DocumentStatus::Deleting, DocumentStatus::Deleted], true)
+            && $request->user()?->can('view', $document) === true;
+
+        return [
+            'id' => $source->public_id,
+            'rank' => $source->rank,
+            'score' => $source->score === null ? null : (float) $source->score,
+            'document_id' => $isLive ? $document->public_id : null,
+            'display_name' => $source->display_name,
+            'source_state' => $isLive ? 'available' : ($isRemoved ? 'removed' : 'unavailable'),
+            'source_route' => $isLive
+                ? sprintf('/app/workspaces/%s/documents/%s', $this->workspace->public_id, $document->public_id)
+                : null,
+            'retrieved_text' => $source->retrieved_text,
         ];
     }
 

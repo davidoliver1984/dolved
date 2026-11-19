@@ -9,6 +9,7 @@ use App\Enums\DocumentStatus;
 use App\Enums\IngestionAttemptStatus;
 use App\Exceptions\DocumentAdministrationException;
 use App\Jobs\AdvanceDocumentDeletion;
+use App\Jobs\SyncDifyDocument;
 use App\Models\Document;
 use App\Models\DocumentDeletionOperation;
 use App\Models\IngestionAuditEvent;
@@ -69,6 +70,7 @@ class RequestDocumentDeletion
         });
 
         AdvanceDocumentDeletion::dispatch($operation->id);
+        SyncDifyDocument::dispatch($operation->document_id);
 
         return $operation->refresh();
     }

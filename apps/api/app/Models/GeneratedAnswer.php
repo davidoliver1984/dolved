@@ -50,6 +50,11 @@ class GeneratedAnswer extends Model
         return $this->hasMany(EvidenceSnapshot::class);
     }
 
+    public function retrievedSources(): HasMany
+    {
+        return $this->hasMany(RetrievedSourceReference::class)->orderBy('rank');
+    }
+
     public function renderedText(): string
     {
         if ($this->contract_version === 'current-policy-answer-v1') {

@@ -32,7 +32,7 @@ class DocumentAdministrationController extends Controller
         $workspace = $workspaces->handle($user, $workspacePublicId)->workspace;
         $values = $request->validated();
         $query = $workspace->documents()
-            ->with(['createdBy', 'latestIngestionAttempt', 'deletionOperation'])
+            ->with(['createdBy', 'latestIngestionAttempt', 'deletionOperation', 'difyBindings'])
             ->when($values['search'] ?? null, fn (Builder $query, string $search): Builder => $query->whereRaw(
                 'LOWER(source_filename) LIKE ?',
                 ['%'.mb_strtolower($search).'%'],
@@ -66,7 +66,7 @@ class DocumentAdministrationController extends Controller
         );
         Gate::authorize('view', $document);
 
-        return new DocumentAdministrationResource($document->load(['createdBy', 'latestIngestionAttempt', 'deletionOperation']));
+        return new DocumentAdministrationResource($document->load(['createdBy', 'latestIngestionAttempt', 'deletionOperation', 'difyBindings']));
     }
 
     public function retry(
@@ -96,7 +96,7 @@ class DocumentAdministrationController extends Controller
                 'idempotency_key' => $operation->idempotency_key,
             ],
             'document' => (new DocumentAdministrationResource(
-                $operation->document->load(['createdBy', 'latestIngestionAttempt', 'deletionOperation']),
+                $operation->document->load(['createdBy', 'latestIngestionAttempt', 'deletionOperation', 'difyBindings']),
             ))->resolve($request),
         ]], 202)->header('X-Correlation-ID', $correlationId);
     }

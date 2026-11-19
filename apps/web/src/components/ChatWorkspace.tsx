@@ -30,6 +30,7 @@ import {
   cancelConversationRun,
   type Conversation,
   type ConversationRun,
+  type RetrievedSource,
   createConversation,
   getConversation,
   listConversations,
@@ -79,6 +80,7 @@ type ChatWorkspaceProps = {
   showConversationNavigation?: boolean;
   workspaceId: string;
   workspaceName: string;
+  locations?: Array<{ public_id: string; name: string }>;
   services?: ChatServices;
   searchableDocumentCount?: number;
   starterQuestions?: StarterQuestion[];
@@ -155,6 +157,37 @@ function CitationEvidence({ citation, index }: Readonly<{ citation: Citation; in
   );
 }
 
+function RetrievedSourceEvidence({ source }: Readonly<{ source: RetrievedSource }>) {
+  const [open, setOpen] = useState(false);
+  const unavailableLabel = source.source_state === "removed"
+    ? "Source removed; the retrieved passage is preserved with this answer"
+    : "Source unavailable";
+  const score = source.score === null ? null : `Match score ${source.score.toFixed(3)}`;
+
+  return (
+    <li className="grid gap-2" data-retrieved-source-id={source.id}>
+      <Button
+        aria-expanded={open}
+        className="w-fit"
+        onClick={() => setOpen((value) => !value)}
+        size="sm"
+        type="button"
+        variant="outline"
+      >
+        {source.rank}. {source.display_name}
+      </Button>
+      {open ? <EvidenceItem
+        excerpt={source.retrieved_text}
+        metadata={score ?? "Retrieved passage"}
+        provenance="Retrieved as context; not linked to a specific claim"
+        sourceHref={source.source_route ?? undefined}
+        sourceUnavailableLabel={unavailableLabel}
+        title={source.display_name}
+      /> : null}
+    </li>
+  );
+}
+
 function idempotencyKey(): string {
   return crypto.randomUUID();
 }
@@ -181,6 +214,7 @@ export function ChatWorkspace({
   showConversationNavigation = true,
   workspaceId,
   workspaceName,
+  locations = [],
   services = defaultServices,
   searchableDocumentCount,
   starterQuestions = [],
@@ -196,6 +230,7 @@ export function ChatWorkspace({
   const [provisionalParts, setProvisionalParts] = useState<AnswerPart[]>([]);
   const [completedParts, setCompletedParts] = useState<Record<string, AnswerPart[]>>({});
   const [accessRevoked, setAccessRevoked] = useState(false);
+  const [selectedLocationId, setSelectedLocationId] = useState("");
   const unsubscribe = useRef<null | (() => void)>(null);
   const transcript = useRef<HTMLDivElement>(null);
   const questionInput = useRef<HTMLTextAreaElement>(null);
@@ -372,17 +407,13 @@ export function ChatWorkspace({
   }, [initialConversationId, services, settleSavedRun, watchRun, workspaceId]);
 
   const newConversation = async () => {
-    setBusy(true);
     setError(null);
-    try {
-      const created = await services.create(workspaceId);
-      setActive({ ...created, messages: [], runs: [] });
-      await refreshList();
-    } catch (caught) {
-      setError(firstError(caught));
-    } finally {
-      setBusy(false);
-    }
+    setActive(null);
+    setSelectedLocationId("");
+    setDraft("");
+    setCompletion(null);
+    setProvisionalParts([]);
+    provisionalPartsRef.current = [];
   };
 
   const submit = async (event: FormEvent) => {
@@ -402,7 +433,7 @@ export function ChatWorkspace({
       let conversation = active;
       let created = false;
       if (!conversation) {
-        conversation = await services.create(workspaceId);
+        conversation = await services.create(workspaceId, selectedLocationId || null);
         setActive({ ...conversation, messages: [], runs: [] });
         created = true;
       }
@@ -514,7 +545,7 @@ export function ChatWorkspace({
       </aside> : null}
 
       <div className="grid min-h-0 grid-rows-[auto_1fr_auto_auto] gap-4">
-        {!showConversationNavigation ? <header className="mb-5"><p className="text-sm font-bold uppercase tracking-[0.14em] text-brand">Grounded chat</p><h1 className="mt-2 text-3xl font-semibold" id="chat-heading">Ask {workspaceName}</h1><p className="mt-2 text-sm text-foreground-muted">Answers use only evidence eligible for this workspace and question.</p></header> : null}
+        {!showConversationNavigation ? <header className="mb-5"><p className="text-sm font-bold uppercase tracking-[0.14em] text-brand">Grounded chat</p><h1 className="mt-2 text-3xl font-semibold" id="chat-heading">Ask {workspaceName}</h1><p className="mt-2 text-sm text-foreground-muted">Answers use only evidence eligible for this workspace and the selected site.</p></header> : null}
         {searchableDocumentCount !== undefined ? <KnowledgeReadinessPanel onAsk={focusQuestion} onChooseQuestion={chooseQuestion} searchableDocumentCount={searchableDocumentCount} starterQuestions={starterQuestions} workspaceId={workspaceId} /> : null}
         <p data-chat-announcement aria-atomic="true" aria-live="polite" className="sr-only" role="status">{announcement}</p>
         <div aria-busy={loading} className="grid min-h-96 content-start gap-4 overflow-y-auto rounded-xl border border-border bg-surface p-4 sm:p-6" ref={transcript}>
@@ -533,6 +564,13 @@ export function ChatWorkspace({
                 <div className="mb-2 flex items-center gap-2"><p className="text-xs font-bold uppercase tracking-[0.12em] text-foreground-muted">{message.role === "user" ? "You" : "Dolved"}</p>{!savedPresentation && run?.answer?.outcome ? <StatusBadge status={run.answer.outcome === "answered" ? "success" : "warning"}>{run.answer.outcome.replaceAll("_", " ")}</StatusBadge> : null}</div>
                 {savedPresentation ? <>
                   <p className="whitespace-pre-wrap leading-7" data-canonical-answer>{message.text}</p>
+                  {run?.answer?.sources_retrieved?.length ? <section aria-label="Sources retrieved" className="mt-4 rounded-lg border border-border bg-surface-raised p-3">
+                    <h3 className="text-sm font-semibold">Sources retrieved</h3>
+                    <p className="mt-1 text-xs text-foreground-muted">These passages were supplied as context. They are not claim-level citations.</p>
+                    <ol className="mt-3 grid gap-2">
+                      {run.answer.sources_retrieved.map((source) => <RetrievedSourceEvidence key={source.id} source={source} />)}
+                    </ol>
+                  </section> : null}
                   {run?.answer?.citations?.length ? <ol aria-label="Answer sources" className="mt-3 flex flex-wrap gap-2">
                     {run.answer.citations.map((citation, index) => <CitationEvidence citation={citation} index={index} key={citation.id} />)}
                   </ol> : null}
@@ -585,6 +623,24 @@ export function ChatWorkspace({
 
         {error ? <Notice tone={accessRevoked ? "warning" : "destructive"}>{accessRevoked ? <div><strong>Workspace access ended</strong><p className="mt-1">{error}</p></div> : error}</Notice> : null}
         <form className="grid gap-3 rounded-xl border border-border bg-card p-4" onSubmit={submit}>
+          {active?.site_context ? <div className="rounded-lg bg-surface-raised px-3 py-2 text-sm">
+            <strong>Site context:</strong> {active.site_context.name}
+            <p className="mt-1 text-xs text-foreground-muted">This context is fixed for this conversation. Start a new chat to change it.</p>
+          </div> : <div className="grid gap-2">
+            <label className="text-sm font-semibold" htmlFor="chat-site-context">Site context</label>
+            <select
+              aria-describedby="chat-site-context-help"
+              className="min-h-11 rounded-lg border border-input bg-background px-3"
+              disabled={busy || accessRevoked}
+              id="chat-site-context"
+              onChange={(event) => setSelectedLocationId(event.target.value)}
+              value={selectedLocationId}
+            >
+              <option value="">Organisation-wide only</option>
+              {locations.map((location) => <option key={location.public_id} value={location.public_id}>{location.name}</option>)}
+            </select>
+            <span className="text-xs text-foreground-muted" id="chat-site-context-help">Choose a registered site explicitly. Site names in the question do not change this selection.</span>
+          </div>}
           <label className="text-sm font-semibold" htmlFor="chat-question">Ask a question</label>
           <Textarea
             disabled={busy || accessRevoked}

@@ -93,7 +93,9 @@ final readonly class FinalizeImportPromotion
             $locked->lease_token_hash = null;
             $locked->lease_expires_at = null;
             $locked->save();
-            $this->ingestion->handle($document, (string) Str::uuid());
+            if (config('documents.processing_driver') !== 'dify') {
+                $this->ingestion->handle($document, (string) Str::uuid());
+            }
             $this->events->record(
                 $locked->workspace()->firstOrFail(),
                 DocumentGovernanceEventKey::PromotionCompleted,

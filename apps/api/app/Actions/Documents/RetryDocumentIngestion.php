@@ -6,6 +6,7 @@ namespace App\Actions\Documents;
 
 use App\Enums\DocumentStatus;
 use App\Exceptions\DocumentAdministrationException;
+use App\Jobs\SyncDifyDocument;
 use App\Models\Document;
 use App\Models\DocumentIngestionRetry;
 use App\Models\IngestionAuditEvent;
@@ -34,6 +35,10 @@ class RetryDocumentIngestion
         string $idempotencyKey,
         string $correlationId,
     ): DocumentIngestionRetry {
+        if (config('documents.processing_driver') === 'dify') {
+            return $this->handleDify($document, $actor, $idempotencyKey, $correlationId);
+        }
+
         return $this->tracer->run('document.ingestion.retry', [
             'rag.correlation.id' => $correlationId,
             'rag.document.id' => $document->public_id,
@@ -100,5 +105,76 @@ class RetryDocumentIngestion
 
             return $retry->load('document');
         }));
+    }
+
+    private function handleDify(
+        Document $document,
+        User $actor,
+        string $idempotencyKey,
+        string $correlationId,
+    ): DocumentIngestionRetry {
+        [$retry, $created] = $this->tracer->run('document.dify.retry', [
+            'rag.correlation.id' => $correlationId,
+            'rag.document.id' => $document->public_id,
+            'rag.operation.stage' => 'dify_retry',
+        ], fn (): array => DB::transaction(function () use ($document, $actor, $idempotencyKey, $correlationId): array {
+            $locked = Document::query()->whereKey($document->getKey())->lockForUpdate()->firstOrFail();
+            $existing = DocumentIngestionRetry::query()
+                ->where('document_id', $locked->id)
+                ->where('idempotency_key', $idempotencyKey)
+                ->first();
+            if ($existing !== null) {
+                return [$existing->load('document'), false];
+            }
+            if ($locked->status !== DocumentStatus::Failed) {
+                throw DocumentAdministrationException::conflict(
+                    'document_retry_ineligible',
+                    'The document is no longer eligible for retry.',
+                );
+            }
+            $retryableBindings = $locked->difyBindings()->where('sync_status', 'failed');
+            if (! $retryableBindings->exists()) {
+                throw DocumentAdministrationException::conflict(
+                    'document_retry_unavailable',
+                    'No disabled searchable copy is available to retry.',
+                );
+            }
+
+            $eventId = (string) Str::uuid();
+            $retry = DocumentIngestionRetry::query()->create([
+                'workspace_id' => $locked->workspace_id,
+                'document_id' => $locked->id,
+                'requested_by_user_id' => $actor->id,
+                'idempotency_key' => $idempotencyKey,
+                'event_id' => $eventId,
+                'correlation_id' => $correlationId,
+            ]);
+            $retryableBindings->update(['sync_status' => 'retry_pending', 'failure_code' => null]);
+            $locked->forceFill([
+                'status' => DocumentStatus::Processing,
+                'failure_category' => null,
+                'failure_message' => null,
+            ])->save();
+            IngestionAuditEvent::query()->create([
+                'event_id' => $eventId,
+                'workspace_id' => $locked->workspace_id,
+                'document_id' => $locked->id,
+                'action' => 'dify_retry_requested',
+                'outcome' => 'queued',
+                'context' => [
+                    'actor_user_id' => $actor->id,
+                    'correlation_id' => $correlationId,
+                ],
+                'occurred_at' => CarbonImmutable::now(),
+            ]);
+
+            return [$retry->load('document'), true];
+        }));
+
+        if ($created) {
+            SyncDifyDocument::dispatch($document->id);
+        }
+
+        return $retry;
     }
 }

@@ -122,6 +122,58 @@ function services() {
 }
 
 describe("ChatWorkspace", () => {
+  it("binds an explicit registered site when creating a conversation", async () => {
+    const fixture = services();
+    const user = userEvent.setup();
+    render(<ChatWorkspace
+      initialConversationId={null}
+      locations={[{ public_id: "09d65ad7-299f-46f7-b9f1-a0ae564cd31a", name: "Oakfield" }]}
+      services={fixture.api}
+      workspaceId="workspace-1"
+      workspaceName="Care"
+    />);
+
+    await user.selectOptions(await screen.findByLabelText("Site context"), "09d65ad7-299f-46f7-b9f1-a0ae564cd31a");
+    await user.type(screen.getByLabelText("Ask a question"), "What is the local rule?");
+    await user.click(screen.getByRole("button", { name: "Send" }));
+
+    await waitFor(() => expect(fixture.api.create).toHaveBeenCalledWith(
+      "workspace-1",
+      "09d65ad7-299f-46f7-b9f1-a0ae564cd31a",
+    ));
+  });
+
+  it("labels Dify context as retrieved sources rather than claim citations", async () => {
+    const fixture = services();
+    fixture.completed.site_context = { scope_key: "global", location_id: null, name: "Organisation-wide only" };
+    fixture.completed.runs![0].answer = {
+      id: "answer-1",
+      outcome: "answered",
+      presentation: "saved-message-v1",
+      text: "Use the current procedure.",
+      sources_retrieved: [{
+        id: "source-1",
+        rank: 1,
+        score: 0.812,
+        document_id: "document-1",
+        display_name: "Data Protection Policy.pdf",
+        source_state: "available",
+        source_route: "/app/workspaces/workspace-1/documents/document-1",
+        retrieved_text: "Personal devices must not be used.",
+      }],
+    };
+    fixture.api.get.mockResolvedValue(fixture.completed);
+    const user = userEvent.setup();
+    render(<ChatWorkspace initialConversationId="conversation-1" services={fixture.api} workspaceId="workspace-1" workspaceName="Care" />);
+
+    expect(await screen.findByRole("region", { name: "Sources retrieved" })).not.toBeNull();
+    expect(screen.getByText(/not claim-level citations/i)).not.toBeNull();
+    await user.click(screen.getByRole("button", { name: /Data Protection Policy.pdf/ }));
+    expect(screen.getByText("Personal devices must not be used.")).not.toBeNull();
+    expect(screen.getByText("Site context:").parentElement?.textContent).toContain("Organisation-wide only");
+    expect(screen.queryByRole("list", { name: "Answer sources" })).toBeNull();
+  });
+
   it("observes an existing pending pilot run after route remount without sending again", async () => {
     const fixture = services();
     const pending = structuredClone(fixture.completed);

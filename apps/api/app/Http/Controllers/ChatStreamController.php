@@ -22,6 +22,7 @@ class ChatStreamController extends Controller
         $workspace = $workspaces->handle($user, $workspacePublicId)->workspace;
         $conversation = Conversation::query()
             ->where('workspace_id', $workspace->id)
+            ->where('created_by_user_id', $user->id)
             ->where('public_id', $conversationPublicId)
             ->firstOrFail();
         $run = GenerationRun::query()

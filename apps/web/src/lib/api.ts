@@ -245,6 +245,12 @@ export type AdminDocument = {
   failure_category: string | null;
   failure_message: string | null;
   extraction_warnings: { code: string; message: string }[];
+  searchable_copies?: Array<{
+    scope_key: string;
+    status: string;
+    failure_code: string | null;
+    synced_at: string | null;
+  }>;
   created_by?: { name: string | null };
   deletion?: {
     public_id: string;

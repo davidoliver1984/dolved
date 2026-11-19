@@ -5,6 +5,7 @@ declare(strict_types=1);
 $maxUploadMegabytes = max(1, (int) env('DOCUMENT_MAX_UPLOAD_MB', 25));
 
 return [
+    'processing_driver' => env('DOCUMENT_PROCESSING_DRIVER', 'legacy'),
     'deletion_stuck_after_seconds' => max(60, (int) env('DOCUMENT_DELETION_STUCK_AFTER_SECONDS', 300)),
     'storage_disk' => env('DOCUMENT_STORAGE_DISK', 's3'),
     'upload_disk' => env('DOCUMENT_UPLOAD_DISK', 's3_uploads'),

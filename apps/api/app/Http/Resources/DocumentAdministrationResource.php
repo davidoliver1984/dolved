@@ -23,6 +23,13 @@ class DocumentAdministrationResource extends DocumentResource
             'failure_category' => $this->failure_category,
             'failure_message' => $this->failure_message,
             'extraction_warnings' => ($attempt?->publication_evidence ?? [])['warnings'] ?? [],
+            'searchable_copies' => $this->whenLoaded('difyBindings', fn (): array => $this->difyBindings
+                ->map(fn ($binding): array => [
+                    'scope_key' => $binding->scope_key,
+                    'status' => $binding->sync_status,
+                    'failure_code' => $binding->failure_code,
+                    'synced_at' => $binding->synced_at,
+                ])->values()->all()),
             'created_by' => $this->whenLoaded('createdBy', fn (): array => [
                 'name' => $this->createdBy?->name,
             ]),

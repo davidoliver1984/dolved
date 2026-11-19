@@ -120,6 +120,22 @@ provisioned.
 
 ---
 
+## Bounded single-client delivery track — Dolved with stock self-hosted Dify
+
+This separately authorised delivery track preserves the long-term roadmap while shipping
+one hosted client pilot. Dolved remains the public Next.js/Laravel security and governance
+boundary; pinned stock Dify supplies extraction, indexing, retrieval and generation behind
+it. Local implementation, production-shaped compatibility and production dependency
+advisory checks are verified. A no-commitment OVH VPS-3 order is prepared within the
+approved monthly limit; account/payment, deployment, isolated restore verification and the
+one fresh independent evaluation remain in progress.
+
+See `docs/operations/dolved-dify/DOLVED-DIFY-DELIVERY.md` and ADR-0041. This track does not
+authorise multi-client Dify tenancy, replace historical evaluation evidence or declare the
+pilot ready for client invitation.
+
+---
+
 ## Phase 0 — Repository Foundation
 
 ### Objectives

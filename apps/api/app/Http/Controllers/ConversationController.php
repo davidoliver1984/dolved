@@ -15,6 +15,7 @@ use App\Http\Requests\StoreConversationMessageRequest;
 use App\Http\Resources\ConversationResource;
 use App\Models\Conversation;
 use App\Models\GenerationRun;
+use App\Models\OrganisationalLocation;
 use App\Models\User;
 use App\Queries\Workspaces\FindWorkspaceForUser;
 use Illuminate\Http\JsonResponse;
@@ -30,6 +31,7 @@ class ConversationController extends Controller
         $workspace = $workspaces->handle($user, $workspacePublicId)->workspace;
         $conversations = Conversation::query()
             ->where('workspace_id', $workspace->id)
+            ->where('created_by_user_id', $user->id)
             ->whereIn('status', [ConversationStatus::Active->value, ConversationStatus::Archived->value])
             ->latest('updated_at')
             ->get();
@@ -43,7 +45,15 @@ class ConversationController extends Controller
         $user = $request->user();
         $workspace = $workspaces->handle($user, $workspacePublicId)->workspace;
 
-        return new ConversationResource($create->handle($workspace, $user));
+        $request->validate(['selected_location_id' => ['nullable', 'uuid']]);
+        $selectedLocation = $request->filled('selected_location_id')
+            ? OrganisationalLocation::query()
+                ->where('workspace_id', $workspace->id)
+                ->where('public_id', $request->string('selected_location_id')->value())
+                ->firstOrFail()
+            : null;
+
+        return new ConversationResource($create->handle($workspace, $user, $selectedLocation));
     }
 
     public function show(Request $request, string $workspacePublicId, string $conversationPublicId, FindWorkspaceForUser $workspaces): ConversationResource
@@ -99,6 +109,7 @@ class ConversationController extends Controller
 
         return Conversation::query()
             ->where('workspace_id', $workspace->id)
+            ->where('created_by_user_id', $user->id)
             ->where('public_id', $conversationPublicId)
             ->whereNotIn('status', [ConversationStatus::Deleting->value, ConversationStatus::Deleted->value])
             ->firstOrFail();
@@ -118,6 +129,8 @@ class ConversationController extends Controller
             'generationRuns.retryOf',
             'generationRuns.deliveryEvents',
             'generationRuns.generatedAnswer.answerParts.evidenceSnapshots.document',
+            'generationRuns.generatedAnswer.retrievedSources.document',
+            'selectedLocation',
             'workspace',
         ]);
     }

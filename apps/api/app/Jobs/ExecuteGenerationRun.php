@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\Jobs;
 
 use App\Actions\Conversation\OrchestrateConversationRun;
+use App\Actions\Conversation\OrchestrateDifyConversationRun;
 use App\Enums\GenerationRunFailureCode;
+use App\Models\DifyWorkspaceBinding;
 use App\Models\GenerationRun;
 use App\Telemetry\TelemetryAttributeAllowlist;
 use App\Telemetry\TraceContextHeaders;
@@ -42,6 +44,7 @@ class ExecuteGenerationRun implements ShouldQueue
 
     public function handle(
         OrchestrateConversationRun $orchestration,
+        OrchestrateDifyConversationRun $difyOrchestration,
         TracerProviderInterface $tracerProvider,
         TelemetryAttributeAllowlist $allowlist,
     ): void {
@@ -61,7 +64,15 @@ class ExecuteGenerationRun implements ShouldQueue
             ->startSpan();
         $scope = $span->activate();
         try {
-            $orchestration->handle($this->generationRunId);
+            $usesDify = $run instanceof GenerationRun && DifyWorkspaceBinding::query()
+                ->where('workspace_id', $run->workspace_id)
+                ->where('enabled', true)
+                ->exists();
+            if ($usesDify) {
+                $difyOrchestration->handle($this->generationRunId);
+            } else {
+                $orchestration->handle($this->generationRunId);
+            }
             $span->setAttribute('rag.operation.outcome', 'completed');
         } catch (Throwable $exception) {
             $span->setAttributes($allowlist->trace([

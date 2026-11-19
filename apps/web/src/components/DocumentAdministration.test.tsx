@@ -17,6 +17,7 @@ const document: AdminDocument = {
   extraction_warnings: [
     { code: "images_not_extracted", message: "Images were not extracted." },
   ],
+  searchable_copies: [{ scope_key: "global", status: "failed", failure_code: "dify_indexing_error", synced_at: null }],
   created_by: { name: "Workspace Owner" },
   deletion: null,
   capabilities: { retry: true, delete: true },
@@ -42,7 +43,8 @@ describe("DocumentAdministration", () => {
     expect(screen.getAllByText("failed")).toHaveLength(2);
     expect(screen.getByText(/The file could not be extracted/)).toBeTruthy();
     expect(screen.getByText(/1 extraction warning/)).toBeTruthy();
-    expect(screen.getByRole("button", { name: "Retry ingestion" })).toBeTruthy();
+    expect(screen.getByText("Searchable-copy status")).toBeTruthy();
+    expect(screen.getByRole("button", { name: "Retry indexing" })).toBeTruthy();
     const deleteDocument = screen.getByRole("button", { name: "Delete" });
     expect(deleteDocument.className).toContain("h-10");
     expect(deleteDocument.className).toContain("min-h-10");
@@ -59,7 +61,7 @@ describe("DocumentAdministration", () => {
       />,
     );
 
-    expect(screen.queryByRole("button", { name: "Retry ingestion" })).toBeNull();
+    expect(screen.queryByRole("button", { name: "Retry indexing" })).toBeNull();
     expect(screen.queryByRole("button", { name: "Delete" })).toBeNull();
   });
 });

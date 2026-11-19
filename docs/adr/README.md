@@ -44,6 +44,7 @@ that supersedes the previous record rather than rewriting its historical context
 
 | ADR | Status | Decision |
 |---|---|---|
+| [0041](0041-use-stock-self-hosted-dify-for-single-client-delivery.md) | Accepted | Use stock self-hosted Dify behind Dolved's existing frontend and security/governance boundary for the bounded single-client pilot |
 | [0040](0040-current-policy-question-pool-profile.md) | Accepted | Add the server-pinned current-policy question-pool profile with conditional scope partitions and existing-message final presentation |
 | [0001](0001-use-postgresql-18.md) | Accepted | Use PostgreSQL 18 as the relational database major version |
 | [0002](0002-use-three-application-service-architecture.md) | Accepted (retrospective) | Separate the web, core API and AI workloads into three applications |

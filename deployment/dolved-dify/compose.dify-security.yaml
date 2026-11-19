@@ -1,0 +1,13 @@
+services:
+  nginx:
+    # Dify is an internal dependency and administration surface. Dolved reaches
+    # this loopback listener through host.docker.internal; it is not public.
+    ports: !override
+      - "127.0.0.1:8080:80"
+      - "127.0.0.1:8443:443"
+
+  plugin_daemon:
+    # The stock compose publishes a remote plugin-debugging port by default.
+    # Dolved does not use it.
+    ports: !reset []
+

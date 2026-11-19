@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Jobs;
 
 use App\Actions\Documents\AdvanceDocumentDeletion as AdvanceAction;
+use App\Actions\Documents\CompleteDifyDocumentDeletion;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -24,9 +25,12 @@ class AdvanceDocumentDeletion implements ShouldQueue
         $this->afterCommit();
     }
 
-    public function handle(AdvanceAction $action): void
+    public function handle(AdvanceAction $action, CompleteDifyDocumentDeletion $dify): void
     {
-        if (! $action->handle($this->operationId)) {
+        $complete = config('documents.processing_driver') === 'dify'
+            ? $dify->handle($this->operationId)
+            : $action->handle($this->operationId);
+        if (! $complete) {
             $this->release((int) config('documents.deletion_quiescence_retry_seconds'));
         }
     }
