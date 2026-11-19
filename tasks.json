@@ -40,10 +40,10 @@
   "progress": {
     "current_phase": "R28",
     "current_session": "R28-S04",
-    "next_action": "Bounded Dolved+Dify single-client delivery is in progress under ADR-0041. Local production-shaped Dolved, pinned stock Dify 1.19.0 compatibility and production dependency advisory checks are verified without provider calls. A no-commitment OVH VPS-3 order is prepared at GBP 12.72 incl VAT/month. Next: OVH account/payment and pilot DNS handoff, production deploy, isolated restore verification, final configuration/corpus freeze and one independently graded hosted 40-question run. Historical R28 evidence and the original dirty checkout remain unchanged; client invitation still requires David's explicit approval.",
+    "next_action": "R28-S04 remains the canonical current session. The approved post-R28 sequence is now R29 configurable branding, R30 private prototype/pilot launch, R31 product-wide acceptance, R32 AWS staging, R33 production and R34 documentation. Bounded Dolved+Dify delivery preparation under ADR-0041 is locally verified and supplies preparatory evidence for R30, but no later gate is pre-completed. Next operational dependency remains verified SSH access to the approved pilot host; no real-client invitation or provider call is implied.",
     "completed_through": "R27-GATE",
     "completed_phase_count": 28,
-    "total_phase_count": 33
+    "total_phase_count": 35
   },
   "phases": [
     {
@@ -5370,7 +5370,7 @@
       "guide_start_line": 15213,
       "guide_end_line": 15470,
       "status": "in_progress",
-      "objective": "Produce the first current-code, live-provider body of evidence for how Dolved performs on retrieval and grounded generation, separately and end to end, over a realistic versioned organisational corpus, after ADR-0030 through ADR-0036 are implemented and before Phase 29 reviews the connected product visually. Preserves all existing engineering/calibration/held-out split governance; adds a live current-commit run on top of it rather than relaxing it.",
+      "objective": "Produce the first current-code, live-provider body of evidence for how Dolved performs on retrieval and grounded generation, separately and end to end, over a realistic versioned organisational corpus, after ADR-0030 through ADR-0036 are implemented and before Phase 31 reviews the connected product visually. Preserves all existing engineering/calibration/held-out split governance; adds a live current-commit run on top of it rather than relaxing it.",
       "sessions": [
         {
           "id": "R28-S01",
@@ -5475,91 +5475,287 @@
         "depends_on": [
           "R28-S07"
         ],
-        "acceptance_scope": "Evidence exists that: the live protocol was approved before any provider call; the frozen checkpoint 19 V4 corpus source was recorded before evaluation-population authoring or provider use; R28-S02's pre-existing population identity, checksum, counts, split classification and compatibility were verified and bound before its provider call, distinct from and never merged with the V4 evaluation population; the V4 evaluation population was authored, audited and frozen under its own immutable identity and checksum, independently of any Dolved output, entirely within R28-S01, before R28-S04's provider call; the current exact commit was tested; provider identities and costs are recorded; the real ImportBatch path materialised the four V4 corpus scopes (the 300-document primary corpus into the primary evaluation tenant, the 12-document foreign-tenant pack into its own isolated tenant, the 6-document separate prompt-injection pack under its governed security-test boundary, and the 13 negative/import fixtures through their rejection/failure/recovery paths) with separate counts, outcomes and lineage and no cross-scope or cross-tenant leakage; retrieval and generation were evaluated separately and end to end over the primary corpus and the frozen V4 evaluation population; version-aware current/historical/comparison cases were exercised; no held-out boundary was crossed; failures were diagnosed honestly; any correction and rerun carries immutable lineage; committed evaluation artefacts verify provider-free afterward; residual limitations are documented; and no AWS deployment work began. This gate blocks Phase 29's product-wide acceptance and all AWS work. Its deliverable is a current-code, lineage-bound body of live-provider evidence showing how Dolved performs over the frozen V4 realistic, versioned organisational corpus, with failures, costs and limitations reported honestly — supporting an explicit pilot-readiness decision scoped to this corpus and commit, never phrased as guaranteed accuracy, production certification, or proof over an arbitrary tenant's corpus.",
+        "acceptance_scope": "Evidence exists that: the live protocol was approved before any provider call; the frozen checkpoint 19 V4 corpus source was recorded before evaluation-population authoring or provider use; R28-S02's pre-existing population identity, checksum, counts, split classification and compatibility were verified and bound before its provider call, distinct from and never merged with the V4 evaluation population; the V4 evaluation population was authored, audited and frozen under its own immutable identity and checksum, independently of any Dolved output, entirely within R28-S01, before R28-S04's provider call; the current exact commit was tested; provider identities and costs are recorded; the real ImportBatch path materialised the four V4 corpus scopes (the 300-document primary corpus into the primary evaluation tenant, the 12-document foreign-tenant pack into its own isolated tenant, the 6-document separate prompt-injection pack under its governed security-test boundary, and the 13 negative/import fixtures through their rejection/failure/recovery paths) with separate counts, outcomes and lineage and no cross-scope or cross-tenant leakage; retrieval and generation were evaluated separately and end to end over the primary corpus and the frozen V4 evaluation population; version-aware current/historical/comparison cases were exercised; no held-out boundary was crossed; failures were diagnosed honestly; any correction and rerun carries immutable lineage; committed evaluation artefacts verify provider-free afterward; residual limitations are documented; and no AWS deployment work began. This gate blocks Phase 29 branding, Phase 30's private-pilot launch, Phase 31's product-wide acceptance and all AWS work. Its deliverable is a current-code, lineage-bound body of live-provider evidence showing how Dolved performs over the frozen V4 realistic, versioned organisational corpus, with failures, costs and limitations reported honestly — supporting an explicit pilot-readiness decision scoped to this corpus and commit, never phrased as guaranteed accuracy, production certification, or proof over an arbitrary tenant's corpus.",
         "completion_evidence": []
       }
     },
     {
       "id": "R29",
-      "guide_phase": "Phase 29 — Product-wide Integration and Visual Acceptance",
+      "guide_phase": "Phase 29 — Configurable Branding",
+      "title": "Configurable Branding",
+      "guide_start_line": 15776,
+      "guide_end_line": 15836,
+      "status": "not_started",
+      "objective": "Provide validated, authorised and accessible Dolved display-name, wordmark/logo, favicon and light/dark accent configuration without allowing arbitrary presentation code or affecting security and evidence decisions.",
+      "sessions": [
+        {
+          "id": "R29-S01",
+          "guide_stage": "Stage 29.1 — Freeze branding ownership and lifecycle",
+          "title": "Freeze Branding Ownership and Lifecycle",
+          "status": "not_started",
+          "objective": "Approve the deployment/workspace ownership boundary, version and lifecycle contract, permissions, storage, fallbacks and accessibility rules for configurable branding.",
+          "session_mode": "architecture",
+          "requires_architecture_review": true,
+          "requires_adr": true,
+          "depends_on": [
+            "R28-GATE"
+          ],
+          "journal": {
+            "required": true,
+            "path_template": "docs/journal/YYYY-MM-DD-r29-s01-freeze-branding-ownership-and-lifecycle.md",
+            "status": "not_started"
+          },
+          "completion_evidence": []
+        },
+        {
+          "id": "R29-S02",
+          "guide_stage": "Stage 29.2 — Implement configurable identity and administration",
+          "title": "Implement Configurable Identity and Administration",
+          "status": "not_started",
+          "objective": "Implement validated display name, logo/wordmark, favicon and light/dark accent configuration with authorised administration, preview, lifecycle and safe Dolved fallback.",
+          "session_mode": "implementation",
+          "requires_architecture_review": false,
+          "requires_adr": false,
+          "depends_on": [
+            "R29-S01"
+          ],
+          "journal": {
+            "required": true,
+            "path_template": "docs/journal/YYYY-MM-DD-r29-s02-implement-configurable-branding.md",
+            "status": "not_started"
+          },
+          "completion_evidence": []
+        },
+        {
+          "id": "R29-S03",
+          "guide_stage": "Stage 29.3 — Apply and visually verify branding across Dolved",
+          "title": "Apply and Visually Verify Branding Across Dolved",
+          "status": "not_started",
+          "objective": "Apply configured and fallback branding consistently across the Dolved web, authentication, invitation and governance-email surfaces and verify responsive, theme and accessibility behaviour.",
+          "session_mode": "implementation",
+          "requires_architecture_review": false,
+          "requires_adr": false,
+          "requires_visual_review": true,
+          "visual_review_policy": "Requires David's explicit approval of configured and fallback identities on desktop/mobile and in light/dark themes.",
+          "depends_on": [
+            "R29-S02"
+          ],
+          "journal": {
+            "required": true,
+            "path_template": "docs/journal/YYYY-MM-DD-r29-s03-verify-configurable-branding.md",
+            "status": "not_started"
+          },
+          "completion_evidence": []
+        }
+      ],
+      "gate": {
+        "id": "R29-GATE",
+        "title": "Configurable Branding Acceptance Gate",
+        "status": "not_started",
+        "depends_on": [
+          "R29-S03"
+        ],
+        "acceptance_scope": "Branding ownership and lifecycle are approved; configuration, preview, validation, safe storage/deletion and Dolved fallbacks are implemented; configured and fallback identity is consistent across client-facing and email surfaces; semantic tokens, accessibility and explicit visual approval are evidenced. No pilot, AWS, production or public-launch claim is made.",
+        "completion_evidence": []
+      }
+    },
+    {
+      "id": "R30",
+      "guide_phase": "Phase 30 — Private Prototype/Pilot Launch",
+      "title": "Private Prototype/Pilot Launch",
+      "guide_start_line": 15838,
+      "guide_end_line": 15918,
+      "status": "not_started",
+      "objective": "Launch and hand over one private, invitation-only single-client Dolved–Dify prototype on the approved non-AWS host, with bounded recovery, observability, security, quality and cost evidence but no production-readiness claim.",
+      "sessions": [
+        {
+          "id": "R30-S01",
+          "guide_stage": "Stage 30.1 — Freeze the private-pilot operating boundary",
+          "title": "Freeze the Private-Pilot Operating Boundary",
+          "status": "not_started",
+          "objective": "Freeze host/software identities, invitation and spending authority, data/corpus scope, deployment ownership, backup/rollback target, legacy recovery, evidence and stop conditions.",
+          "session_mode": "architecture",
+          "requires_architecture_review": true,
+          "requires_adr": false,
+          "depends_on": [
+            "R29-GATE"
+          ],
+          "journal": {
+            "required": true,
+            "path_template": "docs/journal/YYYY-MM-DD-r30-s01-freeze-private-pilot-boundary.md",
+            "status": "not_started"
+          },
+          "completion_evidence": []
+        },
+        {
+          "id": "R30-S02",
+          "guide_stage": "Stage 30.2 — Establish privacy-safe Dolved–Dify pilot observability",
+          "title": "Establish Privacy-Safe Dolved–Dify Pilot Observability",
+          "status": "not_started",
+          "objective": "Propagate W3C trace context across Dolved and Dify and route safe traces/metrics through the Collector without exporting customer questions, answers, prompts, passages, document content or secrets.",
+          "session_mode": "implementation",
+          "requires_architecture_review": false,
+          "requires_adr": false,
+          "depends_on": [
+            "R30-S01"
+          ],
+          "journal": {
+            "required": true,
+            "path_template": "docs/journal/YYYY-MM-DD-r30-s02-establish-private-pilot-observability.md",
+            "status": "not_started"
+          },
+          "completion_evidence": []
+        },
+        {
+          "id": "R30-S03",
+          "guide_stage": "Stage 30.3 — Deploy the invitation-only prototype/pilot",
+          "title": "Deploy the Invitation-Only Prototype/Pilot",
+          "status": "not_started",
+          "objective": "Deploy verified Dolved images and pinned stock Dify to the approved host and prove TLS, private backplane, secret handling, bounded resources, legacy preservation, backup and rollback appropriate to the pilot.",
+          "session_mode": "implementation",
+          "requires_architecture_review": false,
+          "requires_adr": false,
+          "depends_on": [
+            "R30-S02"
+          ],
+          "journal": {
+            "required": true,
+            "path_template": "docs/journal/YYYY-MM-DD-r30-s03-deploy-private-prototype-pilot.md",
+            "status": "not_started"
+          },
+          "completion_evidence": []
+        },
+        {
+          "id": "R30-S04",
+          "guide_stage": "Stage 30.4 — Verify the bounded pilot",
+          "title": "Verify the Bounded Pilot",
+          "status": "not_started",
+          "objective": "Run provider-free checks first and only explicitly authorised live smoke/evaluation calls, verifying invitation access, tenancy, document/citation flows, failure behaviour, usage/cost and privacy-safe trace correlation.",
+          "session_mode": "implementation",
+          "requires_architecture_review": false,
+          "requires_adr": false,
+          "depends_on": [
+            "R30-S03"
+          ],
+          "journal": {
+            "required": true,
+            "path_template": "docs/journal/YYYY-MM-DD-r30-s04-verify-bounded-pilot.md",
+            "status": "not_started"
+          },
+          "completion_evidence": []
+        },
+        {
+          "id": "R30-S05",
+          "guide_stage": "Stage 30.5 — Hand over and decide pilot go/no-go",
+          "title": "Hand Over and Decide Pilot Go/No-Go",
+          "status": "not_started",
+          "objective": "Complete the operational/evidence handoff and record an explicit pilot decision that distinguishes pilot usefulness from production readiness, public launch and scale.",
+          "session_mode": "architecture",
+          "requires_architecture_review": true,
+          "requires_adr": false,
+          "depends_on": [
+            "R30-S04"
+          ],
+          "journal": {
+            "required": true,
+            "path_template": "docs/journal/YYYY-MM-DD-r30-s05-private-pilot-handoff-and-decision.md",
+            "status": "not_started"
+          },
+          "completion_evidence": []
+        }
+      ],
+      "gate": {
+        "id": "R30-GATE",
+        "title": "Private Prototype/Pilot Acceptance Gate",
+        "status": "not_started",
+        "depends_on": [
+          "R30-S05"
+        ],
+        "acceptance_scope": "The private invitation-only Dolved–Dify pilot is hosted with verified TLS, backplane, secrets, bounded backup/rollback, legacy recovery, privacy-safe telemetry, security/tenancy/smoke evidence, independently assessed quality where authorised, honest costs and an explicit pilot go/no-go. No AWS, production, public-launch or high-availability claim is made.",
+        "completion_evidence": []
+      }
+    },
+    {
+      "id": "R31",
+      "guide_phase": "Phase 31 — Product-wide Integration and Visual Acceptance",
       "title": "Product-wide Integration and Visual Acceptance",
-      "guide_start_line": 15474,
-      "guide_end_line": 15555,
+      "guide_start_line": 15920,
+      "guide_end_line": 16003,
       "status": "not_started",
       "objective": "Review Dolved as one connected product across the knowledge library, import workflow, bulk operations and governance notifications; correct accumulated design and cross-feature flow issues; obtain the first product-wide visual acceptance.",
       "sessions": [
         {
-          "id": "R29-S01",
-          "guide_stage": "Stage 29.1 — Consolidated correction-register review and classification",
+          "id": "R31-S01",
+          "guide_stage": "Stage 31.1 — Consolidated correction-register review and classification",
           "title": "Review and Classify the Design-Correction Register",
           "status": "not_started",
           "depends_on": [
-            "R28-GATE"
+            "R30-GATE"
           ],
           "objective": "Classify every design-corrections-register.md entry and David's manual list as cosmetic/interaction, ordinary defect, new capability, or architectural change; only the first two are corrected in this phase."
         },
         {
-          "id": "R29-S02",
-          "guide_stage": "Stage 29.2 — Cross-product navigation, information hierarchy and flow corrections",
+          "id": "R31-S02",
+          "guide_stage": "Stage 31.2 — Cross-product navigation, information hierarchy and flow corrections",
           "title": "Correct Cross-Product Navigation and Flow",
           "status": "not_started",
           "depends_on": [
-            "R29-S01"
+            "R31-S01"
           ]
         },
         {
-          "id": "R29-S03",
-          "guide_stage": "Stage 29.3 — Visual-system consistency across existing surfaces",
+          "id": "R31-S03",
+          "guide_stage": "Stage 31.3 — Visual-system consistency across existing surfaces",
           "title": "Correct Visual-System Consistency",
           "status": "not_started",
           "depends_on": [
-            "R29-S02"
+            "R31-S02"
           ]
         },
         {
-          "id": "R29-S04",
-          "guide_stage": "Stage 29.4 — Responsive, theme, accessibility and complete state review",
+          "id": "R31-S04",
+          "guide_stage": "Stage 31.4 — Responsive, theme, accessibility and complete state review",
           "title": "Review Responsive, Theme, Accessibility and State Coverage",
           "status": "not_started",
           "depends_on": [
-            "R29-S03"
+            "R31-S03"
           ]
         },
         {
-          "id": "R29-S05",
-          "guide_stage": "Stage 29.5 — Integrated Playwright journeys and final product-wide sign-off",
+          "id": "R31-S05",
+          "guide_stage": "Stage 31.5 — Integrated Playwright journeys and final product-wide sign-off",
           "title": "Run Integrated Journeys and Obtain Product-Wide Sign-Off",
           "status": "not_started",
           "depends_on": [
-            "R29-S04"
+            "R31-S04"
           ],
           "requires_visual_review": true,
           "visual_review_policy": "Requires David's explicit, final product-wide visual sign-off — the first sign-off scoped to the connected product rather than one feature or session. This does not retroactively withdraw any earlier staged approval."
         }
       ],
       "gate": {
-        "id": "R29-GATE",
+        "id": "R31-GATE",
         "title": "Product-wide Integration and Visual Acceptance Gate",
         "status": "not_started",
         "depends_on": [
-          "R29-S05"
+          "R31-S05"
         ],
         "acceptance_scope": "Every design-correction-register entry is classified and either corrected, explicitly deferred with a reason, or reallocated to a future session/ADR. Prior per-session visual approvals remain valid staged checkpoints; this gate adds final product-wide sign-off, it does not reopen them.",
         "completion_evidence": []
       }
     },
     {
-      "id": "R30",
-      "guide_phase": "Phase 30 — CI/CD, AWS Foundation and Staging",
+      "id": "R32",
+      "guide_phase": "Phase 32 — CI/CD, AWS Foundation and Staging",
       "title": "CI/CD, AWS Foundation and Staging",
-      "guide_start_line": 15559,
-      "guide_end_line": 15967,
+      "guide_start_line": 16005,
+      "guide_end_line": 16415,
       "status": "not_started",
       "objective": "Make Dolved reproducibly buildable and deployable, then prove the intended AWS architecture in a real staging environment, without claiming production deployment.",
       "sessions": [
         {
-          "id": "R30-S01",
-          "guide_stage": "Stage 30.1 — Add Continuous Integration",
+          "id": "R32-S01",
+          "guide_stage": "Stage 32.1 — Add Continuous Integration",
           "title": "Add Continuous Integration",
           "guide_start_line": 15576,
           "guide_end_line": 15614,
@@ -5568,8 +5764,8 @@
           "session_mode": "implementation",
           "implementation_guide_reference": {
             "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 30 — CI/CD, AWS Foundation and Staging",
-            "stage": "Stage 30.1 — Add Continuous Integration",
+            "phase": "Phase 32 — CI/CD, AWS Foundation and Staging",
+            "stage": "Stage 32.1 — Add Continuous Integration",
             "source_lines": {
               "start": 15566,
               "end": 15604
@@ -5594,17 +5790,17 @@
           "requires_adr": false,
           "journal": {
             "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r30-s01-add-continuous-integration.md",
+            "path_template": "docs/journal/YYYY-MM-DD-r32-s01-add-continuous-integration.md",
             "status": "not_started"
           },
           "completion_evidence": [],
           "depends_on": [
-            "R29-GATE"
+            "R31-GATE"
           ]
         },
         {
-          "id": "R30-S02",
-          "guide_stage": "Stage 30.2 — Create Production Container Builds",
+          "id": "R32-S02",
+          "guide_stage": "Stage 32.2 — Create Production Container Builds",
           "title": "Create Production Container Builds",
           "guide_start_line": 15618,
           "guide_end_line": 15655,
@@ -5613,8 +5809,8 @@
           "session_mode": "implementation",
           "implementation_guide_reference": {
             "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 30 — CI/CD, AWS Foundation and Staging",
-            "stage": "Stage 30.2 — Create Production Container Builds",
+            "phase": "Phase 32 — CI/CD, AWS Foundation and Staging",
+            "stage": "Stage 32.2 — Create Production Container Builds",
             "source_lines": {
               "start": 15608,
               "end": 15645
@@ -5639,14 +5835,14 @@
           "requires_adr": false,
           "journal": {
             "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r30-s02-create-production-container-builds.md",
+            "path_template": "docs/journal/YYYY-MM-DD-r32-s02-create-production-container-builds.md",
             "status": "not_started"
           },
           "completion_evidence": []
         },
         {
-          "id": "R30-S03",
-          "guide_stage": "Stage 30.3 — AWS Architecture Decision and Infrastructure as Code",
+          "id": "R32-S03",
+          "guide_stage": "Stage 32.3 — AWS Architecture Decision and Infrastructure as Code",
           "title": "Decide AWS Architecture and Add Infrastructure as Code",
           "guide_start_line": 15659,
           "guide_end_line": 15723,
@@ -5655,8 +5851,8 @@
           "session_mode": "architecture",
           "implementation_guide_reference": {
             "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 30 — CI/CD, AWS Foundation and Staging",
-            "stage": "Stage 30.3 — AWS Architecture Decision and Infrastructure as Code",
+            "phase": "Phase 32 — CI/CD, AWS Foundation and Staging",
+            "stage": "Stage 32.3 — AWS Architecture Decision and Infrastructure as Code",
             "source_lines": {
               "start": 15649,
               "end": 15713
@@ -5681,14 +5877,14 @@
           "requires_adr": true,
           "journal": {
             "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r30-s03-aws-architecture-decision-and-infrastructure-as-code.md",
+            "path_template": "docs/journal/YYYY-MM-DD-r32-s03-aws-architecture-decision-and-infrastructure-as-code.md",
             "status": "not_started"
           },
           "completion_evidence": []
         },
         {
-          "id": "R30-S04",
-          "guide_stage": "Stage 30.4 — Configure Secrets and Environment Management",
+          "id": "R32-S04",
+          "guide_stage": "Stage 32.4 — Configure Secrets and Environment Management",
           "title": "Configure Secrets and Environment Management",
           "guide_start_line": 15727,
           "guide_end_line": 15760,
@@ -5697,8 +5893,8 @@
           "session_mode": "implementation",
           "implementation_guide_reference": {
             "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 30 — CI/CD, AWS Foundation and Staging",
-            "stage": "Stage 30.4 — Configure Secrets and Environment Management",
+            "phase": "Phase 32 — CI/CD, AWS Foundation and Staging",
+            "stage": "Stage 32.4 — Configure Secrets and Environment Management",
             "source_lines": {
               "start": 15717,
               "end": 15750
@@ -5723,14 +5919,14 @@
           "requires_adr": false,
           "journal": {
             "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r30-s04-configure-secrets-and-environment-management.md",
+            "path_template": "docs/journal/YYYY-MM-DD-r32-s04-configure-secrets-and-environment-management.md",
             "status": "not_started"
           },
           "completion_evidence": []
         },
         {
-          "id": "R30-S05",
-          "guide_stage": "Stage 30.5 — Add Database Backup and Recovery",
+          "id": "R32-S05",
+          "guide_stage": "Stage 32.5 — Add Database Backup and Recovery",
           "title": "Add Database Backup and Recovery",
           "guide_start_line": 15764,
           "guide_end_line": 15787,
@@ -5739,8 +5935,8 @@
           "session_mode": "implementation",
           "implementation_guide_reference": {
             "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 30 — CI/CD, AWS Foundation and Staging",
-            "stage": "Stage 30.5 — Add Database Backup and Recovery",
+            "phase": "Phase 32 — CI/CD, AWS Foundation and Staging",
+            "stage": "Stage 32.5 — Add Database Backup and Recovery",
             "source_lines": {
               "start": 15754,
               "end": 15777
@@ -5765,14 +5961,14 @@
           "requires_adr": false,
           "journal": {
             "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r30-s05-add-database-backup-and-recovery.md",
+            "path_template": "docs/journal/YYYY-MM-DD-r32-s05-add-database-backup-and-recovery.md",
             "status": "not_started"
           },
           "completion_evidence": []
         },
         {
-          "id": "R30-S06",
-          "guide_stage": "Stage 30.6 — Define Vector, Object-Storage and Queue Recovery",
+          "id": "R32-S06",
+          "guide_stage": "Stage 32.6 — Define Vector, Object-Storage and Queue Recovery",
           "title": "Define Vector, Object-Storage and Queue Recovery",
           "guide_start_line": 15791,
           "guide_end_line": 15829,
@@ -5781,8 +5977,8 @@
           "session_mode": "architecture",
           "implementation_guide_reference": {
             "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 30 — CI/CD, AWS Foundation and Staging",
-            "stage": "Stage 30.6 — Define Vector, Object-Storage and Queue Recovery",
+            "phase": "Phase 32 — CI/CD, AWS Foundation and Staging",
+            "stage": "Stage 32.6 — Define Vector, Object-Storage and Queue Recovery",
             "source_lines": {
               "start": 15781,
               "end": 15819
@@ -5807,14 +6003,14 @@
           "requires_adr": true,
           "journal": {
             "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r30-s06-define-vector-object-storage-and-queue-recovery.md",
+            "path_template": "docs/journal/YYYY-MM-DD-r32-s06-define-vector-object-storage-and-queue-recovery.md",
             "status": "not_started"
           },
           "completion_evidence": []
         },
         {
-          "id": "R30-S07",
-          "guide_stage": "Stage 30.7 — Perform Security Hardening",
+          "id": "R32-S07",
+          "guide_stage": "Stage 32.7 — Perform Security Hardening",
           "title": "Perform Security Hardening",
           "guide_start_line": 15833,
           "guide_end_line": 15879,
@@ -5823,8 +6019,8 @@
           "session_mode": "implementation",
           "implementation_guide_reference": {
             "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 30 — CI/CD, AWS Foundation and Staging",
-            "stage": "Stage 30.7 — Perform Security Hardening",
+            "phase": "Phase 32 — CI/CD, AWS Foundation and Staging",
+            "stage": "Stage 32.7 — Perform Security Hardening",
             "source_lines": {
               "start": 15823,
               "end": 15869
@@ -5849,14 +6045,14 @@
           "requires_adr": false,
           "journal": {
             "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r30-s07-perform-security-hardening.md",
+            "path_template": "docs/journal/YYYY-MM-DD-r32-s07-perform-security-hardening.md",
             "status": "not_started"
           },
           "completion_evidence": []
         },
         {
-          "id": "R30-S08",
-          "guide_stage": "Stage 30.8 — Create Staging Deployment",
+          "id": "R32-S08",
+          "guide_stage": "Stage 32.8 — Create Staging Deployment",
           "title": "Create Staging Deployment",
           "guide_start_line": 15883,
           "guide_end_line": 15913,
@@ -5865,8 +6061,8 @@
           "session_mode": "implementation",
           "implementation_guide_reference": {
             "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 30 — CI/CD, AWS Foundation and Staging",
-            "stage": "Stage 30.8 — Create Staging Deployment",
+            "phase": "Phase 32 — CI/CD, AWS Foundation and Staging",
+            "stage": "Stage 32.8 — Create Staging Deployment",
             "source_lines": {
               "start": 15873,
               "end": 15903
@@ -5891,14 +6087,14 @@
           "requires_adr": false,
           "journal": {
             "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r30-s08-create-staging-deployment.md",
+            "path_template": "docs/journal/YYYY-MM-DD-r32-s08-create-staging-deployment.md",
             "status": "not_started"
           },
           "completion_evidence": []
         },
         {
-          "id": "R30-S09",
-          "guide_stage": "Stage 30.9 — Staging Readiness Review",
+          "id": "R32-S09",
+          "guide_stage": "Stage 32.9 — Staging Readiness Review",
           "title": "Staging Readiness Review",
           "guide_start_line": 15917,
           "guide_end_line": 15961,
@@ -5907,8 +6103,8 @@
           "session_mode": "architecture",
           "implementation_guide_reference": {
             "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 30 — CI/CD, AWS Foundation and Staging",
-            "stage": "Stage 30.9 — Staging Readiness Review",
+            "phase": "Phase 32 — CI/CD, AWS Foundation and Staging",
+            "stage": "Stage 32.9 — Staging Readiness Review",
             "source_lines": {
               "start": 15907,
               "end": 15951
@@ -5933,52 +6129,52 @@
           "requires_adr": false,
           "journal": {
             "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r30-s09-staging-readiness-review.md",
+            "path_template": "docs/journal/YYYY-MM-DD-r32-s09-staging-readiness-review.md",
             "status": "not_started"
           },
           "completion_evidence": []
         }
       ],
       "gate": {
-        "id": "R30-GATE",
+        "id": "R32-GATE",
         "title": "CI/CD, AWS Foundation and Staging Acceptance Gate",
         "status": "not_started",
         "depends_on": [
-          "R30-S09"
+          "R32-S09"
         ],
-        "acceptance_scope": "Staging is deployed, tested and reviewed under the Stage 30.3 ADR's own topology. No claim of production deployment, public availability, multi-AZ or high-availability guarantee is made at this gate.",
+        "acceptance_scope": "Staging is deployed, tested and reviewed under the Stage 32.3 ADR's own topology. No claim of production deployment, public availability, multi-AZ or high-availability guarantee is made at this gate.",
         "requirements": [
           "Run the phase acceptance checks in IMPLEMENTATION_GUIDE.md.",
           "Update IMPLEMENTATION_GUIDE.md with the verified final state.",
           "Ensure relevant ADRs and the ADR index are current.",
           "Commit the completed phase.",
-          "Create annotated Git tag phase-30 where required by the guide."
+          "Create annotated Git tag phase-32 where required by the guide."
         ],
         "completion_evidence": []
       }
     },
     {
-      "id": "R31",
-      "guide_phase": "Phase 31 — Production Deployment and Operational Validation",
+      "id": "R33",
+      "guide_phase": "Phase 33 — Production Deployment and Operational Validation",
       "title": "Production Deployment and Operational Validation",
-      "guide_start_line": 15971,
-      "guide_end_line": 16172,
+      "guide_start_line": 16417,
+      "guide_end_line": 16620,
       "status": "not_started",
-      "objective": "Deploy Dolved as an actual production service, subject to the Phase 30 deployment ADR, and prove it can be operated safely — distinguishing deployment success from public launch, high availability and scale-out.",
+      "objective": "Deploy Dolved as an actual production service, subject to the Phase 32 deployment ADR, and prove it can be operated safely — distinguishing deployment success from public launch, high availability and scale-out.",
       "sessions": [
         {
-          "id": "R31-S01",
-          "guide_stage": "Stage 31.1 — Production environment, IAM, secrets, domain and ingress",
+          "id": "R33-S01",
+          "guide_stage": "Stage 33.1 — Production environment, IAM, secrets, domain and ingress",
           "title": "Establish Production Environment, IAM and Ingress",
           "guide_start_line": 15983,
           "guide_end_line": 16006,
           "status": "not_started",
-          "objective": "Create the production AWS environment under the Phase 30 ADR's topology, isolated from staging: its own IAM roles and secret store, domain, DNS, TLS and ingress.",
+          "objective": "Create the production AWS environment under the Phase 32 ADR's topology, isolated from staging: its own IAM roles and secret store, domain, DNS, TLS and ingress.",
           "session_mode": "implementation",
           "implementation_guide_reference": {
             "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 31 — Production Deployment and Operational Validation",
-            "stage": "Stage 31.1 — Production environment, IAM, secrets, domain and ingress",
+            "phase": "Phase 33 — Production Deployment and Operational Validation",
+            "stage": "Stage 33.1 — Production environment, IAM, secrets, domain and ingress",
             "source_lines": {
               "start": 15973,
               "end": 15996
@@ -6003,17 +6199,17 @@
           "requires_adr": false,
           "journal": {
             "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r31-s01-production-environment-iam-and-ingress.md",
+            "path_template": "docs/journal/YYYY-MM-DD-r33-s01-production-environment-iam-and-ingress.md",
             "status": "not_started"
           },
           "completion_evidence": [],
           "depends_on": [
-            "R30-GATE"
+            "R32-GATE"
           ]
         },
         {
-          "id": "R31-S02",
-          "guide_stage": "Stage 31.2 — Production data infrastructure, migrations and initialisation",
+          "id": "R33-S02",
+          "guide_stage": "Stage 33.2 — Production data infrastructure, migrations and initialisation",
           "title": "Provision Production Data Infrastructure and Run Initial Migrations",
           "guide_start_line": 16010,
           "guide_end_line": 16032,
@@ -6022,8 +6218,8 @@
           "session_mode": "implementation",
           "implementation_guide_reference": {
             "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 31 — Production Deployment and Operational Validation",
-            "stage": "Stage 31.2 — Production data infrastructure, migrations and initialisation",
+            "phase": "Phase 33 — Production Deployment and Operational Validation",
+            "stage": "Stage 33.2 — Production data infrastructure, migrations and initialisation",
             "source_lines": {
               "start": 16000,
               "end": 16022
@@ -6048,14 +6244,14 @@
           "requires_adr": false,
           "journal": {
             "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r31-s02-production-data-infrastructure-and-migrations.md",
+            "path_template": "docs/journal/YYYY-MM-DD-r33-s02-production-data-infrastructure-and-migrations.md",
             "status": "not_started"
           },
           "completion_evidence": []
         },
         {
-          "id": "R31-S03",
-          "guide_stage": "Stage 31.3 — Deployment, rollback and backup-restoration drill",
+          "id": "R33-S03",
+          "guide_stage": "Stage 33.3 — Deployment, rollback and backup-restoration drill",
           "title": "Prove Production Deployment, Rollback and Backup Restoration",
           "guide_start_line": 16036,
           "guide_end_line": 16058,
@@ -6064,8 +6260,8 @@
           "session_mode": "implementation",
           "implementation_guide_reference": {
             "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 31 — Production Deployment and Operational Validation",
-            "stage": "Stage 31.3 — Deployment, rollback and backup-restoration drill",
+            "phase": "Phase 33 — Production Deployment and Operational Validation",
+            "stage": "Stage 33.3 — Deployment, rollback and backup-restoration drill",
             "source_lines": {
               "start": 16026,
               "end": 16048
@@ -6090,14 +6286,14 @@
           "requires_adr": false,
           "journal": {
             "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r31-s03-deployment-rollback-and-backup-restoration-drill.md",
+            "path_template": "docs/journal/YYYY-MM-DD-r33-s03-deployment-rollback-and-backup-restoration-drill.md",
             "status": "not_started"
           },
           "completion_evidence": []
         },
         {
-          "id": "R31-S04",
-          "guide_stage": "Stage 31.4 — Monitoring, alerting, cost budgets and scaling thresholds",
+          "id": "R33-S04",
+          "guide_stage": "Stage 33.4 — Monitoring, alerting, cost budgets and scaling thresholds",
           "title": "Add Production Monitoring, Alerting and Cost Controls",
           "guide_start_line": 16062,
           "guide_end_line": 16084,
@@ -6106,8 +6302,8 @@
           "session_mode": "implementation",
           "implementation_guide_reference": {
             "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 31 — Production Deployment and Operational Validation",
-            "stage": "Stage 31.4 — Monitoring, alerting, cost budgets and scaling thresholds",
+            "phase": "Phase 33 — Production Deployment and Operational Validation",
+            "stage": "Stage 33.4 — Monitoring, alerting, cost budgets and scaling thresholds",
             "source_lines": {
               "start": 16052,
               "end": 16074
@@ -6132,14 +6328,14 @@
           "requires_adr": false,
           "journal": {
             "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r31-s04-monitoring-alerting-and-cost-controls.md",
+            "path_template": "docs/journal/YYYY-MM-DD-r33-s04-monitoring-alerting-and-cost-controls.md",
             "status": "not_started"
           },
           "completion_evidence": []
         },
         {
-          "id": "R31-S05",
-          "guide_stage": "Stage 31.5 — Production-safe smoke tests, live-provider verification and security/tenant-isolation verification",
+          "id": "R33-S05",
+          "guide_stage": "Stage 33.5 — Production-safe smoke tests, live-provider verification and security/tenant-isolation verification",
           "title": "Verify Production Smoke Tests, Provider Behaviour and Tenant Isolation",
           "guide_start_line": 16088,
           "guide_end_line": 16113,
@@ -6148,8 +6344,8 @@
           "session_mode": "implementation",
           "implementation_guide_reference": {
             "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 31 — Production Deployment and Operational Validation",
-            "stage": "Stage 31.5 — Production-safe smoke tests, live-provider verification and security/tenant-isolation verification",
+            "phase": "Phase 33 — Production Deployment and Operational Validation",
+            "stage": "Stage 33.5 — Production-safe smoke tests, live-provider verification and security/tenant-isolation verification",
             "source_lines": {
               "start": 16078,
               "end": 16103
@@ -6174,14 +6370,14 @@
           "requires_adr": false,
           "journal": {
             "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r31-s05-production-smoke-provider-and-tenant-isolation-verification.md",
+            "path_template": "docs/journal/YYYY-MM-DD-r33-s05-production-smoke-provider-and-tenant-isolation-verification.md",
             "status": "not_started"
           },
           "completion_evidence": []
         },
         {
-          "id": "R31-S06",
-          "guide_stage": "Stage 31.6 — Incident readiness and final go/no-go review",
+          "id": "R33-S06",
+          "guide_stage": "Stage 33.6 — Incident readiness and final go/no-go review",
           "title": "Complete Incident Readiness and Final Go/No-Go Review",
           "guide_start_line": 16117,
           "guide_end_line": 16165,
@@ -6190,8 +6386,8 @@
           "session_mode": "architecture",
           "implementation_guide_reference": {
             "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 31 — Production Deployment and Operational Validation",
-            "stage": "Stage 31.6 — Incident readiness and final go/no-go review",
+            "phase": "Phase 33 — Production Deployment and Operational Validation",
+            "stage": "Stage 33.6 — Incident readiness and final go/no-go review",
             "source_lines": {
               "start": 16107,
               "end": 16155
@@ -6216,18 +6412,18 @@
           "requires_adr": false,
           "journal": {
             "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r31-s06-incident-readiness-and-go-no-go-review.md",
+            "path_template": "docs/journal/YYYY-MM-DD-r33-s06-incident-readiness-and-go-no-go-review.md",
             "status": "not_started"
           },
           "completion_evidence": []
         }
       ],
       "gate": {
-        "id": "R31-GATE",
+        "id": "R33-GATE",
         "title": "Production Deployment and Operational Validation Acceptance Gate",
         "status": "not_started",
         "depends_on": [
-          "R31-S06"
+          "R33-S06"
         ],
         "acceptance_scope": "Dolved is genuinely deployed to production with verified deployment, rollback, backup-restoration, monitoring and security evidence. No claim of multi-AZ, zero downtime, disaster recovery, production-scale capacity or public customer launch is made beyond what a session actually proved.",
         "requirements": [
@@ -6235,23 +6431,23 @@
           "Update IMPLEMENTATION_GUIDE.md with the verified final state.",
           "Ensure relevant ADRs and the ADR index are current.",
           "Commit the completed phase.",
-          "Create annotated Git tag phase-31 where required by the guide."
+          "Create annotated Git tag phase-33 where required by the guide."
         ],
         "completion_evidence": []
       }
     },
     {
-      "id": "R32",
-      "guide_phase": "Phase 32 — Documentation and Demonstration Readiness",
+      "id": "R34",
+      "guide_phase": "Phase 34 — Documentation and Demonstration Readiness",
       "title": "Documentation and Demonstration Readiness",
-      "guide_start_line": 16176,
-      "guide_end_line": 16294,
+      "guide_start_line": 16622,
+      "guide_end_line": 16740,
       "status": "not_started",
-      "objective": "Document the platform clearly and provide a reproducible demonstration, reflecting the actual final product and deployed architecture from Phases 29-31 rather than an earlier local-only state.",
+      "objective": "Document the platform clearly and provide a reproducible demonstration, reflecting the actual final product and deployed architecture from Phases 29-33 rather than an earlier local-only state.",
       "sessions": [
         {
-          "id": "R32-S01",
-          "guide_stage": "Stage 32.1 — Write Architecture Documentation",
+          "id": "R34-S01",
+          "guide_stage": "Stage 34.1 — Write Architecture Documentation",
           "title": "Write Architecture Documentation",
           "guide_start_line": 16189,
           "guide_end_line": 16224,
@@ -6260,8 +6456,8 @@
           "session_mode": "architecture",
           "implementation_guide_reference": {
             "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 32 — Documentation and Demonstration Readiness",
-            "stage": "Stage 32.1 — Write Architecture Documentation",
+            "phase": "Phase 34 — Documentation and Demonstration Readiness",
+            "stage": "Stage 34.1 — Write Architecture Documentation",
             "source_lines": {
               "start": 16179,
               "end": 16214
@@ -6286,17 +6482,17 @@
           "requires_adr": true,
           "journal": {
             "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r32-s01-write-architecture-documentation.md",
+            "path_template": "docs/journal/YYYY-MM-DD-r34-s01-write-architecture-documentation.md",
             "status": "not_started"
           },
           "completion_evidence": [],
           "depends_on": [
-            "R31-GATE"
+            "R33-GATE"
           ]
         },
         {
-          "id": "R32-S02",
-          "guide_stage": "Stage 32.2 — Create Demonstration Dataset and Scenario",
+          "id": "R34-S02",
+          "guide_stage": "Stage 34.2 — Create Demonstration Dataset and Scenario",
           "title": "Create Demonstration Dataset and Scenario",
           "guide_start_line": 16228,
           "guide_end_line": 16251,
@@ -6305,8 +6501,8 @@
           "session_mode": "implementation",
           "implementation_guide_reference": {
             "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 32 — Documentation and Demonstration Readiness",
-            "stage": "Stage 32.2 — Create Demonstration Dataset and Scenario",
+            "phase": "Phase 34 — Documentation and Demonstration Readiness",
+            "stage": "Stage 34.2 — Create Demonstration Dataset and Scenario",
             "source_lines": {
               "start": 16218,
               "end": 16241
@@ -6331,14 +6527,14 @@
           "requires_adr": false,
           "journal": {
             "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r32-s02-create-demonstration-dataset-and-scenario.md",
+            "path_template": "docs/journal/YYYY-MM-DD-r34-s02-create-demonstration-dataset-and-scenario.md",
             "status": "not_started"
           },
           "completion_evidence": []
         },
         {
-          "id": "R32-S03",
-          "guide_stage": "Stage 32.3 — Finalise Repository README",
+          "id": "R34-S03",
+          "guide_stage": "Stage 34.3 — Finalise Repository README",
           "title": "Finalise Repository README",
           "guide_start_line": 16255,
           "guide_end_line": 16294,
@@ -6347,8 +6543,8 @@
           "session_mode": "implementation",
           "implementation_guide_reference": {
             "document": "IMPLEMENTATION_GUIDE.md",
-            "phase": "Phase 32 — Documentation and Demonstration Readiness",
-            "stage": "Stage 32.3 — Finalise Repository README",
+            "phase": "Phase 34 — Documentation and Demonstration Readiness",
+            "stage": "Stage 34.3 — Finalise Repository README",
             "source_lines": {
               "start": 16245,
               "end": 16284
@@ -6373,25 +6569,25 @@
           "requires_adr": false,
           "journal": {
             "required": true,
-            "path_template": "docs/journal/YYYY-MM-DD-r32-s03-finalise-repository-readme.md",
+            "path_template": "docs/journal/YYYY-MM-DD-r34-s03-finalise-repository-readme.md",
             "status": "not_started"
           },
           "completion_evidence": []
         }
       ],
       "gate": {
-        "id": "R32-GATE",
+        "id": "R34-GATE",
         "title": "Documentation and Demonstration Readiness Acceptance Gate",
         "status": "not_started",
         "depends_on": [
-          "R32-S03"
+          "R34-S03"
         ],
         "requirements": [
           "Run the phase acceptance checks in IMPLEMENTATION_GUIDE.md.",
           "Update IMPLEMENTATION_GUIDE.md with the verified final state.",
           "Ensure relevant ADRs and the ADR index are current.",
           "Commit the completed phase.",
-          "Create annotated Git tag phase-32 where required by the guide."
+          "Create annotated Git tag phase-34 where required by the guide."
         ],
         "completion_evidence": []
       }

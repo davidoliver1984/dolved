@@ -15518,13 +15518,13 @@ theme and responsive-navigation behaviour. No external provider was called.
 Produce the first current-code, live-provider body of evidence for how
 Dolved actually performs — retrieval and grounded generation, separately and
 end to end — over a realistic, versioned organisational corpus, after ADR-0030
-through ADR-0036 are all implemented and before Phase 29 reviews the connected
+through ADR-0036 are all implemented and before Phase 31 reviews the connected
 product visually. Every accepted evaluation-independence rule (engineering,
 calibration, held-out) carries forward unchanged; this phase adds a live,
 current-commit run on top of that governance, it does not relax it. No AWS
-resource may be provisioned before this phase's own gate and Phase 29's gate
+resource may be provisioned before this phase's own gate and Phase 31's gate
 both pass. This phase does not certify production accuracy, guarantee
-performance over an arbitrary tenant's corpus, or substitute for Phase 29's
+performance over an arbitrary tenant's corpus, or substitute for Phase 31's
 visual/product review.
 
 ## Stage 28.1 — Freeze the live-evaluation protocol and safety boundary
@@ -15762,7 +15762,8 @@ exercised; no held-out boundary was crossed; failures were diagnosed
 honestly; any correction and rerun carries immutable lineage; committed
 evaluation artefacts verify provider-free afterward; residual limitations
 are documented; and no AWS deployment work began. This gate blocks Phase
-29's product-wide acceptance and all AWS work. Its deliverable is a
+29 branding, Phase 30's private-pilot launch, Phase 31's product-wide
+acceptance and all AWS work. Its deliverable is a
 current-code, lineage-bound body of live-provider evidence showing how
 Dolved performs over the frozen V4 realistic, versioned organisational
 corpus, with failures, costs and limitations reported honestly —
@@ -15772,7 +15773,151 @@ proof over an arbitrary tenant's corpus.
 
 ---
 
-# Phase 29 — Product-wide Integration and Visual Acceptance
+# Phase 29 — Configurable Branding
+
+## Phase objective
+
+Complete the branding capability deliberately reserved, but not implemented,
+by ADR-0036. Provide a validated, authorised and accessible way to configure
+the Dolved display name, wordmark/logo, favicon and light/dark accent identity
+before the separately gated private pilot. Branding remains presentation only
+and never changes authorization, retrieval, governance or audit decisions.
+
+## Stage 29.1 — Freeze branding ownership and lifecycle
+
+Decide whether the first configurable identity is deployment-wide,
+workspace-owned, or a deliberately bounded combination. Record the authority
+allowed to change it, its version/lifecycle semantics, its storage boundary,
+and how it consumes ADR-0036's provider-neutral branding seam without making
+branding relevant to authorization, retrieval, notification eligibility or
+audit decisions. Reconcile this phase with ADR-0041's stock-Dify delivery
+boundary.
+
+Acceptance requires an approved architecture decision covering the minimum
+branding identity contract (display name, wordmark/logo reference, favicon,
+light/dark accents and fallback), upload validation, permissions, deletion,
+cache behaviour, accessibility and what remains deliberately deferred.
+
+## Stage 29.2 — Implement configurable identity and administration
+
+Implement the approved branding configuration and its authorised management
+surface. Validate media type, dimensions, byte size and safe storage for logo
+assets; validate colour syntax and contrast; provide a preview before
+activation; version changes; and retain a complete Dolved fallback when a
+configuration is missing, unsafe, unavailable or deleted. Do not permit
+arbitrary CSS, HTML, scripts or remote tracking assets.
+
+The implementation must preserve semantic design tokens rather than write raw
+tenant colours throughout components. Tests bind authorization, validation,
+fallbacks, lifecycle and tenant/deployment isolation chosen in Stage 29.1.
+
+## Stage 29.3 — Apply and visually verify branding across Dolved
+
+Apply the resolved identity consistently to the wordmark/logo, favicon,
+authentication and invitation surfaces, application shell, light/dark themes
+and governance emails. Verify responsive behaviour, colour-independent
+meaning, keyboard/focus behaviour and WCAG contrast. Branding remains
+presentation only: it must not change security, retrieval scope, evidence,
+model inputs or governance decisions.
+
+Capture explicit visual approval for configured and fallback states on desktop
+and mobile in both themes. Preserve the original Dolved identity as the safe
+fallback and as recoverable historical evidence.
+
+## Phase 29 gate
+
+The gate requires: approved branding ownership and lifecycle; authorised,
+validated configuration and preview; safe storage and deletion; consistent
+configured and fallback identity across web/authentication/invitations/email;
+semantic-token use; light/dark, responsive and accessibility evidence; and
+David's explicit visual approval. It makes no pilot, AWS, production or
+public-launch claim.
+
+---
+
+# Phase 30 — Private Prototype/Pilot Launch
+
+## Phase objective
+
+Launch one bounded, invitation-only prototype/pilot using the branded Dolved
+frontend with stock self-hosted Dify on the approved non-AWS host. This phase
+exists to learn from a real hosted service before connected-product acceptance,
+AWS staging and production work. It is not a public launch, production
+certification or evidence of high availability, disaster recovery or scale.
+
+The pilot remains private and single-client. Registration stays disabled;
+Dify's administrative UI and API stay private; Dolved remains the only
+client-facing application. Provider calls, invitations and spending remain
+subject to their existing explicit authority boundaries.
+
+## Stage 30.1 — Freeze the private-pilot operating boundary
+
+Record the exact host and software identities, private/invitation boundary,
+data and corpus freeze, provider and spending authority, deployment owner,
+backup/rollback target, legacy-recovery boundary, evidence directory and stop
+conditions. Reconcile ADR-0041 and the completed branding phase. No real-client
+invitation or provider call is implied by infrastructure preparation.
+
+## Stage 30.2 — Establish privacy-safe Dolved–Dify pilot observability
+
+Connect the existing OpenTelemetry foundation to the pilot without exporting
+customer content. Propagate W3C trace context from Dolved's queued generation
+span into the outbound Dify request so the boundary can be correlated. Route
+approved traces and metrics through the OpenTelemetry Collector.
+
+Before enabling stock Dify OpenTelemetry, prove that prompts, questions,
+answers, retrieved passages, document content, credentials and secrets cannot
+reach the telemetry backend. Pinned Dify instrumentation that records those
+fields must remain disabled unless Collector/configuration controls are proven
+to enforce the stricter ADR-0012 allowlist. Safe operational facts include
+bounded service/node identity, duration, outcome, token counts, error category
+and cost where exposed without content or uncontrolled high-cardinality data.
+Observability failure must never fail a user request.
+
+## Stage 30.3 — Deploy the invitation-only prototype/pilot
+
+Deploy the verified Dolved images and pinned stock self-hosted Dify release to
+the approved non-AWS pilot host. Verify host identity, key-only administration,
+least-exposed networking, TLS, private Dify access, secret-file handling,
+bounded logs/resources and the exact internal Dolved–Dify backplane. Import
+only the frozen approved application and corpus configuration.
+
+Preserve the legacy RAG system's commit, dependencies, images, configuration
+references and required data before retiring any component. Prove a bounded
+pilot backup and rollback path sufficient to recover this single host; do not
+claim the later AWS production recovery standard. No public registration or
+client invitation occurs without its separately recorded authority.
+
+## Stage 30.4 — Verify the bounded pilot
+
+Run provider-free deployment/health checks first, followed only by explicitly
+authorised live smoke or evaluation calls. Verify invitation-only access,
+site/tenant isolation, document lifecycle, citations, failure behaviour,
+usage/cost reporting and privacy-safe trace correlation. Preserve raw evidence
+and obtain independent answer-quality assessment without tuning on held-out or
+sealed expectations.
+
+## Stage 30.5 — Hand over and decide pilot go/no-go
+
+Record operational ownership, access and secret handoff, known limitations,
+costs, recovery and stop/rollback procedures. Make an explicit pilot go/no-go
+distinguishing deployability, bounded pilot operation, production readiness,
+public launch and scale. A successful pilot authorises neither AWS
+implementation nor production/client expansion by itself.
+
+## Phase 30 gate
+
+The gate requires: a frozen private-pilot boundary; a private invitation-only
+hosted Dolved–Dify service; preserved legacy recovery evidence; verified TLS,
+backplane, secrets, backups and rollback appropriate to the pilot; privacy-safe
+telemetry with no customer content; bounded security/tenancy/smoke evidence;
+independent quality evidence where authorised; honest usage/cost reporting;
+and David's explicit pilot go/no-go. It makes no AWS, production, public-launch
+or high-availability claim.
+
+---
+
+# Phase 31 — Product-wide Integration and Visual Acceptance
 
 ## Phase objective
 
@@ -15796,7 +15941,7 @@ an architectural change discovered while reviewing the connected product is
 reported and allocated to its own future session or ADR — it is never
 smuggled into this phase as "visual polish."
 
-## Stage 29.1 — Consolidated correction-register review and classification
+## Stage 31.1 — Consolidated correction-register review and classification
 
 Review the canonical design-correction register
 (`docs/design-corrections-register.md`) together with David's own evolving
@@ -15804,9 +15949,9 @@ manual list once he provides it. Classify every entry as one of: a cosmetic or
 interaction correction, an ordinary implementation defect, a genuinely new
 capability, or an architectural change. Record the classification and the
 session it is allocated to. Only cosmetic/interaction corrections and ordinary
-defects are corrected inside Phase 29 itself.
+defects are corrected inside Phase 31 itself.
 
-## Stage 29.2 — Cross-product navigation, information hierarchy and flow corrections
+## Stage 31.2 — Cross-product navigation, information hierarchy and flow corrections
 
 Review end-to-end navigation and hand-off across chat, Library, family/version
 detail, comparison, import, bulk operations, administration, platform
@@ -15815,7 +15960,7 @@ the register identifies. Do not introduce a new navigation concept, information
 architecture change or route structure here — that is an architectural change
 and belongs to its own ADR-backed session.
 
-## Stage 29.3 — Visual-system consistency across existing surfaces
+## Stage 31.3 — Visual-system consistency across existing surfaces
 
 Correct inconsistent buttons, cards, tables, forms, dialogs, spacing,
 typography and status treatment across every implemented surface. Add or
@@ -15825,7 +15970,7 @@ decision (Phase 21's approved chat shell, slate palette and component
 language); this stage corrects drift and gaps against that system, it does not
 replace it.
 
-## Stage 29.4 — Responsive, theme, accessibility and complete state review
+## Stage 31.4 — Responsive, theme, accessibility and complete state review
 
 Review every implemented surface for its loading, empty, warning, error,
 unavailable, partial and permission-concealed states; keyboard navigation,
@@ -15834,7 +15979,7 @@ mobile layout; and light/dark theme correctness. Record any gap found as a
 register entry and correct it within this stage where it is a defect or
 cosmetic correction.
 
-## Stage 29.5 — Integrated Playwright journeys and final product-wide sign-off
+## Stage 31.5 — Integrated Playwright journeys and final product-wide sign-off
 
 Run integrated Playwright journeys that cross feature boundaries (for example:
 import a document, find it in the Library, compare two versions, run a bulk
@@ -15843,38 +15988,38 @@ connected production components, using representative real workflow data —
 never dev-only fixtures as the sole acceptance evidence. Capture staged browser
 evidence for the corrected surfaces.
 
-Stage 29.5 requires David's explicit, final product-wide visual sign-off
+Stage 31.5 requires David's explicit, final product-wide visual sign-off
 before closure. This is the first sign-off in the project scoped to the
 connected product as a whole rather than to one feature or session, and it
 does not retroactively withdraw any earlier staged approval.
 
-## Phase 29 gate
+## Phase 31 gate
 
 The design-correction register must show every entry classified and either
 corrected, explicitly deferred with a reason, or reallocated to a future
 session/ADR — never silently dropped. David's final product-wide visual
-sign-off from Stage 29.5 is the phase's own closing acceptance evidence.
+sign-off from Stage 31.5 is the phase's own closing acceptance evidence.
 
 ---
 
-# Phase 30 — CI/CD, AWS Foundation and Staging
+# Phase 32 — CI/CD, AWS Foundation and Staging
 
 ## Phase objective
 
 Make Dolved reproducibly buildable and deployable, then prove the intended
-cloud architecture in a real AWS staging environment. Phase 30 delivers a
+cloud architecture in a real AWS staging environment. Phase 32 delivers a
 staging environment only. It must not claim, imply or be read as claiming
-that Dolved is publicly or production deployed — that is Phase 31's own,
+that Dolved is publicly or production deployed — that is Phase 33's own,
 separately gated, deliverable.
 
 No unresolved AWS architecture decision is locked in by planning prose alone.
-Stage 30.3 requires a pre-implementation ADR covering the deployment topology,
+Stage 32.3 requires a pre-implementation ADR covering the deployment topology,
 service-ownership boundaries, cost/resilience trade-offs and scaling path
 before any AWS infrastructure is provisioned.
 
 ---
 
-## Stage 30.1 — Add Continuous Integration
+## Stage 32.1 — Add Continuous Integration
 
 ### Objective
 
@@ -15916,7 +16061,7 @@ git commit -m "Add continuous integration pipeline"
 
 ---
 
-## Stage 30.2 — Create Production Container Builds
+## Stage 32.2 — Create Production Container Builds
 
 ### Objective
 
@@ -15957,7 +16102,7 @@ git commit -m "Add production container builds"
 
 ---
 
-## Stage 30.3 — AWS Architecture Decision and Infrastructure as Code
+## Stage 32.3 — AWS Architecture Decision and Infrastructure as Code
 
 ### Objective
 
@@ -16025,7 +16170,7 @@ git commit -m "Define production infrastructure"
 
 ---
 
-## Stage 30.4 — Configure Secrets and Environment Management
+## Stage 32.4 — Configure Secrets and Environment Management
 
 ### Objective
 
@@ -16062,7 +16207,7 @@ git commit -m "Harden environment and secret management"
 
 ---
 
-## Stage 30.5 — Add Database Backup and Recovery
+## Stage 32.5 — Add Database Backup and Recovery
 
 ### Objective
 
@@ -16089,7 +16234,7 @@ git commit -m "Add database backup and recovery plan"
 
 ---
 
-## Stage 30.6 — Define Vector, Object-Storage and Queue Recovery
+## Stage 32.6 — Define Vector, Object-Storage and Queue Recovery
 
 ### Objective
 
@@ -16131,7 +16276,7 @@ git commit -m "Define vector index recovery"
 
 ---
 
-## Stage 30.7 — Perform Security Hardening
+## Stage 32.7 — Perform Security Hardening
 
 ### Objective
 
@@ -16181,7 +16326,7 @@ git commit -m "Harden platform security"
 
 ---
 
-## Stage 30.8 — Create Staging Deployment
+## Stage 32.8 — Create Staging Deployment
 
 ### Objective
 
@@ -16196,7 +16341,7 @@ Not yet executed.
 ### Acceptance criteria
 
 * Staging is provisioned from the infrastructure code and topology the
-  Stage 30.3 ADR defines.
+  Stage 32.3 ADR defines.
 * Production container images are used.
 * Managed secrets are used.
 * Migrations run safely, including a tested migration-rollback path.
@@ -16215,14 +16360,14 @@ To be defined based on the deployment platform.
 
 ---
 
-## Stage 30.9 — Staging Readiness Review
+## Stage 32.9 — Staging Readiness Review
 
 ### Objective
 
 Perform a formal review confirming staging is genuinely representative and
 safe to keep running, before any production-deployment work begins. This
 review is scoped to staging only; it is not, and must not be read as, a
-production go-live decision — that decision belongs to Phase 31.
+production go-live decision — that decision belongs to Phase 33.
 
 ### Status
 
@@ -16261,31 +16406,31 @@ Not yet executed.
 git add docs
 git commit -m "Complete staging readiness review"
 
-## Phase 30 gate
+## Phase 32 gate
 
-Staging is deployed, tested and reviewed under the Stage 30.3 ADR's own
+Staging is deployed, tested and reviewed under the Stage 32.3 ADR's own
 topology. No claim of production deployment, public availability, multi-AZ or
 high-availability guarantee is made at this gate.
 
 ---
 
-# Phase 31 — Production Deployment and Operational Validation
+# Phase 33 — Production Deployment and Operational Validation
 
 ## Phase objective
 
 Deploy Dolved as an actual production service and prove that it can be
-operated safely, subject to the deployment ADR Phase 30 required and
+operated safely, subject to the deployment ADR Phase 32 required and
 accepted. This phase must distinguish clearly between deployment success,
 technical production readiness, public/customer launch, high availability and
 scale-out — it claims only what its own sessions actually implement and
 verify. It does not claim multi-AZ, zero downtime, disaster recovery or
 production-scale capacity unless a session below actually proves them.
 
-## Stage 31.1 — Production environment, IAM, secrets, domain and ingress
+## Stage 33.1 — Production environment, IAM, secrets, domain and ingress
 
 ### Objective
 
-Create the production AWS environment under the Phase 30 ADR's topology,
+Create the production AWS environment under the Phase 32 ADR's topology,
 isolated from staging: its own IAM roles and secret store, domain, DNS, TLS
 and ingress.
 
@@ -16308,7 +16453,7 @@ git commit -m "Establish production environment, IAM and ingress"
 
 ---
 
-## Stage 31.2 — Production data infrastructure, migrations and initialisation
+## Stage 33.2 — Production data infrastructure, migrations and initialisation
 
 ### Objective
 
@@ -16334,7 +16479,7 @@ git commit -m "Provision production data infrastructure and run initial migratio
 
 ---
 
-## Stage 31.3 — Deployment, rollback and backup-restoration drill
+## Stage 33.3 — Deployment, rollback and backup-restoration drill
 
 ### Objective
 
@@ -16360,7 +16505,7 @@ git commit -m "Prove production deployment, rollback and backup restoration"
 
 ---
 
-## Stage 31.4 — Monitoring, alerting, cost budgets and scaling thresholds
+## Stage 33.4 — Monitoring, alerting, cost budgets and scaling thresholds
 
 ### Objective
 
@@ -16386,7 +16531,7 @@ git commit -m "Add production monitoring, alerting and cost controls"
 
 ---
 
-## Stage 31.5 — Production-safe smoke tests, live-provider verification and security/tenant-isolation verification
+## Stage 33.5 — Production-safe smoke tests, live-provider verification and security/tenant-isolation verification
 
 ### Objective
 
@@ -16415,7 +16560,7 @@ git commit -m "Verify production smoke tests, provider behaviour and tenant isol
 
 ---
 
-## Stage 31.6 — Incident readiness and final go/no-go review
+## Stage 33.6 — Incident readiness and final go/no-go review
 
 ### Objective
 
@@ -16447,8 +16592,8 @@ Not yet executed.
 
 * All critical user journeys pass in production.
 * No unresolved critical security finding remains.
-* Backup restoration has been tested in production (Stage 31.3).
-* Rollback has been tested in production (Stage 31.3).
+* Backup restoration has been tested in production (Stage 33.3).
+* Rollback has been tested in production (Stage 33.3).
 * Alerts and runbooks exist and name an owner.
 * Capacity and cost assumptions are documented.
 * Data retention and deletion are documented.
@@ -16465,7 +16610,7 @@ Not yet executed.
 git add docs
 git commit -m "Complete production go/no-go review"
 
-## Phase 31 gate
+## Phase 33 gate
 
 Dolved is genuinely deployed to production with verified deployment,
 rollback, backup-restoration, monitoring and security evidence. No claim of
@@ -16474,20 +16619,20 @@ public customer launch is made beyond what a session above actually proved.
 
 ---
 
-# Phase 32 — Documentation and Demonstration Readiness
+# Phase 34 — Documentation and Demonstration Readiness
 
 ## Phase objective
 
 Document the platform clearly and provide a reproducible way to demonstrate
 its capabilities, without letting presentation work substitute for
 engineering or deployment evidence. This phase documents Dolved's actual final
-product and deployed architecture — including the outcomes of Phase 29's
-product-wide acceptance and Phases 30–31's staging and production deployment
+product and deployed architecture — including the outcomes of Phase 31's
+product-wide acceptance and Phases 32–33's staging and production deployment
 — not an earlier local-only state.
 
 ---
 
-## Stage 32.1 — Write Architecture Documentation
+## Stage 34.1 — Write Architecture Documentation
 
 ### Objective
 
@@ -16505,8 +16650,8 @@ Not yet executed.
 * retrieval and generation sequence diagram;
 * trust boundaries;
 * tenancy model;
-* deployment architecture, reflecting the accepted Phase 30 ADR and the
-  actual Phase 31 production outcome;
+* deployment architecture, reflecting the accepted Phase 32 ADR and the
+  actual Phase 33 production outcome;
 * key ADR index;
 * technology choices and trade-offs.
 
@@ -16526,7 +16671,7 @@ git commit -m "Document platform architecture"
 
 ---
 
-## Stage 32.2 — Create Demonstration Dataset and Scenario
+## Stage 34.2 — Create Demonstration Dataset and Scenario
 
 ### Objective
 
@@ -16553,7 +16698,7 @@ git commit -m "Add repeatable platform demonstration"
 
 ---
 
-## Stage 32.3 — Finalise Repository README
+## Stage 34.3 — Finalise Repository README
 
 ### Objective
 

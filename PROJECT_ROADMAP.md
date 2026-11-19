@@ -103,7 +103,7 @@ Every architectural decision should favour:
 Genuine multi-service AWS architecture, deliberately cost-conscious for
 initial capacity and extensible toward more tenants and resilience — not one
 all-in-one VM, and not yet built. The exact topology is decided by the
-pre-implementation ADR Phase 30 requires before any of the following is
+pre-implementation ADR Phase 32 requires before any of the following is
 provisioned.
 
 - AWS ECS/Fargate and load balancing (direction, subject to that ADR)
@@ -1167,11 +1167,11 @@ presentation.
 Produce the first current-code, live-provider body of evidence for how
 Dolved performs on retrieval and grounded generation, separately and end to
 end, over a realistic versioned organisational corpus, after ADR-0030
-through ADR-0036 are implemented and before Phase 29 reviews the connected
+through ADR-0036 are implemented and before Phase 31 reviews the connected
 product visually. All existing engineering/calibration/held-out
 evaluation-independence rules carry forward unchanged; this phase adds a
 live, current-commit run on top of that governance rather than relaxing it.
-No AWS resource may be provisioned before this phase's gate and Phase 29's
+No AWS resource may be provisioned before this phase's gate and Phase 31's
 gate both pass.
 
 ### Sessions
@@ -1233,7 +1233,7 @@ corpus already exists and was evaluated and there is no future
 300-document goal left to plan toward.
 
 This phase does not certify production accuracy, guarantee performance over
-an arbitrary tenant's corpus, or substitute for Phase 29's visual/product
+an arbitrary tenant's corpus, or substitute for Phase 31's visual/product
 review. Its evidence supports an explicit pilot-readiness decision scoped
 to the evaluated V4 corpus and commit.
 
@@ -1245,7 +1245,75 @@ corpus, with failures, costs and limitations reported honestly.
 
 ---
 
-## Phase 29 — Product-wide Integration and Visual Acceptance
+## Phase 29 — Configurable Branding
+
+### Objectives
+
+Complete the tenant/deployment-branding capability deliberately left behind
+the seam in ADR-0036. Give an authorised operator a safe way to configure the
+display name, wordmark/logo, favicon and light/dark accent identity without
+allowing arbitrary CSS/HTML or making branding relevant to authorization,
+retrieval, governance or audit decisions.
+
+### Sessions
+
+- R29-S01: decide and freeze branding scope, ownership and lifecycle,
+  reconciling ADR-0036's reserved seam and ADR-0041's single-client delivery
+  boundary.
+- R29-S02: implement validated logo/wordmark, product name, favicon and
+  light/dark accent configuration, with authorised administration, preview,
+  lifecycle and safe Dolved fallbacks.
+- R29-S03: apply and verify the resolved identity across the client-facing
+  Dolved shell, authentication, invitations and governance email while
+  preserving semantic tokens, contrast and accessibility.
+
+### Deliverable
+
+A configurable, accessible Dolved identity with a secure administration and
+fallback contract, ready to be exercised by the separately gated pilot.
+
+---
+
+## Phase 30 — Private Prototype/Pilot Launch
+
+### Objectives
+
+Launch the branded Dolved frontend and stock self-hosted Dify as one private,
+invitation-only prototype/pilot on the approved non-AWS host. The pilot is a
+bounded learning environment for named invited users and operational evidence;
+it is not AWS staging, production certification, public launch, high
+availability or completion of the later product-wide acceptance gate.
+
+### Sessions
+
+- R30-S01: freeze the pilot operating boundary, host identity, invitation,
+  spending, data, legacy-recovery and rollback authorities.
+- R30-S02: complete privacy-safe Dolved–Dify observability, including W3C
+  trace-context propagation, Collector routing and exclusion of prompts,
+  answers, retrieved passages and document content from telemetry.
+- R30-S03: bootstrap and deploy the invitation-only prototype, preserving the
+  legacy RAG recovery boundary and proving TLS, private Dify access, secret
+  handling, bounded resources, backup and rollback appropriate to the pilot.
+- R30-S04: run bounded provider-free and explicitly authorised live smoke,
+  security, tenancy and quality checks; retain usage/cost evidence and obtain
+  independent assessment.
+- R30-S05: complete pilot handoff and record an explicit go/no-go that
+  distinguishes a useful pilot from production readiness or public launch.
+
+The phase may reuse verified delivery-branch implementation evidence, but it
+closes only on evidence from the actual pilot host. Public registration,
+uncontrolled provider calls, real-client invitations or expansion beyond the
+approved single-client boundary are never implied.
+
+### Deliverable
+
+A private, invitation-only Dolved–Dify prototype/pilot with recoverable
+deployment evidence, privacy-safe operational visibility and an explicit
+bounded pilot decision.
+
+---
+
+## Phase 31 — Product-wide Integration and Visual Acceptance
 
 ### Objectives
 
@@ -1258,7 +1326,7 @@ in the project.
 
 ### Sessions
 
-R29-S01 through R29-S05 review and classify the design-correction register;
+R31-S01 through R31-S05 review and classify the design-correction register;
 correct cross-product navigation, information hierarchy and flow; correct
 visual-system consistency across existing surfaces; review responsive,
 theme, accessibility and state coverage; and run integrated Playwright
@@ -1267,7 +1335,7 @@ workflow data.
 
 Every prior per-session visual approval (Phase 21 onward) was a valid staged
 checkpoint for the surface it reviewed at the time — this phase does not
-reopen or invalidate any of them. R29-S05 requires David's explicit, final
+reopen or invalidate any of them. R31-S05 requires David's explicit, final
 product-wide visual sign-off, the first in the project scoped to the
 connected product rather than one feature or session.
 
@@ -1284,7 +1352,7 @@ every implemented Dolved workflow.
 
 ---
 
-## Phase 30 — CI/CD, AWS Foundation and Staging
+## Phase 32 — CI/CD, AWS Foundation and Staging
 
 ### Objectives
 
@@ -1295,11 +1363,11 @@ deployed.
 
 ### Sessions
 
-R30-S01 through R30-S09 add continuous integration; production container
+R32-S01 through R32-S09 add continuous integration; production container
 builds; the pre-implementation AWS deployment ADR and infrastructure as code;
 secrets and environment management; database backup/recovery; vector,
 object-storage and queue recovery; security hardening; staging deployment;
-and a staging readiness review. Stage 30.3's ADR must cover deployment
+and a staging readiness review. Stage 32.3's ADR must cover deployment
 topology, ownership boundaries, cost/resilience trade-offs and scaling path —
 reflecting genuine AWS architecture, deliberately cost-conscious initial
 capacity, and no false claim of multi-AZ/high-availability guarantees until
@@ -1313,16 +1381,16 @@ AWS with tested deployment, recovery, security and observability controls.
 
 ---
 
-## Phase 31 — Production Deployment and Operational Validation
+## Phase 33 — Production Deployment and Operational Validation
 
 ### Objectives
 
-Deploy Dolved as an actual production service, subject to the Phase 30
+Deploy Dolved as an actual production service, subject to the Phase 32
 deployment ADR, and prove it can be operated safely.
 
 ### Sessions
 
-R31-S01 through R31-S06 establish the production environment, IAM and
+R33-S01 through R33-S06 establish the production environment, IAM and
 ingress; provision production data infrastructure and run initial
 migrations; prove deployment, rollback and a genuine backup-restoration
 drill; add monitoring, alerting and cost controls; verify production-safe
@@ -1341,19 +1409,19 @@ operational, recovery, security, monitoring and rollback evidence.
 
 ---
 
-## Phase 32 — Documentation and Demonstration Readiness
+## Phase 34 — Documentation and Demonstration Readiness
 
 ### Objectives
 
 Document the platform clearly and provide a reproducible way to demonstrate
 its capabilities, without letting presentation work substitute for
 engineering or deployment evidence. Documentation reflects the actual final
-product and deployed architecture from Phases 29–31, not an earlier
+product and deployed architecture from Phases 29–33, not an earlier
 local-only state.
 
 ### Sessions
 
-R32-S01 through R32-S03 write architecture documentation, create a
+R34-S01 through R34-S03 write architecture documentation, create a
 demonstration dataset and scenario, and finalise the repository README.
 
 ### Deliverable
