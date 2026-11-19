@@ -43,6 +43,17 @@ Expected checksum-manifest SHA-256: dc446e2a304627e93d540390189dc1d15fc12aec9141
 
 The corrected dataset and app-node limits are both Top K 10. One retrieval-only check returned ten passages, including the governing personal-device rule at rank 3. No generation was performed in that verification. Earlier answer-quality failures remain on record; integration is not a retrospective pass.
 
+Retained Top K 10 import package:
+`/Users/davidoliver/Desktop/dolved-experiments/dify-cloud-trial-01/top-k-10-configuration-trial-preparation-20261119-115213Z/duplicate-export/Dolved current-policy — Top K 10 configuration trial.ifpkg`
+
+Package SHA-256: `e2e50881b3a321bbcdc81f4d94d95a25d6d69fce1e152e58d711d40a20542558`
+
+Extracted `app.yaml` SHA-256: `6708d7a35cc6bfd37d63646e790db6aabdba2203bdd0493fb1f401563aaf94c1`
+
+The retained package and pinned Dify 1.19.0 both declare application DSL version 0.7.0.
+This establishes source-level version compatibility, not a successful production import;
+the import/export behavioral comparison remains a deployment acceptance check.
+
 ## Spending and delivery controls
 
 | Category | Limit |
@@ -211,7 +222,9 @@ Dolved worker and Dify nginx, and both Dolved services reached `http://dify-ngin
 Dify's expected HTTP 307 redirect. Every active service in both rendered stacks now uses
 Docker's rotating `local` log driver with a 10 MB / five-file bound; the validation covers
 all nine Dolved services and all sixteen active Dify services without changing unrelated
-host-wide Docker settings.
+host-wide Docker settings. A read-only steady-state snapshot measured 3.14 GiB across the
+21 running Dolved/Dify containers on an 11.67 GiB local host. This supports the selected
+12 GB pilot shape for idle/light operation but is not a load-test or capacity guarantee.
 
 Current milestone: hosting provision and production deployment.
 

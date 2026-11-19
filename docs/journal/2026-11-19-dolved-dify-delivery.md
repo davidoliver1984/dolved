@@ -58,6 +58,17 @@ The dirty source checkout and historical evidence were not changed.
 - Added per-container bounded logging to both production stacks using Docker's rotating
   `local` driver (`max-size=10m`, `max-file=5`) rather than changing the host-wide Docker
   daemon or unrelated services.
+- Reverified the retained Top K 10 package before self-hosted import: package SHA-256
+  `e2e50881b3a321bbcdc81f4d94d95a25d6d69fce1e152e58d711d40a20542558`, extracted
+  `app.yaml` SHA-256
+  `6708d7a35cc6bfd37d63646e790db6aabdba2203bdd0493fb1f401563aaf94c1`. The package
+  declares DSL 0.7.0, exactly matching pinned Dify 1.19.0's
+  `CURRENT_APP_DSL_VERSION`. The disposable console remains at its administrator
+  initialization gate; no account was invented and no package/provider call was made.
+- A read-only steady-state snapshot of the running disposable combined stack measured
+  3.14 GiB across 21 Dolved/Dify containers on an 11.67 GiB host. This supports the
+  selected 12 GB pilot size for idle/light operation but is not a load or capacity result;
+  production resource pressure and disk use still require monitoring.
 
 The full web suite has one pre-existing branding failure in frozen historical evidence.
 The host-side full Laravel suite requires repository-external mounts/configuration and is
