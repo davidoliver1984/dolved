@@ -73,4 +73,11 @@ describe("AuthForm", () => {
 
     await waitFor(() => expect(routerPushMock).toHaveBeenCalledWith("/app/platform/operations"));
   });
+
+  it("does not advertise self-registration when it is disabled", () => {
+    render(<AuthForm mode="login" registrationEnabled={false} />);
+
+    expect(screen.queryByRole("link", { name: "Create an account" })).toBeNull();
+    expect(screen.getByRole("link", { name: "Forgot password?" })).toBeTruthy();
+  });
 });

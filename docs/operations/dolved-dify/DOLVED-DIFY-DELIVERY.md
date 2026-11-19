@@ -245,6 +245,15 @@ general production prompt revision. The prompt removes the stale fixed trial tim
 retains source fidelity and honest uncertainty, and does not use evaluation answers.
 No provider was configured or called.
 
+19 November 2026: Aligned the public Dolved frontend with the production invitation-only
+account boundary. When `AUTH_REGISTRATION_ENABLED=false`, the landing and sign-in pages no
+longer advertise self-registration and `/register` redirects to sign-in, while Laravel's
+existing server-side 404 remains the enforcement boundary. Replaced two internal hard
+navigations identified by the restored locked lint installation with supported Next
+router transitions. Five focused frontend files pass 27 tests; TypeScript, zero-warning
+ESLint, the Next 16.4.6 production build and production Compose rendering pass. The
+production container explicitly sets registration disabled.
+
 Current milestone: hosting provision and production deployment.
 
 Next action: install the dedicated public key for the confirmed `debian` account, verify

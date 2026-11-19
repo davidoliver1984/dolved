@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Wordmark } from "@/components/Wordmark";
 import { Button } from "@/components/ui/button";
@@ -8,6 +9,7 @@ import { Notice } from "@/components/ui/notice";
 import { acceptWorkspaceInvitation, firstError } from "@/lib/api";
 
 export function InvitationAcceptance({ token }: Readonly<{ token: string }>) {
+  const router = useRouter();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -16,7 +18,7 @@ export function InvitationAcceptance({ token }: Readonly<{ token: string }>) {
     setError(null);
     try {
       const response = await acceptWorkspaceInvitation(token);
-      window.location.assign(`/app/workspaces/${encodeURIComponent(response.data.workspace_id)}`);
+      router.push(`/app/workspaces/${encodeURIComponent(response.data.workspace_id)}`);
     } catch (caught) {
       setError(firstError(caught));
       setBusy(false);

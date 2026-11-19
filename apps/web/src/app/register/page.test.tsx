@@ -19,6 +19,7 @@ describe("RegisterPage", () => {
   beforeEach(() => {
     currentUserMock.mockReset();
     redirectMock.mockReset();
+    vi.stubEnv("AUTH_REGISTRATION_ENABLED", "true");
   });
 
   it("renders registration for a signed-out visitor", async () => {
@@ -55,5 +56,14 @@ describe("RegisterPage", () => {
     await RegisterPage();
 
     expect(redirectMock).toHaveBeenCalledWith("/app");
+  });
+
+  it("redirects a signed-out visitor when production registration is disabled", async () => {
+    vi.stubEnv("AUTH_REGISTRATION_ENABLED", "false");
+    currentUserMock.mockResolvedValue(null);
+
+    await RegisterPage();
+
+    expect(redirectMock).toHaveBeenCalledWith("/login");
   });
 });

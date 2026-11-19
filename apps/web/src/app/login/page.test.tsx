@@ -14,6 +14,7 @@ describe("LoginPage", () => {
   beforeEach(() => {
     currentUserMock.mockReset();
     redirectMock.mockReset();
+    vi.stubEnv("AUTH_REGISTRATION_ENABLED", "true");
   });
 
   it("renders login for a signed-out visitor", async () => {
@@ -22,7 +23,7 @@ describe("LoginPage", () => {
     const page = await LoginPage({});
 
     expect(page.type.name).toBe("AuthForm");
-    expect(page.props).toEqual({ mode: "login" });
+    expect(page.props).toEqual({ mode: "login", registrationEnabled: true });
     expect(redirectMock).not.toHaveBeenCalled();
   });
 
@@ -36,7 +37,7 @@ describe("LoginPage", () => {
 
     const page = await LoginPage({ searchParams: Promise.resolve({ next }) });
 
-    expect(page.props).toEqual({ context: "platform", mode: "login", returnTo: next });
+    expect(page.props).toEqual({ context: "platform", mode: "login", registrationEnabled: true, returnTo: next });
   });
 
   it.each([
@@ -48,7 +49,7 @@ describe("LoginPage", () => {
   ])("rejects unsafe or unlisted return value %s", async (next) => {
     currentUserMock.mockResolvedValue(null);
     const page = await LoginPage({ searchParams: Promise.resolve({ next }) });
-    expect(page.props).toEqual({ mode: "login" });
+    expect(page.props).toEqual({ mode: "login", registrationEnabled: true });
   });
 
   it("returns an unverified signed-in account to verification", async () => {
@@ -80,7 +81,16 @@ describe("LoginPage", () => {
   it("accepts Next's promised empty search parameters without changing login", async () => {
     currentUserMock.mockResolvedValue(null);
     const page = await LoginPage({ searchParams: Promise.resolve({}) });
-    expect(page.props).toEqual({ mode: "login" });
+    expect(page.props).toEqual({ mode: "login", registrationEnabled: true });
     expect(redirectMock).not.toHaveBeenCalled();
+  });
+
+  it("hides self-registration links when production registration is disabled", async () => {
+    vi.stubEnv("AUTH_REGISTRATION_ENABLED", "false");
+    currentUserMock.mockResolvedValue(null);
+
+    const page = await LoginPage({});
+
+    expect(page.props).toEqual({ mode: "login", registrationEnabled: false });
   });
 });

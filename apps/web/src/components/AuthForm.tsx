@@ -46,12 +46,13 @@ const content = {
 type Props = {
   context?: "workspace" | "platform";
   mode: Mode;
+  registrationEnabled?: boolean;
   token?: string;
   email?: string;
   returnTo?: PlatformOperationsPath;
 };
 
-export function AuthForm({ context = "workspace", mode, token, email: initialEmail, returnTo }: Props) {
+export function AuthForm({ context = "workspace", mode, registrationEnabled = true, token, email: initialEmail, returnTo }: Props) {
   const router = useRouter();
   const [pending, setPending] = useState(false);
   const [error, setError] = useState("");
@@ -198,7 +199,7 @@ export function AuthForm({ context = "workspace", mode, token, email: initialEma
           {mode === "login" && (
             <>
               <Link href="/forgot-password">Forgot password?</Link>
-              <Link href="/register">Create an account</Link>
+              {registrationEnabled ? <Link href="/register">Create an account</Link> : null}
             </>
           )}
           {mode !== "login" && <Link href="/login">Back to sign in</Link>}

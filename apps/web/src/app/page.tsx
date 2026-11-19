@@ -1,8 +1,12 @@
 import Link from "next/link";
+import { connection } from "next/server";
 import { Wordmark } from "@/components/Wordmark";
 import { Button } from "@/components/ui/button";
 
-export default function Home() {
+export default async function Home() {
+  await connection();
+  const registrationEnabled = process.env.AUTH_REGISTRATION_ENABLED !== "false";
+
   return (
     <main className="min-h-screen bg-background px-6 py-8 sm:px-10 lg:px-16">
       <nav className="mx-auto flex max-w-7xl items-center justify-between" aria-label="Public navigation">
@@ -11,9 +15,11 @@ export default function Home() {
           <Button asChild variant="ghost"><Link href="/login">
             Sign in
           </Link></Button>
-          <Button asChild><Link href="/register">
-            Get started
-          </Link></Button>
+          {registrationEnabled ? (
+            <Button asChild><Link href="/register">
+              Get started
+            </Link></Button>
+          ) : null}
         </div>
       </nav>
 
@@ -29,12 +35,20 @@ export default function Home() {
           grounded answers—with the source always in sight.
         </p>
         <div className="mt-10 flex flex-wrap gap-3">
-          <Button asChild size="lg"><Link href="/register">
-            Build your workspace
-          </Link></Button>
-          <Button asChild size="lg" variant="secondary"><Link href="/login">
-            I already have an account
-          </Link></Button>
+          {registrationEnabled ? (
+            <>
+              <Button asChild size="lg"><Link href="/register">
+                Build your workspace
+              </Link></Button>
+              <Button asChild size="lg" variant="secondary"><Link href="/login">
+                I already have an account
+              </Link></Button>
+            </>
+          ) : (
+            <Button asChild size="lg"><Link href="/login">
+              Sign in to Dolved
+            </Link></Button>
+          )}
         </div>
       </section>
 

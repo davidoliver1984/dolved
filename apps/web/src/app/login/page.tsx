@@ -8,6 +8,7 @@ type Props = { searchParams?: Promise<{ next?: string }> };
 export default async function LoginPage({ searchParams = Promise.resolve({}) }: Props) {
   const { next } = await searchParams;
   const platformEntry = isPlatformOperationsPath(next);
+  const registrationEnabled = process.env.AUTH_REGISTRATION_ENABLED !== "false";
   const user = await currentUser();
 
   if (user) {
@@ -15,6 +16,6 @@ export default async function LoginPage({ searchParams = Promise.resolve({}) }: 
   }
 
   return platformEntry
-    ? <AuthForm context="platform" mode="login" returnTo={next} />
-    : <AuthForm mode="login" />;
+    ? <AuthForm context="platform" mode="login" registrationEnabled={registrationEnabled} returnTo={next} />
+    : <AuthForm mode="login" registrationEnabled={registrationEnabled} />;
 }

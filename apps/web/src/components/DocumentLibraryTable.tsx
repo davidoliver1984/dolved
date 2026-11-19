@@ -2,6 +2,7 @@
 
 import { CalendarClock, CheckSquare2, ChevronRight, CircleAlert, FileSearch, Info, LoaderCircle } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -69,6 +70,7 @@ function operationFilters(query: Query): Record<string, unknown> {
 }
 
 export function DocumentLibraryTable({ canManage = false, metadata, page, query, workspacePublicId }: Readonly<{ canManage?: boolean; metadata?: DocumentMetadata; page: DocumentFamilyPage; query: Query; workspacePublicId: string }>) {
+  const router = useRouter();
   const base = `/app/workspaces/${workspacePublicId}/documents`;
   const [selected, setSelected] = useState<string[]>([]);
   const [allFiltered, setAllFiltered] = useState(false);
@@ -108,7 +110,7 @@ export function DocumentLibraryTable({ canManage = false, metadata, page, query,
     setBusy(true); setError(null);
     try {
       await confirmBulkOperation(workspacePublicId, preflight.public_id);
-      window.location.assign(`${base}/bulk/${preflight.public_id}`);
+      router.push(`${base}/bulk/${preflight.public_id}`);
     } catch { setError("Dolved could not confirm this operation. Its frozen preflight remains unchanged."); setBusy(false); }
   };
   return <section aria-labelledby="library-heading" className="grid gap-5">

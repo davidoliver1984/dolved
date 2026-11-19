@@ -3,6 +3,8 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { DocumentLibraryTable } from "@/components/DocumentLibraryTable";
 import { createBulkOperation, type DocumentFamilyPage } from "@/lib/api";
 
+vi.mock("next/navigation", () => ({ useRouter: () => ({ push: vi.fn() }) }));
+
 vi.mock("@/lib/api", async (importOriginal) => ({
   ...await importOriginal<typeof import("@/lib/api")>(),
   createBulkOperation: vi.fn(),

@@ -9,5 +9,9 @@ export default async function RegisterPage() {
     redirect(user.email_verified_at ? "/app" : "/verify-email");
   }
 
+  if (process.env.AUTH_REGISTRATION_ENABLED === "false") {
+    return redirect("/login");
+  }
+
   return <AuthForm mode="register" />;
 }
