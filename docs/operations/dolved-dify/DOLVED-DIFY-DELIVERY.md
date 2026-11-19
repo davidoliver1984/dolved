@@ -64,7 +64,7 @@ the import/export behavioral comparison remains a deployment acceptance check.
 
 All limits apply together. Historical trial allowances do not transfer. Track actual and estimated costs separately; unknown cost is not zero. Alerts are not guaranteed hard caps.
 
-Prefer monthly cancellation, no annual prepayment, paid control panel or optional support plan. On 19 November 2026 the OVHcloud checkout confirmed VPS-3 2027 in UK Erith, Debian 13, no commitment, 6 vCore, 12 GB RAM, 100 GB NVMe and standard daily backup at GBP 10.60 ex VAT / GBP 12.72 incl UK VAT per month. The prepared order is within the recurring and total delivery limits, but no purchase has yet been made. Use this one Docker-capable Linux VPS; keep existing production services untouched and use a dedicated pilot subdomain.
+Prefer monthly cancellation, no annual prepayment, paid control panel or optional support plan. On 19 November 2026 David purchased the prepared OVHcloud VPS-3 2027 in UK Erith with Debian 13, no commitment, 6 vCore, 12 GB RAM, 100 GB NVMe and standard daily backup at GBP 10.60 ex VAT / GBP 12.72 incl UK VAT per month. The VPS reports public IPv4 `57.129.190.4` and is running. The first read-only SSH checks reached the host and recorded its ED25519 host key, but the dedicated deployment key was rejected for both `root` and the confirmed `debian` account. No password was requested or disclosed; key installation through the OVH control/console path is pending. Use this one Docker-capable Linux VPS; keep existing production services untouched and use a dedicated pilot subdomain.
 
 Provisioning, deployment, HTTPS, backups and necessary provider calls are within the delivery authority and limits. Missing credentials or payment steps require David's input through secure channels. Do not place secrets in Git, reports or chat. Do not automatically tear down the delivered service: document recurring commitments and shutdown instructions.
 
@@ -236,8 +236,19 @@ package/firewall/user/swap/backplane setup from SSH password hardening so the la
 run until the `dolved` Ed25519 authorized-key file exists and a second login has been
 verified operationally. Neither script has yet run on the purchased VPS.
 
+19 November 2026: Reviewed the retained trial application against the production
+adapter and pinned Dify source. The trial's fixed `select` start variable cannot support
+dynamic registered Dolved location UUIDs: Dify 1.19.0 rejects select values outside the
+graph's static option list. `PRODUCTION-DIFY-CONFIG.md` now records the minimum supported
+self-hosted adaptation to a required, server-supplied `text-input` and the one permitted
+general production prompt revision. The prompt removes the stale fixed trial timestamp,
+retains source fidelity and honest uncertainty, and does not use evaluation answers.
+No provider was configured or called.
+
 Current milestone: hosting provision and production deployment.
 
-Next action: complete the OVH account/payment handoff, provision the prepared VPS, obtain
-the dedicated pilot DNS action and deploy without touching existing production services.
+Next action: install the dedicated public key for the confirmed `debian` account, verify
+key-only sudo-capable access and the Debian 13 image, then run the bounded host bootstrap.
+After the service is reachable, obtain the dedicated pilot DNS action and deploy without
+touching existing production services.
 
