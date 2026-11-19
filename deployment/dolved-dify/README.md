@@ -41,6 +41,23 @@ attach that proxy to the isolated Dolved–Dify backplane.
    both stacks retain their own default networks for required outbound traffic.
 9. Verify DNS for the dedicated Dolved, API and storage subdomains before starting Caddy.
 
+Before starting either stack, run the non-mutating configuration gate as the deployment
+account:
+
+```sh
+./preflight-production.sh \
+  /srv/dify/docker \
+  /srv/dolved-pilot/deployment/dolved-dify \
+  /secure/path/dolved.env
+```
+
+It verifies the pinned Dify commit and source checksums, restricted secret-file modes,
+resolved secure-store values, the 32-byte agent secret encoding, production hostnames,
+the internal backplane, rendered Compose files, Dify's loopback-only port boundary,
+bounded logging and exact Dolved backplane membership. It writes rendered configuration
+only to a mode-0700 temporary directory and removes it on exit; it does not start a
+service or call a model provider.
+
 Both Compose definitions use Docker's rotating `local` log driver with a 10 MB / five-file
 limit per container. Do not replace it with an unbounded driver in production.
 The same overrides apply explicit CPU and memory ceilings sized from the verified local
