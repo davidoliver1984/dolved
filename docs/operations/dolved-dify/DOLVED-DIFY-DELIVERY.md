@@ -225,6 +225,11 @@ all nine Dolved services and all sixteen active Dify services without changing u
 host-wide Docker settings. A read-only steady-state snapshot measured 3.14 GiB across the
 21 running Dolved/Dify containers on an 11.67 GiB local host. This supports the selected
 12 GB pilot shape for idle/light operation but is not a load-test or capacity guarantee.
+Explicit per-service CPU and memory ceilings were then rendered and exercised on the
+disposable local stacks. Dolved health checks passed; the pinned Dify API reached healthy
+and returned HTTP 200 after startup; all inspected containers reported no OOM kill; and
+the private Dolved-to-Dify path continued to return Dify's expected redirect. This proves
+the bounded idle/startup configuration locally, not production load capacity.
 
 Current milestone: hosting provision and production deployment.
 

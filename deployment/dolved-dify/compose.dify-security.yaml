@@ -7,45 +7,73 @@ x-bounded-logging: &bounded-logging
 services:
   db_postgres:
     logging: *bounded-logging
+    mem_limit: 512m
+    cpus: 1.0
 
   redis:
     logging: *bounded-logging
+    mem_limit: 128m
+    cpus: 0.5
 
   weaviate:
     logging: *bounded-logging
+    mem_limit: 512m
+    cpus: 2.0
 
   init_permissions:
     logging: *bounded-logging
+    mem_limit: 128m
+    cpus: 0.5
 
   api:
     logging: *bounded-logging
+    mem_limit: 1g
+    cpus: 2.0
 
   worker:
     logging: *bounded-logging
+    mem_limit: 1g
+    cpus: 2.0
 
   worker_beat:
     logging: *bounded-logging
+    mem_limit: 768m
+    cpus: 1.0
 
   api_websocket:
     logging: *bounded-logging
+    mem_limit: 768m
+    cpus: 1.0
 
   web:
     logging: *bounded-logging
+    mem_limit: 384m
+    cpus: 1.0
 
   sandbox:
     logging: *bounded-logging
+    mem_limit: 256m
+    cpus: 0.5
 
   ssrf_proxy:
     logging: *bounded-logging
+    mem_limit: 128m
+    cpus: 0.5
 
   agent_backend:
     logging: *bounded-logging
+    mem_limit: 384m
+    cpus: 1.0
 
   agent_ssrf_proxy:
     logging: *bounded-logging
+    mem_limit: 128m
+    cpus: 0.5
 
   local_sandbox:
     logging: *bounded-logging
+    mem_limit: 256m
+    cpus: 0.5
 
   nginx:
     # Dify is an internal dependency and administration surface. Dolved reaches
@@ -60,12 +88,16 @@ services:
         aliases:
           - dify-nginx
     logging: *bounded-logging
+    mem_limit: 128m
+    cpus: 0.5
 
   plugin_daemon:
     # The stock compose publishes a remote plugin-debugging port by default.
     # Dolved does not use it.
     ports: !reset []
     logging: *bounded-logging
+    mem_limit: 256m
+    cpus: 0.5
 
 networks:
   dolved_dify_backplane:

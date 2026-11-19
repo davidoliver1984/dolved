@@ -69,6 +69,14 @@ The dirty source checkout and historical evidence were not changed.
   3.14 GiB across 21 Dolved/Dify containers on an 11.67 GiB host. This supports the
   selected 12 GB pilot size for idle/light operation but is not a load or capacity result;
   production resource pressure and disk use still require monitoring.
+- Added explicit per-service CPU and memory ceilings to both production Compose layers.
+  Both effective configurations render with a non-zero ceiling for every active service.
+  Recreated the disposable Dolved and pinned Dify stacks under those exact caps: Dolved
+  API/web/PostgreSQL/object storage became healthy, all long-running services remained up,
+  Dify API reached `healthy`/HTTP 200 after ordinary startup, every inspected container
+  reported `OOMKilled=false`, and both Dolved API and worker still reached Dify nginx over
+  the private backplane. One unrelated Compose orphan was observed and deliberately left
+  untouched.
 
 The full web suite has one pre-existing branding failure in frozen historical evidence.
 The host-side full Laravel suite requires repository-external mounts/configuration and is

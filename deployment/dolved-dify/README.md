@@ -34,6 +34,9 @@ attach that proxy to the isolated Dolved–Dify backplane.
 
 Both Compose definitions use Docker's rotating `local` log driver with a 10 MB / five-file
 limit per container. Do not replace it with an unbounded driver in production.
+The same overrides apply explicit CPU and memory ceilings sized from the verified local
+steady-state snapshot. These are pilot safeguards, not capacity guarantees; record OOM
+events, queue growth and sustained pressure before changing them.
 
 The Dify console is available only through an administrator SSH tunnel, for example
 local port 18080 to server `127.0.0.1:8080`. It must not be added to public Caddy routes.
@@ -58,6 +61,12 @@ host-published ports. Confirm Dify nginx has alias `dify-nginx` on the external
 `dolved-dify-backplane` network and no other Dify service is attached to it.
 Confirm every active service reports the `local` logging driver with `max-size=10m` and
 `max-file=5` in the rendered Compose configuration.
+
+After startup, inspect `docker stats --no-stream` and
+`docker inspect --format '{{.State.OOMKilled}}' <container>` for every long-running
+container. Any OOM kill, sustained memory above 80% of its ceiling, or swap thrashing is
+an operational halt: preserve evidence and review the limit/host size rather than silently
+removing the cap.
 
 From this directory:
 
