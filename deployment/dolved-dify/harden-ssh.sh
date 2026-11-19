@@ -13,12 +13,16 @@ if [ ! -s "$key_file" ] || ! grep -q '^ssh-ed25519 ' "$key_file"; then
 fi
 
 install -d -m 0755 /etc/ssh/sshd_config.d
-install -m 0600 /dev/null /etc/ssh/sshd_config.d/90-dolved-pilot.conf
+# OpenSSH uses the first value it reads. This file must sort before the
+# provider's 50-cloud-init.conf, which may explicitly enable passwords.
+install -m 0600 /dev/null /etc/ssh/sshd_config.d/40-dolved-pilot.conf
 printf '%s\n' \
   'PasswordAuthentication no' \
   'KbdInteractiveAuthentication no' \
   'PermitRootLogin prohibit-password' \
-  > /etc/ssh/sshd_config.d/90-dolved-pilot.conf
+  > /etc/ssh/sshd_config.d/40-dolved-pilot.conf
+
+rm -f /etc/ssh/sshd_config.d/90-dolved-pilot.conf
 
 sshd -t
 systemctl reload ssh
