@@ -15,7 +15,8 @@ private backend and administration console. Client users never use the Dify web 
 
 Use the upstream compose file from that exact commit. Do not copy or fork its
 services into this repository. Apply `compose.dify-security.yaml` after the stock
-file to remove the plugin debug port and bind Dify nginx to loopback only.
+file to remove the plugin debug port, bind Dify nginx's host ports to loopback and
+attach that proxy to the isolated Dolved–Dify backplane.
 
 ## Prepare the host
 
@@ -26,7 +27,10 @@ file to remove the plugin debug port and bind Dify nginx to loopback only.
    `SECURE_STORE_REQUIRED` value from secure storage. Never commit either real file.
 5. Generate `DIFY_AGENT_SERVER_SECRET_KEY` as exactly 32 random bytes encoded as
    unpadded base64url. Other keys must be independently random and at least 32 bytes.
-6. Verify DNS for the dedicated Dolved, API and storage subdomains before starting Caddy.
+6. Create the private shared network once: `docker network create --internal
+   dolved-dify-backplane`. It is the only cross-project path from Dolved to Dify;
+   both stacks retain their own default networks for required outbound traffic.
+7. Verify DNS for the dedicated Dolved, API and storage subdomains before starting Caddy.
 
 The Dify console is available only through an administrator SSH tunnel, for example
 local port 18080 to server `127.0.0.1:8080`. It must not be added to public Caddy routes.
@@ -47,7 +51,8 @@ docker compose -p dolved-dify \
 
 Confirm the effective port list contains only `127.0.0.1:8080` and
 `127.0.0.1:8443`; the plugin daemon, PostgreSQL, Redis and Weaviate must have no
-host-published ports.
+host-published ports. Confirm Dify nginx has alias `dify-nginx` on the external
+`dolved-dify-backplane` network and no other Dify service is attached to it.
 
 From this directory:
 
@@ -60,7 +65,9 @@ docker compose --env-file /secure/path/dolved.env \
 
 Verify migrations and storage initialisation completed, API and web health checks
 are healthy, HTTPS redirects correctly, registration is disabled, Dify keys never
-appear in browser payloads, and one authorised upload can progress through indexing.
+appear in browser payloads, and the API/worker can resolve `dify-nginx` while the
+Dify console remains unreachable on the server's non-loopback interfaces. Then verify
+one authorised upload can progress through indexing.
 
 ## Persistent state and backups
 

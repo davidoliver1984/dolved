@@ -45,6 +45,16 @@ The dirty source checkout and historical evidence were not changed.
   commitment, 6 vCore, 12 GB RAM, 100 GB NVMe and standard daily backup at GBP 10.60 ex
   VAT / GBP 12.72 incl UK VAT per month. The order is prepared but not purchased; no
   hosting charge has occurred.
+- A deployment render review found that Linux containers cannot use a Dify listener
+  bound only to the host loopback through `host.docker.internal`. The production
+  definitions now use one external, internal-only `dolved-dify-backplane` network:
+  Dolved API/worker services reach only the Dify nginx alias `dify-nginx`, while Dify's
+  host ports remain loopback-only and its data services remain private.
+- Both effective Compose configurations render successfully. The live disposable test
+  backplane contained exactly `dolved-pilot-api-1`, `dolved-pilot-worker-1` and
+  `docker-nginx-1`; HTTP requests from both Dolved containers to `http://dify-nginx/`
+  returned the expected `HTTP/1.1 307 Temporary Redirect`. This was a provider-free
+  connectivity check, not an application generation or retrieval call.
 
 The full web suite has one pre-existing branding failure in frozen historical evidence.
 The host-side full Laravel suite requires repository-external mounts/configuration and is

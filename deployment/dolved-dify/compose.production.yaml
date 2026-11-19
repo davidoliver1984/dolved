@@ -34,7 +34,7 @@ x-api-environment: &api-environment
   AWS_ENDPOINT: http://objectstore:8333
   AWS_UPLOAD_ENDPOINT: https://${STORAGE_DOMAIN:?STORAGE_DOMAIN is required}
   AWS_USE_PATH_STYLE_ENDPOINT: "true"
-  DIFY_BASE_URL: http://host.docker.internal:8080
+  DIFY_BASE_URL: http://dify-nginx
   DIFY_APP_API_KEY: ${DIFY_APP_API_KEY:?DIFY_APP_API_KEY is required}
   DIFY_KNOWLEDGE_API_KEY: ${DIFY_KNOWLEDGE_API_KEY:?DIFY_KNOWLEDGE_API_KEY is required}
   DIFY_TIMEOUT_SECONDS: ${DIFY_TIMEOUT_SECONDS:-180}
@@ -60,8 +60,6 @@ x-api-service: &api-service
     target: production
   image: dolved-api:${DOLVED_IMAGE_TAG:-local}
   environment: *api-environment
-  extra_hosts:
-    - host.docker.internal:host-gateway
   restart: unless-stopped
 
 services:
@@ -114,6 +112,9 @@ services:
 
   api:
     <<: *api-service
+    networks:
+      - default
+      - dify_backplane
     depends_on:
       migrate:
         condition: service_completed_successfully
@@ -127,6 +128,9 @@ services:
 
   worker:
     <<: *api-service
+    networks:
+      - default
+      - dify_backplane
     command: php artisan queue:work conversation --queue=conversation-generation,document-administration,document-governance --tries=1 --timeout=900 --sleep=1
     depends_on:
       migrate:
@@ -190,3 +194,8 @@ volumes:
   object_data:
   caddy_data:
   caddy_config:
+
+networks:
+  dify_backplane:
+    external: true
+    name: dolved-dify-backplane

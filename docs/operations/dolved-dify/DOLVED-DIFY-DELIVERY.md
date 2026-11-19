@@ -200,6 +200,16 @@ local storage and standard daily backup is GBP 10.60 ex VAT / GBP 12.72 incl UK 
 month. No optional backup/storage product is selected. Checkout is preserved at the
 account/payment boundary; no hosting charge has occurred.
 
+19 November 2026: Corrected the production cross-stack network before deployment. A
+container cannot reach a host service bound only to `127.0.0.1` through
+`host.docker.internal`; Dolved API/worker services and Dify nginx now share the external,
+internal-only `dolved-dify-backplane` network using alias `dify-nginx`. Dify's host ports
+remain loopback-only for SSH administration and no Dify data service joins the backplane.
+Both production Compose combinations render successfully. A live provider-free check on
+the disposable local stacks confirmed that the backplane contained exactly the Dolved API,
+Dolved worker and Dify nginx, and both Dolved services reached `http://dify-nginx/` with
+Dify's expected HTTP 307 redirect.
+
 Current milestone: hosting provision and production deployment.
 
 Next action: complete the OVH account/payment handoff, provision the prepared VPS, obtain
