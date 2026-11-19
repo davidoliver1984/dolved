@@ -25,6 +25,9 @@ function isImmutableLegacyIdentity(path: string, line: string): boolean {
     "docs/adr/0006-use-workspace-as-the-tenancy-and-isolation-boundary.md",
     "docs/adr/0027-define-the-product-interface-and-design-system.md",
     "docs/journal/2026-08-18-r18-phase-closure.md",
+    "docs/evaluation/r28-s01/r28-s02-population-binding.md",
+    "docs/evaluation/runs/R28-S02-LIVE-RETRIEVAL-BASELINE-0001/execution-policy.json",
+    "tests/evaluation/policies/v1/r28-s02-live-retrieval-policy.json",
   ].includes(path)) return true;
   return false;
 }
@@ -44,6 +47,12 @@ describe("product identity", () => {
     const wordmark = readFileSync(resolve(process.cwd(), wordmarkSurface), "utf8");
     expect(wordmark).toContain("dolved");
     expect(wordmark).not.toContain("dolved.");
+
+    const layout = readFileSync(resolve(process.cwd(), "src/app/layout.tsx"), "utf8");
+    const icon = readFileSync(resolve(process.cwd(), "public/dolved-mark.svg"), "utf8");
+    expect(layout).toContain('/dolved-mark.svg');
+    expect(icon).toContain('#006c4d');
+    expect(icon).toContain('aria-label="Dolved"');
   });
 
   it("rejects legacy product branding across tracked active repository content", () => {

@@ -12,7 +12,7 @@
         <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:640px;background:#ffffff;border:1px solid #d8ddd9;border-radius:16px;overflow:hidden;">
             <tr><td style="padding:28px 32px 18px;font-size:30px;font-weight:800;letter-spacing:-1px;">
                 @if ($logoUrl)<img alt="{{ $brandName }}" src="{{ $logoUrl }}" width="132" style="display:block;max-height:48px;max-width:132px;margin:0 0 10px;">@endif
-                <span>{{ $brandName }}</span><span style="color:{{ $accentColour }};">.</span>
+                <span>{{ $brandName }}</span>
             </td></tr>
             <tr><td style="padding:0 32px 8px;color:#5f6f68;font-size:14px;">{{ $workspaceName }}</td></tr>
             <tr><td style="padding:8px 32px 0;"><h1 style="margin:0;font-size:28px;line-height:1.2;">{{ $heading }}</h1></td></tr>

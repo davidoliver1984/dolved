@@ -19,6 +19,9 @@ export const metadata: Metadata = {
     template: "%s · Dolved",
   },
   description: "Grounded answers from the knowledge your team already owns.",
+  icons: {
+    icon: "/dolved-mark.svg",
+  },
 };
 
 export default function RootLayout({
