@@ -109,6 +109,21 @@ appear in browser payloads, and the API/worker can resolve `dify-nginx` while th
 Dify console remains unreachable on the server's non-loopback interfaces. Then verify
 one authorised upload can progress through indexing.
 
+After DNS and both stacks are up, run the provider-free live gate:
+
+```sh
+./verify-running.sh \
+  /srv/dify/docker \
+  /srv/dolved-pilot/deployment/dolved-dify \
+  /secure/path/dolved.env
+```
+
+It first reruns the static preflight, then waits up to five minutes for the expected
+runtime services to become running/healthy. It rejects OOM kills, failed one-shot setup,
+unexpected backplane members, non-loopback Dify ports, an exposed plugin daemon, broken
+Dolved-to-Dify connectivity, or failed public HTTPS boundaries. It does not perform a
+retrieval, embedding or generation call.
+
 ## Persistent state and backups
 
 Recovery requires more than source code. Preserve together:
