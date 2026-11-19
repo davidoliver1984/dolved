@@ -32,6 +32,9 @@ attach that proxy to the isolated Dolved–Dify backplane.
    both stacks retain their own default networks for required outbound traffic.
 7. Verify DNS for the dedicated Dolved, API and storage subdomains before starting Caddy.
 
+Both Compose definitions use Docker's rotating `local` log driver with a 10 MB / five-file
+limit per container. Do not replace it with an unbounded driver in production.
+
 The Dify console is available only through an administrator SSH tunnel, for example
 local port 18080 to server `127.0.0.1:8080`. It must not be added to public Caddy routes.
 
@@ -53,6 +56,8 @@ Confirm the effective port list contains only `127.0.0.1:8080` and
 `127.0.0.1:8443`; the plugin daemon, PostgreSQL, Redis and Weaviate must have no
 host-published ports. Confirm Dify nginx has alias `dify-nginx` on the external
 `dolved-dify-backplane` network and no other Dify service is attached to it.
+Confirm every active service reports the `local` logging driver with `max-size=10m` and
+`max-file=5` in the rendered Compose configuration.
 
 From this directory:
 

@@ -1,4 +1,52 @@
+x-bounded-logging: &bounded-logging
+  driver: local
+  options:
+    max-size: 10m
+    max-file: "5"
+
 services:
+  db_postgres:
+    logging: *bounded-logging
+
+  redis:
+    logging: *bounded-logging
+
+  weaviate:
+    logging: *bounded-logging
+
+  init_permissions:
+    logging: *bounded-logging
+
+  api:
+    logging: *bounded-logging
+
+  worker:
+    logging: *bounded-logging
+
+  worker_beat:
+    logging: *bounded-logging
+
+  api_websocket:
+    logging: *bounded-logging
+
+  web:
+    logging: *bounded-logging
+
+  sandbox:
+    logging: *bounded-logging
+
+  ssrf_proxy:
+    logging: *bounded-logging
+
+  agent_backend:
+    logging: *bounded-logging
+
+  agent_ssrf_proxy:
+    logging: *bounded-logging
+
+  local_sandbox:
+    logging: *bounded-logging
+
   nginx:
     # Dify is an internal dependency and administration surface. Dolved reaches
     # it through the isolated Docker backplane; the host listener remains
@@ -11,11 +59,13 @@ services:
       dolved_dify_backplane:
         aliases:
           - dify-nginx
+    logging: *bounded-logging
 
   plugin_daemon:
     # The stock compose publishes a remote plugin-debugging port by default.
     # Dolved does not use it.
     ports: !reset []
+    logging: *bounded-logging
 
 networks:
   dolved_dify_backplane:

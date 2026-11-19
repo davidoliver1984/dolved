@@ -55,6 +55,9 @@ The dirty source checkout and historical evidence were not changed.
   `docker-nginx-1`; HTTP requests from both Dolved containers to `http://dify-nginx/`
   returned the expected `HTTP/1.1 307 Temporary Redirect`. This was a provider-free
   connectivity check, not an application generation or retrieval call.
+- Added per-container bounded logging to both production stacks using Docker's rotating
+  `local` driver (`max-size=10m`, `max-file=5`) rather than changing the host-wide Docker
+  daemon or unrelated services.
 
 The full web suite has one pre-existing branding failure in frozen historical evidence.
 The host-side full Laravel suite requires repository-external mounts/configuration and is

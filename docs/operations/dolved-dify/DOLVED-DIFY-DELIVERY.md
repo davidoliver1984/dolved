@@ -208,7 +208,10 @@ remain loopback-only for SSH administration and no Dify data service joins the b
 Both production Compose combinations render successfully. A live provider-free check on
 the disposable local stacks confirmed that the backplane contained exactly the Dolved API,
 Dolved worker and Dify nginx, and both Dolved services reached `http://dify-nginx/` with
-Dify's expected HTTP 307 redirect.
+Dify's expected HTTP 307 redirect. Every active service in both rendered stacks now uses
+Docker's rotating `local` log driver with a 10 MB / five-file bound; the validation covers
+all nine Dolved services and all sixteen active Dify services without changing unrelated
+host-wide Docker settings.
 
 Current milestone: hosting provision and production deployment.
 
