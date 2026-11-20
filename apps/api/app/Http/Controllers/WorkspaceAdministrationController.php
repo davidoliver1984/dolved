@@ -23,6 +23,7 @@ use App\Models\User;
 use App\Models\Workspace;
 use App\Notifications\WorkspaceInvitationNotification;
 use App\Queries\Workspaces\FindWorkspaceForUser;
+use App\Services\Branding\WorkspaceBranding;
 use App\Support\CorrelationId;
 use App\Support\Workspaces\RecordWorkspaceAdministrationAudit;
 use App\Telemetry\OperationTracer;
@@ -66,6 +67,7 @@ class WorkspaceAdministrationController extends Controller
         string $workspacePublicId,
         FindWorkspaceForUser $workspaces,
         IssueWorkspaceInvitation $action,
+        WorkspaceBranding $branding,
     ): JsonResponse {
         /** @var User $user */
         $user = $request->user();
@@ -95,7 +97,11 @@ class WorkspaceAdministrationController extends Controller
                     'rag.correlation.id' => $correlationId,
                     'rag.operation.stage' => 'invitation_delivery',
                 ], fn () => Notification::route('mail', $result['invitation']->invited_email)
-                    ->notify(new WorkspaceInvitationNotification($result['invitation'], $result['token'])));
+                    ->notify(new WorkspaceInvitationNotification(
+                        $result['invitation'],
+                        $result['token'],
+                        $branding->effective($workspace)['configuration'],
+                    )));
                 $delivery = 'sent';
             } catch (Throwable) {
                 Log::warning('Workspace invitation delivery was unavailable.', [

@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use LogicException;
 
 #[Fillable(['name', 'slug', 'created_by_user_id'])]
@@ -78,6 +79,24 @@ class Workspace extends Model
     public function organisationalLocations(): HasMany
     {
         return $this->hasMany(OrganisationalLocation::class);
+    }
+
+    /** @return HasOne<WorkspaceBrandingProfile, $this> */
+    public function brandingProfile(): HasOne
+    {
+        return $this->hasOne(WorkspaceBrandingProfile::class);
+    }
+
+    /** @return HasMany<WorkspaceBrandingRevision, $this> */
+    public function brandingRevisions(): HasMany
+    {
+        return $this->hasMany(WorkspaceBrandingRevision::class);
+    }
+
+    /** @return HasMany<WorkspaceBrandingAsset, $this> */
+    public function brandingAssets(): HasMany
+    {
+        return $this->hasMany(WorkspaceBrandingAsset::class);
     }
 
     /** @return HasMany<Conversation, $this> */

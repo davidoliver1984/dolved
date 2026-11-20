@@ -57,7 +57,7 @@ final readonly class BuildDocumentGovernanceEmail
             heading: $heading,
             summary: $summary,
             workspaceName: (string) $envelope->workspace_display_name_snapshot,
-            actionLabel: $digest ? 'Review governance work' : 'Open in Dolved',
+            actionLabel: $digest ? 'Review governance work' : 'Open in '.$branding->brandName,
             actionUrl: $frontend.$route,
             preferenceUrl: $frontend."/app/workspaces/{$workspace->public_id}/settings/notifications",
             items: $digest ? $items : [],
@@ -65,6 +65,9 @@ final readonly class BuildDocumentGovernanceEmail
             brandName: $branding->brandName,
             accentColour: $branding->accentColour,
             logoUrl: $branding->logoUrl,
+            senderDisplayName: $branding->senderDisplayName,
+            footerText: $branding->footerText,
+            supportContact: $branding->supportContact,
         );
     }
 
@@ -112,6 +115,9 @@ final readonly class BuildDocumentGovernanceEmail
             brandName: $branding->brandName,
             accentColour: $accent,
             logoUrl: $branding->logoUrl,
+            senderDisplayName: $branding->senderDisplayName,
+            footerText: $branding->footerText,
+            supportContact: $branding->supportContact,
         );
     }
 

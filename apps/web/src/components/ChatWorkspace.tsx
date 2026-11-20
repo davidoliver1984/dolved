@@ -81,6 +81,8 @@ type ChatWorkspaceProps = {
   workspaceName: string;
   locations?: Array<{ public_id: string; name: string }>;
   services?: ChatServices;
+  welcomeHeading?: string | null;
+  welcomeIntroduction?: string | null;
 };
 
 const progressLabels: Record<string, string> = {
@@ -213,6 +215,8 @@ export function ChatWorkspace({
   workspaceName,
   locations = [],
   services = defaultServices,
+  welcomeHeading,
+  welcomeIntroduction,
 }: ChatWorkspaceProps) {
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [active, setActive] = useState<Conversation | null>(null);
@@ -554,7 +558,11 @@ export function ChatWorkspace({
         <div aria-busy={loading} className="grid min-h-96 content-start gap-4 overflow-y-auto rounded-xl border border-border bg-surface p-4 sm:p-6" ref={transcript}>
           {loading ? <div aria-label="Loading conversation" className="grid gap-4"><Skeleton className="h-20 w-3/4" /><Skeleton className="ml-auto h-16 w-2/3" /><Skeleton className="h-28 w-4/5" /></div> : null}
           {!loading && !(active?.messages?.length) ? (
-            <EmptyState description="Answers use eligible workspace evidence and keep their citation references close." icon={Inbox} title="What do you need to know?" />
+            <EmptyState
+              description={welcomeIntroduction || "Answers use eligible workspace evidence and keep their citation references close."}
+              icon={Inbox}
+              title={welcomeHeading || "What do you need to know?"}
+            />
           ) : null}
           {active?.messages?.map((message) => {
             const run = runsByMessage.get(message.id);

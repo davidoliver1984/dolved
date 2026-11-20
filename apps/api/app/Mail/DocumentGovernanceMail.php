@@ -6,6 +6,7 @@ namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Address;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Mail\Mailables\Headers;
@@ -31,11 +32,17 @@ final class DocumentGovernanceMail extends Mailable
         public readonly string $brandName = 'Dolved',
         public readonly string $accentColour = '#008466',
         public readonly ?string $logoUrl = null,
+        public readonly ?string $senderDisplayName = null,
+        public readonly ?string $footerText = null,
+        public readonly ?string $supportContact = null,
     ) {}
 
     public function envelope(): Envelope
     {
-        return new Envelope(subject: $this->mailSubject);
+        return new Envelope(
+            from: new Address((string) config('mail.from.address'), $this->senderDisplayName ?: (string) config('mail.from.name')),
+            subject: $this->mailSubject,
+        );
     }
 
     public function headers(): Headers

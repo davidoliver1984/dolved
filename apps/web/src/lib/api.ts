@@ -99,6 +99,60 @@ export type Workspace = {
   name: string;
   slug: string;
   role: WorkspaceRole;
+  branding?: EffectiveBranding;
+};
+
+export type BrandingAsset = {
+  public_id: string;
+  kind: "primary_logo" | "dark_logo" | "favicon";
+  url: string;
+  width: number;
+  height: number;
+};
+
+export type BrandingConfiguration = {
+  display_name: string;
+  logo_label: string;
+  primary_logo: BrandingAsset | null;
+  dark_logo: BrandingAsset | null;
+  favicon: BrandingAsset | null;
+  primary_colour: string;
+  accent_colour: string;
+  primary_foreground: string;
+  accent_foreground: string;
+  sign_in_heading: string | null;
+  sign_in_introduction: string | null;
+  chat_welcome_heading: string | null;
+  chat_welcome_introduction: string | null;
+  sender_display_name: string | null;
+  footer_text: string | null;
+  support_contact: string | null;
+};
+
+export type EffectiveBranding = {
+  mode: "default" | "custom";
+  revision: number | null;
+  revision_public_id?: string | null;
+  configuration: BrandingConfiguration;
+};
+
+export type PlatformTenant = {
+  public_id: string;
+  name: string;
+  slug: string;
+  branding_mode: "default" | "custom";
+};
+
+export type TenantBrandingSnapshot = {
+  tenant: { public_id: string; name: string; slug: string };
+  mode: "default" | "custom";
+  draft_version: number;
+  draft: BrandingConfiguration;
+  applied_revision: number | null;
+  applied_revision_public_id: string | null;
+  last_custom_revision: number | null;
+  can_reapply_custom: boolean;
+  effective: EffectiveBranding;
 };
 
 export type GovernanceNotification = {
@@ -707,7 +761,7 @@ export async function apiFetch<T>(
 
   headers.set("Accept", "application/json");
 
-  if (init.body && !headers.has("Content-Type")) {
+  if (init.body && !(init.body instanceof FormData) && !headers.has("Content-Type")) {
     headers.set("Content-Type", "application/json");
   }
 
@@ -778,6 +832,60 @@ export async function apiFetch<T>(
   }
 
   return payload as T;
+}
+
+export async function workspaceBranding(workspacePublicId: string): Promise<EffectiveBranding> {
+  const response = await apiFetch<{ data: EffectiveBranding }>(`/api/workspaces/${encodeURIComponent(workspacePublicId)}/branding`);
+  return response.data;
+}
+
+export async function deploymentBranding(): Promise<EffectiveBranding> {
+  const response = await apiFetch<{ data: EffectiveBranding }>("/api/branding/effective");
+  return response.data;
+}
+
+export async function invitationBranding(token: string): Promise<EffectiveBranding> {
+  const response = await apiFetch<{ data: EffectiveBranding }>(`/api/branding/invitations/${encodeURIComponent(token)}`);
+  return response.data;
+}
+
+export async function saveTenantBrandingDraft(workspacePublicId: string, draftVersion: number, configuration: BrandingConfiguration): Promise<TenantBrandingSnapshot> {
+  const assetId = (asset: BrandingAsset | null) => asset?.public_id ?? null;
+  const response = await apiFetch<{ data: TenantBrandingSnapshot }>(`/api/platform/tenants/${encodeURIComponent(workspacePublicId)}/branding/draft`, {
+    method: "PUT",
+    body: JSON.stringify({
+      draft_version: draftVersion,
+      configuration: {
+        ...configuration,
+        primary_logo: assetId(configuration.primary_logo),
+        dark_logo: assetId(configuration.dark_logo),
+        favicon: assetId(configuration.favicon),
+      },
+    }),
+  });
+  return response.data;
+}
+
+export async function applyTenantBranding(workspacePublicId: string, draftVersion: number): Promise<TenantBrandingSnapshot> {
+  const response = await apiFetch<{ data: TenantBrandingSnapshot }>(`/api/platform/tenants/${encodeURIComponent(workspacePublicId)}/branding/apply`, {
+    method: "POST", body: JSON.stringify({ draft_version: draftVersion }),
+  });
+  return response.data;
+}
+
+export async function switchTenantBrandingMode(workspacePublicId: string, mode: "default" | "custom"): Promise<TenantBrandingSnapshot> {
+  const response = await apiFetch<{ data: TenantBrandingSnapshot }>(`/api/platform/tenants/${encodeURIComponent(workspacePublicId)}/branding/mode`, {
+    method: "PUT", body: JSON.stringify({ mode }),
+  });
+  return response.data;
+}
+
+export async function uploadTenantBrandingAsset(workspacePublicId: string, kind: BrandingAsset["kind"], file: File): Promise<BrandingAsset> {
+  const body = new FormData();
+  body.set("kind", kind);
+  body.set("asset", file);
+  const response = await apiFetch<{ data: BrandingAsset }>(`/api/platform/tenants/${encodeURIComponent(workspacePublicId)}/branding/assets`, { method: "POST", body });
+  return response.data;
 }
 
 export function firstError(error: unknown): string {

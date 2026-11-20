@@ -14,6 +14,11 @@
 
 Manage notification preferences: {{ $preferenceUrl }}
 
-This message contains no document content. Sign in to Dolved to view authorised workspace information.
+This message contains no document content. Sign in to {{ $brandName }} to view authorised workspace information.
+@if ($supportContact)
+Support: {{ $supportContact }}
+@endif
 
+@if ($footerText){{ $footerText }}
+@endif
 Sent by Dolved.

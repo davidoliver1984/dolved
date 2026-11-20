@@ -4,6 +4,7 @@ use App\Http\Controllers\BulkOperationController;
 use App\Http\Controllers\ChatStreamController;
 use App\Http\Controllers\ConversationController;
 use App\Http\Controllers\DeletedDocumentFamilyController;
+use App\Http\Controllers\DeploymentBrandingController;
 use App\Http\Controllers\DocumentAdministrationController;
 use App\Http\Controllers\DocumentContentController;
 use App\Http\Controllers\DocumentFamilyDeletionController;
@@ -21,9 +22,12 @@ use App\Http\Controllers\Internal\ImportPreflightController;
 use App\Http\Controllers\Internal\IngestionOperationController;
 use App\Http\Controllers\Internal\ObservabilityReconciliationController;
 use App\Http\Controllers\PlatformOperationsController;
+use App\Http\Controllers\PlatformTenantBrandingAssetController;
+use App\Http\Controllers\PlatformTenantBrandingController;
 use App\Http\Controllers\RetrievalController;
 use App\Http\Controllers\SavedViewController;
 use App\Http\Controllers\WorkspaceAdministrationController;
+use App\Http\Controllers\WorkspaceBrandingController;
 use App\Http\Controllers\WorkspaceController;
 use App\Http\Controllers\WorkspaceKnowledgeReadinessController;
 use App\Http\Controllers\WorkspaceUsageController;
@@ -81,6 +85,10 @@ Route::get('/platform/status', function () {
     return response()->json(['data' => ['status' => 'available']]);
 })->middleware(['auth:sanctum', 'account.enabled', 'verified']);
 
+Route::get('/branding/effective', [DeploymentBrandingController::class, 'show']);
+Route::get('/branding/invitations/{token}', [DeploymentBrandingController::class, 'invitation'])
+    ->where('token', '[A-Za-z0-9_-]{32,512}');
+
 Route::prefix('/platform/operations')->middleware([
     'auth:sanctum',
     'account.enabled',
@@ -92,6 +100,22 @@ Route::prefix('/platform/operations')->middleware([
     Route::get('/policy', [PlatformOperationsController::class, 'policy']);
     Route::post('/policy', [PlatformOperationsController::class, 'storePolicy']);
 });
+
+Route::prefix('/platform/tenants')->middleware([
+    'auth:sanctum',
+    'account.enabled',
+    'verified',
+    'can:access-platform-operations',
+])->group(function (): void {
+    Route::get('/', [PlatformTenantBrandingController::class, 'index']);
+    Route::get('/{workspacePublicId}/branding', [PlatformTenantBrandingController::class, 'show']);
+    Route::put('/{workspacePublicId}/branding/draft', [PlatformTenantBrandingController::class, 'store']);
+    Route::post('/{workspacePublicId}/branding/apply', [PlatformTenantBrandingController::class, 'apply']);
+    Route::put('/{workspacePublicId}/branding/mode', [PlatformTenantBrandingController::class, 'mode']);
+    Route::post('/{workspacePublicId}/branding/assets', [PlatformTenantBrandingAssetController::class, 'store']);
+});
+
+Route::get('/branding/assets/{assetPublicId}', [PlatformTenantBrandingAssetController::class, 'show']);
 
 Route::post('/internal/observability/reconciliation/plan', [ObservabilityReconciliationController::class, 'plan'])
     ->middleware('observability.reconciler:observability.policy.plan.read');
@@ -145,6 +169,7 @@ Route::prefix('/internal/import-preflights/{eventId}')->group(function (): void 
 Route::middleware(['auth:sanctum', 'account.enabled', 'verified'])->group(function (): void {
     Route::get('/workspaces', [WorkspaceController::class, 'index']);
     Route::get('/workspaces/{workspacePublicId}', [WorkspaceController::class, 'show']);
+    Route::get('/workspaces/{workspacePublicId}/branding', [WorkspaceBrandingController::class, 'show']);
     Route::get('/workspaces/{workspacePublicId}/members', [WorkspaceAdministrationController::class, 'members']);
     Route::get('/workspaces/{workspacePublicId}/invitations', [WorkspaceAdministrationController::class, 'invitations']);
     Route::get('/workspaces/{workspacePublicId}/usage', [WorkspaceUsageController::class, 'show']);

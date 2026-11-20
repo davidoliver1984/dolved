@@ -85,7 +85,7 @@ The existing 106–166-hour estimate is provisional. Track actual focused effort
 | Sources | Honest source display and authorised links to mapped originals | Deployed — compact expandable Sources retrieved and authorised links reported working; hosted permission/link acceptance pending |
 | Hosting and recovery | HTTPS, restricted services, backups and isolated restore check | In progress — host and Dify are deployed and hardened. The restricted Dify snapshot at `/var/backups/dolved-pilot/20261119T214500Z` has checksum-manifest SHA-256 `ad3ddd8a01eb12389de6ccf89ceaf643bf605fffed2759f85ccb36e590473d4c`; its isolated database/original restore passed. The post-import Dolved backup at `/var/backups/dolved-pilot/20261119T220500Z` has checksum-manifest SHA-256 `97ad53a8b995b5dc4c5638313f4867c4321050149b042beca6208a869feb0f59`; its temporary database restored with eleven documents and all restored originals matched their source checksums. DNS/HTTPS, dedicated Dify credentials and SMTP configuration are now complete per David's 20 November report; actual mail delivery and remaining hosted operational acceptance are pending |
 | Fixed product branding | Established Dolved identity across current product surfaces | Deployed — distinct from configurable branding |
-| Platform-admin branding controls | Bounded logo/colour and related settings through the reserved branding seam | Not started — fixed identity does not complete this deliverable |
+| Platform-admin branding controls | Bounded logo/colour and related settings through the reserved branding seam | In progress — specification-backed editor and versioned backend are implemented and locally verified; hosted deployment and David's light/dark/mobile visual acceptance remain open |
 | Privacy-safe observability | Planned OpenTelemetry propagation/Collector routing without content or secrets in general telemetry | In progress — completion and hosted verification pending; not claimed verified |
 | Restricted evaluation evidence capture | Exact assembled model input and user-visible answer/source/link records | Verified — existing hosted run directly records Dify 1.19.0's assembled `PromptMessage` sequence and natively correlates it to the global structured context, Dolved answer and ten ordered permission-enforced source routes; this is the Dify model-runtime boundary, not provider-wire bytes. Restricted package manifest SHA-256 `75ec5655326aba7d2b946a2db081d431fc2bcefc0d0b4b7198ee1859dc12656e`; no new provider call or setting change |
 | Final freeze | Application, Dify, plugins, prompt, corpus and settings recorded | Not started |
@@ -329,11 +329,13 @@ pilot activation. The previously recorded backup/restore checks remain evidence;
 restoration is claimed. Fixed Dolved branding is deployed; configurable platform-admin
 branding is a separate unfinished deliverable.
 
-Current milestone: hosted engineering acceptance. Next action: David confirms the deployed
-first-message fix without refresh and completes the normal user journeys while engineering
-finishes lifecycle/email/mobile/permission checks. Complete bounded branding controls and
-planned observability; use the verified restricted model-input/user-visible capture package
-for readiness evidence. General telemetry must not carry those sensitive captures.
+Current milestone: hosted engineering acceptance. Next action: deploy the locally verified
+tenant-branding implementation, then David reviews the configured and fallback identities
+on desktop/mobile and in light/dark mode. After that, complete the already identified
+document-applicability/location controls, bounded conversation context and privacy-safe
+observability before the consolidated acceptance run. Use the verified restricted
+model-input/user-visible capture package for readiness evidence. General telemetry must not
+carry those sensitive captures.
 
 Then recheck corpus/site/configuration identities, freeze and produce one neutral Claude
 readiness handoff. All 40 questions remain sealed. No evaluation run, client invitation,
@@ -341,6 +343,31 @@ canonical gate closure, AWS work or new testing campaign is authorised by this u
 
 Current activation blockers: none reported. Outstanding acceptance and deliverables remain
 open, not waived. Canonical phase/session and later AWS milestones are unchanged.
+
+### Configurable tenant branding implementation — 20 November 2026
+
+The product specification `docs/specs/product-features/tenant-branding.md` is the governing
+contract for this work; it is deliberately a product specification, not an ADR. Its source
+SHA-256 at implementation start was
+`90121361327f7452ae499f7843d37e48c7233c795dcb2407e3baee27d222f417`.
+
+The delivery branch now contains a Platform administration tenant list and branding editor,
+workspace-owned drafts, optimistic conflict protection, immutable applied revisions,
+default/custom switching with retained custom state, audited changes and safe server-side
+image decoding/re-encoding. The effective tenant identity is resolved for authorised
+workspace surfaces and a configured trusted single-client sign-in context; Platform
+administration and the private Dify console remain Dolved-branded. Applied identity reaches
+the workspace shell, page title/favicon, chat welcome, trusted invitation surface,
+invitation correspondence and snapshotted governance correspondence. Password reset and
+verification email remain tenant-neutral Dolved correspondence where no trusted tenant
+context exists.
+
+Local evidence: the focused branding, workspace-administration and governance-mail backend
+set passed 32 tests / 196 assertions. The focused frontend set passed 4 files / 50 tests;
+lint completed with only the expected controlled runtime-image warnings and the production
+Next.js build passed. This establishes implementation readiness, not hosted visual approval.
+Deployment, restart persistence/backup inclusion and David's actual desktop/mobile,
+light/dark review remain required before R29-S03 or the branding gate can be marked verified.
 
 ### Restricted model-input capture verification — 20 November 2026
 

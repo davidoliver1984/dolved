@@ -3,6 +3,7 @@
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import {
   Activity,
+  Building2,
   Archive,
   CalendarClock,
   ChevronLeft,
@@ -27,7 +28,7 @@ import {
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
-import type { User, Workspace } from "@/lib/api";
+import { workspaceBranding, type EffectiveBranding, type User, type Workspace } from "@/lib/api";
 import { listConversations, type Conversation } from "@/lib/conversations";
 import { cn } from "@/lib/utils";
 import { LogoutButton } from "@/components/LogoutButton";
@@ -50,6 +51,17 @@ type AppShellProps = Readonly<{
   user: User;
   workspaces: Workspace[];
 }>;
+
+const DEFAULT_BRANDING: EffectiveBranding = {
+  mode: "default", revision: null,
+  configuration: {
+    display_name: "Dolved", logo_label: "Dolved", primary_logo: null, dark_logo: null, favicon: null,
+    primary_colour: "var(--brand)", accent_colour: "var(--ring)", primary_foreground: "var(--brand-foreground)", accent_foreground: "var(--brand-foreground)",
+    sign_in_heading: "Welcome back", sign_in_introduction: "Sign in to access your workspace.",
+    chat_welcome_heading: "Ask Dolved", chat_welcome_introduction: "Ask a question grounded in your approved knowledge base.",
+    sender_display_name: "Dolved", footer_text: null, support_contact: null,
+  },
+};
 
 function workspaceIdFromPath(pathname: string) {
   return pathname.match(/^\/app\/workspaces\/([^/]+)/)?.[1] ?? null;
@@ -97,8 +109,12 @@ export function AppShell({ canOperatePlatform, children, user, workspaces }: App
     () => workspaces.find((item) => item.public_id === workspaceId) ?? null,
     [workspaceId, workspaces],
   );
+  const [refreshedBranding, setRefreshedBranding] = useState<{ workspaceId: string; data: EffectiveBranding } | null>(null);
   const isAdministration = workspaceSection(pathname, workspaceId, "administration");
-  const isPlatformOperations = pathname.startsWith("/app/platform/operations");
+  const isPlatformAdministration = pathname.startsWith("/app/platform/");
+  const branding = refreshedBranding?.workspaceId === workspaceId ? refreshedBranding.data : workspace?.branding ?? DEFAULT_BRANDING;
+  const effectiveBranding = isPlatformAdministration ? DEFAULT_BRANDING : branding;
+  const brand = effectiveBranding.configuration;
   const activeDocumentsDestination = documentsDestination(pathname, workspaceId);
   const isDocuments = activeDocumentsDestination !== null;
   const workspaceHome = `/app/workspaces/${workspaceId}`;
@@ -117,6 +133,30 @@ export function AppShell({ canOperatePlatform, children, user, workspaces }: App
       .catch(() => active && setConversations([]));
     return () => { active = false; };
   }, [workspaceId]);
+
+  useEffect(() => {
+    if (!workspaceId || isPlatformAdministration) {
+      return;
+    }
+    let active = true;
+    const refresh = () => void workspaceBranding(workspaceId).then((next) => active && setRefreshedBranding({ workspaceId, data: next })).catch(() => undefined);
+    refresh();
+    window.addEventListener("focus", refresh);
+    return () => { active = false; window.removeEventListener("focus", refresh); };
+  }, [isPlatformAdministration, workspaceId]);
+
+  useEffect(() => {
+    document.title = isPlatformAdministration ? "Platform administration · Dolved" : `${brand.display_name} · Workspace`;
+    let icon = document.querySelector<HTMLLinkElement>('link[rel="icon"][data-tenant-branding]');
+    if (!icon) {
+      icon = document.createElement("link"); icon.rel = "icon"; icon.dataset.tenantBranding = "true"; document.head.appendChild(icon);
+    }
+    icon.href = brand.favicon?.url ?? "/favicon.ico";
+  }, [brand.display_name, brand.favicon?.url, isPlatformAdministration]);
+
+  const brandMark = (mobile = false) => brand.primary_logo
+    ? <Link aria-label={brand.logo_label} href="/app"><img alt={brand.logo_label} className={cn("max-w-full object-contain object-left", mobile ? "h-8 max-w-36" : "h-10 max-w-44")} src={brand.primary_logo.url} /></Link>
+    : <Wordmark className={mobile ? undefined : "text-[1.7rem]"} href="/app" />;
 
   const navigation = workspaceId ? (
     <>
@@ -137,10 +177,11 @@ export function AppShell({ canOperatePlatform, children, user, workspaces }: App
     </>
   ) : null;
 
-  const contextual = isPlatformOperations ? (
+  const contextual = isPlatformAdministration ? (
     <div className={cn("min-h-0 flex-1 overflow-y-auto border-t border-sidebar-border pt-4", collapsed && "lg:hidden")}>
-      <p className="px-3 text-xs font-bold uppercase tracking-[0.14em] text-foreground-faint">Platform operations</p>
-      <nav aria-label="Platform operations" className="mt-2 grid gap-1">
+      <p className="px-3 text-xs font-bold uppercase tracking-[0.14em] text-foreground-faint">Platform administration</p>
+      <nav aria-label="Platform administration" className="mt-2 grid gap-1">
+        <Link aria-current={pathname === "/app/platform/tenants" || pathname.startsWith("/app/platform/tenants/") ? "page" : undefined} className={activeClass(pathname === "/app/platform/tenants" || pathname.startsWith("/app/platform/tenants/"))} href="/app/platform/tenants" onClick={closeMobileNavigation}><Building2 aria-hidden="true" className="size-4" /><span>Tenants</span></Link>
         <Link aria-current={pathname === "/app/platform/operations" ? "page" : undefined} className={activeClass(pathname === "/app/platform/operations")} href="/app/platform/operations" onClick={closeMobileNavigation}><Gauge aria-hidden="true" className="size-4" /><span>Overview</span></Link>
         <Link aria-current={pathname.endsWith("/alerts") ? "page" : undefined} className={activeClass(pathname.endsWith("/alerts"))} href="/app/platform/operations/alerts" onClick={closeMobileNavigation}><BellRing aria-hidden="true" className="size-4" /><span>Active alerts</span></Link>
         <Link aria-current={pathname.endsWith("/telemetry") ? "page" : undefined} className={activeClass(pathname.endsWith("/telemetry"))} href="/app/platform/operations/telemetry" onClick={closeMobileNavigation}><LineChart aria-hidden="true" className="size-4" /><span>Global telemetry</span></Link>
@@ -189,7 +230,7 @@ export function AppShell({ canOperatePlatform, children, user, workspaces }: App
     <div className="flex h-full min-h-0 flex-col gap-4">
       <div aria-hidden="true" className="h-11 shrink-0 lg:hidden" />
       <div className="hidden items-center justify-between gap-2 px-1 lg:flex">
-        {!collapsed ? <Wordmark className="text-[1.7rem]" href="/app" /> : null}
+        {!collapsed ? brandMark() : null}
         {!collapsed ? <Button aria-label="Collapse sidebar" onClick={() => setCollapsed(true)} size="icon" variant="ghost"><ChevronLeft aria-hidden="true" /></Button> : null}
       </div>
       {workspaceId && workspaces.length ? (
@@ -200,7 +241,7 @@ export function AppShell({ canOperatePlatform, children, user, workspaces }: App
           </select>
         </label>
       ) : null}
-      <nav aria-label="Primary" className="grid gap-1">{navigation}{canOperatePlatform ? <Link aria-current={pathname.startsWith("/app/platform/operations") ? "page" : undefined} className={cn(activeClass(pathname.startsWith("/app/platform/operations")), "mt-2 border border-sidebar-border")} href="/app/platform/operations" onClick={closeMobileNavigation}><Activity aria-hidden="true" className="size-5 shrink-0" />{sidebarLabel("Platform operations")}</Link> : null}</nav>
+      <nav aria-label="Primary" className="grid gap-1">{navigation}{canOperatePlatform ? <Link aria-current={isPlatformAdministration ? "page" : undefined} className={cn(activeClass(isPlatformAdministration), "mt-2 border border-sidebar-border")} href="/app/platform/tenants" onClick={closeMobileNavigation}><Activity aria-hidden="true" className="size-5 shrink-0" />{sidebarLabel("Platform administration")}</Link> : null}</nav>
       {contextual}
       <div className="border-t border-sidebar-border pt-3">
         <div className={cn("flex items-center gap-2", collapsed && "lg:justify-center")}>
@@ -225,10 +266,10 @@ export function AppShell({ canOperatePlatform, children, user, workspaces }: App
   );
 
   return (
-    <div className="min-h-dvh bg-background text-foreground">
+    <div className="min-h-dvh bg-background text-foreground" style={{ "--brand": brand.primary_colour, "--brand-foreground": brand.primary_foreground, "--ring": brand.accent_colour } as React.CSSProperties}>
       <aside className={cn("fixed inset-y-0 left-0 z-30 hidden border-r border-sidebar-border bg-sidebar p-4 lg:block", collapsed ? "w-20" : "w-72")}>{sidebar}{collapsed ? <Button aria-label="Expand sidebar" className="absolute -right-5 top-5 border border-border bg-surface-raised" onClick={() => setCollapsed(false)} size="icon" variant="ghost"><ChevronRight aria-hidden="true" /></Button> : null}</aside>
       <DialogPrimitive.Root onOpenChange={setMobileOpen} open={mobileOpen}>
-        <header className="sticky top-0 z-20 flex h-16 items-center justify-between border-b border-border bg-background/90 px-4 backdrop-blur lg:hidden"><Wordmark href="/app" /><DialogPrimitive.Trigger asChild><Button aria-label="Open navigation" size="icon" variant="outline"><Menu aria-hidden="true" /></Button></DialogPrimitive.Trigger></header>
+        <header className="sticky top-0 z-20 flex h-16 items-center justify-between border-b border-border bg-background/90 px-4 backdrop-blur lg:hidden">{brandMark(true)}<DialogPrimitive.Trigger asChild><Button aria-label="Open navigation" size="icon" variant="outline"><Menu aria-hidden="true" /></Button></DialogPrimitive.Trigger></header>
         <DialogPrimitive.Portal><DialogPrimitive.Overlay className="fixed inset-0 z-40 bg-overlay lg:hidden" /><DialogPrimitive.Content className="fixed inset-y-0 left-0 z-50 w-[min(88vw,20rem)] border-r border-sidebar-border bg-sidebar p-4 outline-none lg:hidden"><DialogPrimitive.Title className="sr-only">Application navigation</DialogPrimitive.Title>{sidebar}<DialogPrimitive.Close aria-label="Close navigation" className="absolute right-3 top-3 grid size-11 place-items-center rounded-md hover:bg-sidebar-accent focus-visible:ring-2 focus-visible:ring-sidebar-ring"><X aria-hidden="true" /></DialogPrimitive.Close></DialogPrimitive.Content></DialogPrimitive.Portal>
       </DialogPrimitive.Root>
       <main className={cn("min-h-[calc(100dvh-4rem)] transition-[padding] lg:min-h-dvh", collapsed ? "lg:pl-20" : "lg:pl-72")}><div className="mx-auto w-full max-w-[96rem] p-4 sm:p-6 lg:p-8">{children}</div></main>

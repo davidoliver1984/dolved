@@ -10,5 +10,8 @@ final readonly class ResolvedGovernanceEmailBranding
         public string $brandName,
         public string $accentColour,
         public ?string $logoUrl = null,
+        public ?string $senderDisplayName = null,
+        public ?string $footerText = null,
+        public ?string $supportContact = null,
     ) {}
 }

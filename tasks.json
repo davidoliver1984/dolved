@@ -5513,9 +5513,10 @@
       "title": "Configurable Branding",
       "guide_start_line": 15776,
       "guide_end_line": 15836,
-      "status": "not_started",
+      "status": "in_progress",
       "objective": "Specify, then implement, validated, authorised and accessible Dolved display-name, wordmark/logo, favicon and light/dark accent configuration without allowing arbitrary presentation code or affecting security and evidence decisions.",
       "specification_references": [
+        "docs/specs/product-features/tenant-branding.md",
         "docs/specs/product-features/product-interface-and-design-system.md",
         "docs/specs/product-features/administration-and-tenant-control.md",
         "docs/specs/product-features/document-governance-notifications-and-reminders.md"
@@ -5528,7 +5529,7 @@
           "id": "R29-S01",
           "guide_stage": "Stage 29.1 — Specify branding ownership and lifecycle",
           "title": "Specify Branding Ownership and Lifecycle",
-          "status": "not_started",
+          "status": "verified",
           "objective": "Specify or extend the bounded deployment/workspace ownership boundary, version and lifecycle contract, permissions, storage, fallbacks and accessibility rules for configurable branding before implementation. Add an ADR only if a new consequential architectural choice is required.",
           "session_mode": "specification",
           "requires_architecture_review": false,
@@ -5539,15 +5540,19 @@
           "journal": {
             "required": true,
             "path_template": "docs/journal/YYYY-MM-DD-r29-s01-freeze-branding-ownership-and-lifecycle.md",
-            "status": "not_started"
+            "status": "verified",
+            "actual_path": "docs/journal/2026-11-20-r29-s01-freeze-branding-ownership-and-lifecycle.md"
           },
-          "completion_evidence": []
+          "completion_evidence": [
+            "Tenant Branding and Correspondence product specification reviewed as the binding implementation contract; no ADR was created because no new consequential architecture decision was required.",
+            "Specification source SHA-256 at implementation start: 90121361327f7452ae499f7843d37e48c7233c795dcb2407e3baee27d222f417."
+          ]
         },
         {
           "id": "R29-S02",
           "guide_stage": "Stage 29.2 — Implement configurable identity and administration",
           "title": "Implement Configurable Identity and Administration",
-          "status": "not_started",
+          "status": "in_progress",
           "objective": "Implement validated display name, logo/wordmark, favicon and light/dark accent configuration with authorised administration, preview, lifecycle and safe Dolved fallback.",
           "session_mode": "implementation",
           "requires_architecture_review": false,
@@ -5558,9 +5563,13 @@
           "journal": {
             "required": true,
             "path_template": "docs/journal/YYYY-MM-DD-r29-s02-implement-configurable-branding.md",
-            "status": "not_started"
+            "status": "in_progress",
+            "actual_path": "docs/journal/2026-11-20-r29-s02-implement-configurable-branding.md"
           },
-          "completion_evidence": []
+          "completion_evidence": [
+            "Platform-admin tenant list/editor, versioned draft/apply/default/custom lifecycle, safe re-encoded tenant assets, live resolver, tenant UI propagation and correspondence integration implemented on the delivery branch.",
+            "Focused verification: 32 Laravel tests / 196 assertions and 4 web test files / 50 tests; production web build passed. Hosted deployment and David's visual acceptance remain open."
+          ]
         },
         {
           "id": "R29-S03",

@@ -6,7 +6,12 @@ export const PLATFORM_OPERATION_PATHS = [
 ] as const;
 
 export type PlatformOperationsPath = (typeof PLATFORM_OPERATION_PATHS)[number];
+export type PlatformAdministrationPath = PlatformOperationsPath | "/app/platform/tenants" | `/app/platform/tenants/${string}/branding`;
 
-export function isPlatformOperationsPath(value: unknown): value is PlatformOperationsPath {
-  return typeof value === "string" && PLATFORM_OPERATION_PATHS.some((path) => path === value);
+export function isPlatformOperationsPath(value: unknown): value is PlatformAdministrationPath {
+  return typeof value === "string" && (
+    PLATFORM_OPERATION_PATHS.some((path) => path === value)
+    || value === "/app/platform/tenants"
+    || /^\/app\/platform\/tenants\/[0-9a-f-]{36}\/branding$/i.test(value)
+  );
 }

@@ -2,14 +2,14 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Wordmark } from "@/components/Wordmark";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Notice } from "@/components/ui/notice";
-import { apiFetch, ApiError, firstError, User } from "@/lib/api";
-import type { PlatformOperationsPath } from "@/lib/platform-operations";
+import { apiFetch, ApiError, deploymentBranding, firstError, type EffectiveBranding, User } from "@/lib/api";
+import type { PlatformAdministrationPath } from "@/lib/platform-operations";
 
 type Mode = "login" | "register" | "forgot" | "reset";
 
@@ -49,7 +49,7 @@ type Props = {
   registrationEnabled?: boolean;
   token?: string;
   email?: string;
-  returnTo?: PlatformOperationsPath;
+  returnTo?: PlatformAdministrationPath;
 };
 
 export function AuthForm({ context = "workspace", mode, registrationEnabled = true, token, email: initialEmail, returnTo }: Props) {
@@ -58,6 +58,15 @@ export function AuthForm({ context = "workspace", mode, registrationEnabled = tr
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const copy = content[mode];
+  const [branding, setBranding] = useState<EffectiveBranding | null>(null);
+  useEffect(() => {
+    if (context === "platform") return;
+    let active = true;
+    void deploymentBranding().then((value) => active && setBranding(value)).catch(() => undefined);
+    return () => { active = false; };
+  }, [context]);
+  const brand = branding?.configuration;
+  const style = brand ? { "--brand": brand.primary_colour, "--brand-foreground": brand.primary_foreground, "--ring": brand.accent_colour } as React.CSSProperties : undefined;
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -109,22 +118,22 @@ export function AuthForm({ context = "workspace", mode, registrationEnabled = tr
   }
 
   return (
-    <main className="grid min-h-screen bg-background lg:grid-cols-2">
+    <main className="grid min-h-screen bg-background lg:grid-cols-2" style={style}>
       <section className="flex min-h-screen flex-col px-6 py-8 sm:px-10 lg:px-[max(3rem,calc((100vw-80rem)/4))] lg:py-10">
         <div className="flex items-center justify-between gap-4">
-          <Wordmark />
+          {context === "workspace" && brand?.primary_logo ? <img alt={brand.logo_label} className="h-12 max-w-56 object-contain object-left" src={brand.primary_logo.url} /> : <Wordmark />}
           <ThemeToggle />
         </div>
 
         <div className="mt-20 max-w-xl sm:mt-28">
-          <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand">{context === "platform" ? "Platform administration" : copy.eyebrow}</p>
-          <h1 className="mt-4 text-5xl font-semibold leading-[0.95] tracking-tight sm:text-6xl">{context === "platform" ? "Platform Operations" : copy.title}</h1>
+          <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand">{context === "platform" ? "Platform administration" : mode === "login" && brand?.sign_in_heading ? brand.sign_in_heading : copy.eyebrow}</p>
+          <h1 className="mt-4 text-5xl font-semibold leading-[0.95] tracking-tight sm:text-6xl">{context === "platform" ? "Platform Operations" : mode === "login" && brand?.display_name ? `Sign in to ${brand.display_name}` : copy.title}</h1>
           <p className="mt-5 text-lg text-foreground-muted">
             {context === "platform"
               ? "Platform metrics, OpenTelemetry health, alerting and Grafana access."
               : mode === "register"
               ? "One secure account for your documents, searches, and answers."
-              : "Your workspace is protected by the Laravel API."}
+              : mode === "login" && brand?.sign_in_introduction ? brand.sign_in_introduction : "Your workspace is protected by the Laravel API."}
           </p>
         </div>
 

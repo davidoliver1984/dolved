@@ -72,7 +72,7 @@ describe("AppShell", () => {
     );
 
     expect(screen.queryByRole("link", { name: "Administration" })).toBeNull();
-    expect(screen.queryByRole("link", { name: "Platform operations" })).toBeNull();
+    expect(screen.queryByRole("link", { name: "Platform administration" })).toBeNull();
     pathnameState.value = "/app/workspaces/workspace-1/documents";
     cleanup();
     render(
@@ -103,7 +103,7 @@ describe("AppShell", () => {
     expect(screen.getByRole("link", { name: "People & roles" }).getAttribute("href")).toBe("/app/workspaces/workspace-1/administration/people");
     expect(screen.getByRole("link", { name: "People & roles" }).getAttribute("aria-current")).toBe("page");
     expect(screen.getByRole("link", { name: "New conversation" }).getAttribute("aria-current")).toBeNull();
-    expect(screen.getByRole("link", { name: "Platform operations" }).getAttribute("href")).toBe("/app/platform/operations");
+    expect(screen.getByRole("link", { name: "Platform administration" }).getAttribute("href")).toBe("/app/platform/tenants");
   });
 
   it("renders route-backed platform context with exactly one contextual destination active", () => {
@@ -114,7 +114,8 @@ describe("AppShell", () => {
       </AppShell>,
     );
 
-    expect(screen.getByRole("link", { name: "Platform operations" }).getAttribute("aria-current")).toBe("page");
+    expect(screen.getByRole("link", { name: "Platform administration" }).getAttribute("aria-current")).toBe("page");
+    expect(screen.getByRole("link", { name: "Tenants" }).getAttribute("href")).toBe("/app/platform/tenants");
     expect(screen.getByRole("link", { name: "Overview" }).getAttribute("aria-current")).toBeNull();
     expect(screen.getByRole("link", { name: "Active alerts" }).getAttribute("href")).toBe("/app/platform/operations/alerts");
     expect(screen.getByRole("link", { name: "Global telemetry" }).getAttribute("aria-current")).toBe("page");

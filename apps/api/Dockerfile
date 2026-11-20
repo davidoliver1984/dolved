@@ -11,16 +11,24 @@ RUN apk add --no-cache \
         libxml2 \
         oniguruma \
         libpq \
+        libpng \
+        libjpeg-turbo \
+        libwebp \
         sqlite-libs \
     && apk add --no-cache --virtual .build-dependencies \
         $PHPIZE_DEPS \
         icu-dev \
         libpq-dev \
+        libpng-dev \
+        libjpeg-turbo-dev \
+        libwebp-dev \
         libxml2-dev \
         oniguruma-dev \
         sqlite-dev \
+    && docker-php-ext-configure gd --with-jpeg --with-webp \
     && docker-php-ext-install -j"$(nproc)" \
         dom \
+        gd \
         intl \
         mbstring \
         pcntl \
@@ -78,11 +86,16 @@ RUN apt-get update \
         libicu-dev \
         libonig-dev \
         libpq-dev \
+        libpng-dev \
+        libjpeg62-turbo-dev \
+        libwebp-dev \
         libxml2-dev \
         libzip-dev \
         unzip \
+    && docker-php-ext-configure gd --with-jpeg --with-webp \
     && docker-php-ext-install -j"$(nproc)" \
         dom \
+        gd \
         intl \
         mbstring \
         pcntl \

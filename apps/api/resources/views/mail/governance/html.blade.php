@@ -32,10 +32,11 @@
             </td></tr>
             <tr><td style="border-top:1px solid #e6e9e7;padding:20px 32px 28px;color:#68766f;font-size:13px;line-height:1.5;">
                 <a href="{{ $preferenceUrl }}" style="color:#006d55;">Manage notification preferences</a><br>
-                This message contains no document content. Sign in to Dolved to view authorised workspace information.
+                This message contains no document content. Sign in to {{ $brandName }} to view authorised workspace information.
+                @if ($supportContact)<br>Support: <a href="mailto:{{ $supportContact }}">{{ $supportContact }}</a>@endif
             </td></tr>
         </table>
-        <div style="padding:18px;color:#7a8580;font-size:12px;">Sent by Dolved · Grounded knowledge for your team</div>
+        <div style="padding:18px;color:#7a8580;font-size:12px;">@if ($footerText){{ $footerText }} · @endif Sent by Dolved · Grounded knowledge for your team</div>
     </td></tr>
 </table>
 </body>

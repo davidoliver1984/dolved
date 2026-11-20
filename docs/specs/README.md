@@ -16,6 +16,10 @@ These specifications govern Dolved-owned behaviour around the private Dify servi
 - [Import Staging and Promotion](product-features/import-staging-and-promotion.md) — Dolved import and promotion behaviour; the current Dify delivery adds an integration behind this boundary.
 - [Conversation and Streaming Domain](product-features/conversations-and-streaming.md) — Dolved-facing conversation, persistence and delivery requirements remain relevant; its custom RAG generation protocol is not the stock Dify implementation.
 
+## Planned pilot branding
+
+- [Tenant Branding and Correspondence](product-features/tenant-branding.md) — R29 product specification for platform-admin-managed workspace branding; implementation is in progress on the authorised pilot delivery track.
+
 ## Shared governance and product requirements
 
 These remain repository requirements or planned product behaviour but are not, by themselves, evidence that every capability is active in the bounded pilot.
