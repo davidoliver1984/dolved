@@ -33,5 +33,9 @@ the focused tenant-email rendering test passed; ESLint reported zero errors, PHP
 and the production Next.js build passed. A broader email test-file run encountered an unrelated
 pre-existing Faker apostrophe escaping assertion; the changed branding-email case passed alone.
 
-Remaining before verification: deploy the follow-up correction, confirm favicon persistence and
-obtain David's visual approval of custom and fallback branding on desktop/mobile and light/dark surfaces.
+The follow-up correction was deployed to the pilot as application commit `ca72a0a`. All application
+containers returned healthy and the live effective-branding response resolved custom revision 5,
+including `Ask Cherish` and the configured Cherish introduction.
+
+Remaining before verification: confirm favicon upload/persistence on the hosted editor and obtain
+David's visual approval of custom and fallback branding on desktop/mobile and light/dark surfaces.
