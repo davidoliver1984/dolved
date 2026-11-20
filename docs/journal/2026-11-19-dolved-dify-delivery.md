@@ -85,15 +85,106 @@ The dirty source checkout and historical evidence were not changed.
   separate hardening script after a second key-authenticated session succeeds. Both scripts
   pass POSIX shell syntax checks; execution awaits the delivered VPS.
 
-The full web suite has one pre-existing branding failure in frozen historical evidence.
-The host-side full Laravel suite requires repository-external mounts/configuration and is
-not a reliable delivery regression signal; focused delivery tests are green. No
-model/provider call or charge was incurred in this work.
+The historical branding fixture remains preserved, while the active product branding is
+now regression-bound. The full current web suite passes 170/170 tests, TypeScript and
+ESLint pass, and the production build completes. The focused Dify boundary/lifecycle suite
+passes 10 tests / 62 assertions.
 
-## Next
+## Hosted implementation update
 
-Complete the OVH account/payment handoff, provision the prepared VPS and bounded
-DNS/secure secrets, deploy the frozen configuration, perform an isolated restore check,
-freeze the corpus and configuration, then execute the single independently graded hosted
-evaluation. Client invitation remains a separate explicit decision.
+- Purchased and activated the approved OVH VPS at GBP 12.72 including VAT per month,
+  including its standard daily backup. Key-only SSH is enforced.
+- Deployed pinned stock Dify 1.19.0 at
+  `8e689e868b63b6dd2b449d0eb568ca5cc7127759`, with Dify nginx loopback-only and data/plugin
+  services unexposed. The OpenAI plugin is pinned at 1.1.0.
+- Built and deployed the branded Dolved images from
+  `4d511c555d1645e472c0aee352b4e9531022bc19`: API
+  `sha256:c2ca5ebc89eaf3639a5e77fa37a8df09fc7e6e4bd0239188d387878ef7e2a643`
+  and web
+  `sha256:a63c28c791e5a66a86b3bdfc08170bb673df6563356083cc5f0948f9404a1849`.
+- Created the private Dolved pilot workspace and exact four registered site identities.
+  Authentication, registration-disabled behaviour, ownership, site-context and source-link
+  controls remain covered by provider-free tests.
+- Verified the eleven Dify originals directly from persistent storage against the frozen
+  inventory. The dataset contains exactly eleven enabled, non-archived documents.
+- Imported those same exact originals into authoritative Dolved object storage and
+  governance using application actions. Read-back size and SHA-256 match for all eleven;
+  every version is approved/current, has its exact universal or site-specific applicability
+  and maps to the pre-existing Dify document ID. No duplicate searchable document was
+  created.
+- Verified effective Dify retrieval: dataset Top K 10, node Top K 10, threshold off,
+  hybrid 0.7 semantic / 0.3 keyword, required server-supplied site context and manual
+  global-or-selected-site filter. The app is private and unpublished.
+- Created a restricted Dify backup at
+  `/var/backups/dolved-pilot/20261119T214500Z`; its checksum-manifest SHA-256 is
+  `ad3ddd8a01eb12389de6ccf89ceaf643bf605fffed2759f85ccb36e590473d4c`.
+  An isolated database restore and original-byte extraction/hash check passed.
+- Published the unchanged frozen workflow as Dify version 1, enabling its stock backend
+  API on the private backplane while leaving MCP disabled and Dify unexposed publicly.
+- Took the post-import Dolved backup at
+  `/var/backups/dolved-pilot/20261119T220500Z`; checksum-manifest SHA-256
+  `97ad53a8b995b5dc4c5638313f4867c4321050149b042beca6208a869feb0f59`.
+  A temporary isolated database restored with eleven documents, every restored original
+  matched the source checksum list, and only the temporary database was then dropped.
+- Public DNS still returns NXDOMAIN for `pilot.dolved.com`, `api.pilot.dolved.com` and
+  `storage.pilot.dolved.com`; the authoritative zone is served by
+  `ns1`–`ns4.mysecurecloudhost.com`.
 
+No sealed final-evaluation question, expected answer, control identity or source mapping was
+accessed. The neutral Claude handoff and its frozen criteria/checksums were verified only.
+
+## 20 November hosted authentication correction
+
+- Diagnosed the first production password-reset sign-in without changing the account or
+  repeating the reset. The browser login request succeeded, but the following Next.js
+  server requests were unauthenticated.
+- The deployed API had derived `dolved-session` from `APP_NAME`, while the web server's
+  deliberate forwarding allowlist accepts `rag-platform-session`. The web container also
+  lacked its public `FRONTEND_URL`, so internal authenticated requests supplied the local
+  default origin instead of `https://pilot.dolved.com`.
+- Froze both values explicitly in production Compose, retained the previous server Compose
+  file, recreated only the Dolved application services and verified API/web health.
+  The public CSRF endpoint now returns `rag-platform-session` and `XSRF-TOKEN` scoped to
+  `.pilot.dolved.com`, with secure/HTTP-only/SameSite attributes as applicable and the
+  expected credentialled CORS origin. Added a preflight invariant to prevent this web/API
+  session handoff from drifting again.
+- No credential value, Dify setting, corpus state or sealed evaluation material was read or
+  changed during the correction.
+
+## Next recorded before the 20 November status reconciliation
+
+Finish the three external activation dependencies: DNS for the pilot/API/storage names,
+two dedicated Dify API keys, and SMTP. Then start the worker and HTTPS edge, complete one
+benign instrumentation check plus ordinary hosted engineering/mobile checks, take the
+post-import backup, freeze the configuration and prepare the neutral independent-readiness
+handoff. Stop before question release or evaluation execution. Client invitation remains a
+separate explicit decision.
+
+
+## 20 November status reconciliation
+
+Reconciled the pilot delivery track from David's current status report and local delivery
+commits. DNS/HTTPS, dedicated Dify credentials, SMTP configuration and pilot activation
+are no longer blockers. The existing fixed product branding is deployed; the separate
+platform-admin branding editor remains unbuilt. Actual SMTP delivery and hosted lifecycle,
+permissions, mobile and source-link acceptance remain pending.
+
+The first-message live-update fix at `c115890` is reported deployed with 18 regression
+tests, lint, TypeScript and production build passed. David's hosted no-refresh confirmation
+is still required; this entry does not claim that confirmation occurred. Import verification
+fixes and the compact source display are recorded in the delivery branch. Prior backup and
+isolated restore evidence is retained; no new restore was performed.
+
+Updated `tasks.json`, `PROJECT_ROADMAP.md` and the delivery checklist, preserving R28-S04,
+all canonical phase/session/gate statuses and the future AWS sequence. Removed only stale
+activation blockers. The earlier Next section and dated negative DNS observations are
+historical and superseded, not erased. Existing uncommitted edits were preserved.
+
+Next: finish hands-on defects and hosted acceptance; implement bounded admin branding;
+complete planned privacy-safe observability and separate restricted model-input/user-visible
+capture; recheck corpus/settings; freeze one neutral readiness handoff for Claude. The 40
+questions remain sealed and no release/execution or client invitation is implied.
+
+This was a documentation reconciliation only: no application edits, live host checks,
+provider calls, tests, deployment or sealed-material access. David's supplied hosted status
+is attributed rather than represented as newly independently verified evidence.

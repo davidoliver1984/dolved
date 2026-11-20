@@ -4,7 +4,7 @@ Date: 19 November 2026
 Owner: David
 Implementation: Codex
 Independent assessment: Claude
-Status: implementation in progress in isolated worktree `RAG-dolved-dify-delivery` on branch `codex/dolved-dify-delivery-20261119`.
+Status: live hosted pilot undergoing engineering acceptance as of 20 November 2026; isolated worktree `RAG-dolved-dify-delivery`, branch `codex/dolved-dify-delivery-20261119`. Canonical roadmap remains R28-S04.
 
 ## Purpose and authority
 
@@ -64,7 +64,7 @@ the import/export behavioral comparison remains a deployment acceptance check.
 
 All limits apply together. Historical trial allowances do not transfer. Track actual and estimated costs separately; unknown cost is not zero. Alerts are not guaranteed hard caps.
 
-Prefer monthly cancellation, no annual prepayment, paid control panel or optional support plan. On 19 November 2026 David purchased the prepared OVHcloud VPS-3 2027 in UK Erith with Debian 13, no commitment, 6 vCore, 12 GB RAM, 100 GB NVMe and standard daily backup at GBP 10.60 ex VAT / GBP 12.72 incl UK VAT per month. The VPS reports public IPv4 `57.129.190.4` and is running. The first read-only SSH checks reached the host and recorded its ED25519 host key, but the dedicated deployment key was rejected for both `root` and the confirmed `debian` account. No password was requested or disclosed; key installation through the OVH control/console path is pending. Use this one Docker-capable Linux VPS; keep existing production services untouched and use a dedicated pilot subdomain.
+Prefer monthly cancellation, no annual prepayment, paid control panel or optional support plan. On 19 November 2026 David purchased the prepared OVHcloud VPS-3 2027 in UK Erith with Debian 13, no commitment, 6 vCore, 12 GB RAM, 100 GB NVMe and standard daily backup at GBP 10.60 ex VAT / GBP 12.72 incl UK VAT per month. The VPS reports public IPv4 `57.129.190.4` and is running. Dedicated Ed25519 key access to the confirmed `debian` account and sudo are operational; password-based SSH has been retired under the host hardening procedure. Use this one Docker-capable Linux VPS; keep existing production services untouched and use the dedicated pilot subdomains.
 
 Provisioning, deployment, HTTPS, backups and necessary provider calls are within the delivery authority and limits. Missing credentials or payment steps require David's input through secure channels. Do not place secrets in Git, reports or chat. Do not automatically tear down the delivered service: document recurring commitments and shutdown instructions.
 
@@ -75,15 +75,19 @@ The existing 106–166-hour estimate is provisional. Track actual focused effort
 | Deliverable | Completion evidence | Status |
 |---|---|---|
 | Architecture and local development setup | Isolated worktree, pinned dependencies, ADR, roadmap/tasks updated where required | Verified locally — worktree from `9e43561`; initial plan preserved; ADR-0041 and production runbook recorded |
-| Dolved production runtime | Working production frontend/API, required workers, no development server dependency | Verified locally — production API/web images, PostgreSQL 18.4, SeaweedFS 4.53, migrations, storage initialisation and health checks pass |
-| Stock Dify deployment | Pinned release/plugins, persistent stores, supported API compatibility | Verified locally — stock Dify 1.19.0/`8e689e8`, private services, loopback-only nginx, HTTP 200; hosted deployment pending |
-| Authentication and ownership | Workspace, conversation and document access checks verified | In progress — provider-free conversation ownership and source-link authorisation tests pass |
-| Document upload | Authorised user uploads via Dolved; original stored durably; status visible | Verified locally — versioned original storage, Dify processing/failure projection and storage initialisation covered; hosted end-to-end check pending |
-| Governance synchronisation | Approval, eligibility, replacement, withdrawal and failure transitions verified | Verified locally — fail-closed global/multi-site, replacement, withdrawal, deletion and retry contracts pass; hosted recovery check pending |
-| Chat | Streaming where supported, saved history, fresh conversations, refresh consistency | Verified locally — Dify orchestration, session identity, persisted answers and reload contract implemented; hosted provider check pending |
-| Site context | Backend-validated selections and correct global/site retrieval behaviour | Verified locally — explicit registered selection or global-only, immutable per conversation; backend and web tests pass |
-| Sources | Honest source display and authorised links to mapped originals | Verified locally — mapped authorised originals only and `Sources retrieved` wording; backend and web tests pass |
-| Hosting and recovery | HTTPS, restricted services, backups and isolated restore check | In progress — production Compose, HTTPS edge, private Dify override, persistent-state inventory and restore procedure written; bounded no-commitment OVH VPS checkout prepared at GBP 12.72 incl VAT/month; account/payment, deployment and restore execution pending |
+| Dolved production runtime | Working production frontend/API, required workers, no development server dependency | Deployed — production frontend/Laravel runtime at pilot.dolved.com per David's 20 November report; hosted engineering acceptance remains open |
+| Stock Dify deployment | Pinned release/plugins, persistent stores, supported API compatibility | Verified on host — stock Dify 1.19.0/`8e689e8`, private data services, loopback-only nginx, plugin debug port removed, HTTP 200; OpenAI plugin 1.1.0 |
+| Authentication and ownership | Workspace, conversation and document access checks verified | Implemented — local boundary checks and hosted sign-in correction recorded; complete hosted roles/ownership acceptance remains |
+| Document upload | Authorised user uploads via Dolved; original stored durably; status visible | Implemented and deployed — eleven originals stored/read-back verified; import corrections deployed; fresh hosted upload and complete lifecycle acceptance pending |
+| Governance synchronisation | Approval, eligibility, replacement, withdrawal and failure transitions verified | Verified locally — fail-closed contracts pass; hosted replacement, withdrawal, deletion and recovery acceptance pending |
+| Chat | Streaming where supported, saved history, fresh conversations, refresh consistency | Deployed — answers, persistence and reload reported working; c115890 first-message fix deployed with reported regression/lint/type/build checks; David's no-refresh confirmation pending |
+| Site context | Backend-validated selections and correct global/site retrieval behaviour | Implemented — backend-validated registered selection or global-only; complete hosted acceptance and final site mapping verification pending |
+| Sources | Honest source display and authorised links to mapped originals | Deployed — compact expandable Sources retrieved and authorised links reported working; hosted permission/link acceptance pending |
+| Hosting and recovery | HTTPS, restricted services, backups and isolated restore check | In progress — host and Dify are deployed and hardened. The restricted Dify snapshot at `/var/backups/dolved-pilot/20261119T214500Z` has checksum-manifest SHA-256 `ad3ddd8a01eb12389de6ccf89ceaf643bf605fffed2759f85ccb36e590473d4c`; its isolated database/original restore passed. The post-import Dolved backup at `/var/backups/dolved-pilot/20261119T220500Z` has checksum-manifest SHA-256 `97ad53a8b995b5dc4c5638313f4867c4321050149b042beca6208a869feb0f59`; its temporary database restored with eleven documents and all restored originals matched their source checksums. DNS/HTTPS, dedicated Dify credentials and SMTP configuration are now complete per David's 20 November report; actual mail delivery and remaining hosted operational acceptance are pending |
+| Fixed product branding | Established Dolved identity across current product surfaces | Deployed — distinct from configurable branding |
+| Platform-admin branding controls | Bounded logo/colour and related settings through the reserved branding seam | Not started — fixed identity does not complete this deliverable |
+| Privacy-safe observability | Planned OpenTelemetry propagation/Collector routing without content or secrets in general telemetry | In progress — completion and hosted verification pending; not claimed verified |
+| Restricted evaluation evidence capture | Exact assembled model input and user-visible answer/source/link records | Verified — existing hosted run directly records Dify 1.19.0's assembled `PromptMessage` sequence and natively correlates it to the global structured context, Dolved answer and ten ordered permission-enforced source routes; this is the Dify model-runtime boundary, not provider-wire bytes. Restricted package manifest SHA-256 `75ec5655326aba7d2b946a2db081d431fc2bcefc0d0b4b7198ee1859dc12656e`; no new provider call or setting change |
 | Final freeze | Application, Dify, plugins, prompt, corpus and settings recorded | Not started |
 | Independent evaluation | One hosted 40-question run and Claude's frozen-rubric assessment | Not started |
 | Handover | URL, secure access, costs, runbooks, limitations and client-access decision | Not started |
@@ -254,10 +258,108 @@ router transitions. Five focused frontend files pass 27 tests; TypeScript, zero-
 ESLint, the Next 16.4.6 production build and production Compose rendering pass. The
 production container explicitly sets registration disabled.
 
-Current milestone: hosting provision and production deployment.
+Milestone recorded on 19 November (superseded by the 20 November reconciliation): hosting provision and production deployment.
 
-Next action: install the dedicated public key for the confirmed `debian` account, verify
-key-only sudo-capable access and the Debian 13 image, then run the bounded host bootstrap.
-After the service is reachable, obtain the dedicated pilot DNS action and deploy without
-touching existing production services.
+19 November 2026: The approved VPS is provisioned and key-only access is operational.
+Stock Dify is installed at the pinned commit and its existing pilot app/dataset survived
+the security-boundary recreation unchanged. The console is loopback-only, the plugin
+daemon has no published host port, and the exact dataset contains eleven enabled,
+non-archived documents. Stored Dify originals were hashed from Dify's own persistent
+storage and all eleven match the frozen inventory. The effective dataset and retrieval
+node both persist Top K 10, threshold disabled and weighted hybrid retrieval 0.7 semantic /
+0.3 keyword with the global-or-selected-site metadata filter. A restricted backup and
+isolated restore check are recorded above. Production Dolved images built from commit
+`4d511c555d1645e472c0aee352b4e9531022bc19` have image IDs
+`sha256:c2ca5ebc89eaf3639a5e77fa37a8df09fc7e6e4bd0239188d387878ef7e2a643`
+(API) and `sha256:a63c28c791e5a66a86b3bdfc08170bb673df6563356083cc5f0948f9404a1849`
+(web). The full web suite passes 170/170 tests and the focused Dify boundary/lifecycle
+suite passes 10 tests / 62 assertions.
 
+Milestone recorded on 19 November (superseded by the 20 November reconciliation): production Dolved service activation and hosted engineering checks.
+
+19 November 2026: Activated the production Dolved core without exposing an insecure
+public edge. PostgreSQL, SeaweedFS, Laravel API/scheduler and the production Next.js web
+image are healthy. A production owner, private workspace, the exact four registered site
+identities and the self-hosted Dify workspace binding now exist. The worker remains
+deliberately stopped until dedicated Dify keys are installed; SMTP remains in explicit
+log-only mode rather than pretending password-reset delivery is available.
+
+19 November 2026: Materialised the frozen eleven-document assessment corpus into the
+authoritative Dolved layer without re-uploading or duplicating the already indexed Dify
+corpus. Each original was copied to restricted staging, verified before import, written to
+Dolved object storage, read back through Dolved and verified again by size and SHA-256.
+All eleven versions are approved, have their retained historical approval/effective dates,
+have sealed universal or exact-site applicability records and map to the expected existing
+Dify document ID. Dolved reports all eleven as indexed and every binding as available.
+The exact Dify dataset remains eleven enabled, non-archived documents; both dataset and
+node Top K remain 10, threshold remains disabled and weighted hybrid retrieval remains
+0.7 semantic / 0.3 keyword. The two failed import attempts are retained as ordinary
+deployment corrections: the first found a missing container-local staging path, and the
+second used the browser-facing upload disk for a server-side copy. Both database
+transactions rolled back; the successful run used the intended internal storage disk and
+created the corpus exactly once.
+
+19 November 2026: Published the unchanged frozen Dify workflow as version 1 so its stock
+backend-service API is available to the private Dolved backplane. Dify remains inaccessible
+from the public internet and the MCP endpoint remains disabled. Took the post-import Dolved
+backup at `/var/backups/dolved-pilot/20261119T220500Z`, restored the database into a
+temporary isolated database (eleven documents), compared every restored original checksum
+with its source, then removed only the temporary database. The application services were
+restarted healthy. DNS-over-HTTPS still reports NXDOMAIN for all three pilot names; the
+authoritative nameservers remain `ns1` through `ns4.mysecurecloudhost.com`.
+
+Next action recorded on 19 November (superseded; retained as history): install one dedicated Dify app key and one dedicated knowledge key, supply
+SMTP, and confirm `pilot.dolved.com`, `api.pilot.dolved.com` and
+`storage.pilot.dolved.com` resolve to `57.129.190.4`. Then start the worker and HTTPS edge,
+run the bounded hosted engineering/instrumentation checks, take the post-import backup,
+freeze the configuration and write the independent-readiness package. No sealed evaluation
+question has been accessed, released or executed.
+
+
+## Current status reconciliation — 20 November 2026
+
+Source: David's hosted-pilot status report in the delivery conversation, reconciled against
+this worktree's records and commits (`c115890`, `43094b0`, `809e104`, `17332a7`, `77e56f7`).
+This documentation-only reconciliation did not access the host, run tests, inspect secrets
+or open sealed evaluation material. Reported hosted completion is not new independent
+verification. Earlier dated DNS/key/SMTP observations remain historical, not current blockers.
+
+Completed activation: DNS/HTTPS, dedicated Dify credentials, SMTP configuration and live
+pilot activation. The previously recorded backup/restore checks remain evidence; no new
+restoration is claimed. Fixed Dolved branding is deployed; configurable platform-admin
+branding is a separate unfinished deliverable.
+
+Current milestone: hosted engineering acceptance. Next action: David confirms the deployed
+first-message fix without refresh and completes the normal user journeys while engineering
+finishes lifecycle/email/mobile/permission checks. Complete bounded branding controls and
+planned observability; use the verified restricted model-input/user-visible capture package
+for readiness evidence. General telemetry must not carry those sensitive captures.
+
+Then recheck corpus/site/configuration identities, freeze and produce one neutral Claude
+readiness handoff. All 40 questions remain sealed. No evaluation run, client invitation,
+canonical gate closure, AWS work or new testing campaign is authorised by this update.
+
+Current activation blockers: none reported. Outstanding acceptance and deliverables remain
+open, not waived. Canonical phase/session and later AWS milestones are unchanged.
+
+### Restricted model-input capture verification — 20 November 2026
+
+One bounded read-only check used the existing hosted acceptance run
+`454f0020-836e-45b6-b09a-d58714b93676`; no new question or provider call was made.
+Stock Dify 1.19.0's LLM node retained the complete serialized `PromptMessage` sequence
+created from the same runtime object passed to `model_instance.invoke_llm`. The record
+contains the final system and user messages, all ten retrieved passages, model identity,
+generation parameters, usage and finish reason. Native Dolved/Dify identifiers link it to
+the `global` structured context, the exact saved/displayed answer and all ten ordered
+source destinations. Exact passage text, document IDs, segment IDs and ordering match
+between Dify retrieval output and Dolved's displayed-source records.
+
+Conclusion: **VERIFIED** at the Dify model-runtime boundary. Provider-specific HTTP
+serialization and byte-level wire capture remain unavailable and are not claimed. The
+restricted package is outside Git at
+`/Users/davidoliver/Desktop/dolved-experiments/dolved-dify-model-input-capture-20261120T092919Z/`;
+its checksum-manifest SHA-256 is
+`75ec5655326aba7d2b946a2db081d431fc2bcefc0d0b4b7198ee1859dc12656e`.
+Raw files are mode 0600 in a mode 0700 directory and remain separate from ordinary
+OpenTelemetry. No sealed question was accessed and broader observability/acceptance tasks
+remain open.

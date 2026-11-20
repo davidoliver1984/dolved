@@ -122,17 +122,32 @@ provisioned.
 
 ## Bounded single-client delivery track — Dolved with stock self-hosted Dify
 
-This separately authorised delivery track preserves the long-term roadmap while shipping
-one hosted client pilot. Dolved remains the public Next.js/Laravel security and governance
-boundary; pinned stock Dify supplies extraction, indexing, retrieval and generation behind
-it. Local implementation, production-shaped compatibility and production dependency
-advisory checks are verified. A no-commitment OVH VPS-3 order is prepared within the
-approved monthly limit; account/payment, deployment, isolated restore verification and the
-one fresh independent evaluation remain in progress.
+This separately authorised track has reached a live hosted single-client pilot at
+https://pilot.dolved.com, undergoing engineering acceptance. It preserves the canonical
+R28-S04 position and does not pre-complete any later gate. Dolved remains the public
+Next.js/Laravel security and governance boundary; pinned stock Dify 1.19.0 provides the
+private retrieval/generation services.
+
+As reconciled from David's 20 November status report and the delivery-branch records,
+DNS/HTTPS, dedicated Dify credentials, SMTP configuration and pilot activation are complete.
+The eleven governed documents, structured site context, persisted chat/reload and source
+links are implemented; backup/restore foundations are recorded. The deployed first-message
+fix at `c115890` still awaits David's hosted confirmation. SMTP configuration is complete,
+but actual delivery and the remaining hosted lifecycle/mobile/permission checks are pending.
+
+The fixed Dolved visual identity is applied. The bounded platform-admin branding editor
+remains unbuilt under the R29 seam; this is not permission to add multi-client tenancy.
+Next: finish hands-on acceptance defects and branding controls, complete privacy-safe
+observability and restricted exact-model-input/user-visible capture, recheck the corpus and
+effective Top K 10 settings, then freeze and prepare one neutral readiness handoff. Capture
+verification can proceed alongside acceptance. The 40 questions remain sealed; no new
+answer-quality test campaign is implied. The status reconciliation did not itself run live
+checks. No activation dependency is currently reported as blocking the track.
 
 See `docs/operations/dolved-dify/DOLVED-DIFY-DELIVERY.md` and ADR-0041. This track does not
-authorise multi-client Dify tenancy, replace historical evaluation evidence or declare the
-pilot ready for client invitation.
+authorise multi-client Dify tenancy, replace historical evaluation evidence, pre-complete
+the canonical R28/R29/R30 gates or declare the pilot ready for client invitation. Future
+AWS phases remain preserved and follow the private pilot/product-acceptance work.
 
 ---
 

@@ -40,7 +40,35 @@
   "progress": {
     "current_phase": "R28",
     "current_session": "R28-S04",
-    "next_action": "R28-S04 remains the canonical current session. The approved post-R28 sequence is now R29 configurable branding, R30 private prototype/pilot launch, R31 product-wide acceptance, R32 AWS staging, R33 production and R34 documentation. Bounded Dolved+Dify delivery preparation under ADR-0041 is locally verified and supplies preparatory evidence for R30, but no later gate is pre-completed. Next operational dependency remains verified SSH access to the approved pilot host; no real-client invitation or provider call is implied.",
+    "next_action": "R28-S04 remains the canonical roadmap session; no later gate is pre-completed. The separately authorised ADR-0041 track is a live hosted single-client pilot undergoing engineering acceptance. DNS/HTTPS, dedicated Dify credentials, SMTP configuration, pilot activation and restricted exact-model-input capture are complete. Next: confirm the deployed first-message fix in hosted use, finish hands-on/lifecycle/mobile/permission/email acceptance, implement bounded platform-admin branding and complete privacy-safe observability, then verify corpus/settings and freeze one neutral Claude readiness handoff using the verified capture package. Keep the 40 questions sealed. R29/R30 evidence may be reused without closing their gates; R31 acceptance and R32 AWS/R33 production/R34 documentation remain preserved.",
+    "authorised_delivery_track": {
+      "decision_reference": "ADR-0041 and docs/operations/dolved-dify/DOLVED-DIFY-DELIVERY.md",
+      "status": "in_progress",
+      "scope": "One private, invitation-only, single-client Dolved pilot using pinned stock self-hosted Dify on the approved non-AWS host.",
+      "completed": [
+        "Established Dolved branding is applied; this is fixed product identity, not the unbuilt platform-admin branding editor.",
+        "Production Dolved frontend and Laravel backend are deployed on the approved OVH VPS. The first-message live-update correction at c115890 is reported deployed; hosted confirmation remains pending.",
+        "Stock Dify 1.19.0 at 8e689e868b63b6dd2b449d0eb568ca5cc7127759 is deployed privately.",
+        "The eleven assessment originals are recorded as hash-verified, governed, applicability-bound and mapped in Dolved/Dify without duplicate searchable copies; recheck against the final freeze before evaluation.",
+        "Dataset and node Top K 10, threshold off, weighted hybrid 0.7/0.3 and global-or-selected-site filtering were verified in the retained deployment record; final freeze verification remains.",
+        "DNS/HTTPS, dedicated Dify credentials, SMTP configuration and pilot activation are complete per David's 20 November report; mail-delivery acceptance is still pending.",
+        "Authentication, roles, workspace/conversation boundaries, structured site context, saved chat/reload and authorised source links are implemented; hosted acceptance coverage remains to be completed.",
+        "Compact expandable Sources retrieved display and import-verification corrections are deployed per David's report and delivery-branch commits.",
+        "Restricted exact model-input capture is verified from an existing hosted acceptance run without a new provider call: the direct Dify 1.19.0 PromptMessage sequence is natively correlated to the global site input, Dolved answer and ten ordered source links. Provider-wire bytes remain outside the stated capture boundary.",
+        "Restricted backup and isolated database/original restore evidence are recorded; legacy RAG recovery assets remain preserved."
+      ],
+      "remaining": [
+        "Complete David's hands-on hosted acceptance; confirm first-message answer arrival without refresh at c115890 (reported 18 regression tests, lint, TypeScript and production build passed).",
+        "Build the bounded platform-admin branding editor through the reserved seam; fixed Dolved identity does not complete R29 configurable branding.",
+        "Verify the full hosted upload, processing, replacement, withdrawal and deletion lifecycle, including ordinary failure/recovery cases.",
+        "Verify actual SMTP delivery, mobile presentation, roles/permissions, conversation ownership and source-link access.",
+        "Complete the planned privacy-safe OpenTelemetry work; keep restricted model-input evaluation captures separate from general operational telemetry.",
+        "Recheck the exact eleven-document corpus, site mapping and effective dataset/node Top K 10; freeze final deployed application, Dify/plugins, prompt, model and configuration identities.",
+        "Prepare one checksummed neutral readiness handoff for Claude; stop before sealed-question release or evaluation execution."
+      ],
+      "blockers": [],
+      "evaluation_boundary": "The 40 questions, expected answers, controls and item-to-source mappings remain sealed. No release or execution is authorised in this delivery step."
+    },
     "completed_through": "R27-GATE",
     "completed_phase_count": 28,
     "total_phase_count": 35
