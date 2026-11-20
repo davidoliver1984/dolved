@@ -521,8 +521,9 @@ top of it.
 
 Recorded 2026-08-03, arising from Phase 13 (ADR-0013)'s embedding/retrieval
 boundary discussion, formalised in Phase 16's Retrieval Planning,
-Eligibility and Retriever Contract ADR (Stage 16.2, ADR-0018, accepted
-2026-08-07): `RetrievalPlan.retrieval_queries` is the query-planning
+Eligibility and Retriever Contract specification (Stage 16.2, accepted
+2026-08-07; [current specification](docs/specs/data-api-contracts/retrieval-planning-eligibility-and-retriever.md)):
+`RetrievalPlan.retrieval_queries` is the query-planning
 boundary this constraint describes, exercised for V1 only by an
 identity/no-op planner exactly as anticipated here.
 
@@ -573,7 +574,7 @@ Generate answers that are constrained by retrieved evidence and accompanied by v
 
 Reliable RAG responses.
 
-**Completion evidence:** ADR-0023's provider-neutral generation architecture
+**Completion evidence:** the [Provider-Neutral Grounded Generation Contract](docs/specs/data-api-contracts/grounded-generation.md)
 is implemented through deterministic request assembly, typed grounded outcomes,
 citation-bound AnswerParts, durable evidence snapshots, the OpenAI/gpt-5-mini
 adapter and bounded answer evaluation. GEN-EXP-0001 preserves the original
@@ -673,7 +674,7 @@ Expose the RAG workflow as a persistent, streaming conversational experience.
 
 Production-quality chat interface.
 
-**Architecture boundary recorded 2026-08-18 by ADR-0024** (Stage 18.1):
+**Architecture boundary recorded 2026-08-18 by the [Conversation and Streaming Domain specification](docs/specs/product-features/conversations-and-streaming.md)** (Stage 18.1):
 tenant-owned conversations and visible messages are separated from durable,
 connection-independent generation runs; Laravel retains tenancy,
 authorisation, retrieval, orchestration, validation, persistence and SSE
@@ -739,7 +740,7 @@ Provide operational visibility and safe tenant-level controls.
 
 Complete administration tools.
 
-**Architecture boundary accepted 2026-08-19 through ADR-0025:** the fixed
+**Architecture boundary accepted 2026-08-19 through the [Administration and Tenant Control Plane specification](docs/specs/product-features/administration-and-tenant-control.md):** the fixed
 owner/admin/member capability model governs administrative actions; Laravel owns
 tenant authority and durable transitions while Python performs only authenticated,
 Laravel-scoped provider-native work. Document deletion is asynchronous and waits
@@ -893,7 +894,8 @@ without a design pass — but not limited to it, since redesigning only
 administration would make it read as a different application from chat,
 documents and the shared shell.
 
-ADR-0027 is the accepted product-wide architecture boundary: one adaptive, route-backed
+The [Product Interface and Design System specification](docs/specs/product-features/product-interface-and-design-system.md)
+is the accepted product-wide boundary: one adaptive, route-backed
 shell; repository-owned design tokens and components; dark-default explicit
 theming; a WCAG 2.2 AA baseline; and a bounded Laravel-owned citation/source
 presentation contract. The accepted route tree includes durable conversation
@@ -1008,7 +1010,9 @@ Comprehensive test suite.
 
 ### Objectives
 
-Implement the accepted ADR-0030–0032 foundation in its binding dependency
+Implement the accepted [Document Family and Version Metadata](docs/specs/data-api-contracts/document-family-and-version-metadata.md),
+[Version Governance, Content Reuse and Family Deletion](docs/specs/product-features/version-governance-content-reuse-and-family-deletion.md),
+and ADR-0032 foundation in its binding dependency
 order: document-family/version metadata first, then the governance primitives
 that do not depend on structured extraction, then structured extraction and
 source delivery, and finally governance paths that require that extraction
@@ -1053,7 +1057,8 @@ knowledge library and import lifecycle.
 
 ### Objectives
 
-Implement ADR-0033's route-backed knowledge-library experience after the Phase
+Implement the [Knowledge Library Navigation specification](docs/specs/product-features/knowledge-library-navigation.md)
+after the Phase
 23 data and delivery contracts exist.
 
 ### Sessions
@@ -1084,7 +1089,7 @@ unchanged as a binding Phase 25 acceptance requirement.
 
 ### Objectives
 
-Implement ADR-0034's isolated staging, deterministic preflight/matching and
+Implement the [Import Staging and Promotion specification](docs/specs/product-features/import-staging-and-promotion.md), including isolated staging, deterministic preflight/matching and
 atomic promotion lifecycle after the library foundation is available.
 
 ### Sessions
@@ -1118,7 +1123,8 @@ authorised actor. No legacy-upload substitute or provider call was used.
 
 ### Objectives
 
-Implement ADR-0035 only after ADR-0034's `ImportItem` and promotion primitives
+Implement the [Bulk Document Operations specification](docs/specs/product-features/bulk-document-operations.md)
+only after the Import Staging and Promotion specification's `ImportItem` and promotion primitives
 exist.
 
 ### Sessions
@@ -1152,7 +1158,8 @@ with a reviewed responsive product surface and genuine end-to-end evidence.
 
 ### Objectives
 
-Implement ADR-0036 after ADR-0030–0035 have supplied their event-producing
+Implement the [Document Governance Notifications and Reminders specification](docs/specs/product-features/document-governance-notifications-and-reminders.md)
+after the preceding document-governance specifications have supplied their event-producing
 lifecycles and after R26-S01 has established the PostgreSQL privilege model.
 
 ### Sessions
@@ -1181,8 +1188,9 @@ presentation.
 
 Produce the first current-code, live-provider body of evidence for how
 Dolved performs on retrieval and grounded generation, separately and end to
-end, over a realistic versioned organisational corpus, after ADR-0030
-through ADR-0036 are implemented and before Phase 31 reviews the connected
+end, over a realistic versioned organisational corpus, after the accepted
+document metadata, governance, library, import, bulk-operations and
+notifications specifications are implemented and before Phase 31 reviews the connected
 product visually. All existing engineering/calibration/held-out
 evaluation-independence rules carry forward unchanged; this phase adds a
 live, current-commit run on top of that governance rather than relaxing it.
@@ -1265,16 +1273,20 @@ corpus, with failures, costs and limitations reported honestly.
 ### Objectives
 
 Complete the tenant/deployment-branding capability deliberately left behind
-the seam in ADR-0036. Give an authorised operator a safe way to configure the
+the seam in the [Document Governance Notifications and Reminders specification](docs/specs/product-features/document-governance-notifications-and-reminders.md).
+Give an authorised operator a safe way to configure the
 display name, wordmark/logo, favicon and light/dark accent identity without
 allowing arbitrary CSS/HTML or making branding relevant to authorization,
 retrieval, governance or audit decisions.
 
 ### Sessions
 
-- R29-S01: decide and freeze branding scope, ownership and lifecycle,
-  reconciling ADR-0036's reserved seam and ADR-0041's single-client delivery
-  boundary.
+- R29-S01: specify or extend the bounded branding behaviour, ownership,
+  lifecycle and acceptance criteria from the Product Interface and Design
+  System, Administration and Tenant Control Plane, and Document Governance
+  Notifications and Reminders specifications. ADR-0041 remains the
+  single-client delivery constraint; add another ADR only if a new
+  consequential architectural choice is required.
 - R29-S02: implement validated logo/wordmark, product name, favicon and
   light/dark accent configuration, with authorised administration, preview,
   lifecycle and safe Dolved fallbacks.

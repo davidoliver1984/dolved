@@ -7669,7 +7669,7 @@ The canonical extracted-document architecture was accepted and recorded
 before any Phase 10 implementation code in:
 
 ```text
-docs/adr/0010-define-the-canonical-extracted-document-contract.md
+docs/specs/data-api-contracts/canonical-extracted-document.md
 ```
 
 Every extractor — plain text, PDF, DOCX, and any future format — produces
@@ -8623,7 +8623,7 @@ The chunking architecture and chunk contract were accepted and recorded
 before any Phase 11 implementation code in:
 
 ```text
-docs/adr/0011-define-the-chunking-architecture-and-contract.md
+docs/specs/data-api-contracts/chunking-contract.md
 ```
 
 Chunking is a deterministic, versioned transformation from one immutable
@@ -10850,7 +10850,7 @@ Completed on 2026-08-06.
 ADR 0015 was accepted before any Phase 15 implementation code, in:
 
 ```text
-docs/adr/0015-define-end-to-end-ingestion-orchestration-and-worker-result-contracts.md
+docs/specs/data-api-contracts/ingestion-orchestration-and-worker-results.md
 ```
 
 It supersedes ADR 0009 **in part**: ADR 0009's cryptographic primitives — HMAC-
@@ -11010,7 +11010,7 @@ Completed on 2026-08-06.
 ADR 0016 was accepted before any Stage 15.3 implementation code, in:
 
 ```text
-docs/adr/0016-define-ingestion-publication-and-recovery-semantics.md
+docs/specs/data-api-contracts/ingestion-publication-and-recovery.md
 ```
 
 It supersedes ADR 0015 **in part** — provisional-vector visibility,
@@ -11373,7 +11373,7 @@ ADR 0017 was accepted before any Stage 16.2 implementation or architecture
 work began, in:
 
 ```text
-docs/adr/0017-define-document-versioning-and-temporal-authority.md
+docs/specs/data-api-contracts/document-versioning-and-temporal-authority.md
 ```
 
 It supersedes ADR-0007 **in part** — specifically its *"no versioning for
@@ -11528,7 +11528,7 @@ Completed on 2026-08-07.
 ADR 0018 was accepted before any Stage 16.3/16.4 implementation began, in:
 
 ```text
-docs/adr/0018-define-retrieval-planning-eligibility-and-the-retriever-contract.md
+docs/specs/data-api-contracts/retrieval-planning-eligibility-and-retriever.md
 ```
 
 It consumes ADR-0017 without reopening it, and extends ADR-0016's dual
@@ -11881,7 +11881,7 @@ Completed on 2026-08-07.
 ADR 0019 was accepted before any Stage 16.6 implementation began, in:
 
 ```text
-docs/adr/0019-define-retrieval-evaluation-and-quality-gates.md
+docs/specs/quality/retrieval-evaluation-and-quality-gates.md
 ```
 
 It fulfils ADR-0013's forward evaluation commitment, consumes ADR-0017 and
@@ -12635,7 +12635,7 @@ Completed on 2026-08-16.
 ADR 0023 was accepted in:
 
 ```text
-docs/adr/0023-define-the-provider-neutral-grounded-generation-architecture-and-contract.md
+docs/specs/data-api-contracts/grounded-generation.md
 ```
 
 Full rationale, alternatives and consequences live in the ADR; summarised
@@ -13342,7 +13342,7 @@ Provide operational visibility and safe tenant-level controls.
 
 ### Accepted architecture
 
-[ADR-0025](docs/adr/0025-define-the-administration-and-tenant-control-plane.md)
+[Administration and Tenant Control Plane specification](docs/specs/product-features/administration-and-tenant-control.md)
 is the authoritative Phase 19 control-plane architecture. It retains the fixed
 `OWNER`/`ADMIN`/`MEMBER` role model, keeps administrative authority and durable
 state transitions in Laravel, and limits Python to provider-native ingestion and
@@ -15778,25 +15778,31 @@ proof over an arbitrary tenant's corpus.
 ## Phase objective
 
 Complete the branding capability deliberately reserved, but not implemented,
-by ADR-0036. Provide a validated, authorised and accessible way to configure
+by the [Document Governance Notifications and Reminders specification](docs/specs/product-features/document-governance-notifications-and-reminders.md).
+Start from the [Product Interface and Design System](docs/specs/product-features/product-interface-and-design-system.md)
+and [Administration and Tenant Control Plane](docs/specs/product-features/administration-and-tenant-control.md)
+specifications. Provide a validated, authorised and accessible way to configure
 the Dolved display name, wordmark/logo, favicon and light/dark accent identity
 before the separately gated private pilot. Branding remains presentation only
 and never changes authorization, retrieval, governance or audit decisions.
 
-## Stage 29.1 — Freeze branding ownership and lifecycle
+## Stage 29.1 — Specify branding ownership and lifecycle
 
-Decide whether the first configurable identity is deployment-wide,
+Specify whether the first configurable identity is deployment-wide,
 workspace-owned, or a deliberately bounded combination. Record the authority
 allowed to change it, its version/lifecycle semantics, its storage boundary,
-and how it consumes ADR-0036's provider-neutral branding seam without making
+and how it consumes the governance notifications specification's
+provider-neutral branding seam without making
 branding relevant to authorization, retrieval, notification eligibility or
 audit decisions. Reconcile this phase with ADR-0041's stock-Dify delivery
 boundary.
 
-Acceptance requires an approved architecture decision covering the minimum
-branding identity contract (display name, wordmark/logo reference, favicon,
+Acceptance requires a bounded specification covering the minimum branding
+identity contract (display name, wordmark/logo reference, favicon,
 light/dark accents and fallback), upload validation, permissions, deletion,
 cache behaviour, accessibility and what remains deliberately deferred.
+Create an ADR only if this work makes a new consequential architectural choice;
+ordinary specification maintenance does not require one.
 
 ## Stage 29.2 — Implement configurable identity and administration
 
