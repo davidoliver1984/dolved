@@ -79,4 +79,5 @@ Counts below are case-insensitive occurrences of the legacy identifier, former p
 
 - No files under evaluation evidence, tests, contracts, application source, infrastructure or `docs/adr/gpt_drafts/` were moved or edited for reclassification.
 - The baseline pilot worktree had uncommitted changes to `PROJECT_ROADMAP.md`, `tasks.json`, `docs/journal/2026-11-19-dolved-dify-delivery.md` and `docs/operations/dolved-dify/DOLVED-DIFY-DELIVERY.md`. Current-reference edits to the first two are independent but require reconciliation with that worktree before merge; the journal and delivery-plan working copies were not copied into this branch.
+- The original `codex/block1-extractive-hold-20261112` worktree has an uncommitted edit to ADR-0039. It was not copied or overwritten. The classification row above reflects the selected pilot baseline and must be revalidated against that edit before integration.
 - The accepted Dify pilot decision and legacy custom RAG recovery documentation remain distinct. Reclassification does not declare the legacy system superseded beyond what recorded decisions state.
