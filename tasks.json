@@ -1891,7 +1891,7 @@
             "status": "completed"
           },
           "completion_evidence": [
-            "docs/adr/0011-define-the-chunking-architecture-and-contract.md",
+            "docs/specs/data-api-contracts/chunking-contract.md",
             "IMPLEMENTATION_GUIDE.md Stage 11.1 (Decision, Session verification, acceptance criteria checked)",
             "docs/journal/2026-07-30-r11-s01-define-chunk-contract.md"
           ]
@@ -2693,7 +2693,7 @@
             "status": "completed"
           },
           "completion_evidence": [
-            "docs/adr/0015-define-end-to-end-ingestion-orchestration-and-worker-result-contracts.md",
+            "docs/specs/data-api-contracts/ingestion-orchestration-and-worker-results.md",
             "docs/adr/README.md (index updated)",
             "IMPLEMENTATION_GUIDE.md Stage 15.1 (Decision, Session verification, Acceptance criteria checked)",
             "docs/journal/2026-08-06-r15-s01-define-end-to-end-ingestion-orchestration-and-worker-result-contracts.md"
@@ -2740,7 +2740,7 @@
             "status": "completed"
           },
           "completion_evidence": [
-            "docs/adr/0016-define-ingestion-publication-and-recovery-semantics.md",
+            "docs/specs/data-api-contracts/ingestion-publication-and-recovery.md",
             "docs/adr/README.md (index updated)",
             "IMPLEMENTATION_GUIDE.md Stage 15.2 (Decision, Session verification, Acceptance criteria checked)",
             "docs/journal/2026-08-06-r15-s02-define-ingestion-publication-and-recovery-semantics.md"
@@ -2864,7 +2864,7 @@
             "status": "completed"
           },
           "completion_evidence": [
-            "docs/adr/0017-define-document-versioning-and-temporal-authority.md",
+            "docs/specs/data-api-contracts/document-versioning-and-temporal-authority.md",
             "docs/adr/README.md (index updated)",
             "IMPLEMENTATION_GUIDE.md Stage 16.1 (Decision, Session verification, Acceptance criteria checked)",
             "PROJECT_ROADMAP.md (Phase 16 task list synchronised)",
@@ -2912,7 +2912,7 @@
             "status": "completed"
           },
           "completion_evidence": [
-            "docs/adr/0018-define-retrieval-planning-eligibility-and-the-retriever-contract.md",
+            "docs/specs/data-api-contracts/retrieval-planning-eligibility-and-retriever.md",
             "docs/adr/README.md (index updated)",
             "IMPLEMENTATION_GUIDE.md Stage 16.2 (Decision, Session verification, Acceptance criteria checked)",
             "IMPLEMENTATION_GUIDE.md Phase 16 restructuring note (second) and Stage 16.3 inserted",
@@ -3064,7 +3064,7 @@
             "status": "completed"
           },
           "completion_evidence": [
-            "docs/adr/0019-define-retrieval-evaluation-and-quality-gates.md",
+            "docs/specs/quality/retrieval-evaluation-and-quality-gates.md",
             "docs/adr/README.md (index updated)",
             "IMPLEMENTATION_GUIDE.md Stage 16.5 (Decision, Session verification, Acceptance criteria checked)",
             "PROJECT_ROADMAP.md (Phase 16 task list synchronised)",
@@ -3298,7 +3298,7 @@
             "status": "completed"
           },
           "completion_evidence": [
-            "docs/adr/0023-define-the-provider-neutral-grounded-generation-architecture-and-contract.md",
+            "docs/specs/data-api-contracts/grounded-generation.md",
             "docs/adr/README.md (index updated)",
             "IMPLEMENTATION_GUIDE.md Stage 17.1 (Decision, Session verification, Acceptance criteria checked)",
             "PROJECT_ROADMAP.md (Phase 17 design constraints reconciled against ADR-0023)",

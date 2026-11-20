@@ -7669,7 +7669,7 @@ The canonical extracted-document architecture was accepted and recorded
 before any Phase 10 implementation code in:
 
 ```text
-docs/adr/0010-define-the-canonical-extracted-document-contract.md
+docs/specs/data-api-contracts/canonical-extracted-document.md
 ```
 
 Every extractor — plain text, PDF, DOCX, and any future format — produces
@@ -8623,7 +8623,7 @@ The chunking architecture and chunk contract were accepted and recorded
 before any Phase 11 implementation code in:
 
 ```text
-docs/adr/0011-define-the-chunking-architecture-and-contract.md
+docs/specs/data-api-contracts/chunking-contract.md
 ```
 
 Chunking is a deterministic, versioned transformation from one immutable
@@ -10850,7 +10850,7 @@ Completed on 2026-08-06.
 ADR 0015 was accepted before any Phase 15 implementation code, in:
 
 ```text
-docs/adr/0015-define-end-to-end-ingestion-orchestration-and-worker-result-contracts.md
+docs/specs/data-api-contracts/ingestion-orchestration-and-worker-results.md
 ```
 
 It supersedes ADR 0009 **in part**: ADR 0009's cryptographic primitives — HMAC-
@@ -11010,7 +11010,7 @@ Completed on 2026-08-06.
 ADR 0016 was accepted before any Stage 15.3 implementation code, in:
 
 ```text
-docs/adr/0016-define-ingestion-publication-and-recovery-semantics.md
+docs/specs/data-api-contracts/ingestion-publication-and-recovery.md
 ```
 
 It supersedes ADR 0015 **in part** — provisional-vector visibility,
@@ -11373,7 +11373,7 @@ ADR 0017 was accepted before any Stage 16.2 implementation or architecture
 work began, in:
 
 ```text
-docs/adr/0017-define-document-versioning-and-temporal-authority.md
+docs/specs/data-api-contracts/document-versioning-and-temporal-authority.md
 ```
 
 It supersedes ADR-0007 **in part** — specifically its *"no versioning for
@@ -11528,7 +11528,7 @@ Completed on 2026-08-07.
 ADR 0018 was accepted before any Stage 16.3/16.4 implementation began, in:
 
 ```text
-docs/adr/0018-define-retrieval-planning-eligibility-and-the-retriever-contract.md
+docs/specs/data-api-contracts/retrieval-planning-eligibility-and-retriever.md
 ```
 
 It consumes ADR-0017 without reopening it, and extends ADR-0016's dual
@@ -11881,7 +11881,7 @@ Completed on 2026-08-07.
 ADR 0019 was accepted before any Stage 16.6 implementation began, in:
 
 ```text
-docs/adr/0019-define-retrieval-evaluation-and-quality-gates.md
+docs/specs/quality/retrieval-evaluation-and-quality-gates.md
 ```
 
 It fulfils ADR-0013's forward evaluation commitment, consumes ADR-0017 and
@@ -12635,7 +12635,7 @@ Completed on 2026-08-16.
 ADR 0023 was accepted in:
 
 ```text
-docs/adr/0023-define-the-provider-neutral-grounded-generation-architecture-and-contract.md
+docs/specs/data-api-contracts/grounded-generation.md
 ```
 
 Full rationale, alternatives and consequences live in the ADR; summarised
@@ -13342,7 +13342,7 @@ Provide operational visibility and safe tenant-level controls.
 
 ### Accepted architecture
 
-[ADR-0025](docs/adr/0025-define-the-administration-and-tenant-control-plane.md)
+[Administration and Tenant Control Plane specification](docs/specs/product-features/administration-and-tenant-control.md)
 is the authoritative Phase 19 control-plane architecture. It retains the fixed
 `OWNER`/`ADMIN`/`MEMBER` role model, keeps administrative authority and durable
 state transitions in Laravel, and limits Python to provider-native ingestion and

@@ -51,8 +51,8 @@ The browser **never** talks to the Python AI service directly (`contracts/http/R
 - **ADR-0007**: Document lifecycle is a state machine (`UPLOADING → UPLOADED → QUEUED → PROCESSING → INDEXED`, with `FAILED` and `DELETING → DELETED` branches), superseded in part by ADR-0008 for what "entering `QUEUED`" means.
 - **ADR-0008**: transactional outbox pattern for publishing ingestion events — PostgreSQL owns durable publish *intent*; SQS delivery is eventual and at-least-once.
 - **ADR-0009**: HMAC-SHA256 authentication for the Python worker's internal Laravel claim request — a narrow, single-purpose machine identity, not a general auth framework.
-- **ADR-0010**: canonical, immutable `ExtractedDocument`/`Element` contract — extraction preserves semantic structure; only later stages may discard information.
-- **ADR-0011**: deterministic, immutable `ChunkingStrategy`/`ChunkingResult` contract — chunking operates only on `NormalisedDocument`, no context wrapper.
+- **Canonical Extracted Document Contract**: canonical, immutable `ExtractedDocument`/`Element` contract — extraction preserves semantic structure; only later stages may discard information.
+- **Chunking Architecture and Contract**: deterministic, immutable `ChunkingStrategy`/`ChunkingResult` contract — chunking operates only on `NormalisedDocument`, no context wrapper.
 - **ADR-0012**: OpenTelemetry as the canonical, vendor-neutral instrumentation API; a strict attribute **allowlist** (not a denylist) guards against sensitive data ever reaching telemetry.
 
 ## Implemented vs. planned
@@ -762,13 +762,13 @@ This service currently has two entrypoints sharing one codebase: `app/main.py` (
 
 ---
 
-### `app/extraction/` — the canonical extraction contract (ADR-0010)
+### `app/extraction/` — the canonical extraction contract (Canonical Extracted Document Contract)
 
 #### `models.py`
 
-**Responsibilities**: defines the entire `ExtractedDocument`/`Element` contract from ADR-0010 in Pydantic. This is the single most important file to read to understand what "extraction" actually produces in this codebase.
+**Responsibilities**: defines the entire `ExtractedDocument`/`Element` contract from Canonical Extracted Document Contract in Pydantic. This is the single most important file to read to understand what "extraction" actually produces in this codebase.
 
-**Technical description**: `ImmutableModel` (base class, `frozen=True, extra="forbid"`) underlies everything. `SourceLocation` is a sealed-ish polymorphic base with format-specific subclasses `TextSourceLocation`, `PdfSourceLocation` (PDF geometry in points, rotation, crop-box distinction), `DocxSourceLocation` (body-block index, optional table row/column). `Element` (`id: UUID`, `kind`, `source_location`, `confidence`) is subclassed by `ParagraphElement`, `HeadingElement` (with `level`), `TableElement` (with `rows: tuple[TableRow,...]`, each row validated for contiguous, rectangular cell indexing), and `UnknownElement` — the ADR-0010-mandated safe-fallback type for anything a consumer doesn't recognise. `ExtractedDocument` is the top-level immutable contract: `workspace_id`, `document_id`, `source_media_type`, `source_byte_size`, `extractor: ExtractorIdentity`, `text`, `elements` (min length 1), `warnings`, `metadata`.
+**Technical description**: `ImmutableModel` (base class, `frozen=True, extra="forbid"`) underlies everything. `SourceLocation` is a sealed-ish polymorphic base with format-specific subclasses `TextSourceLocation`, `PdfSourceLocation` (PDF geometry in points, rotation, crop-box distinction), `DocxSourceLocation` (body-block index, optional table row/column). `Element` (`id: UUID`, `kind`, `source_location`, `confidence`) is subclassed by `ParagraphElement`, `HeadingElement` (with `level`), `TableElement` (with `rows: tuple[TableRow,...]`, each row validated for contiguous, rectangular cell indexing), and `UnknownElement` — the Canonical Extracted Document Contract-mandated safe-fallback type for anything a consumer doesn't recognise. `ExtractedDocument` is the top-level immutable contract: `workspace_id`, `document_id`, `source_media_type`, `source_byte_size`, `extractor: ExtractorIdentity`, `text`, `elements` (min length 1), `warnings`, `metadata`.
 
 **Relationships** — Produced by: `plain_text.py`, `pdf/pdfplumber.py`, `docx/python_docx.py`. Consumed by: `normalisation/structural.py`.
 
@@ -776,7 +776,7 @@ This service currently has two entrypoints sharing one codebase: `app/main.py` (
 
 #### `errors.py`, `limits.py`
 
-`ExtractionFailure` (carries `kind: ExtractionFailureKind.TRANSIENT|PERMANENT`, a machine-readable `code`, and a human-readable `user_message`) is the typed failure ADR-0010 requires — every extractor raises this, never a bare exception, for any unrecoverable input. `limits.py` just defines `DEFAULT_MAX_SOURCE_BYTES = 25 MiB`, shared across all three extractors. **Status**: Implemented.
+`ExtractionFailure` (carries `kind: ExtractionFailureKind.TRANSIENT|PERMANENT`, a machine-readable `code`, and a human-readable `user_message`) is the typed failure Canonical Extracted Document Contract requires — every extractor raises this, never a bare exception, for any unrecoverable input. `limits.py` just defines `DEFAULT_MAX_SOURCE_BYTES = 25 MiB`, shared across all three extractors. **Status**: Implemented.
 
 #### `plain_text.py` (`PlainTextExtractor`)
 
@@ -810,17 +810,17 @@ This service currently has two entrypoints sharing one codebase: `app/main.py` (
 
 ---
 
-### `app/normalisation/` — structural normalisation (ADR-0010's third stage)
+### `app/normalisation/` — structural normalisation (Canonical Extracted Document Contract's third stage)
 
 #### `models.py`
 
-Defines `NormalisedDocument`/`NormalisedElement` (and typed subclasses mirroring the extraction-side `Element` hierarchy: `NormalisedParagraphElement`, `NormalisedHeadingElement`, `NormalisedTableElement`, `NormalisedUnknownElement`) plus `NormalisationChange` (a record of *what* was normalised away and why — required by ADR-0010's traceability rule). Every `NormalisedElement` retains `source_element_ids` back to the `ExtractedDocument` elements it derived from. **Status**: Implemented.
+Defines `NormalisedDocument`/`NormalisedElement` (and typed subclasses mirroring the extraction-side `Element` hierarchy: `NormalisedParagraphElement`, `NormalisedHeadingElement`, `NormalisedTableElement`, `NormalisedUnknownElement`) plus `NormalisationChange` (a record of *what* was normalised away and why — required by Canonical Extracted Document Contract's traceability rule). Every `NormalisedElement` retains `source_element_ids` back to the `ExtractedDocument` elements it derived from. **Status**: Implemented.
 
 #### `structural.py` (`StructuralNormaliser`)
 
 **Responsibilities**: the concrete, deterministic normaliser — Unicode NFC normalisation, line-ending/whitespace canonicalisation, removal of *semantically empty* elements (recorded as a `NormalisationChange`, never silently dropped), and a conservative repeated-header/footer-removal heuristic specific to multi-page PDFs (requires the *same* normalised text to appear at the same page-relative boundary position on every page before removing it — a deliberately narrow rule to avoid false positives).
 
-**Technical description**: `normalise(ExtractedDocument) -> NormalisedDocument`. Builds deterministic element IDs via `uuid5` over (`normaliser_version`, source element ID, kind, normalised text) — so re-running normalisation over the same extraction produces identical IDs, per ADR-0010/0011's replayability principle. `_repeated_boundary_changes()` only activates when there are ≥3 pages with ≥2 elements each, and only removes a boundary element if it's an *identical* `ParagraphElement` at every single page's header/footer position — anything less certain is left alone.
+**Technical description**: `normalise(ExtractedDocument) -> NormalisedDocument`. Builds deterministic element IDs via `uuid5` over (`normaliser_version`, source element ID, kind, normalised text) — so re-running normalisation over the same extraction produces identical IDs, per Canonical Extracted Document Contract/0011's replayability principle. `_repeated_boundary_changes()` only activates when there are ≥3 pages with ≥2 elements each, and only removes a boundary element if it's an *identical* `ParagraphElement` at every single page's header/footer position — anything less certain is left alone.
 
 **Relationships** — Called by: (not yet wired into the ingestion worker — see Status). Consumes: `ExtractedDocument`. Produces: `NormalisedDocument`, consumed by `chunking/baseline.py`. Tested by: `tests/test_structural_normalisation.py`.
 
@@ -828,17 +828,17 @@ Defines `NormalisedDocument`/`NormalisedElement` (and typed subclasses mirroring
 
 ---
 
-### `app/chunking/` — the deterministic chunking contract (ADR-0011)
+### `app/chunking/` — the deterministic chunking contract (Chunking Architecture and Contract)
 
 #### `protocol.py`, `models.py`
 
-`ChunkingStrategy` is a one-method `Protocol`: `chunk(document: NormalisedDocument) -> ChunkingResult` — no context wrapper, exactly as ADR-0011 mandates, since `NormalisedDocument` is already self-describing. `models.py` defines `TokenizerIdentity`, `BaselineChunkingConfiguration` (with a `fingerprint()` method — a SHA-256 of the canonical JSON serialisation, used for deterministic chunk-identity derivation), `ChunkContribution` (per-element provenance within a chunk, tagged `role: "primary"|"overlap"`), `Chunk`, `ChunkingWarning`, `ChunkingResult` (validates its own `configuration_fingerprint` matches `configuration.fingerprint()`, and that chunk ordinals are contiguous from zero — a model-level self-check, not just a strategy-level convention). **Status**: Implemented.
+`ChunkingStrategy` is a one-method `Protocol`: `chunk(document: NormalisedDocument) -> ChunkingResult` — no context wrapper, exactly as Chunking Architecture and Contract mandates, since `NormalisedDocument` is already self-describing. `models.py` defines `TokenizerIdentity`, `BaselineChunkingConfiguration` (with a `fingerprint()` method — a SHA-256 of the canonical JSON serialisation, used for deterministic chunk-identity derivation), `ChunkContribution` (per-element provenance within a chunk, tagged `role: "primary"|"overlap"`), `Chunk`, `ChunkingWarning`, `ChunkingResult` (validates its own `configuration_fingerprint` matches `configuration.fingerprint()`, and that chunk ordinals are contiguous from zero — a model-level self-check, not just a strategy-level convention). **Status**: Implemented.
 
 #### `baseline.py` (`BaselineStructuralChunker`)
 
 **Responsibilities**: the one concrete `ChunkingStrategy` implementation (Stage 11.2's baseline). Groups normalised elements into token-bounded chunks, splits oversized elements deterministically at sentence/paragraph/word boundaries (row boundaries for tables) without ever discarding content, and computes token-bounded overlap between adjacent chunks.
 
-**Technical description**: `_split_element()` uses the tokenizer's `largest_prefix_end`/`smallest_suffix_start` to find safe split points within the token budget, preferring sentence boundaries (`_SENTENCE_BOUNDARY` regex) over raw truncation. `_group_primary_pieces()` packs pieces up to `target_tokens`, with special-case handling so a heading is never left stranded alone at the end of a chunk if pairing it with the next piece would still fit. `_overlap_from()` walks backward through the previous chunk's pieces to build a token-bounded overlap prefix for the next chunk, shrinking the budget until it fits under `max_tokens`. `_build_chunk()` derives a deterministic `uuid5` chunk ID from workspace/document/strategy/version/configuration-fingerprint/ordinal/provenance/text — satisfying ADR-0011's "identity reflects what a chunk actually is." `_assert_complete()` is the ADR-0011 completeness check: walks every normalised element's *primary* contributions and raises `UnrepresentableContentError` if any character range isn't fully covered — a structural guarantee, not just a warning.
+**Technical description**: `_split_element()` uses the tokenizer's `largest_prefix_end`/`smallest_suffix_start` to find safe split points within the token budget, preferring sentence boundaries (`_SENTENCE_BOUNDARY` regex) over raw truncation. `_group_primary_pieces()` packs pieces up to `target_tokens`, with special-case handling so a heading is never left stranded alone at the end of a chunk if pairing it with the next piece would still fit. `_overlap_from()` walks backward through the previous chunk's pieces to build a token-bounded overlap prefix for the next chunk, shrinking the budget until it fits under `max_tokens`. `_build_chunk()` derives a deterministic `uuid5` chunk ID from workspace/document/strategy/version/configuration-fingerprint/ordinal/provenance/text — satisfying Chunking Architecture and Contract's "identity reflects what a chunk actually is." `_assert_complete()` is the Chunking Architecture and Contract completeness check: walks every normalised element's *primary* contributions and raises `UnrepresentableContentError` if any character range isn't fully covered — a structural guarantee, not just a warning.
 
 **Relationships** — Implements: `ChunkingStrategy`. Consumes: `NormalisedDocument`. Uses: `tokenizer.Tokenizer`. Tested by: `tests/test_baseline_chunking.py`, `tests/test_chunking_evaluation.py` (see `docs/evaluation/r11-s03-baseline-chunking.md`).
 
@@ -846,7 +846,7 @@ Defines `NormalisedDocument`/`NormalisedElement` (and typed subclasses mirroring
 
 #### `tokenizer.py` (`TiktokenTokenizer`)
 
-**Responsibilities**: pins the *exact* tokenizer behaviour chunking relies on for reproducibility — this is what makes ADR-0011's determinism guarantee actually hold in practice, not just in principle.
+**Responsibilities**: pins the *exact* tokenizer behaviour chunking relies on for reproducibility — this is what makes Chunking Architecture and Contract's determinism guarantee actually hold in practice, not just in principle.
 
 **Technical description**: Asserts the installed `tiktoken` version matches `TIKTOKEN_VERSION` exactly at construction (fails loudly rather than silently drifting). Computes a `vocabulary_fingerprint` by hashing every `(token, rank)` pair in the loaded encoding's merge ranks, since tiktoken exposes no public vocabulary-revision identifier otherwise. `largest_prefix_end`/`smallest_suffix_start` binary-search-like scan token-decode offsets to find safe character split points; both raise `UnrepresentableContentError` if the tokenizer can't round-trip the text exactly (a correctness guard against silent corruption from token boundary mismatches).
 
@@ -856,7 +856,7 @@ Defines `NormalisedDocument`/`NormalisedElement` (and typed subclasses mirroring
 
 #### `errors.py`
 
-`ChunkingError` (base) / `UnrepresentableContentError` — the ADR-0011-mandated typed failure for content that cannot be safely chunked, raised instead of returning an incomplete "successful" result. **Status**: Implemented.
+`ChunkingError` (base) / `UnrepresentableContentError` — the Chunking Architecture and Contract-mandated typed failure for content that cannot be safely chunked, raised instead of returning an incomplete "successful" result. **Status**: Implemented.
 
 ---
 
@@ -874,7 +874,7 @@ Documents the general principles for every event contract in this directory (ver
 
 #### `contracts/events/document-ingestion-requested/v1.schema.json`, `v1.example.json`, `README.md`, `fixtures/*`
 
-**File responsibilities**: the actual, physical JSON Schema both Laravel (`DocumentIngestionContractValidator`) and Python (`contract.py`) load and validate against — genuinely the same file on disk via each service's read-only `/contracts` mount, not two independently maintained copies. This is the concrete artefact ADR-0008 and ADR-0010's cross-service-contract reasoning point at.
+**File responsibilities**: the actual, physical JSON Schema both Laravel (`DocumentIngestionContractValidator`) and Python (`contract.py`) load and validate against — genuinely the same file on disk via each service's read-only `/contracts` mount, not two independently maintained copies. This is the concrete artefact ADR-0008 and Canonical Extracted Document Contract's cross-service-contract reasoning point at.
 
 **Technical description**: `additionalProperties: false` — even a purely additive optional field requires a new `v2` schema, a deliberate strict/fail-closed choice explained in the README (small blast radius: one producer, one consumer, one monorepo). `fixtures/` holds four deliberately-invalid payloads (`invalid-missing-workspace-id.json`, `invalid-unknown-field.json`, `invalid-unsupported-version.json`, `invalid-zero-byte-size.json`), each exercising one negative case shared by both languages' test suites.
 
@@ -1043,7 +1043,7 @@ Each stage is fully implemented and independently tested, but as of this commit 
 7. **`app/Actions/Ingestion/*` + `app/Services/Ingestion/*` alongside ADR-0008 and ADR-0009** — the outbox and HMAC-claim mechanics are the most architecturally dense part of the API; read the ADRs and the code side by side.
 8. **`contracts/events/document-ingestion-requested/`** — the schema itself, then both `DocumentIngestionContractValidator.php` and `contract.py` side by side, to see the same contract enforced twice.
 9. **`apps/ai/app/ingestion/*`** — the Python mirror of step 7; read `worker.py` (the entrypoint) first, then trace into `sqs.py`, `contract.py`, `claim_client.py`, `signing.py`.
-10. **`apps/ai/app/extraction/models.py`, then one extractor (`plain_text.py` is the simplest)**, then **`normalisation/structural.py`**, then **`chunking/baseline.py`** — read ADR-0010 and ADR-0011 immediately before this block; the code is dense without that context.
+10. **`apps/ai/app/extraction/models.py`, then one extractor (`plain_text.py` is the simplest)**, then **`normalisation/structural.py`**, then **`chunking/baseline.py`** — read Canonical Extracted Document Contract and Chunking Architecture and Contract immediately before this block; the code is dense without that context.
 11. **`apps/web/src/lib/server-api.ts` and one page (`app/app/workspaces/[workspacePublicId]/page.tsx`)** — see how the frontend re-derives authorisation on every request rather than trusting client state.
 12. **Tests last, but not skipped** — `DocumentIngestionClaimTest.php`, `test_ingestion_worker.py`, and `test_chunking_evaluation.py` in particular encode edge-case behaviour (stale events, poison payloads, completeness guarantees) that isn't obvious from the production code alone.
 
@@ -1053,7 +1053,7 @@ Each stage is fully implemented and independently tested, but as of this commit 
 
 **ADR** — Architecture Decision Record; a numbered, immutable document in `docs/adr/` recording a durable architectural decision, its alternatives, and its consequences.
 
-**Chunk / Chunking** — splitting a `NormalisedDocument` into retrieval-sized units (`Chunk`s) that a future embedding stage will vectorise. Governed by ADR-0011; implemented by `BaselineStructuralChunker`.
+**Chunk / Chunking** — splitting a `NormalisedDocument` into retrieval-sized units (`Chunk`s) that a future embedding stage will vectorise. Governed by Chunking Architecture and Contract; implemented by `BaselineStructuralChunker`.
 
 **ChunkingResult** — the immutable output of one chunking run: the produced chunks, the strategy identity/version, and a configuration snapshot + fingerprint, kept separate from operational/execution telemetry.
 
@@ -1067,7 +1067,7 @@ Each stage is fully implemented and independently tested, but as of this commit 
 
 **Document lifecycle** — the state machine `UPLOADING → UPLOADED → QUEUED → PROCESSING → INDEXED`, with `FAILED` and `DELETING → DELETED` branches, defined in ADR-0007 and encoded as `DocumentStatus`.
 
-**ExtractedDocument / Element** — the canonical, immutable, format-agnostic output of any extractor (plain text, PDF, DOCX), defined in ADR-0010. Extraction preserves as much semantic structure as practical; later stages, not extraction, decide what to discard.
+**ExtractedDocument / Element** — the canonical, immutable, format-agnostic output of any extractor (plain text, PDF, DOCX), defined in Canonical Extracted Document Contract. Extraction preserves as much semantic structure as practical; later stages, not extraction, decide what to discard.
 
 **Extraction confidence** — an optional per-element float (0–1) an extractor may populate, reserved for future quality-control use; not currently consumed by anything.
 
@@ -1075,7 +1075,7 @@ Each stage is fully implemented and independently tested, but as of this commit 
 
 **Idempotency (ingestion)** — the guarantee that redelivering or republishing the same logical `event_id` never performs a lifecycle transition twice; enforced via the durable `IngestionEventClaim` row, not SQS's transport-level message ID.
 
-**NormalisedDocument / NormalisedElement** — the deterministic, structurally-cleaned-up representation produced from an `ExtractedDocument` by the `StructuralNormaliser`; self-describing (carries its own `workspace_id`/`document_id`), which is why chunking needs no context wrapper (ADR-0011).
+**NormalisedDocument / NormalisedElement** — the deterministic, structurally-cleaned-up representation produced from an `ExtractedDocument` by the `StructuralNormaliser`; self-describing (carries its own `workspace_id`/`document_id`), which is why chunking needs no context wrapper (Chunking Architecture and Contract).
 
 **Outbox (transactional outbox)** — the ADR-0008 pattern where Laravel durably records "an event must be published" in the same PostgreSQL transaction as the Document's lifecycle transition, decoupling durable intent from eventual, best-effort SQS delivery.
 
