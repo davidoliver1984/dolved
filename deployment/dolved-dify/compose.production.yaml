@@ -53,6 +53,7 @@ x-api-environment: &api-environment
   DOCUMENT_GOVERNANCE_QUEUE: document-governance
   LOG_CHANNEL: stderr
   OTEL_SDK_DISABLED: "true"
+  OPERATIONAL_METRICS_ENABLED: ${OPERATIONAL_METRICS_ENABLED:-false}
   MAIL_MAILER: ${MAIL_MAILER:-smtp}
   MAIL_HOST: ${MAIL_HOST:?MAIL_HOST is required}
   MAIL_PORT: ${MAIL_PORT:-587}

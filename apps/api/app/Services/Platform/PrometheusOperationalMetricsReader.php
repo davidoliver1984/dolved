@@ -51,6 +51,10 @@ final class PrometheusOperationalMetricsReader implements OperationalMetricsRead
 
     public function snapshot(): array
     {
+        if (! (bool) config('platform.metrics.enabled')) {
+            return $this->unavailableSnapshot();
+        }
+
         return Cache::remember(self::CACHE_KEY, (int) config('platform.metrics.cache_seconds'), function (): array {
             $metrics = [];
             foreach (self::QUERIES as $name => $query) {
@@ -89,6 +93,28 @@ final class PrometheusOperationalMetricsReader implements OperationalMetricsRead
                 'alertmanager_url' => (string) config('platform.metrics.alertmanager_public_url'),
             ];
         });
+    }
+
+    private function unavailableSnapshot(): array
+    {
+        return [
+            'status' => 'unavailable',
+            'health_status' => 'unknown',
+            'as_of' => now()->toIso8601String(),
+            'freshness' => 'unavailable',
+            'metrics' => array_fill_keys(array_keys(self::QUERIES), ['status' => 'unavailable', 'values' => []]),
+            'slos' => array_map(fn (string $id, array $definition): array => [
+                'id' => $id,
+                'objective' => $definition['objective'],
+                'window_days' => $definition['window_days'],
+                'status' => 'unavailable',
+                'value' => null,
+                'compliant' => null,
+            ], array_keys(self::SLOS), array_values(self::SLOS)),
+            'alerts' => ['status' => 'unavailable', 'values' => []],
+            'grafana_url' => (string) config('platform.metrics.grafana_url'),
+            'alertmanager_url' => (string) config('platform.metrics.alertmanager_public_url'),
+        ];
     }
 
     /** @return array{status: string, values: array<int, array<string, string>>} */
