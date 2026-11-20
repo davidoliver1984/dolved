@@ -24,9 +24,6 @@ final class PlatformTenantBrandingAssetController extends Controller
         ]);
         $workspace = Workspace::query()->where('public_id', $workspacePublicId)->firstOrFail();
         $uploaded = $validated['asset'];
-        if ($validated['kind'] === 'favicon' && $uploaded->getSize() > 524288) {
-            throw ValidationException::withMessages(['asset' => 'Favicons must be 512 KiB or smaller.']);
-        }
         $bytes = file_get_contents($uploaded->getRealPath());
         if (is_string($bytes) && (str_contains($bytes, 'ANIM') || str_contains($bytes, 'ANMF') || str_contains($bytes, 'acTL'))) {
             throw ValidationException::withMessages(['asset' => 'Animated branding assets are not supported.']);
@@ -41,19 +38,35 @@ final class PlatformTenantBrandingAssetController extends Controller
         }
         $width = imagesx($image);
         $height = imagesy($image);
-        $maximum = $validated['kind'] === 'favicon' ? 512 : 4096;
+        $maximum = 4096;
         if ($width < 16 || $height < 16 || $width > $maximum || $height > $maximum) {
             imagedestroy($image);
             throw ValidationException::withMessages(['asset' => "Image dimensions must be between 16 and {$maximum} pixels."]);
         }
-        ob_start();
-        imagealphablending($image, false);
-        imagesavealpha($image, true);
-        imagepng($image, null, 9);
-        $safeBytes = ob_get_clean();
+
+        if ($validated['kind'] === 'favicon' && max($width, $height) > 512) {
+            $resized = $this->resizeToFit($image, 512);
+            imagedestroy($image);
+            $image = $resized;
+            $width = imagesx($image);
+            $height = imagesy($image);
+        }
+
+        $safeBytes = $this->encodePng($image);
+        if ($validated['kind'] === 'favicon' && strlen($safeBytes) > 524288 && max($width, $height) > 256) {
+            $resized = $this->resizeToFit($image, 256);
+            imagedestroy($image);
+            $image = $resized;
+            $width = imagesx($image);
+            $height = imagesy($image);
+            $safeBytes = $this->encodePng($image);
+        }
         imagedestroy($image);
-        if (! is_string($safeBytes) || $safeBytes === '') {
+        if ($safeBytes === '') {
             throw ValidationException::withMessages(['asset' => 'The uploaded image could not be made safe.']);
+        }
+        if ($validated['kind'] === 'favicon' && strlen($safeBytes) > 524288) {
+            throw ValidationException::withMessages(['asset' => 'The favicon could not be safely reduced below 512 KiB.']);
         }
         $publicId = (string) Str::uuid();
         $path = "branding/{$workspace->public_id}/{$publicId}.png";
@@ -95,5 +108,33 @@ final class PlatformTenantBrandingAssetController extends Controller
             'Content-Disposition' => 'inline; filename="brand-'.$asset->public_id.'.png"',
             'X-Content-Type-Options' => 'nosniff',
         ]);
+    }
+
+    private function resizeToFit(\GdImage $source, int $maximum): \GdImage
+    {
+        $sourceWidth = imagesx($source);
+        $sourceHeight = imagesy($source);
+        $ratio = min($maximum / $sourceWidth, $maximum / $sourceHeight);
+        $width = max(1, (int) round($sourceWidth * $ratio));
+        $height = max(1, (int) round($sourceHeight * $ratio));
+        $resized = imagecreatetruecolor($width, $height);
+        imagealphablending($resized, false);
+        imagesavealpha($resized, true);
+        $transparent = imagecolorallocatealpha($resized, 0, 0, 0, 127);
+        imagefill($resized, 0, 0, $transparent);
+        imagecopyresampled($resized, $source, 0, 0, 0, 0, $width, $height, $sourceWidth, $sourceHeight);
+
+        return $resized;
+    }
+
+    private function encodePng(\GdImage $image): string
+    {
+        ob_start();
+        imagealphablending($image, false);
+        imagesavealpha($image, true);
+        imagepng($image, null, 9);
+        $bytes = ob_get_clean();
+
+        return is_string($bytes) ? $bytes : '';
     }
 }

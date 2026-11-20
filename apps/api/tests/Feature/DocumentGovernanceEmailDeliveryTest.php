@@ -288,6 +288,8 @@ final class DocumentGovernanceEmailDeliveryTest extends TestCase
         $html = $mail->render();
         $this->assertStringContainsString('Alderbridge Care', $html);
         $this->assertStringContainsString('https://assets.example.test/alderbridge.png', $html);
+        $this->assertStringContainsString('align="center"', $html);
+        $this->assertStringContainsString('margin:0 auto 10px', $html);
         $this->assertStringContainsString('background:#6B2D84', $html);
         $this->assertStringContainsString('Sent by Dolved', $html);
     }

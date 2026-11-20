@@ -10,6 +10,7 @@ use App\Enums\WorkspaceRole;
 use App\Models\PlatformAdministrationAuditEvent;
 use App\Models\User;
 use App\Models\Workspace;
+use App\Models\WorkspaceBrandingAsset;
 use App\Models\WorkspaceBrandingRevision;
 use App\Models\WorkspaceInvitation;
 use App\Services\Branding\WorkspaceBranding;
@@ -151,5 +152,21 @@ final class WorkspaceBrandingTest extends TestCase
                 'chat_welcome_introduction' => null, 'sender_display_name' => null, 'footer_text' => null, 'support_contact' => null,
             ]],
         )->assertUnprocessable()->assertJsonValidationErrors('primary_logo');
+    }
+
+    public function test_large_png_favicon_is_resized_and_safely_compressed(): void
+    {
+        $workspace = Workspace::factory()->create();
+        $administrator = User::factory()->create(['platform_role' => PlatformRole::Administrator]);
+
+        $asset = $this->actingAs($administrator)->post(
+            "/api/platform/tenants/{$workspace->public_id}/branding/assets",
+            ['kind' => 'favicon', 'asset' => UploadedFile::fake()->image('favicon.png', 1024, 768)->size(700)],
+        )->assertCreated()->json('data');
+
+        $this->assertLessThanOrEqual(512, max($asset['width'], $asset['height']));
+        $stored = WorkspaceBrandingAsset::query()->where('public_id', $asset['public_id'])->sole();
+        $this->assertLessThanOrEqual(524288, $stored->size_bytes);
+        $this->assertSame('image/png', $stored->media_type);
     }
 }

@@ -122,6 +122,23 @@ function services() {
 }
 
 describe("ChatWorkspace", () => {
+  it("uses the configured chat welcome copy in the page header and empty state", async () => {
+    const fixture = services();
+    render(<ChatWorkspace
+      initialConversationId={null}
+      services={fixture.api}
+      showConversationNavigation={false}
+      welcomeHeading="Ask Cherish"
+      welcomeIntroduction="Ask about approved Cherish policies and procedures."
+      workspaceId="workspace-1"
+      workspaceName="Dolved pilot"
+    />);
+
+    expect(await screen.findByRole("heading", { level: 1, name: "Ask Cherish" })).not.toBeNull();
+    expect(screen.getAllByText("Ask Cherish")).toHaveLength(2);
+    expect(screen.getAllByText("Ask about approved Cherish policies and procedures.")).toHaveLength(2);
+  });
+
   it("binds an explicit registered site when creating a conversation", async () => {
     const fixture = services();
     const user = userEvent.setup();

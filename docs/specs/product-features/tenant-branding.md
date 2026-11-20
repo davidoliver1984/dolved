@@ -73,7 +73,7 @@ Reject conflicting edits using a revision/version precondition rather than silen
 
 ## Assets and accessibility
 
-Accept static PNG, JPEG or WebP logos and PNG favicon uploads. Proposed maximums: 2 MiB per logo and 512 KiB for favicon; decode and validate content server-side, cap decoded dimensions, strip metadata and re-encode to safe derivatives. Do not accept raw SVG, HTML, animated assets or remote image URLs in this release. State accepted formats visibly rather than silently rejecting them.
+Accept static PNG, JPEG or WebP logos and PNG favicon uploads up to 2 MiB. Decode and validate content server-side, cap decoded dimensions, strip metadata and re-encode to safe derivatives; favicon derivatives are resized where needed and capped at 512 KiB. Do not accept raw SVG, HTML, animated assets or remote image URLs in this release. State accepted formats visibly rather than silently rejecting them.
 
 Use server-generated identifiers and filenames. Keep original/staged uploads private. Publish only safe branding derivatives through a controlled route suitable for the web and email; do not expose object-storage URLs, directory listing or arbitrary files. Brand assets embedded in email must be treated as recipient-visible/publicly fetchable presentation assets, not confidential uploads. Do not use per-recipient image tokens or tracking pixels.
 

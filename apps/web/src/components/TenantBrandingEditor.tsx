@@ -26,7 +26,7 @@ export function TenantBrandingEditor({ initial }: Readonly<{ initial: TenantBran
   const [savedDraft, setSavedDraft] = useState(initial.draft);
   const [preview, setPreview] = useState<Preview>("light-desktop");
   const [pending, setPending] = useState<string | null>(null);
-  const [message, setMessage] = useState<{ tone: "success" | "warning"; text: string } | null>(null);
+  const [message, setMessage] = useState<{ tone: "success" | "destructive"; text: string } | null>(null);
   const dirty = useMemo(() => JSON.stringify(draft) !== JSON.stringify(savedDraft), [draft, savedDraft]);
   const set = <K extends keyof BrandingConfiguration>(key: K, value: BrandingConfiguration[K]) => setDraft((current) => ({ ...current, [key]: value }));
 
@@ -46,7 +46,7 @@ export function TenantBrandingEditor({ initial }: Readonly<{ initial: TenantBran
       setSnapshot(next); setDraft(next.draft); setSavedDraft(next.draft);
       setMessage({ tone: "success", text: success });
     } catch (error) {
-      setMessage({ tone: "warning", text: firstError(error) });
+      setMessage({ tone: "destructive", text: firstError(error) });
     } finally { setPending(null); }
   };
 
@@ -57,7 +57,7 @@ export function TenantBrandingEditor({ initial }: Readonly<{ initial: TenantBran
       const asset = await uploadTenantBrandingAsset(initial.tenant.public_id, kind, file);
       set(kind, asset);
       setMessage({ tone: "success", text: "Asset uploaded to this draft. Save the draft when you are ready." });
-    } catch (error) { setMessage({ tone: "warning", text: firstError(error) }); }
+    } catch (error) { setMessage({ tone: "destructive", text: firstError(error) }); }
     finally { setPending(null); }
   };
 
@@ -72,10 +72,9 @@ export function TenantBrandingEditor({ initial }: Readonly<{ initial: TenantBran
   return <section className="grid gap-8">
     <header><p className="text-xs font-bold uppercase tracking-[0.16em] text-brand">Platform administration · Tenant branding</p><h1 className="mt-2 text-4xl font-semibold tracking-tight">{initial.tenant.name}</h1><p className="mt-2 text-sm text-foreground-muted">Stable identity: {initial.tenant.public_id} · {initial.tenant.slug}</p><p className="mt-3 max-w-3xl text-foreground-muted">Drafts are private. Applying creates an immutable custom revision; switching to Dolved defaults retains the last custom identity for demonstration or later reuse.</p></header>
     <div className="flex flex-wrap items-center gap-3"><span className="rounded-full bg-surface-raised px-3 py-1.5 text-sm font-semibold">Live: {snapshot.mode}</span><span className="text-sm text-foreground-muted">Applied revision: {snapshot.applied_revision ?? "Dolved default"}</span>{dirty ? <span className="text-sm font-semibold text-status-warning">Unsaved changes</span> : null}</div>
-    {message ? <Notice tone={message.tone}>{message.text}</Notice> : null}
     <div className="grid items-start gap-6 xl:grid-cols-[minmax(0,1.05fr)_minmax(26rem,0.95fr)]">
       <div className="grid gap-5">
-        <Card><CardHeader><CardTitle>Identity and assets</CardTitle><CardDescription>PNG, JPEG or WebP. Logos up to 2 MiB; favicon up to 512 KiB. Images are decoded and re-created before use.</CardDescription></CardHeader><CardContent className="grid gap-4 sm:grid-cols-2">
+        <Card><CardHeader><CardTitle>Identity and assets</CardTitle><CardDescription>PNG, JPEG or WebP logos and PNG favicons up to 2 MiB. Favicons are resized and safely compressed to a maximum 512 KiB derivative.</CardDescription></CardHeader><CardContent className="grid gap-4 sm:grid-cols-2">
           <Field label="Display brand name"><Input maxLength={80} onChange={(e) => set("display_name", e.target.value)} value={draft.display_name} /></Field>
           <Field label="Accessible logo label"><Input maxLength={120} onChange={(e) => set("logo_label", e.target.value)} value={draft.logo_label} /></Field>
           <AssetField asset={draft.primary_logo} busy={pending === "primary_logo"} label="Primary logo (required)" onFile={(file) => upload("primary_logo", file)} />
@@ -101,12 +100,15 @@ export function TenantBrandingEditor({ initial }: Readonly<{ initial: TenantBran
         </CardContent></Card>
       </div>
     </div>
-    <div className="sticky bottom-3 z-10 flex flex-wrap gap-3 rounded-xl border border-border bg-background/95 p-4 shadow-lg backdrop-blur">
-      <Button disabled={pending !== null || !dirty} onClick={() => void act("save", () => saveTenantBrandingDraft(initial.tenant.public_id, snapshot.draft_version, draft), "Branding draft saved without changing the live tenant.")}><Save />Save draft</Button>
-      <Button disabled={pending !== null || dirty || !savedDraft.primary_logo} onClick={() => window.confirm(`Apply custom branding to ${initial.tenant.name}?`) && void act("apply", () => applyTenantBranding(initial.tenant.public_id, snapshot.draft_version), "Custom branding is now live.")} variant="secondary"><Check />Apply custom branding</Button>
-      <Button disabled={pending !== null || snapshot.mode === "default"} onClick={() => window.confirm(`Use Dolved defaults for ${initial.tenant.name}? The custom profile will be retained.`) && void act("default", () => switchTenantBrandingMode(initial.tenant.public_id, "default"), "Dolved defaults are now live; the custom profile is retained.")} variant="outline"><RotateCcw />Use Dolved defaults</Button>
-      {snapshot.mode === "default" && snapshot.can_reapply_custom ? <Button disabled={pending !== null} onClick={() => window.confirm(`Restore the last applied custom branding for ${initial.tenant.name}?`) && void act("custom", () => switchTenantBrandingMode(initial.tenant.public_id, "custom"), "The last custom revision is live again.")} variant="outline">Restore custom</Button> : null}
-      <Button disabled={!dirty || pending !== null} onClick={() => window.confirm("Discard all unsaved branding changes?") && setDraft(savedDraft)} variant="ghost">Discard unsaved changes</Button>
+    <div className="sticky bottom-3 z-10 grid gap-3 rounded-xl border border-border bg-background/95 p-4 shadow-lg backdrop-blur">
+      {message ? <Notice className="shadow-sm" tone={message.tone}>{message.text}</Notice> : null}
+      <div className="flex flex-wrap gap-3">
+        <Button disabled={pending !== null || !dirty} onClick={() => void act("save", () => saveTenantBrandingDraft(initial.tenant.public_id, snapshot.draft_version, draft), "Branding draft saved without changing the live tenant.")}><Save />Save draft</Button>
+        <Button disabled={pending !== null || dirty || !savedDraft.primary_logo} onClick={() => window.confirm(`Apply custom branding to ${initial.tenant.name}?`) && void act("apply", () => applyTenantBranding(initial.tenant.public_id, snapshot.draft_version), "Custom branding is now live.")} variant="secondary"><Check />Apply custom branding</Button>
+        <Button disabled={pending !== null || snapshot.mode === "default"} onClick={() => window.confirm(`Use Dolved defaults for ${initial.tenant.name}? The custom profile will be retained.`) && void act("default", () => switchTenantBrandingMode(initial.tenant.public_id, "default"), "Dolved defaults are now live; the custom profile is retained.")} variant="outline"><RotateCcw />Use Dolved defaults</Button>
+        {snapshot.mode === "default" && snapshot.can_reapply_custom ? <Button disabled={pending !== null} onClick={() => window.confirm(`Restore the last applied custom branding for ${initial.tenant.name}?`) && void act("custom", () => switchTenantBrandingMode(initial.tenant.public_id, "custom"), "The last custom revision is live again.")} variant="outline">Restore custom</Button> : null}
+        <Button disabled={!dirty || pending !== null} onClick={() => window.confirm("Discard all unsaved branding changes?") && setDraft(savedDraft)} variant="ghost">Discard unsaved changes</Button>
+      </div>
     </div>
   </section>;
 }
@@ -121,6 +123,6 @@ function foreground(hex: string): string {
   return ((luminance + 0.05) / 0.05) >= (1.05 / (luminance + 0.05)) ? `${hash}000000` : `${hash}FFFFFF`;
 }
 function ColourField({ label, onChange, value }: Readonly<{ label: string; onChange: (value: string) => void; value: string }>) { return <Field label={label}><div className="flex gap-2"><input aria-label={`${label} colour picker`} className="h-11 w-14 rounded-md border border-input bg-background p-1" onChange={(e) => onChange(e.target.value.toUpperCase())} type="color" value={value} /><Input onChange={(e) => onChange(e.target.value)} pattern="^#[0-9A-Fa-f]{6}$" value={value} /></div></Field>; }
-function AssetField({ asset, busy, label, onFile }: Readonly<{ asset: BrandingAsset | null; busy: boolean; label: string; onFile: (file: File | undefined) => void }>) { return <Field label={label}><div className="grid gap-2 rounded-lg border border-border p-3">{asset ? <img alt="" className="h-12 max-w-full object-contain object-left" src={asset.url} /> : <span className="text-sm font-normal text-foreground-muted">No asset selected</span>}<label className="inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-md border border-border px-3 text-sm font-semibold hover:bg-accent"><ImageUp className="size-4" />{busy ? "Uploading…" : "Choose image"}<input accept="image/png,image/jpeg,image/webp" className="sr-only" disabled={busy} onChange={(e) => onFile(e.target.files?.[0])} type="file" /></label></div></Field>; }
+function AssetField({ asset, busy, label, onFile }: Readonly<{ asset: BrandingAsset | null; busy: boolean; label: string; onFile: (file: File | undefined) => void }>) { const favicon = asset?.kind === "favicon" || label.startsWith("Favicon"); return <Field label={label}><div className="grid gap-2 rounded-lg border border-border p-3">{asset ? <img alt="" className="h-12 max-w-full object-contain object-left" src={asset.url} /> : <span className="text-sm font-normal text-foreground-muted">No asset selected</span>}<label className="inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-md border border-border px-3 text-sm font-semibold hover:bg-accent"><ImageUp className="size-4" />{busy ? "Uploading…" : "Choose image"}<input accept={favicon ? "image/png" : "image/png,image/jpeg,image/webp"} className="sr-only" disabled={busy} onChange={(e) => onFile(e.target.files?.[0])} type="file" /></label></div></Field>; }
 function ProductPreview({ draft, dark }: Readonly<{ draft: BrandingConfiguration; dark: boolean }>) { const logo = dark ? draft.dark_logo ?? draft.primary_logo : draft.primary_logo; return <div className="grid min-h-80 grid-cols-[5rem_1fr]"><aside className="border-r border-border bg-sidebar p-3">{logo ? <img alt={draft.logo_label} className="max-h-10 max-w-full object-contain" src={logo.url} /> : <strong>{draft.display_name}</strong>}<div className="mt-8 h-9 rounded-md bg-primary" /><div className="mt-2 h-9 rounded-md bg-surface-raised" /></aside><main className="p-5"><span className="text-xs font-bold uppercase tracking-[0.14em] text-brand">Knowledge workspace</span><h2 className="mt-3 text-2xl font-semibold">{draft.chat_welcome_heading || `Ask ${draft.display_name}`}</h2><p className="mt-2 text-sm text-foreground-muted">{draft.chat_welcome_introduction || `Ask a question grounded in ${draft.display_name}'s approved knowledge base.`}</p><button className="mt-6 min-h-11 rounded-md bg-primary px-4 font-semibold text-primary-foreground">Start a conversation</button></main></div>; }
-function EmailPreview({ draft }: Readonly<{ draft: BrandingConfiguration }>) { return <div className="bg-background p-6 text-foreground">{draft.primary_logo ? <img alt={draft.logo_label} className="h-12 max-w-48 object-contain object-left" src={draft.primary_logo.url} /> : <strong className="text-xl">{draft.display_name}</strong>}<h2 className="mt-6 text-xl font-semibold">Document review needs attention</h2><p className="mt-3 text-sm">A document governance reminder is waiting in your workspace.</p><button className="mt-5 rounded-md px-4 py-3 font-semibold" style={{ background: draft.accent_colour, color: foreground(draft.accent_colour) }}>Review governance work</button><p className="mt-8 border-t pt-4 text-xs text-foreground-muted">{draft.footer_text || `Sent by ${draft.display_name}.`}{draft.support_contact ? ` Support: ${draft.support_contact}` : ""}</p></div>; }
+function EmailPreview({ draft }: Readonly<{ draft: BrandingConfiguration }>) { return <div className="bg-background p-6 text-foreground"><div className="flex justify-center text-center">{draft.primary_logo ? <img alt={draft.logo_label} className="h-12 max-w-48 object-contain" src={draft.primary_logo.url} /> : <strong className="text-xl">{draft.display_name}</strong>}</div><h2 className="mt-6 text-xl font-semibold">Document review needs attention</h2><p className="mt-3 text-sm">A document governance reminder is waiting in your workspace.</p><button className="mt-5 rounded-md px-4 py-3 font-semibold" style={{ background: draft.accent_colour, color: foreground(draft.accent_colour) }}>Review governance work</button><p className="mt-8 border-t pt-4 text-xs text-foreground-muted">{draft.footer_text || `Sent by ${draft.display_name}.`}{draft.support_contact ? ` Support: ${draft.support_contact}` : ""}</p></div>; }

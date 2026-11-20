@@ -10,8 +10,8 @@
 <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#f4f2ea;padding:24px 12px;">
     <tr><td align="center">
         <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:640px;background:#ffffff;border:1px solid #d8ddd9;border-radius:16px;overflow:hidden;">
-            <tr><td style="padding:28px 32px 18px;font-size:30px;font-weight:800;letter-spacing:-1px;">
-                @if ($logoUrl)<img alt="{{ $brandName }}" src="{{ $logoUrl }}" width="132" style="display:block;max-height:48px;max-width:132px;margin:0 0 10px;">@endif
+            <tr><td align="center" style="padding:28px 32px 18px;font-size:30px;font-weight:800;letter-spacing:-1px;text-align:center;">
+                @if ($logoUrl)<img alt="{{ $brandName }}" src="{{ $logoUrl }}" width="132" style="display:block;max-height:48px;max-width:132px;margin:0 auto 10px;">@endif
                 <span>{{ $brandName }}</span>
             </td></tr>
             <tr><td style="padding:0 32px 8px;color:#5f6f68;font-size:14px;">{{ $workspaceName }}</td></tr>

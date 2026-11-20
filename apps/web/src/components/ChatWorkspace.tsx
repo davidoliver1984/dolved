@@ -517,6 +517,8 @@ export function ChatWorkspace({
       .map((run) => [run.assistant_message_id, run]),
   );
   const failedRuns = (active?.runs ?? []).filter((run) => run.status === "failed");
+  const resolvedWelcomeHeading = welcomeHeading || `Ask ${workspaceName}`;
+  const resolvedWelcomeIntroduction = welcomeIntroduction || "Answers use only evidence eligible for this workspace and the selected site.";
 
   return (
     <section data-chat-pending={busy} data-chat-progress={progress ?? ""} data-completion-run={completion?.runId} data-completion-path={completion?.path} className={showConversationNavigation ? "grid min-h-[42rem] overflow-hidden rounded-xl border border-border bg-card lg:grid-cols-[18rem_1fr]" : "grid min-h-[42rem]"} aria-labelledby="chat-heading">
@@ -524,13 +526,13 @@ export function ChatWorkspace({
         <div className="flex items-start justify-between gap-3">
           <div>
             <p className="text-xs font-bold uppercase tracking-[0.16em] text-brand">Grounded chat</p>
-            <h2 id="chat-heading">Ask {workspaceName}</h2>
+            <h2 id="chat-heading">{resolvedWelcomeHeading}</h2>
           </div>
           <Button disabled={busy} onClick={newConversation} size="sm" type="button">
             New chat
           </Button>
         </div>
-        <p className="mt-4 text-xs leading-5 text-foreground-muted">Scope: all documents eligible for this workspace and question.</p>
+        <p className="mt-4 text-xs leading-5 text-foreground-muted">{resolvedWelcomeIntroduction}</p>
         <nav aria-label="Conversation history" className="mt-5 grid gap-2">
           {conversations.length === 0 && !loading ? (
             <p className="text-sm text-foreground-muted">No conversations yet.</p>
@@ -553,7 +555,7 @@ export function ChatWorkspace({
       </aside> : null}
 
       <div className="grid min-h-0 grid-rows-[auto_1fr_auto_auto] gap-4">
-        {!showConversationNavigation ? <header className="mb-5"><p className="text-sm font-bold uppercase tracking-[0.14em] text-brand">Grounded chat</p><h1 className="mt-2 text-3xl font-semibold" id="chat-heading">Ask {workspaceName}</h1><p className="mt-2 text-sm text-foreground-muted">Answers use only evidence eligible for this workspace and the selected site.</p></header> : null}
+        {!showConversationNavigation ? <header className="mb-5"><p className="text-sm font-bold uppercase tracking-[0.14em] text-brand">Grounded chat</p><h1 className="mt-2 text-3xl font-semibold" id="chat-heading">{resolvedWelcomeHeading}</h1><p className="mt-2 text-sm text-foreground-muted">{resolvedWelcomeIntroduction}</p></header> : null}
         <p data-chat-announcement aria-atomic="true" aria-live="polite" className="sr-only" role="status">{announcement}</p>
         <div aria-busy={loading} className="grid min-h-96 content-start gap-4 overflow-y-auto rounded-xl border border-border bg-surface p-4 sm:p-6" ref={transcript}>
           {loading ? <div aria-label="Loading conversation" className="grid gap-4"><Skeleton className="h-20 w-3/4" /><Skeleton className="ml-auto h-16 w-2/3" /><Skeleton className="h-28 w-4/5" /></div> : null}

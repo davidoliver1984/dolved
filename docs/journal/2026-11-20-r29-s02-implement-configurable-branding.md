@@ -1,7 +1,7 @@
 # R29-S02 — Implement Configurable Branding
 
 Date: 20 November 2026
-Status: In progress — locally implemented and verified; hosted deployment and visual review remain.
+Status: In progress — implemented and deployed; hosted visual acceptance remains.
 
 Implemented on the Dolved–Dify delivery branch:
 
@@ -21,6 +21,17 @@ Verification:
 - ESLint: zero errors; controlled runtime tenant-image warnings only.
 - Production Next.js build: passed, including the tenant list and branding editor routes.
 
-Remaining before verification: deploy the migration/runtime, bind the pilot's trusted workspace
-identifier, confirm persistence and asset backup coverage, and obtain David's visual approval
-of custom and fallback branding on desktop/mobile and light/dark surfaces.
+Hosted review on 20 November identified four presentation defects. The follow-up correction:
+
+- uses the configured chat welcome heading and introduction in the page header as well as the empty state;
+- centres default and custom identities in the email preview and governance email header;
+- accepts PNG favicon sources up to 2 MiB, resizes them to at most 512 pixels and caps the safe derivative at 512 KiB;
+- keeps green success and red failure feedback directly above the sticky editor actions.
+
+Follow-up verification: 19 chat tests passed; 4 branding tests / 43 assertions passed;
+the focused tenant-email rendering test passed; ESLint reported zero errors, PHP Pint passed,
+and the production Next.js build passed. A broader email test-file run encountered an unrelated
+pre-existing Faker apostrophe escaping assertion; the changed branding-email case passed alone.
+
+Remaining before verification: deploy the follow-up correction, confirm favicon persistence and
+obtain David's visual approval of custom and fallback branding on desktop/mobile and light/dark surfaces.
