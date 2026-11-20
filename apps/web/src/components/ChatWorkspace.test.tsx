@@ -194,7 +194,7 @@ describe("ChatWorkspace", () => {
     expect(fixture.api.send).not.toHaveBeenCalled();
   });
 
-  it("does not navigate a newly created conversation until submission has a receipt", async () => {
+  it("keeps a newly created conversation mounted until its live run settles", async () => {
     const fixture = services();
     let resolveSend!: (receipt: {run_id: string; status: string}) => void;
     fixture.api.send.mockImplementation(()=>new Promise((resolve)=>{resolveSend=resolve;}));
@@ -205,7 +205,12 @@ describe("ChatWorkspace", () => {
     await waitFor(()=>expect(fixture.api.send).toHaveBeenCalledOnce());
     expect(navigate).not.toHaveBeenCalled();
     resolveSend({run_id:"run-1",status:"queued"});
+    await waitFor(()=>expect(fixture.api.subscribe).toHaveBeenCalledOnce());
+    expect(screen.getByText("Sending your question…")).toBeTruthy();
+    expect(navigate).not.toHaveBeenCalled();
+    fixture.emit({ sequence: 4, type: "answer_completed", provisional: false, payload: {} });
     await waitFor(()=>expect(navigate).toHaveBeenCalledExactlyOnceWith("conversation-1"));
+    expect(screen.getByText("Use the current procedure.")).toBeTruthy();
   });
   it.each(["History is outside this pilot's scope.", "The request exceeds answer capacity; nothing was truncated.", "The answer could not be generated safely."])("omits legacy outcome badge for saved presentation: %s", async (text) => {
     const fixture = services();

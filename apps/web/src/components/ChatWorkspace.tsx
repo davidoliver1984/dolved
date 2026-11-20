@@ -229,6 +229,7 @@ export function ChatWorkspace({
   const unsubscribe = useRef<null | (() => void)>(null);
   const transcript = useRef<HTMLDivElement>(null);
   const provisionalPartsRef = useRef<AnswerPart[]>([]);
+  const pendingCreatedConversationId = useRef<string | null>(null);
   const mounted = useRef(true);
   useEffect(() => {
     mounted.current = true;
@@ -236,6 +237,12 @@ export function ChatWorkspace({
   }, []);
   const settledRun = useRef<string | null>(null);
   const [completion, setCompletion] = useState<{ runId: string; path: string } | null>(null);
+
+  const routeCreatedConversation = useCallback((conversationId: string) => {
+    if (pendingCreatedConversationId.current !== conversationId) return;
+    pendingCreatedConversationId.current = null;
+    onConversationCreated?.(conversationId);
+  }, [onConversationCreated]);
 
   const settleSavedRun = useCallback((conversation: Conversation, runId: string, path: string) => {
     const run = conversation.runs?.find((candidate) => candidate.id === runId);
@@ -288,6 +295,7 @@ export function ChatWorkspace({
       const saved = await services.get(workspaceId, conversationId);
       if (settleSavedRun(saved, runId, "sse")) {
         await refreshList();
+        routeCreatedConversation(conversationId);
         return;
       }
       setBusy(false);
@@ -297,8 +305,9 @@ export function ChatWorkspace({
       setActive(saved);
       setCompletedParts({});
       await refreshList();
+      routeCreatedConversation(conversationId);
     },
-    [refreshList, services, settleSavedRun, workspaceId],
+    [refreshList, routeCreatedConversation, services, settleSavedRun, workspaceId],
   );
 
   const watchRun = useCallback(
@@ -364,7 +373,9 @@ export function ChatWorkspace({
         () => {
           if (settledRun.current === runId) return;
           void services.get(workspaceId, conversationId).then((saved) => {
-            settleSavedRun(saved, runId, "persisted_recovery");
+            if (settleSavedRun(saved, runId, "persisted_recovery")) {
+              routeCreatedConversation(conversationId);
+            }
           }).catch((caught) => setError(firstError(caught)));
           setError("The live update connection was interrupted. Your conversation is safe and the connection is retrying.");
           setProgress("Reconnecting to live updates…");
@@ -372,7 +383,7 @@ export function ChatWorkspace({
         },
       );
     },
-    [finishRun, services, settleSavedRun, workspaceId],
+    [finishRun, routeCreatedConversation, services, settleSavedRun, workspaceId],
   );
 
   useEffect(() => {
@@ -406,6 +417,7 @@ export function ChatWorkspace({
     setSelectedLocationId("");
     setDraft("");
     setCompletion(null);
+    pendingCreatedConversationId.current = null;
     setProvisionalParts([]);
     provisionalPartsRef.current = [];
   };
@@ -429,6 +441,7 @@ export function ChatWorkspace({
       if (!conversation) {
         conversation = await services.create(workspaceId, selectedLocationId || null);
         setActive({ ...conversation, messages: [], runs: [] });
+        pendingCreatedConversationId.current = conversation.id;
         created = true;
       }
       const receipt = await services.send(
@@ -437,13 +450,16 @@ export function ChatWorkspace({
         message,
         idempotencyKey(),
       );
-      if (created) onConversationCreated?.(conversation.id);
       if (!mounted.current) return;
       setDraft("");
       const saved = await services.get(workspaceId, conversation.id);
       if (!mounted.current) return;
       setActive(saved);
-      if (!settleSavedRun(saved, receipt.run_id, "persisted_state")) watchRun(conversation.id, receipt.run_id);
+      if (settleSavedRun(saved, receipt.run_id, "persisted_state")) {
+        if (created) routeCreatedConversation(conversation.id);
+      } else {
+        watchRun(conversation.id, receipt.run_id);
+      }
     } catch (caught) {
       setBusy(false);
       setProgress(null);
