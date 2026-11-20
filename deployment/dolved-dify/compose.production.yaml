@@ -16,6 +16,7 @@ x-api-environment: &api-environment
   CORS_ALLOWED_ORIGINS: https://${DOLVED_DOMAIN}
   SANCTUM_STATEFUL_DOMAINS: ${DOLVED_DOMAIN}
   SESSION_DRIVER: database
+  SESSION_COOKIE: rag-platform-session
   SESSION_DOMAIN: ${SESSION_DOMAIN:?SESSION_DOMAIN is required}
   SESSION_SECURE_COOKIE: "true"
   SESSION_HTTP_ONLY: "true"
@@ -174,6 +175,7 @@ services:
     environment:
       API_INTERNAL_URL: http://api
       AUTH_REGISTRATION_ENABLED: "false"
+      FRONTEND_URL: https://${DOLVED_DOMAIN}
       NEXT_PUBLIC_API_URL: https://${API_DOMAIN}
     depends_on:
       api:

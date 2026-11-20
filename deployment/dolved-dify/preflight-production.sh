@@ -190,4 +190,12 @@ jq -e '
   exit 1
 }
 
+jq -e '
+  (.services.api.environment.SESSION_COOKIE == "rag-platform-session") and
+  (.services.web.environment.FRONTEND_URL == .services.api.environment.FRONTEND_URL)
+' "$tmp_dir/dolved.json" >/dev/null || {
+  echo "Dolved web/API session handoff configuration is inconsistent." >&2
+  exit 1
+}
+
 echo "Production preflight passed without starting services or contacting a model provider."
