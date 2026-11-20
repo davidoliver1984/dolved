@@ -1,4 +1,4 @@
-# ADR 0015: Define End-to-End Ingestion Orchestration and Worker Result Contracts
+# Ingestion Orchestration and Worker Result Contracts
 
 ## Status
 
@@ -80,16 +80,16 @@ Qdrant write and the call that would have reported it.
 ADR 0008 already named this seam without resolving it: *"Any further
 lifecycle transition Python needs... is requested through an authenticated
 internal application boundary. The exact authentication mechanism for that
-boundary is not decided by this ADR."* ADR 0009 resolved exactly one such
+boundary is not decided by this specification."* ADR 0009 resolved exactly one such
 transition — the claim — and explicitly deferred the rest. This document
 resolves the rest: canonical chunk transfer, successful completion, permanent
 failure, the authenticated protocol carrying all of them, the trust boundary
 between the two services, and the queue and reconciliation semantics that
 keep a Document from becoming permanently stuck.
 
-## What this ADR decides and does not decide
+## What this specification decides and does not decide
 
-This ADR defines the **contract** — service ownership, authoritative state
+This specification defines the **contract** — service ownership, authoritative state
 transitions, what each service asserts versus independently verifies, the
 shape of the canonical-chunk and completion payloads, failure classification,
 queue acknowledgement and reconciliation semantics — not primarily an
@@ -110,7 +110,7 @@ lifecycle, canonical chunk text, and both generation lifecycles (ADR 0007,
 ADR 0014). Python remains the sole owner of extraction, normalisation,
 chunking, embedding, `VectorStore`, Qdrant, and vector-side completeness
 verification (ADR 0002, ADR 0010, ADR 0011, ADR 0013, ADR 0014). Nothing in
-this ADR moves any of that. The gap this ADR closes is the protocol by which
+this specification moves any of that. The gap this specification closes is the protocol by which
 Python's computed results cross into Laravel's domain so Laravel — and only
 Laravel — can perform the writes and transitions it alone is authorised to
 make. Direct Python writes to Laravel-owned tables remain rejected, exactly
@@ -125,7 +125,7 @@ embedding, vector persistence, and result reporting — as one
 observationally-atomic state, exactly as ADR 0007 already requires: *"A
 partial write... does not qualify as `INDEXED`; the Document remains
 `PROCESSING`, or moves to `FAILED`, until the complete representation is in
-place."* This ADR's completion contract (below) is designed as a single
+place."* This specification's completion contract (below) is designed as a single
 atomic Laravel transaction specifically so that requirement continues to
 hold without qualification. No intermediate state (`INDEXING` or equivalent)
 is introduced: under a single-transaction completion, there is no durable
@@ -142,7 +142,7 @@ lifecycle concern.
 one logical processing attempt, exactly as ADR 0008 and ADR 0009 established.
 It is not enough on its own for this phase, because it says nothing about
 *which currently-live worker*, if any, is entitled to act on that attempt
-right now — and a worker can crash after successfully claiming. This ADR
+right now — and a worker can crash after successfully claiming. This specification
 introduces a **processing lease**: a Laravel-owned, time-bounded grant of
 current ownership over one `event_id`'s in-progress work, layered on top of
 the durable `event_id` rather than replacing it.
@@ -190,7 +190,7 @@ are Stage 15.2 decisions. Its expiry duration and renewal mechanics are not
 independent implementation details — they are governed by the coordinated
 timing model in "Lease, visibility and acknowledgement coordination" below,
 because a lease that can silently drift out of step with SQS's own delivery
-timing reopens exactly the hazard this ADR exists to close. This ADR fixes
+timing reopens exactly the hazard this specification exists to close. This specification fixes
 the five outcomes above, the invariant that every subsequent call must prove
 a currently-valid lease, and — below — how lease validity and queue
 visibility stay coordinated rather than becoming two unrelated
@@ -526,7 +526,7 @@ report `ingestion.fail` once it has lost, or cannot confirm, its lease
 below); and it lets redelivery, a fresh claim's authoritative status
 discovery, and — if redelivery is itself exhausted — DLQ terminal
 reconciliation resolve the attempt instead. This preserves a distinction
-this ADR treats as load-bearing, not cosmetic: **"processing failed"** and
+this specification treats as load-bearing, not cosmetic: **"processing failed"** and
 **"the authoritative result could not yet be delivered"** are different
 facts, and only the first may ever be reported as `ingestion.fail`.
 
@@ -535,7 +535,7 @@ facts, and only the first may ever be reported as `ingestion.fail`.
 The processing lease and SQS message visibility are not two unrelated
 configuration values. Treating them as independent is precisely what would
 let one expire while the other is still assumed valid, reopening the
-duplicate-execution hazard the lease exists to close. This ADR requires one
+duplicate-execution hazard the lease exists to close. This specification requires one
 coordinated timing and ownership model, not two separately-tuned settings
 that happen to coexist.
 
@@ -558,7 +558,7 @@ extending that message's visibility; these are two independent systems, and
 nothing links their two operations into a single all-or-nothing commit.
 Either a heartbeat cycle *attempts* both together, or two separately-issued
 extensions are driven by one shared timing budget that keeps them from
-drifting apart in the ordinary case — either satisfies this ADR, but both
+drifting apart in the ordinary case — either satisfies this specification, but both
 must be designed on the assumption that one call can succeed while the other
 fails, because that is a real, expected outcome, not an edge case to define
 away. The renewal interval must be a meaningful fraction of both the lease
@@ -570,14 +570,14 @@ clock skew ADR 0009 already tolerates for signature freshness (production
 hosts are already required to maintain reasonably synchronised clocks; this
 coordination depends on that same assumption holding).
 
-This ADR does not claim, and no implementation of it may claim, that lease
+This specification does not claim, and no implementation of it may claim, that lease
 renewal and visibility extension always succeed or fail together. It fixes
 what must happen when they do not:
 
 #### Partial success: lease renewal succeeds, visibility extension fails
 
 - the worker must stop authoritative processing and callbacks all the same
-  — a live lease is necessary for authority, but this ADR does not treat it
+  — a live lease is necessary for authority, but this specification does not treat it
   as sufficient once the worker knows its own renewal cycle is unhealthy;
 - because Laravel's lease is still live, a concurrently redelivered second
   worker that attempts to claim receives the "owned by another live worker"
@@ -619,7 +619,7 @@ which authoritatively resolves the worker's true status via the outcomes
 "The processing lease" already defines (still owned by a live lease if
 Laravel's side of renewal actually succeeded, reclaimable if it did not).
 The coordinated timing budget above minimises how often partial success
-occurs; it does not, and cannot, eliminate it, and this ADR does not pretend
+occurs; it does not, and cannot, eliminate it, and this specification does not pretend
 otherwise.
 
 **Reclaim is Laravel-authoritative, not client-computed.** A second worker
@@ -659,9 +659,9 @@ authorised to complete the same attempt are not.
 ### DLQ terminal reconciliation
 
 Arrival in the dead-letter queue does not, by itself, change any PostgreSQL
-state — a DLQ is a transport-layer fact, not a domain fact, and this ADR does
+state — a DLQ is a transport-layer fact, not a domain fact, and this specification does
 not conflate them, consistent with ADR 0008's own separation between
-publisher-side retry and consumer-side redelivery. The invariant this ADR
+publisher-side retry and consumer-side redelivery. The invariant this specification
 does commit to: **every processing attempt whose message is exhausted into
 the DLQ must eventually be reconciled into an authoritative Laravel outcome
 — no Document may remain indefinitely `PROCESSING` solely because queue
@@ -693,7 +693,7 @@ different in kind:
   Laravel's authority, during that workspace's first valid indexing
   workflow — resolved at claim time as described above. It becomes `ACTIVE`
   only after successful persistence and verification, per ADR 0014's
-  existing lifecycle and completeness rules, which this ADR does not
+  existing lifecycle and completeness rules, which this specification does not
   redefine.
 
 ### Observability
@@ -705,7 +705,7 @@ submission, completion and failure calls are outbound HTTP calls from
 Python, and nothing new needs deciding about propagation itself. The
 existing contract-level `correlation_id` threads through claim, submission,
 and completion/failure exactly as it already threads through the inbound
-direction. This ADR adds a small set of `rag.*` attributes specific to this
+direction. This specification adds a small set of `rag.*` attributes specific to this
 boundary — completion status, chunk count, processing duration as a metric,
 never chunk text or vectors, consistent with ADR 0012's allowlist-first
 posture and ADR 0013's existing embedding-telemetry privacy rules — and
@@ -717,7 +717,7 @@ audited action category, rather than treating them as telemetry-only.
 
 Authenticated HTTP, extending ADR 0009's protocol as described above, is the
 V1 mechanism for all four purposes. It is chosen over three alternatives
-considered and rejected below. This ADR is explicit about what the resulting
+considered and rejected below. This specification is explicit about what the resulting
 guarantee actually is, because it is not exactly-once delivery and should
 never be described as such: the guarantee is **at-least-once queue
 delivery, deterministic and idempotent processing at every pipeline stage,
@@ -767,7 +767,7 @@ apparatus for it.
 Rejected. Mixes two different concerns — bounded, retryable content
 transfer and small, referential completion evidence — into one unbounded
 request, with no natural batching story for a large document and a much
-larger blast radius for any single failed call. Splitting them, as this ADR
+larger blast radius for any single failed call. Splitting them, as this specification
 does, keeps the completion payload small and cheap to verify regardless of
 document size.
 
@@ -870,13 +870,13 @@ See "DLQ terminal reconciliation" above.
 ### Negative
 
 - The processing lease is new, real implementation surface — expiry,
-  renewal, and reclaim logic that did not exist before this ADR — layered on
+  renewal, and reclaim logic that did not exist before this specification — layered on
   top of the claim mechanism ADR 0009 already shipped.
 - Splitting chunk submission from completion means two request shapes and
   two round trips to design, test and version, instead of one.
 - Coordinating lease renewal with SQS visibility extension as one timing
   budget, rather than tuning each independently, is a real operational
-  design problem this ADR requires be solved, not merely a suggestion —
+  design problem this specification requires be solved, not merely a suggestion —
   Stage 15.2 carries that obligation, not just a number to pick.
 - DLQ reconciliation is a new, mandatory operational surface — something
   must run, be monitored, and be alertable, not merely exist as an idle
@@ -987,7 +987,7 @@ This document does not define:
 
 - whether the lease extends the existing durable event/claim record (ADR
   0009, Stage 9.3) or uses a dedicated relational entity — either satisfies
-  this ADR, provided the five claim outcomes and coordinated-timing
+  this specification, provided the five claim outcomes and coordinated-timing
   invariants above hold;
 - the lease token's physical representation;
 - exact route paths, header names, or the exact duration of the bounded
@@ -1006,10 +1006,10 @@ This document does not define:
   deferred;
 - the exact `rag.*` attribute and metric names for this boundary;
 - retrieval, evaluation, reranking, or generation — all remain downstream of
-  `INDEXED` and unaffected by this ADR;
-- document versioning — this ADR keys everything off Document identity plus
+  `INDEXED` and unaffected by this specification;
+- document versioning — this specification keys everything off Document identity plus
   `event_id`/lease, which does not foreclose a future versioning ADR, but
   does not design one.
 
-These remain open for Stage 15.2 to decide with the context this ADR
+These remain open for Stage 15.2 to decide with the context this specification
 establishes.

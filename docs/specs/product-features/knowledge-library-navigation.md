@@ -1,4 +1,4 @@
-# ADR 0033: Extend the Product Interface for Knowledge Library Navigation
+# Knowledge Library Navigation
 
 ## Status
 
@@ -15,19 +15,19 @@ the semantic-token/theme architecture, the chat evidence/citation
 presentation contract (including `source_route` as the canonical field
 naming `/app/workspaces/{workspace}/documents/{document}` as a citation's
 authorised source destination), the shadcn component system, and the WCAG
-2.2 AA baseline. ADR-0028 establishes the precedent this ADR follows: a
+2.2 AA baseline. ADR-0028 establishes the precedent this specification follows: a
 growing product section gains its own route-backed contextual region
 inside the shell's existing contextual slot, verified directly against
 `apps/web/src/components/AppShell.tsx`, which already implements this for
 Administration and Platform Operations but not yet for Documents.
 
-**This ADR preserves `/app/workspaces/{workspace}/documents/{document}`
+**This specification preserves `/app/workspaces/{workspace}/documents/{document}`
 exactly as ADR-0027 already fixed it** — no reinterpretation of that
 route segment as a family identity is made anywhere in this document.
 Every existing citation `source_route`, bookmark, and live route continues
 to resolve unchanged.
 
-This ADR consumes ADR-0030 (metadata classification, checksum state),
+This specification consumes ADR-0030 (metadata classification, checksum state),
 ADR-0031 (governance actions, clone mechanism, family deletion), and
 ADR-0032 (canonical extraction artefact, projection, source delivery) as
 frozen Tier 1 (`TIER_1_READY_TO_FREEZE`) without reopening any of their
@@ -282,7 +282,7 @@ This is genuine new Laravel work, allocated to R24-S02 below.
 - **Page-based**, matching this repository's established API style
   (verified: `DocumentPage`/`workspaceDocuments` already use
   `page`/`per_page` request parameters and `meta.current_page`/
-  `last_page` response shape — this ADR's library table reuses that exact
+  `last_page` response shape — this specification's library table reuses that exact
   convention, not cursor pagination).
 - **Sort keys**: title, last-meaningful-update, review-due date — each
   ascending or descending.
@@ -303,7 +303,7 @@ This is genuine new Laravel work, allocated to R24-S02 below.
   read.
 - **Invalid or unsupported parameter values are dropped with the affected
   filter reset to its default, never a 500 or a silently wrong result** —
-  the same honest-degradation principle this ADR already applies to saved
+  the same honest-degradation principle this specification already applies to saved
   views.
 
 **Query shape — a bounded plan, not an N-query loop:**
@@ -349,7 +349,7 @@ fact, resolved independently of anything this filtering surface does. V1
 has organisational locations only, no departments or teams; the future
 second-applicability-axis seam ADR-0017 already reserves is preserved,
 not built. "Applicability is not confidentiality" appears verbatim in
-every user-facing explanation this ADR specifies.
+every user-facing explanation this specification specifies.
 
 ### Saved views — complete Laravel-owned domain
 
@@ -476,7 +476,7 @@ produced, starter questions are omitted entirely.
 ### Deleted/history — ownership
 
 ADR-0031 owns family-deletion tombstone semantics and persistence (its
-own R23-S02c session). This ADR owns the `/documents/deleted` route and
+own R23-S02c session). This specification owns the `/documents/deleted` route and
 presentation contract, once that tombstone data exists — an owner/admin-
 only view listing family tombstones with recorded deletion reason/date and
 audit reference. ADR-0036 may contribute activity-feed events referencing
@@ -633,7 +633,7 @@ alone:
 5. Reach real technical processing completion (`INDEXED`).
 6. Approve/current-authorise as required by ADR-0017/0031.
 7. **Assert the readiness count reflects genuinely searchable documents**
-   using this ADR's corrected count definition — not a raw upload or
+   using this specification's corrected count definition — not a raw upload or
    promotion count.
 8. Ask a question genuinely supported by the imported corpus.
 9. Receive a grounded answer with valid evidence/citation behaviour
@@ -682,9 +682,9 @@ owned fields are read from `DocumentFamily` directly, always.
 ### Recomputing "last meaningful update" from a live scan of every
 ### underlying event table at read time
 
-Rejected as a query-shape violation of this ADR's own bounded-query
+Rejected as a query-shape violation of this specification's own bounded-query
 requirement — a per-row scan across metadata-audit, governance-audit, and
-warning tables would reintroduce the N-query problem this ADR otherwise
+warning tables would reintroduce the N-query problem this specification otherwise
 closes. A maintained, write-time-updated summary projection is required
 instead.
 
@@ -744,7 +744,7 @@ implying an unsupported fact.
 
 ## Scope boundaries
 
-This ADR does not define: ADR-0027's design system or shell mechanics;
+This specification does not define: ADR-0027's design system or shell mechanics;
 ADR-0031's governance action semantics or family-deletion flow; ADR-0032's
 source-delivery security mechanics; ADR-0035's bulk-operation mechanics
 beyond the row-contract seam it will consume; ADR-0036's notification

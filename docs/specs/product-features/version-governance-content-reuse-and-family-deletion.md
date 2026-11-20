@@ -1,4 +1,4 @@
-# ADR 0031: Define Version Governance Orchestration, Content Reuse and Family Deletion
+# Version Governance, Content Reuse and Family Deletion
 
 ## Status
 
@@ -14,18 +14,18 @@ Accepted
 
 ADR-0017 already defines `DocumentFamily`, linear version lineage, the
 `authority_start` derivation, the `DRAFT → APPROVED → WITHDRAWN` governance
-model, and per-version immutable applicability snapshots. **This ADR does
+model, and per-version immutable applicability snapshots. **This specification does
 not reopen any of that.** The domain logic implementing it already
 exists — `ApproveDocumentVersion`, `WithdrawDocumentVersion`,
 `RescheduleDocumentVersion`, `CreateDocumentVersion`, and
 `CorrectDocumentGovernanceTimestamps` all exist today under
-`app/Actions/Documents/`. This ADR's first decision is to expose the
+`app/Actions/Documents/`. This specification's first decision is to expose the
 existing domain layer, not to redesign it.
 
 ### Consumes ADR-0030's metadata classification and checksum state
 
-Every metadata field this ADR's API surface reads or writes is defined by
-ADR-0030. **This ADR requires `checksum_verification_status = 'verified'`
+Every metadata field this specification's API surface reads or writes is defined by
+ADR-0030. **This specification requires `checksum_verification_status = 'verified'`
 as the first element of its clone compatibility proof** — a `pending` or
 `unavailable` predecessor is simply ineligible for cloning, exactly as
 ADR-0030 already states.
@@ -33,7 +33,7 @@ ADR-0030 already states.
 ### Consumes ADR-0032's canonical artefact, digests, and upload/projection
 ### machinery
 
-This ADR's clone mechanism consumes ADR-0032's `DocumentExtractionArtifact`
+This specification's clone mechanism consumes ADR-0032's `DocumentExtractionArtifact`
 schema, its canonical serialisation/digest algorithm, and its lease-bound
 upload and atomic-projection-publication machinery. **ADR-0031's clone
 orchestration cannot be implemented before ADR-0032's artefact/digest
@@ -45,7 +45,7 @@ foundation exists** — see "Implementation order" below.
 ADR-0025 already defines owner/admin-only deletion authorization, the
 ingestion-quiescence barrier, vector-scope enumeration, hard chunk
 deletion with `EvidenceSnapshot` lineage preserved, and a single-open-
-per-document idempotency rule. **This ADR reuses those *principles*
+per-document idempotency rule. **This specification reuses those *principles*
 unmodified** — the quiescence barrier, the cleanup ordering, the
 citation-survival guarantee, and the retry discipline are not redesigned.
 **But the child deletion's actual implementation is genuinely extended**,
@@ -87,7 +87,7 @@ described as "unmodified" when it is not; and the final transition to
 
 **`content_clone` is a distinct operational/materialisation category from
 ordinary `ingestion`**, closed as settled product direction, applied
-throughout this ADR:
+throughout this specification:
 
 - Clone attempts, outcomes, failures, and latency are reported as
   `content_clone` — never merged into ordinary ingestion's own counters.
@@ -115,10 +115,10 @@ throughout this ADR:
 1. ADR-0030's schema, metadata, and checksum-state foundation.
 2. ADR-0032's canonical artefact schema, upload-authorisation record, and
    atomic projection-publication machinery.
-3. This ADR's governance routes and idempotency model may proceed
+3. This specification's governance routes and idempotency model may proceed
    alongside step 2 where genuinely independent.
-4. This ADR's clone orchestration begins only after step 2 exists.
-5. This ADR's family-deletion extension follows once every layer it must
+4. This specification's clone orchestration begins only after step 2 exists.
+5. This specification's family-deletion extension follows once every layer it must
    clean up has a real persistence path.
 
 ### Action and controller ownership
@@ -185,7 +185,7 @@ identity (populated only after execution).
 ### Applicability-only successor and the durable pipeline fingerprint
 
 Because ADR-0017 records applicability as an immutable per-version
-snapshot, changing it requires a new governed version. This ADR resolves
+snapshot, changing it requires a new governed version. This specification resolves
 whether that version must re-run extraction, chunking, and embedding
 against unchanged content.
 
@@ -497,7 +497,7 @@ prior draft described this narratively rather than as one atomic unit.
 
 **A destructive, family-wide operation requires an explicit two-step flow**
 — a materially higher blast radius than ADR-0025's own single-version
-deletion, which this ADR does not retroactively change.
+deletion, which this specification does not retroactively change.
 
 **Preview (read-only, no mutation of any kind):**
 
@@ -607,13 +607,13 @@ survives as a tombstone. No restoration in V1.**
 - A hold can never block deletion indefinitely, per ADR-0037's fixed
   expiry.
 
-ADR-0037 defines the hold's own schema and expiry value; this ADR fixes the
+ADR-0037 defines the hold's own schema and expiry value; this specification fixes the
 mutex identity and the lock-then-decide protocol.
 
 ### EvidenceSnapshots
 
 Unchanged: ADR-0025's citation-survival design is unconditionally preserved
-by every deletion path in this ADR, extended by this ADR's claim-linkage
+by every deletion path in this specification, extended by this specification's claim-linkage
 design so a citation against cloned content captures the target claim's
 own `event_id`, never the predecessor's.
 
@@ -734,7 +734,7 @@ single-document scoping unmodified instead of re-deriving it.
 
 ## Scope boundaries
 
-This ADR does not define:
+This specification does not define:
 
 - Any change to ADR-0017's temporal-authority derivation.
 - Restoration of a deleted family or version.

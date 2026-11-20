@@ -1,4 +1,4 @@
-# ADR 0016: Define Ingestion Publication and Recovery Semantics
+# Ingestion Publication and Recovery Semantics
 
 ## Status
 
@@ -14,30 +14,30 @@ Accepted
 
 ADR 0015 is accepted, committed and tagged at `R15-S01`, and is not rewritten
 by this document. A post-acceptance implementation review, before any Stage
-15.2/15.3 code existed, found three genuine gaps that this ADR resolves by
+15.2/15.3 code existed, found three genuine gaps that this specification resolves by
 partial supersession rather than by reopening ADR-0015 wholesale:
 
 - **Provisional-vector visibility.** ADR-0015 allowed Python to write vectors
   directly into a workspace's active corpus generation before Laravel
   accepted final completion, with nothing distinguishing those points from
-  already-published ones. This ADR replaces that with an explicit
+  already-published ones. This specification replaces that with an explicit
   provisional-to-published lifecycle and a dual retrieval-visibility gate.
 - **Cross-worker chunk recovery.** ADR-0015 promised that a successor worker
   could resume an abandoned attempt using a predecessor's already-submitted
   chunks, without defining how the successor would obtain them. As
   "Context" below details, that promise is not achievable by recomputation
   given how ADR-0010 and ADR-0011 derive identity — only by an explicit
-  hand-off. This ADR replaces the promise with a concrete sealed-attempt
+  hand-off. This specification replaces the promise with a concrete sealed-attempt
   model and a bounded, authenticated resume contract.
 - **The complete purpose-scoped worker protocol.** ADR-0015 defined four
   `v2` purposes (`ingestion.claim`, `ingestion.chunks.submit`,
   `ingestion.complete`, `ingestion.fail`) but its own "Lease, visibility and
   acknowledgement coordination" section discusses lease renewal as an
   authenticated operation without ever adding it to that list — an internal
-  gap, not a new requirement. This ADR completes the purpose list.
+  gap, not a new requirement. This specification completes the purpose list.
 - **Any wording implying the distributed workflow is observationally atomic
   as one unit.** ADR-0015 was already careful about this for lease/visibility
-  renewal (see its own "Coordinated renewal, not atomic renewal"); this ADR
+  renewal (see its own "Coordinated renewal, not atomic renewal"); this specification
   extends the same honesty to the publication saga introduced below, which
   spans PostgreSQL and Qdrant and is a recoverable saga of individually
   transactional steps, never one distributed transaction.
@@ -64,7 +64,7 @@ payload-minimalism *principle* — the payload remains deliberately minimal,
 chunk text and vectors are still never duplicated into it — it is an
 addition required to actually deliver on ADR-0014's own stated invariant
 that *"a partial write... does not qualify as `INDEXED`"* (ADR 0007) now
-that this ADR makes explicit how that invariant is kept true on the Qdrant
+that this specification makes explicit how that invariant is kept true on the Qdrant
 side, not only the PostgreSQL side.
 
 ### Continuity with ADR-0009's supersession
@@ -128,9 +128,9 @@ operations phases."* This document is that later phase.
 three: an internal gap in ADR-0015's own text, corrected in "Lease renewal"
 below.
 
-## What this ADR decides and does not decide
+## What this specification decides and does not decide
 
-This ADR defines: an explicit provisional-to-published vector lifecycle and
+This specification defines: an explicit provisional-to-published vector lifecycle and
 the dual gate that makes retrieval safe during the crash window; independent
 post-publication verification and evidence-bound publication authorisation,
 so a partially-succeeded or uncertain publication mutation can never be
@@ -268,7 +268,7 @@ verification now finds a different expected point set than the one
 authorised), publication must be re-authorised against the current evidence
 or rejected outright — it must never silently reuse an earlier authorisation
 for a conflicting point set. This is the same no-silent-loss, no-silent-
-substitution discipline this ADR and ADR-0011 already apply everywhere else
+substitution discipline this specification and ADR-0011 already apply everywhere else
 a mismatch could otherwise be quietly papered over.
 
 Laravel's completion validation (step 12) checks the same binding in
@@ -433,7 +433,7 @@ accommodates any purpose value):
 | `ingestion.fail` | ADR 0015 | Request a permanent `FAILED` transition |
 
 `ingestion.complete`'s meaning is refined, not renamed: under ADR-0015 it
-meant "the whole attempt is done." Under this ADR it retains exactly that
+meant "the whole attempt is done." Under this specification it retains exactly that
 meaning, but is now reachable only after publication has been performed
 *and independently verified complete* (step 10), not merely attempted —
 the intervening authorisation handshake (`ingestion.publication.authorise`)
@@ -530,7 +530,7 @@ independently-built mechanisms that could disagree. That policy must be:
 
 The exact worker, command, scheduler, or DLQ-consumer mechanism remains
 Stage 15.3 implementation work, as ADR-0015 already deferred for DLQ
-reconciliation specifically; this ADR extends that same deferral to cover
+reconciliation specifically; this specification extends that same deferral to cover
 the reclaim-triggered case under one policy.
 
 ### Publication recovery cases
@@ -627,9 +627,9 @@ No additional ADR is required solely to produce that table.
 
 ## Roadmap clarification: Phase 15 stage structure
 
-Recorded here as the planning correction this ADR requires, pending separate
+Recorded here as the planning correction this specification requires, pending separate
 application to `PROJECT_ROADMAP.md`, `IMPLEMENTATION_GUIDE.md` and
-`tasks.json` after this document is reviewed — this ADR does not itself
+`tasks.json` after this document is reviewed — this specification does not itself
 modify any of them. Because Stage 15.2 implementation had not begun when
 these gaps were found, Phase 15's stage structure is corrected rather than
 patched around:
@@ -866,5 +866,5 @@ This document does not define:
   ADR-0014's collection topology, `VectorStore` boundary, or generation
   model — all remain exactly as previously accepted.
 
-These remain open for Stage 15.3 to decide with the context this ADR
+These remain open for Stage 15.3 to decide with the context this specification
 establishes.

@@ -1,4 +1,4 @@
-# ADR 0020: Clarify Retrieval Evaluation Evidence and Model-Assisted Evaluation Semantics
+# Retrieval Evaluation Evidence and Model-Assisted Evaluation Semantics
 
 ## Status
 
@@ -76,9 +76,9 @@ None of these findings challenge ADR-0019's architecture. All of them are
 exactly the kind of bounded precision a pre-implementation review is
 supposed to surface before an implementer has to guess.
 
-## What this ADR decides and does not decide
+## What this specification decides and does not decide
 
-This ADR decides, and only this: the corrected adversarial-case ownership
+This specification decides, and only this: the corrected adversarial-case ownership
 split (planner-robustness versus retrieval-robustness versus generation-
 robustness); the repository-owned `EvidenceUnit` contract as the stable
 ground-truth anchor ADR-0019's source-anchoring direction requires;
@@ -394,7 +394,7 @@ the Ragas addition requires. Its eventual commit boundary may legitimately
 include, as applicable: `apps/ai`; evaluation contracts/schema/data; tests;
 scripts; reports; configuration/dependency files; and documentation/
 tracker changes. Nothing in this document authorises beginning any of this
-implementation before this ADR itself is reviewed and accepted.
+implementation before this specification itself is reviewed and accepted.
 
 ## Alternatives considered
 

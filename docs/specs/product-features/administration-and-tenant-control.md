@@ -1,4 +1,4 @@
-# ADR 0025: Define the Administration and Tenant Control Plane
+# Administration and Tenant Control Plane
 
 ## Status
 
@@ -223,9 +223,9 @@ or repairs authoritative state. Existing Python workers/adapters continue
 their established work unchanged; Phase 19 moves no provider-native
 processing into Laravel and no tenant authority into Python.
 
-## What this ADR decides and does not decide
+## What this specification decides and does not decide
 
-This ADR defines: the owner/admin/member capability matrix for
+This specification defines: the owner/admin/member capability matrix for
 administrative actions and its explicit narrowing of ADR-0007's
 deletion-authorization wording; ownership-transfer invariants and
 transaction shape; voluntary-departure rules; permission-revocation

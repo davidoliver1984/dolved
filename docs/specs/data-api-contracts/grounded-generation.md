@@ -1,4 +1,4 @@
-# ADR 0023: Define the Provider-Neutral Grounded Generation Architecture and Contract
+# Provider-Neutral Grounded Generation Contract
 
 ## Status
 
@@ -88,7 +88,7 @@ generation is the same call shape — synchronous, inside the same request's
 critical path, Laravel-signed, Python-verified, no processing lease, no
 `event_id` — so this document adds a fourth `rc1` purpose,
 `generation.answer`, rather than defining a new protocol version. This is a
-genuine architectural decision this ADR makes, not one the R17-S01 brief's
+genuine architectural decision this specification makes, not one the R17-S01 brief's
 notes addressed directly; see the review appendix for why it surfaced only
 during repository reconciliation.
 
@@ -167,7 +167,7 @@ already establish), but it is the settled basis Phase 17 now builds on.
 
 An independent architecture review of the proposed Phase 17 direction (the
 `R17-S01` review) was conducted and accepted before this document was
-drafted. It settled the shape this ADR formalises: a single generation
+drafted. It settled the shape this specification formalises: a single generation
 operation that owns sufficiency judgement (no separate LLM judge), three
 first-class outcomes preferring useful qualified answers over bare refusal,
 a structured-but-natural-prose answer representation with deterministically
@@ -181,9 +181,9 @@ answers a different question: *"given already-authorised trustworthy
 evidence, what is the model allowed to say, how is that answer grounded,
 and how is its evidence lineage preserved?"*
 
-## What this ADR decides and does not decide
+## What this specification decides and does not decide
 
-This ADR defines: the end-to-end generation flow from `RetrievalResult` to
+This specification defines: the end-to-end generation flow from `RetrievalResult` to
 a persisted, validated answer; the provider-neutral `Generator` boundary and
 OpenAI/gpt-5-mini as the initial V1 adapter; why generation, not a separate
 sufficiency judge, owns the sufficiency decision; the `ANSWERED`/
@@ -309,7 +309,7 @@ That reuse does not make gpt-5-mini a permanent generation-quality
 decision — it is suitable for proving the provider-neutral generation
 contract now, and generation *quality* is a separate question this
 document deliberately defers to Stage 17.4's evaluation (see below), not
-one this ADR claims to have settled by picking a model. Before R17-S03
+one this specification claims to have settled by picking a model. Before R17-S03
 begins implementation, the selected model must still be confirmed to
 support the required strict structured-output behaviour reliably for
 *generation* specifically — a model's suitability as ADR-0018's narrow

@@ -1,4 +1,4 @@
-# ADR 0018: Define Retrieval Planning, Eligibility and the Retriever Contract
+# Retrieval Planning, Eligibility and Retriever Contract
 
 ## Status
 
@@ -12,11 +12,11 @@ Accepted
 
 ### Consumes ADR-0017; decides nothing about it
 
-ADR-0017 defines the domain model this ADR builds a consumer against:
+ADR-0017 defines the domain model this specification builds a consumer against:
 `DocumentFamily`, explicit linear version lineage, the derived
 `CURRENT`/`VALID_AT_DATE` temporal-authority rule, the minimal
 `DRAFT → APPROVED → WITHDRAWN` governance model, and per-version
-`OrganisationalLocation` applicability. This ADR treats every one of those
+`OrganisationalLocation` applicability. This specification treats every one of those
 as settled and authoritative. It does not redefine, re-derive, or reopen any
 part of ADR-0017's domain model or invariants — it only decides how a
 retrieval request consumes them. Where this document needs to name a
@@ -29,10 +29,10 @@ a parallel one.
 ADR-0016's dual retrieval-visibility gate — a published Qdrant point **and**
 PostgreSQL `INDEXED` — remains the unconditional structural prerequisite for
 a chunk to be retrievable at all, exactly as ADR-0016 and ADR-0017 both
-already state. This ADR's eligibility model is a **third, additive gate**,
+already state. This specification's eligibility model is a **third, additive gate**,
 applied on top of the existing two, never a substitute for either and never
 a redefinition of what `INDEXED` means. A chunk can pass ADR-0016's dual
-gate and still be correctly excluded by this ADR's eligibility model (not
+gate and still be correctly excluded by this specification's eligibility model (not
 yet approved, not effective, withdrawn, or out of the authorised or
 applicable scope) — that is the expected, common case, not an edge case to
 design around.
@@ -93,7 +93,7 @@ consuming its domain model rather than deciding it. This document is that
 job.
 
 An independent architectural review of the proposed Phase 16 direction,
-conducted before this document was drafted, settled the shape this ADR
+conducted before this document was drafted, settled the shape this specification
 formalises: a Laravel-owned authorisation boundary, a Python-owned,
 LLM-backed planning boundary that never touches authorisation or storage, a
 Laravel-owned deterministic eligibility boundary that combines the two, and
@@ -106,9 +106,9 @@ Laravel-to-Python synchronous call, inside a user request's critical path,
 and needs its own answer — not a stretched reuse of a protocol whose
 principal, direction, lease assumptions and failure behaviour do not fit.
 
-## What this ADR decides and does not decide
+## What this specification decides and does not decide
 
-This ADR defines: the request flow from an authenticated user's question to
+This specification defines: the request flow from an authenticated user's question to
 a returned `RetrievalResult`; the three-way metadata classification
 (security, eligibility, descriptive) that keeps authorisation, eligibility
 and relevance from being conflated; `AuthorisedKnowledgeScope` as
@@ -1016,9 +1016,9 @@ forward-looking sections did for the stages that followed them.
 
 ## Roadmap clarification: Phase 16 stage structure
 
-Recorded here as the planning correction this ADR's review surfaced,
+Recorded here as the planning correction this specification's review surfaced,
 pending separate application to `PROJECT_ROADMAP.md`, `IMPLEMENTATION_GUIDE.md`
-and `tasks.json` after this document is reviewed — this ADR does not itself
+and `tasks.json` after this document is reviewed — this specification does not itself
 modify any of them. `R16-S01` (ADR-0017, accepted) currently has no
 explicit implementation session: Phase 16's stage sequence, as it stands,
 moves directly from defining the versioning/temporal-authority domain model

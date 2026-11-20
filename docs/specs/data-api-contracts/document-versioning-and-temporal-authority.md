@@ -1,4 +1,4 @@
-# ADR 0017: Define Document Versioning and Temporal Authority
+# Document Versioning and Temporal Authority
 
 ## Status
 
@@ -16,7 +16,7 @@ ADR 0007 deliberately deferred versioning rather than rejecting it outright,
 and named the shape it expected a future decision to take: *"a future ADR
 could add an explicit relationship between documents (for example, a
 'supersedes' link) once a genuine requirement exists, without requiring
-this ADR's lifecycle or storage separation to change."* Phase 16 is that
+this specification's lifecycle or storage separation to change."* Phase 16 is that
 requirement. Retrieval cannot honestly answer *"which evidence is eligible
 to answer this question"* without a settled definition of which version of
 a document is authoritative at a given moment, so this document resolves
@@ -38,7 +38,7 @@ go through exactly that same lifecycle, independently, whether or not it
 belongs to a family with other versions.
 
 This document does not rename or replace the `Document` model ADR-0007
-established. A **version**, in this ADR's vocabulary, is a Document
+established. A **version**, in this specification's vocabulary, is a Document
 understood in the context of the family it belongs to — the terms
 `Document` and `DocumentVersion` are used interchangeably where the version
 context matters, without implying a schema rename. Whether the eventual
@@ -68,9 +68,9 @@ it), and how ADR-0014 (the storage domain model) relates to ADR-0015/0016
 (the orchestration that consumes it) — Stage 16.2 (ADR-0018) is the
 consumer here, not this document.
 
-## What this ADR decides and does not decide
+## What this specification decides and does not decide
 
-This ADR defines: `DocumentFamily` as the stable identity that persists
+This specification defines: `DocumentFamily` as the stable identity that persists
 across versions; the rule that every Document belongs to exactly one
 family; explicit, linear version lineage; the temporal-authority derivation
 rule (`CURRENT` as a special case of `VALID_AT_DATE`); the structural
@@ -124,7 +124,7 @@ third, family-less case.
 
 Each Document, except a family's first, carries an explicit, immutable
 reference to the single version it supersedes within the same family.
-Lineage is a chain, not a graph: this ADR does not support branching
+Lineage is a chain, not a graph: this specification does not support branching
 version history (multiple concurrent successors to one version) — nothing
 in the stated V1 requirements needs it, and a linear chain is sufficient to
 answer every `CURRENT`/`VALID_AT_DATE`/`COMPARE` question named in Context.
@@ -142,7 +142,7 @@ at the same layer as the effective-date uniqueness constraint in
 ### The temporal authority model: `CURRENT` as a special case of `VALID_AT_DATE`
 
 Rather than defining `CURRENT` and `VALID_AT_DATE` as two independently
-implemented rules that must be kept in agreement, this ADR defines one rule
+implemented rules that must be kept in agreement, this specification defines one rule
 and treats `CURRENT` as `VALID_AT_DATE` evaluated at the present moment.
 Getting this rule right requires two corrections to a naive version of it,
 both worth stating precisely because neither failure is obvious from a
@@ -381,13 +381,13 @@ unapproved `DRAFT` is a separate case, handled in its own bullet:
   depended on it to begin with. No gap is possible, and no predecessor is
   ever displaced by a version that never took effect.
 - **A `DRAFT` that is never approved** is not "cancelled" in this sense at
-  all, and abandoning one is not a governance-state transition this ADR
+  all, and abandoning one is not a governance-state transition this specification
   defines. `WITHDRAWN` is reachable only from `APPROVED` (see "Governance
   state" below); a `DRAFT` was never governance-eligible and never attains
   authority regardless of what becomes of it, so there is no authority for
   a withdrawal to close and no transition to name. Whether and how an
   unapproved `DRAFT` may be deleted or left inert is ordinary Document
-  lifecycle handling (ADR-0006/ADR-0007), not something this ADR needs to
+  lifecycle handling (ADR-0006/ADR-0007), not something this specification needs to
   define.
 - **Rescheduling** a not-yet-attained, `APPROVED` version changes its
   `effective_from`, constrained by the same effective-date uniqueness
@@ -409,7 +409,7 @@ collapsed into one state machine or a loose boolean:
 
 - **Technical processing state** (ADR 0007, unchanged): *"Is this version
   successfully processed and indexed?"*
-- **Governance state** (new, this ADR): *"Is this version authorised to
+- **Governance state** (new, this specification): *"Is this version authorised to
   become authoritative knowledge?"*
 
 A version can be `INDEXED` — technically complete, its vectors published —
@@ -467,10 +467,10 @@ DRAFT → APPROVED → WITHDRAWN
 `REJECTED`, richer approval workflows (multi-step sign-off, delegated
 approval authority, notification), and any administrative UI for managing
 these transitions are deliberately out of scope — a genuine future need for
-Administration (Phase 19) to design, not something this ADR should
+Administration (Phase 19) to design, not something this specification should
 anticipate speculatively. *Who* is authorised to approve or withdraw a
 version is an authorisation question belonging to Laravel's existing
-role/permission model (ADR 0006); this ADR does not decide it.
+role/permission model (ADR 0006); this specification does not decide it.
 
 Governance transitions are business-audit-worthy events under ADR-0006's
 existing audit layer, extending the same treatment already given to
@@ -491,7 +491,7 @@ silently changing a recorded `approved_at` or `withdrawn_at` silently
 changes what a historical query would return, with no trace that history
 was rewritten.
 
-This ADR does not design a correction workflow — the administration UX
+This specification does not design a correction workflow — the administration UX
 (who requests a correction, what review it goes through, how it is
 surfaced) is left to Administration (Phase 19), exactly as the rest of this
 governance model's UI is. What it does fix, because the temporal model
@@ -580,7 +580,7 @@ administrator at creation time) is that version's own durable fact from
 then on.
 
 Administrative CRUD for `OrganisationalLocation`, hierarchy-management UI,
-and configuration UX are Phase 19 (Administration) concerns. This ADR
+and configuration UX are Phase 19 (Administration) concerns. This specification
 defines only the domain shape retrieval eligibility and durable historical
 data require.
 
@@ -592,7 +592,7 @@ temporal dimension exists: ADR-0016's dual gate — a published Qdrant point
 prerequisite for a chunk to be retrievable at all. `INDEXED` continues to
 mean exactly what ADR-0007 and ADR-0016 already say it means: the complete,
 verified searchable representation exists. It is never redefined, here or
-anywhere, to mean `CURRENT` or "temporally authoritative." This ADR's
+anywhere, to mean `CURRENT` or "temporally authoritative." This specification's
 governance and temporal-authority model is a **third, additive gate**,
 applied on top of the existing two by `EligibilityResolver` (ADR-0018) — a
 version can be fully `INDEXED` and structurally retrievable while still
@@ -621,7 +621,7 @@ extension, not designed against here.
 
 ### A stored, scheduler-flipped `is_current` flag
 
-Rejected, per the explicit requirement this ADR is built around. A stored
+Rejected, per the explicit requirement this specification is built around. A stored
 flag makes correctness depend on a background job having actually run at
 the right moment — exactly the kind of fragile, silently-stuck-until-noticed
 failure mode this platform has repeatedly designed against elsewhere (ADR
@@ -721,7 +721,7 @@ consulted when resolving an existing version's eligibility.
 Considered and rejected as the default. Making withdrawal retroactive would
 mean a `VALID_AT_DATE` query for a past date could return a different answer
 after a later withdrawal than it would have before — directly undermining
-the *"preserving historical source-of-truth behaviour"* requirement this ADR
+the *"preserving historical source-of-truth behaviour"* requirement this specification
 exists partly to satisfy. Withdrawal takes effect from its own timestamp
 forward only.
 
@@ -733,7 +733,7 @@ repeated preference to defer scope until a demonstrated need exists (ADR
 ADR 0013's decision not to self-host embeddings). A three-state governance
 model is the minimum that makes `CURRENT`/`VALID_AT_DATE`/`COMPARE`
 resolvable honestly; multi-step sign-off, delegation and notification are
-real product concerns for Phase 19, not architecture this ADR should
+real product concerns for Phase 19, not architecture this specification should
 anticipate speculatively.
 
 ## Consequences
@@ -876,7 +876,7 @@ anticipate speculatively.
   descendant locations, and is always evaluated independently of user
   access.
 - ADR-0016's dual gate (published Qdrant point plus PostgreSQL `INDEXED`)
-  remains the unconditional prerequisite for retrievability; this ADR's
+  remains the unconditional prerequisite for retrievability; this specification's
   governance/temporal gate is additive, never a redefinition of `INDEXED`.
 - `DocumentFamily`, version lineage, governance state and
   `OrganisationalLocation` are Laravel/PostgreSQL-owned and mandatorily
@@ -902,4 +902,4 @@ This document does not define:
   implementation, constrained by the invariants fixed here.
 
 These remain open for the phases and stages named above to decide with the
-context this ADR establishes.
+context this specification establishes.

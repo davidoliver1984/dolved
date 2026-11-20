@@ -1,4 +1,4 @@
-# ADR 0030: Define Document Family and Version Metadata
+# Document Family and Version Metadata
 
 ## Status
 
@@ -20,11 +20,11 @@ governance state machine, or applicability resolution.
 ### Extends ADR-0007, and introduces the checksum it did not
 
 ADR-0007's three-layer separation and technical processing lifecycle are
-unchanged. This ADR introduces `source_checksum_sha256` — verified absent
+unchanged. This specification introduces `source_checksum_sha256` — verified absent
 from `documents` today — because ADR-0031's clone compatibility proof and
 ADR-0037's export manifest both require a real, verified content identity.
 Because this repository already contains documents whose retained source
-bytes may be unavailable, this ADR defines a **phased, honestly-stateful**
+bytes may be unavailable, this specification defines a **phased, honestly-stateful**
 introduction rather than assuming every row can trivially receive one.
 
 ### Consumed by ADR-0031, ADR-0033, ADR-0034, ADR-0037
@@ -33,7 +33,7 @@ ADR-0031's clone compatibility proof and ADR-0037's source-inclusive export
 both **require** a document's checksum state to be `verified` before
 proceeding — a `pending` or `unavailable` document is not eligible for
 either, exactly as reflected below. ADR-0033 consumes the category domain.
-ADR-0034 requires this ADR's metadata as "required metadata" before
+ADR-0034 requires this specification's metadata as "required metadata" before
 promotion.
 
 ### Does not touch ADR-0032
@@ -85,7 +85,7 @@ authority.
 
 **Final terminology, used consistently: `checksum_verification_status`,
 with values `pending`, `verified`, `unavailable`.** This is not a cosmetic
-naming choice — it is the mechanism that lets this ADR be honest about
+naming choice — it is the mechanism that lets this specification be honest about
 legacy documents whose retained source bytes may already be deleted or
 unreadable, rather than assuming every row can trivially receive a
 checksum.
@@ -115,7 +115,7 @@ checksum.
 3. **Upload completion requires streamed source verification, and
    transitions to `verified` with the computed checksum in the same
    authoritative state change** — the `UPLOADING → UPLOADED` transition
-   already gates on verified existence and size (ADR-0007); this ADR adds
+   already gates on verified existence and size (ADR-0007); this specification adds
    the streamed SHA-256 computation to that same gate, so a newly created
    document is never observably `UPLOADED` while still `pending`. A
    missing or unreadable object at this point fails the upload outright
@@ -217,10 +217,10 @@ provenance rules.
   row** — the XOR between the human and system shapes above, structurally,
   not only by application discipline.
 - **Existing rows backfill as `human`** — every pre-existing row already
-  has a non-nullable `actor_user_id` under the schema this ADR extends, so
+  has a non-nullable `actor_user_id` under the schema this specification extends, so
   this backfill is value-preserving, not inferred.
 - The checksum backfill, owner backfill, and audit-target-scope backfill
-  (this ADR's own migration events) all use explicit, bounded system codes
+  (this specification's own migration events) all use explicit, bounded system codes
   from the vocabulary above — never left as unattributed rows.
 - **Only allowed metadata fields and stable public identities may appear
   in a recorded value, for either provenance form** — never source bytes,
@@ -279,7 +279,7 @@ Withdrawn — see the prior revision's reasoning, unchanged.
 Considered — it would have simplified the migration to a single backfill
 pass with no honest failure state — and rejected: this repository already
 contains, or could contain, documents whose source bytes have been deleted
-or become unreadable independently of this ADR. Claiming every row
+or become unreadable independently of this specification. Claiming every row
 "eventually gets verified" would either block indefinitely on unrecoverable
 rows or silently fabricate a value for content that cannot actually be
 checked. The three-state model represents reality; a two-state
@@ -342,7 +342,7 @@ ADR's tenant-scoping primitive, closes it with no new lock type.
 
 ## Scope boundaries
 
-Unchanged from the prior revision, plus: this ADR does not define the
+Unchanged from the prior revision, plus: this specification does not define the
 exact bounded window after which a `pending` legacy document's backfill is
 considered stuck and surfaced for operator attention — an R23
 implementation detail, not fixed here.

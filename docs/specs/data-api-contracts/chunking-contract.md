@@ -1,4 +1,4 @@
-# ADR 0011: Define the Chunking Architecture and Chunk Contract
+# Chunking Architecture and Contract
 
 ## Status
 
@@ -24,11 +24,11 @@ platform needs an architectural contract chunking conforms to — the same way
 ADR 0010 defined what every extractor must produce before Stage 10.2–10.4
 picked specific parsing libraries.
 
-This ADR defines that contract: the boundary a `ChunkingStrategy`
+This specification defines that contract: the boundary a `ChunkingStrategy`
 implementation must respect, what a `ChunkingResult` represents, and what
 guarantees a chunk carries. It does not choose chunk sizes, overlap
 behaviour, or any specific chunking algorithm — those are Stage 11.2
-concerns, exercised against the contract this ADR defines.
+concerns, exercised against the contract this specification defines.
 
 ## Decision
 
@@ -49,7 +49,7 @@ ChunkingStrategy.chunk(document: NormalisedDocument) -> ChunkingResult
 
 No `ChunkingContext` or `ChunkingInput` wrapper is introduced. This is a
 direct application of a pattern the codebase already establishes, not a new
-one invented for this ADR.
+one invented for this specification.
 
 `ExtractionContext` exists in Stage 10.2–10.4's extractors
 (`extract(source: bytes, *, context: ExtractionContext)`) for a specific
@@ -121,7 +121,7 @@ consequential parameters, and the model-produced decisions that shaped the
 chunk set are sufficiently fixed, retained or cached to reproduce that same
 semantic chunk set on demand. A strategy that cannot provide this must not
 claim conformance to the deterministic `ChunkingStrategy` contract — it is
-not a lesser implementation of this ADR, it is an implementation that has
+not a lesser implementation of this specification, it is an implementation that has
 not met it.
 
 ### Immutability
@@ -152,10 +152,10 @@ location is meant to hold all the way through the pipeline, not just at one
 stage boundary.
 
 This provenance exists to support future citation, inspection and
-traceability. It is deliberately not this ADR's job to design what a citation
+traceability. It is deliberately not this specification's job to design what a citation
 actually looks like, how it is presented, or how it survives re-extraction —
 that is Phase 16's work, and the citation/re-extraction design constraint
-already recorded in `PROJECT_ROADMAP.md`. This ADR's obligation is narrower:
+already recorded in `PROJECT_ROADMAP.md`. This specification's obligation is narrower:
 ensure chunking does not discard the information a future citation feature
 would need, consistent with ADR 0010's core principle that information
 discarded early can never be recreated later.
@@ -205,7 +205,7 @@ configuration are expected to produce identical content and therefore
 identical identities; if they ever diverged, that divergence itself is
 worth surfacing rather than being masked by an identity computed only from
 the inputs. The exact derivation scheme — hashing approach, UUID
-namespace, field ordering — is an implementation detail this ADR constrains
+namespace, field ordering — is an implementation detail this specification constrains
 but does not fix; it belongs to whichever stage first implements the chunk
 model.
 
@@ -252,7 +252,7 @@ result, and it is a statement about the invocation, not about a strategy's
 implementation. A `ChunkingStrategy` may still be constructed with typed
 configuration, a tokenizer, or other implementation dependencies — supplying
 those is ordinary dependency injection, not a violation of this principle.
-What this ADR rejects is narrower and specific: the *invocation* itself —
+What this specification rejects is narrower and specific: the *invocation* itself —
 `chunk(document: NormalisedDocument)` — must operate directly on the
 supplied document without requiring a reference to, or a lookup of, a
 persisted extraction or chunking-run entity. Configuration and dependencies
@@ -279,7 +279,7 @@ Recorded tokenizer identity must be precise enough to resolve the exact
 tokenisation behaviour actually used — a bare name is not sufficient if that
 name's behaviour can change underneath it. Where applicable, this includes
 the vocabulary or model revision and the implementation or library version
-that performed the tokenisation. This ADR does not prescribe the exact
+that performed the tokenisation. This specification does not prescribe the exact
 representation of that identity; it requires only that whatever is recorded
 is sufficient to reproduce the same token counts later.
 
@@ -451,7 +451,7 @@ vector-storage and operations phases, not for this boundary.
 - Future strategies (semantic, model-assisted, hybrid) are additive changes,
   matching the Open/Closed precedent ADR 0010 already established.
 - Provenance chains cleanly from a chunk back through `NormalisedElement` to
-  its original source location, without this ADR having to design the
+  its original source location, without this specification having to design the
   citation system that will eventually consume it.
 - A completeness failure surfaces as a typed error at the point content
   cannot be safely represented, rather than as a silent gap discovered later
@@ -466,7 +466,7 @@ vector-storage and operations phases, not for this boundary.
   configuration fields to be chosen deliberately; getting this wrong could
   misclassify two configurations as equivalent when they are not, or vice
   versa.
-- This ADR can require determinism architecturally, but cannot itself
+- This specification can require determinism architecturally, but cannot itself
   guarantee that every future strategy implementation honours it — a poorly
   built model-assisted strategy could still violate the contract, and a
   model-assisted strategy that cannot fix, retain or cache enough of its own
@@ -491,7 +491,7 @@ vector-storage and operations phases, not for this boundary.
 
 ## Scope boundaries
 
-This ADR does not define:
+This specification does not define:
 
 - baseline chunk sizes;
 - the overlap algorithm;
@@ -511,7 +511,7 @@ This ADR does not define:
 - whether and how a `ChunkingResult` or chunk set is persisted, including
   processing attempts, active-versus-historical generations, embedding
   lineage, or operational audit records — deferred to later orchestration,
-  vector-storage and operations phases, not rejected by this ADR.
+  vector-storage and operations phases, not rejected by this specification.
 
 These remain open for Stage 11.2 (the baseline strategy) and later phases to
 decide with the context appropriate to each.

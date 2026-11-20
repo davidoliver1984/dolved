@@ -1,4 +1,4 @@
-# ADR 0024: Define the Conversation and Streaming Domain
+# Conversation and Streaming Domain
 
 ## Status
 
@@ -582,9 +582,9 @@ context and applicability constraints, regardless of what was said earlier
 in the same conversation, regardless of how confidently it was said, and
 regardless of whether it carried citations.
 
-## What this ADR decides and does not decide
+## What this specification decides and does not decide
 
-This ADR defines: the conversation/grounding/execution domain model and its
+This specification defines: the conversation/grounding/execution domain model and its
 aggregate boundaries (`Conversation`, `Message` with its `kind`
 discriminator, `GenerationRun`, `GeneratedAnswer`); persisted message roles;
 the bounded conversational-context policy, including how clarification
@@ -1314,7 +1314,7 @@ AnswerCompleted                        (authoritative; persisted)
 
 The product-facing description may continue to call the overall feature
 "validated AnswerPart streaming" — that framing is fine for users and
-documentation — but the contract and this ADR use the precise terms above
+documentation — but the contract and this specification use the precise terms above
 internally, specifically so no future reader mistakes "passed part-local
 validation" for "final."
 

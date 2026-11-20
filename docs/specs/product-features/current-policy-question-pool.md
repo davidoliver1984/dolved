@@ -1,4 +1,4 @@
-# ADR-0040: Current-policy question-pool conversation profile
+# Current-Policy Question-Pool Conversation Profile
 
 ## Status
 

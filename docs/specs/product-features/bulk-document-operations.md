@@ -1,4 +1,4 @@
-# ADR 0035: Define Frozen Bulk Document Operations
+# Bulk Document Operations
 
 ## Status
 
@@ -15,14 +15,14 @@ Accepted
 ADR-0027 establishes the shadcn/Tailwind/Lucide component system, the
 semantic-token/theme architecture, and the WCAG 2.2 AA baseline. ADR-0033
 explicitly reserved a selection seam on the library table — "no checkbox
-column until this ADR supplies a real action to select for" — and named
+column until this specification supplies a real action to select for" — and named
 the "select this page" versus "select every filtered result" distinction
-as a requirement this ADR would define. This ADR makes that seam real.
+as a requirement this specification would define. This specification makes that seam real.
 
 ### Consumes ADR-0030, ADR-0031, ADR-0034 as frozen (Proposed, Tier-2
 ### freeze-audited) without reopening or weakening them
 
-This ADR invokes, per item, the **existing single-item domain actions**
+This specification invokes, per item, the **existing single-item domain actions**
 those ADRs already define — `ApproveDocumentVersion`,
 `WithdrawDocumentVersion`, `RescheduleDocumentVersion`,
 `CreateApplicabilityOnlySuccessor` (ADR-0031); the `PromotionAttempt`
@@ -32,7 +32,7 @@ model. **It introduces no new governance rule, no new clone mechanism, no
 new checksum-serialization primitive, and no new promotion sequence** —
 every domain-level decision about *whether* and *how* a single target may
 be approved, withdrawn, cloned, or promoted remains exactly where those
-ADRs already put it. This ADR's own contribution is orchestration: freezing
+ADRs already put it. This specification's own contribution is orchestration: freezing
 a target set, invoking the existing per-item action once per target under
 its own existing rules, and aggregating honest results.
 
@@ -43,7 +43,7 @@ platform's shape for "one durable parent, real progress, idempotent
 retry, derived status" — verified directly, its
 `(document_id, idempotency_key)`-style single-open-operation pattern and
 its "surfaced as visibly stuck" read-model language are the direct
-precedents this ADR's own parent/item model and stuck-operation
+precedents this specification's own parent/item model and stuck-operation
 visibility reuse, generalised from one document to many.
 
 ### Does not redecide ADR-0017's authority model, ADR-0007's technical
@@ -52,7 +52,7 @@ visibility reuse, generalised from one document to many.
 Locations remain applicability/relevance facts, never access control; no
 departments or teams exist in V1; categories/tags/keywords remain library
 organisation only, never retrieval signals — all unchanged, restated where
-this ADR's own operations touch them.
+this specification's own operations touch them.
 
 ## Context
 
@@ -62,16 +62,16 @@ single-document `DocumentDeletionOperation`. Laravel's own application-
 owned database queue is already proven in production shape by
 `AdvanceDocumentDeletion` and `ExecuteGenerationRun`
 (`apps/api/app/Jobs/`), both running on the `database` queue driver —
-this ADR's execution model reuses that exact, already-working pattern,
+this specification's execution model reuses that exact, already-working pattern,
 via its own dedicated, explicitly named connection (`bulk`, "Idempotency
 and concurrency" below) **rather than depending on whatever the
 application's global default queue connection happens to be**.
 `RetryDocumentIngestion`'s `(document_id, idempotency_key)` shape,
 generalised in ADR-0034's `(workspace_id, import_item_id, actor_identity,
 operation_kind, client_idempotency_key)` idempotency identity, is the
-direct precedent this ADR's own request-idempotency model follows.
+direct precedent this specification's own request-idempotency model follows.
 `WorkspaceRole::{Owner, Admin, Member}` is the complete, unchanged
-authorization vocabulary this ADR gates against — no new role is
+authorization vocabulary this specification gates against — no new role is
 introduced.
 
 This is the second of two ADRs completing the accepted Import, Staging and
@@ -96,7 +96,7 @@ of bulk preflight, membership freezing, or orchestration.** Where a
 single-item fallback legitimately triggers full ingestion (ADR-0031's own
 fail-closed fallback when a clone's compatibility proof does not hold),
 that fallback remains governed entirely by its existing ADR and
-evaluation/provider rules — this ADR neither relaxes nor tightens them.
+evaluation/provider rules — this specification neither relaxes nor tightens them.
 
 ### V1 operation allowlist
 
@@ -119,12 +119,12 @@ are deferred rather than casually included.
 
 **Deferred explicitly, not by omission**: bulk deletion and bulk
 withdrawal/rescheduling are **not** in the V1 allowlist. Both are
-genuinely destructive or authority-affecting at scale, and this ADR
+genuinely destructive or authority-affecting at scale, and this specification
 declines to introduce them casually. **The existing single-item path
 remains fully available for both** — an owner/admin may withdraw or
 delete documents one at a time through ADR-0031's existing governance
 routes and family-deletion preview/confirm flow, entirely unaffected by
-this ADR. A future ADR may extend this allowlist once a genuine,
+this specification. A future ADR may extend this allowlist once a genuine,
 demonstrated need is established, following exactly the same pattern this
 ADR itself establishes.
 
@@ -498,7 +498,7 @@ directions — there is no state, and no column, left to an implicit,
 unconstrained `TRUE`. `excluded` is folded in as its own first branch
 rather than a separate `CHECK`, since a truth table with an exception
 bolted on beside it is exactly the shape that produced every gap found
-across this ADR's audit passes so far.
+across this specification's audit passes so far.
 
 **Sweep of every remaining `BulkOperationItem` column, confirming nothing
 else is left unconstrained**: `id`, `bulk_operation_id`, `workspace_id`,
@@ -652,7 +652,7 @@ every invariant this section requires database-enforced.
 deletion while history "survives" — a constrained foreign key cannot
 simply become unusable; `restrictOnDelete()` would block the very target
 deletion ADR-0025/ADR-0031 must remain free to perform, and an ordinary
-cascade would destroy the retained history this ADR requires. Neither was
+cascade would destroy the retained history this specification requires. Neither was
 actually specified before; both are now resolved explicitly.**
 
 - **Each target FK declares `nullOnDelete()`** — the same Laravel schema-
@@ -755,7 +755,7 @@ schema must establish its schema `USAGE`, existing-object grants
 (tables, sequences, **and functions**), and owner-scoped default
 privileges (tables, sequences, **and functions**) before any runtime
 dependency on that schema is deployed. **Trigger-only and owner-only
-functions — including every `SECURITY DEFINER` function this ADR
+functions — including every `SECURITY DEFINER` function this specification
 introduces — never receive a runtime `EXECUTE` grant at all**, whether
 existing or future: PostgreSQL's trigger mechanism invokes a trigger
 function regardless of whether the table-owning role or the statement's
@@ -764,7 +764,7 @@ given. This baseline is reconciled idempotently in local, CI, and
 deployed bootstrap and verified across the existing application before
 the restricted role becomes the default.
 
-**Every `SECURITY DEFINER` function this ADR introduces — currently just
+**Every `SECURITY DEFINER` function this specification introduces — currently just
 `retire_bulk_operation_item_targets()` — independently satisfies the same
 four requirements, not merely by inheriting the baseline above**: owned by
 `rag_platform_owner`; declares `SET search_path = ''` with every
@@ -856,7 +856,7 @@ migration, ever produces a retained-deleted row.
   issues an ordinary `DELETE` against `document_families`, which the
   retirement trigger intercepts exactly as described above. For a
   **version** (`Document`) deletion, the same applies against `documents`.
-  For an **`ImportItem`**, this ADR distinguishes two genuinely different
+  For an **`ImportItem`**, this specification distinguishes two genuinely different
   events that the brief's word "expiry" could mean: (1) **staging
   expiry** — ADR-0034's own retention window elapsing — is a **status
   change** (`staging_expired`), never a row deletion; the `ImportItem` row
@@ -868,7 +868,7 @@ migration, ever produces a retained-deleted row.
   **actual `ImportItem` row deletion** (e.g. batch purge after retention),
   which the retirement trigger handles identically to a family or version
   deletion. **Only genuine row deletion ever exercises the retirement
-  trigger; a status-only expiry never does**, and this ADR's typed
+  trigger; a status-only expiry never does**, and this specification's typed
   exclusion/skip vocabulary already distinguishes the two honestly.
 - **Execution racing target deletion**: the per-item finalize transaction
   (below, "Idempotency and concurrency") acquires a row lock on the
@@ -921,7 +921,7 @@ migration, ever produces a retained-deleted row.
   the retained shape — is therefore attributable to target-side trigger
   execution or genuine owner authority, never to caller-manufactured
   context.
-- **This is the second and third place this ADR's migration requires
+- **This is the second and third place this specification's migration requires
   explicit, raw PostgreSQL DDL** (`DB::unprepared`) **rather than
   Laravel's schema-builder abstraction alone** — alongside the
   cross-workspace trigger below, the schema builder has no API for
@@ -949,7 +949,7 @@ migration, ever produces a retained-deleted row.
   OR UPDATE` on `bulk_operation_items` and, for whichever of the three
   target columns is non-null, looks up that target row's own
   `workspace_id` and raises an exception if it does not equal `NEW.
-  workspace_id`. **This trigger is one of the three places this ADR's
+  workspace_id`. **This trigger is one of the three places this specification's
   migration requires explicit, raw PostgreSQL DDL rather than Laravel's
   schema-builder abstraction alone**, alongside the retirement trigger and
   its guard above — the builder has no API for authoring any of the
@@ -974,7 +974,7 @@ migration, ever produces a retained-deleted row.
   ADR-0025's or ADR-0031's own deletion paths — satisfied structurally by
   the retirement trigger performing the live-to-retained transition inside
   the deleting transaction itself, with no further coordination required
-  between this ADR and either of theirs.
+  between this specification and either of theirs.
 
 **Constraints, stated explicitly:**
 
@@ -1096,7 +1096,7 @@ different target into the frozen set.
   per-operation category matrix** "Per-operation contract matrix" below
   defines for every V1 operation — never free text, and never left
   "enumerated at implementation time": every stable semantic category is
-  fixed in this ADR; only the low-level infrastructure code beneath each
+  fixed in this specification; only the low-level infrastructure code beneath each
   category is implementation detail.
 - The requested change (the canonical payload) and the scope affected.
 - **An explicit confirmation action.**
@@ -1526,7 +1526,7 @@ concept.
      name a generation whose own terminal outcome already exists.
 
   This is a cross-table read inside a trigger, exactly the same
-  established pattern this ADR already uses for the workspace-scoping and
+  established pattern this specification already uses for the workspace-scoping and
   retirement guards above — not a plain `CHECK`, because a `CHECK` cannot
   compare `OLD` to `NEW` or inspect another table.
 - **Atomicity with item terminalisation**: every write to
@@ -1932,7 +1932,7 @@ expected state is no longer true — it never double-applies a mutation.
 
 **Bulk-orchestration queue connection, named explicitly**: rather than
 depending on whatever the application's global default queue connection
-happens to be, this ADR's jobs run on a dedicated, explicitly configured
+happens to be, this specification's jobs run on a dedicated, explicitly configured
 Laravel queue connection, `bulk` (`config/queue.php`), using the
 `database` driver **regardless of what `QUEUE_CONNECTION` the
 application's default queue is set to** — the same underlying driver
@@ -2096,10 +2096,10 @@ for every subordinate-backed item.
   ingestion lineage `event_id` (the `document.ingestion.requested` event
   ADR-0034 already names).
 - **Expected terminal outcomes are exactly the subordinate's own,
-  already-defined ones — this ADR introduces no new subordinate
+  already-defined ones — this specification introduces no new subordinate
   vocabulary, only maps the existing one onto its own item outcome — via
   exactly two normative mapping tables, below, which are the sole source
-  of this mapping. No other prose in this ADR restates or redefines
+  of this mapping. No other prose in this specification restates or redefines
   it.**
 - **Idempotent, Laravel-owned reconciliation**: the same bounded batch
   job that claims `eligible` items also, in its own bounded pass, reads
@@ -2138,7 +2138,7 @@ for every subordinate-backed item.
 from `COPYING` or `SOURCE_VERIFIED`), to `ABANDONED` (cancellation, from
 any non-terminal state), or to `EXPIRED` (retention elapsed, no valid
 lease). This table is the **sole** source of the promotion mapping; no
-other prose in this ADR restates it.
+other prose in this specification restates it.
 
 | `PromotionAttempt` state | Bulk item outcome | Typed reason | Notes |
 |---|---|---|---|
@@ -2166,7 +2166,7 @@ directly**: `AUTHORISED → COPYING → VERIFYING → INDEXED`, with
 `COPYING`/`VERIFYING` able to transition to `CLEANUP_REQUIRED →
 FALLBACK_READY → ordinary ingestion` on any layer's integrity-proof
 failure. This table is the **sole** source of the applicability/clone
-mapping; no other prose in this ADR restates it.
+mapping; no other prose in this specification restates it.
 
 | ADR-0031 state / event | Bulk item outcome | Typed reason | Notes |
 |---|---|---|---|
@@ -2189,11 +2189,11 @@ step (separate approval before the successor can attain authority),
 never a second, contradictory "technical indexing still pending" claim.
 **Searchability still requires both the accepted technical rules
 (ADR-0007/ADR-0032) and the accepted governance rules (ADR-0017)** —
-unchanged by this ADR in either direction.
+unchanged by this specification in either direction.
 
 **Laravel owns every reconciliation decision in both tables above. Python
 reports only its own already-bounded technical result** (a clone's
-completeness report, per ADR-0031) — this ADR grants it no new authority
+completeness report, per ADR-0031) — this specification grants it no new authority
 over what a bulk item's own outcome means.
 
 ### Applicability/location bulk change — orchestration detail
@@ -2239,17 +2239,17 @@ weight that implies:
   since recovery is still in progress; the sole `failed_permanent` outcome
   in this whole operation type is the fallback's own ingestion reaching
   ADR-0007's `FAILED` after its own ceiling — never silently retried by
-  this ADR, and never presented as `succeeded` ahead of that subordinate's
+  this specification, and never presented as `succeeded` ahead of that subordinate's
   own genuine outcome.
 - **Why this never edits an authoritative version in place**: ADR-0017's
-  applicability snapshot is immutable per version, by design — this ADR
+  applicability snapshot is immutable per version, by design — this specification
   does not, and structurally cannot, alter that; every applicability
   change is, and remains, a new governed successor.
 
 **No departments or teams are introduced.** The applicability-change UI
 exposes only the existing organisational-location hierarchy; a future
 department/team axis's extension seam is preserved by not hard-coding
-this ADR's own preview/confirmation UI to a single-hierarchy assumption
+this specification's own preview/confirmation UI to a single-hierarchy assumption
 beyond what ADR-0017 already requires — no inactive, greyed-out
 department/team control is shown in V1.
 
@@ -2257,7 +2257,7 @@ department/team control is shown in V1.
 
 **Withdrawn: "bounded and enumerated at implementation time" as the
 description of any operation's exclusion/result vocabulary.** Every
-stable semantic category below is fixed by this ADR, for all seven V1
+stable semantic category below is fixed by this specification, for all seven V1
 operation types; only the low-level infrastructure code beneath a given
 category (an exact string constant, a specific database error class) is
 implementation detail.
@@ -2284,7 +2284,7 @@ retryable-and-failable. Backing action: `ApproveDocumentVersion`
 the version is now governance-`APPROVED`. Audit event:
 `bulk_operation_item.approved`. Downstream pending work: whether the
 version has genuinely *attained* authority depends on ADR-0017's
-`authority_start` derivation, unaffected by this ADR — approval alone
+`authority_start` derivation, unaffected by this specification — approval alone
 **never guarantees current/searchable authority**. Knowledge-gap
 behaviour: none — approval only ever adds authority, never removes it.
 
@@ -2424,7 +2424,7 @@ database/infrastructure error. Permanent failure categories: none beyond
 ceiling exhaustion. Backing action: ADR-0030's review-date action,
 unmodified. Item success: the assignment (or clear) commits. Audit
 event: `bulk_operation_item.review_date_assigned`. Downstream pending
-work: none beyond ADR-0036's future reminder scheduling, which this ADR
+work: none beyond ADR-0036's future reminder scheduling, which this specification
 does not define. Knowledge-gap behaviour: none — review dates are
 advisory only, per ADR-0030, and never affect authority.
 
@@ -2503,7 +2503,7 @@ retry):**
   immutable `failed_permanent`.**
 - **`failed_permanent`, `skipped`, `cancelled`, `excluded`, and
   `succeeded` never reopen, under any of the four concepts below, and
-  under no other mechanism this ADR defines.** Acting again on any
+  under no other mechanism this specification defines.** Acting again on any
   terminal item requires a genuinely **new** `BulkOperation` — its own
   fresh membership, its own fresh preflight, its own fresh authorization
   check, its own idempotency identity, and its own explicit confirmation.
@@ -2582,10 +2582,10 @@ own.
   route (below), retained even after a target is later deleted, using
   the captured scalar public-identity/label snapshot (above) rather than
   a live join that a later deletion would break.
-- **Notification consumption, reserved, not designed here**: this ADR
+- **Notification consumption, reserved, not designed here**: this specification
   emits the domain events (`bulk_operation.completed`,
   `bulk_operation.completed_with_exceptions`) ADR-0036 may subscribe to
-  for notification delivery — this ADR does not define delivery,
+  for notification delivery — this specification does not define delivery,
   recipients, or preferences, only that the events exist and carry safe,
   allowlisted content.
 
@@ -2598,7 +2598,7 @@ operation-detail/result surface — a real, refresh-safe, deep-linkable,
 tenant-concealed route, not a modal-only experience that loses state on
 refresh.
 
-**The library provides**: row checkboxes (only once this ADR ships, per
+**The library provides**: row checkboxes (only once this specification ships, per
 ADR-0033's own reserved seam); current-page selection; the explicit
 all-filtered-results selection action with its visible exact frozen
 count; a bulk-action toolbar offering only the operations the current
@@ -2620,7 +2620,7 @@ links from every item's result back to its affected family/version/
 import detail page.
 
 **Tooltips and accessible information affordances are required** for:
-approval versus promotion (a genuinely confusable pair this ADR's own
+approval versus promotion (a genuinely confusable pair this specification's own
 allowlist keeps as two distinct operations); applicability; universal
 applicability; excluded; skipped; retryable failure; and the current-page-
 versus-every-filtered-result distinction. Every tooltip is concise, plain-
@@ -2671,7 +2671,7 @@ successful result; and an empty/no-action (zero-eligible) result.
 
 Rejected — a client-held selection list has no durable, auditable
 identity and cannot survive a browser refresh or a lost response; the
-frozen-membership model this ADR requires is a server-side, durable fact
+frozen-membership model this specification requires is a server-side, durable fact
 from confirmation onward.
 
 ### Storing only the query and rerunning it during execution
@@ -2711,7 +2711,7 @@ distinct audit events; no combined shortcut is introduced.
 
 Rejected for V1 — both are genuinely destructive or authority-affecting
 at scale; the existing single-item path remains fully available for
-either, and this ADR declines to introduce their bulk form without a
+either, and this specification declines to introduce their bulk form without a
 separately demonstrated need.
 
 ### Python-owned bulk orchestration
@@ -2746,7 +2746,7 @@ without sacrificing type safety.
 ### A cross-table `CHECK` constraint comparing an item's target columns
 ### directly against its parent's `operation_type`
 
-This was an earlier design in this ADR and is withdrawn as unimplementable
+This was an earlier design in this specification and is withdrawn as unimplementable
 — verified that PostgreSQL `CHECK` constraints cannot inspect another
 table at all; no such constraint could ever have enforced the comparison
 it described. The corrected design duplicates `operation_type` onto the
@@ -2762,7 +2762,7 @@ Considered, and rejected on inspection: PostgreSQL's `ON DELETE SET NULL`
 nulls every column participating in the foreign key together, so a
 composite `(target_family_id, workspace_id)` FK would null the item's own
 `workspace_id` the instant its target was deleted — destroying the
-tenancy scoping this ADR's retained history depends on. Single-column
+tenancy scoping this specification's retained history depends on. Single-column
 target FKs, with cross-workspace safety enforced instead by a database
 trigger (the same pattern ADR-0017's migration already establishes for an
 analogous cross-table invariant), avoid this entirely.
@@ -2770,13 +2770,13 @@ analogous cross-table invariant), avoid this entirely.
 ### An unconditional target-shape `CHECK` with no live/retained
 ### discriminator, relying on `nullOnDelete()` alone
 
-This was an earlier design in this ADR and is withdrawn as
+This was an earlier design in this specification and is withdrawn as
 self-contradictory — Codex correctly identified that PostgreSQL
 re-evaluates every `CHECK` constraint on a row as part of the very
 `UPDATE ... SET target_document_id = NULL` that implements
 `ON DELETE SET NULL`, so a `CHECK` that unconditionally required a
 non-null target column for its `operation_type` would reject that
-`UPDATE` outright, coupling this ADR's history retention to every
+`UPDATE` outright, coupling this specification's history retention to every
 deletion path in ADR-0025/ADR-0031 in a way neither of those ADRs'
 deletion designs can accept. The corrected design adds
 `target_reference_status` as an explicit discriminator, branches the
@@ -2801,7 +2801,7 @@ simultaneously.
 ### A durable `claimed` item state with a lease, heartbeat, and expiry-
 ### based reclaim
 
-This was an earlier design in this ADR and is withdrawn as unsafely
+This was an earlier design in this specification and is withdrawn as unsafely
 underspecified — a durable `claimed` row with no accompanying lease-
 generation, heartbeat, or expiry mechanism cannot structurally guarantee
 a crashed worker's claim is ever released, and adding that machinery
@@ -2818,7 +2818,7 @@ outcome-recording to be the same transaction.
 ### A single claim-through-commit transaction, with no durable
 ### per-attempt record
 
-This was an earlier design in this ADR and is withdrawn as unsafe on two
+This was an earlier design in this specification and is withdrawn as unsafe on two
 independent grounds Codex identified. First, a transaction that itself
 aborts cannot durably record its own failure or increment its own retry
 count against a row it never committed — "the current model can retry
@@ -2840,7 +2840,7 @@ above.
 ### Committing the parent's terminal status "in the same transaction as
 ### the last item's own terminal commit," with no shared lock
 
-This was an earlier design in this ADR and is withdrawn as unsafe under
+This was an earlier design in this specification and is withdrawn as unsafe under
 PostgreSQL `READ COMMITTED` — Codex correctly identified that two items
 finishing at nearly the same moment, each in its own transaction, could
 each independently query the item distribution without ever seeing the
@@ -2860,7 +2860,7 @@ domain-mutation work itself.
 ### Restating the parent terminal mapping as parallel prose, a
 ### distribution table, and a diagram, with no single normative function
 
-This was an earlier design in this ADR and is withdrawn because the three
+This was an earlier design in this specification and is withdrawn because the three
 descriptions were found to drift — the zero-total-item case and the
 "unexpected cancelled" defensive branch had no home in any of the three,
 and nothing prevented a future edit from updating one description without
@@ -2871,9 +2871,9 @@ its branches.
 
 ### Assuming every subordinate workflow's identity is a `public_id`
 
-This was an earlier design in this ADR and is withdrawn as incomplete —
+This was an earlier design in this specification and is withdrawn as incomplete —
 ordinary full-ingestion fallback has no `public_id`-bearing row of its
-own to reference; forcing one would have meant inventing a row this ADR
+own to reference; forcing one would have meant inventing a row this specification
 has no other reason to create, purely to satisfy a column's assumed
 shape. The corrected design generalises the column into a
 `subordinate_identity_kind`/`subordinate_identity_value` pair, with a
@@ -2883,7 +2883,7 @@ the fallback case.
 
 ### Exposing a fabricated "claimed" count in the browser progress UI
 
-This was an earlier design in this ADR and is withdrawn because this
+This was an earlier design in this specification and is withdrawn because this
 design has no durable `claimed` item state to back such a count with —
 displaying one would have shown a number backed by nothing durably
 observable. The corrected design shows only counts backed by durable
@@ -2894,7 +2894,7 @@ introduced in this pass.
 ### Treating a bulk item as `succeeded` the moment it merely initiates a
 ### subordinate workflow
 
-This was an earlier design in this ADR and is withdrawn as internally
+This was an earlier design in this specification and is withdrawn as internally
 contradictory — it allowed an item to be reported terminal-successful at
 the instant a `PromotionAttempt` or content-clone operation was merely
 *created*, while separately (correctly) requiring that subordinate to
@@ -2908,7 +2908,7 @@ item's own truthful terminal state.
 
 ### A transaction-local custom GUC as the retirement trigger's authority
 
-This was an earlier design in this ADR and is withdrawn because a
+This was an earlier design in this specification and is withdrawn because a
 caller-controlled setting is forgeable by the Laravel runtime role and
 therefore cannot prove that target deletion caused a child transition.
 The corrected design uses protected columns, a trigger-only `SECURITY
@@ -2920,7 +2920,7 @@ diagnostic role in the implementation.
 ### need no durable idempotency/result primitive because they are
 ### "naturally idempotent"
 
-This was an earlier design in this ADR and is withdrawn as conflating a
+This was an earlier design in this specification and is withdrawn as conflating a
 domain effect's determinism with the safety of blindly replaying it.
 `ApproveDocumentVersion` requires `DRAFT` and **rejects** a second
 invocation once the version is no longer `DRAFT` — a crash-and-replay
@@ -2936,7 +2936,7 @@ have no separate idempotency table of their own.
 ### An item-level `CHECK` design composed of several independently-correct
 ### clauses, rather than one closed truth table
 
-This was an earlier design in this ADR and is withdrawn because
+This was an earlier design in this specification and is withdrawn because
 independently-composed clauses each correctly asserted what a given state
 *must* have, but none of them asserted what every *other* state must
 **not** have — leaving a partial subordinate tuple on a terminal row, and
@@ -2949,7 +2949,7 @@ database constraints" above.
 ### No stale-worker fencing, relying on the lease-expiry reclaim alone to
 ### prevent a late mutation
 
-This was an earlier design in this ADR and is withdrawn as incomplete —
+This was an earlier design in this specification and is withdrawn as incomplete —
 a bounded lease and a reclaim sweep prevent a stale attempt from being
 *counted* as still open, but nothing previously stopped a worker that
 merely paused past its own lease (a long GC pause, a slow network call
@@ -2961,17 +2961,17 @@ regardless of whether it "believes" its lease is still valid.
 
 ### Leaving the lock order implicit, verified only piecemeal per section
 
-This was an earlier design in this ADR and is withdrawn because a lock
+This was an earlier design in this specification and is withdrawn because a lock
 order that is only ever justified locally, section by section, cannot be
 checked for a global cycle — the exact category of bug a deadlock is.
 The corrected design states one explicit, named lock order up front
-("Global lock order" above), covering every phase this ADR defines, with
+("Global lock order" above), covering every phase this specification defines, with
 one explicit cycle-freedom argument covering all of them together.
 
 ### Committing an attempt's terminal outcome and incorporating it into
 ### the item as two independently-timed transactions with no durable link
 
-This was an earlier design in this ADR and is withdrawn as leaving
+This was an earlier design in this specification and is withdrawn as leaving
 exactly the crash window Codex identified: between an attempt's own
 terminal commit and a later, separate item-finalisation transaction, the
 item could still read `eligible`/`failed_retryable` with nothing to stop
@@ -2987,7 +2987,7 @@ terminal — see
 ### Granting the runtime role unrestricted, whole-row `INSERT` on
 ### `bulk_operation_items`
 
-This was an earlier design in this ADR and is withdrawn as leaving a
+This was an earlier design in this specification and is withdrawn as leaving a
 structural path to the exact retained-deleted shape the retirement
 privilege boundary exists to protect — Codex correctly identified that an
 unrestricted `INSERT` grant would let runtime create a row already
@@ -3003,7 +3003,7 @@ fire `BEFORE INSERT`.
 ### object" while its `ALTER DEFAULT PRIVILEGES` rules named only tables
 ### and sequences
 
-This was an earlier design in this ADR and is withdrawn as an overclaim —
+This was an earlier design in this specification and is withdrawn as an overclaim —
 Codex correctly identified that PostgreSQL grants `EXECUTE` on a newly
 created function to `PUBLIC` automatically, and the prior baseline's
 default-privilege rules never revoked that for **functions**, only for
@@ -3016,7 +3016,7 @@ function retroactively during the foundation migration.
 ### An item `CHECK` truth table that constrained every column the prior
 ### audit named, but left `started_at` and `result_identity` unconstrained
 
-This was an earlier design in this ADR and is withdrawn as the same class
+This was an earlier design in this specification and is withdrawn as the same class
 of gap the truth-table correction itself was meant to close — closing two
 named gaps without sweeping every state-bearing column left two more of
 exactly the same shape. The corrected design adds both columns to every
@@ -3057,7 +3057,7 @@ execution-state-keyed primary table should not be overloaded to express.
   item — a real implementation cost, not a thin wrapper.
 - Retained, undeleted operation history grows unboundedly over a
   workspace's lifetime — an accepted, bounded-per-row storage cost, not a
-  performance concern at the scale this ADR targets.
+  performance concern at the scale this specification targets.
 - The maximum-target-count bound and transaction-duration monitoring
   requirement mean a very large "select all" action may be rejected
   outright rather than silently degrading — a real, visible V1
@@ -3077,7 +3077,7 @@ execution-state-keyed primary table should not be overloaded to express.
 
 ## Scope boundaries
 
-This ADR does not define: ADR-0030/0031's governance or metadata rules;
+This specification does not define: ADR-0030/0031's governance or metadata rules;
 ADR-0032's artefact/projection mechanics; ADR-0034's staging/promotion
 mechanics beyond invoking its existing `PromotionAttempt` sequence and
 shared checksum-serialization primitive unmodified; ADR-0036's
@@ -3389,7 +3389,7 @@ committed.
 No live-provider run is required to prove bulk orchestration itself; any
 provider-dependent downstream ingestion evidence (a full-ingestion
 fallback from a failed clone) remains governed by its own existing
-ADR-0029 boundary, unmodified by this ADR.
+ADR-0029 boundary, unmodified by this specification.
 
 ## Phase/session allocation
 
@@ -3426,7 +3426,7 @@ decomposition's earlier stated intent.
 
 ## Required final report — describes the corrected ADR, not any earlier draft
 
-This ADR has now been through **seven** implementation-readiness
+This specification has now been through **seven** implementation-readiness
 correction passes, the first six summarised at the top of the prior
 report below this one in the file's own history. **This report covers
 the seventh pass**, which closed the four concrete implementation

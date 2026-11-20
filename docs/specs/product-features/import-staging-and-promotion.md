@@ -1,4 +1,4 @@
-# ADR 0034: Define Import Staging and Promotion
+# Import Staging and Promotion
 
 ## Status
 
@@ -10,7 +10,7 @@ Accepted
 
 ## Relationship to prior ADRs
 
-This ADR sits entirely upstream of the existing ingestion outbox/claim
+This specification sits entirely upstream of the existing ingestion outbox/claim
 pipeline (ADR-0008/0015/0016): no `document.ingestion.requested` event is
 published before promotion commits. It consumes ADR-0030 (metadata
 classification, checksum state), ADR-0031 (`CreateDocumentVersion`,
@@ -154,7 +154,7 @@ structurally:**
   into an unresolvable dangling reference.
 - **Update**: `replaced_by_import_item_id` is set exactly once, at the
   moment a replacement item is created for a failed/rejected original —
-  it is never reassigned afterward, and this ADR introduces no
+  it is never reassigned afterward, and this specification introduces no
   restoration path that would need to clear or change it.
 
 **Required tests for both composite bindings**: a current-snapshot
@@ -437,8 +437,8 @@ version's governance standing.
 - **If identical bytes match a live version and the intended change is
   applicability-only**, the UI directs the user to ADR-0031's
   `CreateApplicabilityOnlySuccessor` action instead of re-uploading
-  identical content through this ADR's promotion path — the two are
-  different operations, and this ADR's duplicate guard exists to prevent
+  identical content through this specification's promotion path — the two are
+  different operations, and this specification's duplicate guard exists to prevent
   the wrong one being used, not to block the right one.
 - Otherwise: the user is told an identical document already exists, with
   safe actions to open it or remove the import item. No second version is
@@ -475,7 +475,7 @@ organisational metadata with content identity.
 ### Shared workspace/checksum serialization primitive
 
 **Corrected: an earlier design excluded ADR-0031's applicability-only
-clone from this ADR's checksum-reservation mechanism entirely, on the
+clone from this specification's checksum-reservation mechanism entirely, on the
 reasoning that a clone's identical checksum is intentional, not a
 duplicate.** That reasoning is correct about *duplicate rejection*, but
 it does not follow that clone should skip *serialization* — without a
@@ -486,7 +486,7 @@ race this mechanism exists to prevent. **Verified against ADR-0031's own
 text: it defines no workspace-checksum lock, reservation, or serialization
 mechanism of any kind, and states nothing that would forbid one — there is
 no Tier-1 contradiction here, and this correction is resolved entirely
-within this ADR, as the consumer-side specification both this ADR's own
+within this specification, as the consumer-side specification both this specification's own
 promotion path and ADR-0031's clone operation must follow.**
 
 **`WorkspaceChecksumReservation`** — one durable row per
@@ -537,7 +537,7 @@ promotion path and ADR-0031's clone operation must follow.**
   on that checksum simply recreates it via the same idempotent insert.
 - **Why it cannot indefinitely block subsequent operations**: the lock is
   never held longer than the single short transaction that already bounds
-  every other terminal decision in this ADR's state machine — the same
+  every other terminal decision in this specification's state machine — the same
   transaction that would otherwise be taken regardless of this
   correction, not a new, separately-timed critical section.
 
@@ -683,7 +683,7 @@ ownership transfers. The reserved-key cleanup sweep must lock the
 references the exact key before ever deleting it; a key is deleted only
 when no committed `Document` owns it and no open attempt or valid lease
 may still write to it. Deletion of the resulting `Document` later is
-exclusively ADR-0025/ADR-0031's concern; this ADR's sweep never touches
+exclusively ADR-0025/ADR-0031's concern; this specification's sweep never touches
 that key again once ownership has transferred. Cleanup and commit are
 serialised by this same lock, never two independently-timed checks.
 
@@ -727,7 +727,7 @@ not currently prove this for any backend in use.
 SHA-256**, satisfied only by option 1 or 2, never by a bare existence
 check. **`DocumentObjectStorage` is extended, at implementation time, with
 whichever primitive (conditional-create or version-identity capture) the
-deployed backend actually supports** — this ADR requires the extension,
+deployed backend actually supports** — this specification requires the extension,
 not a specific vendor API. Commit binds both the storage key and the
 proof identity together; cleanup and deletion address that same identity;
 no modifiable key is ever committed merely because it was hashed moments
@@ -1001,7 +1001,7 @@ closes it.
 ### Excluding ADR-0031's applicability-only clone from the checksum
 ### reservation/lock entirely
 
-This was an earlier design in this ADR and is withdrawn: it correctly
+This was an earlier design in this specification and is withdrawn: it correctly
 recognised that a clone's matching checksum must never be *rejected* as a
 duplicate, but incorrectly concluded from that, that the clone should
 also skip *serialization* — leaving a real phantom-duplicate/phantom-
@@ -1035,7 +1035,7 @@ different authorised actor, are required instead.
   browser-facing stages — including the previously-omitted
   `RequestDocumentIngestion` — accounted for in the cutover and drain.
 - The complete relational-invariant tables give Codex an unambiguous
-  implementation target for every entity this ADR introduces.
+  implementation target for every entity this specification introduces.
 - The asynchronous preflight design matches this codebase's actual worker
   topology rather than inventing an inconsistent synchronous call.
 - Matching is fully deterministic, provider-free, and safe under
@@ -1060,7 +1060,7 @@ different authorised actor, are required instead.
 
 ## Scope boundaries
 
-This ADR does not define: the ingestion outbox/claim/lease protocol
+This specification does not define: the ingestion outbox/claim/lease protocol
 itself; ADR-0031's governance actions or family-deletion flow; ADR-0032's
 artefact/projection mechanics; ADR-0035's bulk-operation mechanics beyond
 the primitives it consumes; ADR-0036's notification triggers; ADR-0037's
@@ -1096,7 +1096,7 @@ proof and its backend-unsupported fail-closed path; **the complete legacy-
 marker bootstrap sequence** (pre-existing rows, rows racing the cutover
 transaction, idempotent restart) and the legacy cutover/drain sequence for
 every pre-cutover state; and the projection lifecycle tests specified in
-ADR-0033 for `document_family_activity_summary`, since this ADR's own
+ADR-0033 for `document_family_activity_summary`, since this specification's own
 promotion commit is one of that projection's allowlisted producers.
 
 Required Playwright journeys: one-file import; mixed multi-file import;
@@ -1125,7 +1125,7 @@ terminal condition ADR-0033's onboarding journey asserts).
   flow; the honest coarse-progress model
   (`Promoted/queued → Processing → Indexed`, with finer sub-stage
   granularity named as an explicitly deferred future seam requiring
-  ingestion-worker-protocol changes outside this ADR's scope).
+  ingestion-worker-protocol changes outside this specification's scope).
 - **R25-S07 — Tests and Playwright journeys.** The complete list above.
 
 Not allocated here: ADR-0035's bulk-execution UI, ADR-0036's notification

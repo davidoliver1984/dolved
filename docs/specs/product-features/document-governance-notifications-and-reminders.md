@@ -1,4 +1,4 @@
-# ADR 0036: Define Document Governance Notifications and Reminders
+# Document Governance Notifications and Reminders
 
 ## Status
 
@@ -13,7 +13,7 @@ Accepted
 ### Consumes ADR-0030–ADR-0035 as frozen (Proposed, independently
 ### implementation-readiness-audited) without reopening any of them
 
-This ADR consumes the **event-producing lifecycles** these six ADRs
+This specification consumes the **event-producing lifecycles** these six ADRs
 already define — document-family/version metadata and its owner/category/
 tag/review-date fields (ADR-0030); version-governance orchestration,
 applicability-only successors, the `DocumentContentCloneOperation`/
@@ -21,16 +21,16 @@ full-ingestion-fallback subordinate state machine, and family deletion
 (ADR-0031); structured extraction and source delivery (ADR-0032, no
 direct event surface of its own); import staging and the `PromotionAttempt`
 state machine (ADR-0034 — the actual source authority for every
-promotion outcome this ADR notifies about); the frozen bulk-operation
+promotion outcome this specification notifies about); the frozen bulk-operation
 model, including its exhaustive parent terminal-mapping function and its
 own normative mapping tables that **consume, but do not own**, ADR-0034's
 `PromotionAttempt` states and ADR-0031's clone/fallback states (ADR-0035);
 and ADR-0033's knowledge-library navigation and route hierarchy, into
-which this ADR's own surfaces are placed. **It introduces no new
+which this specification's own surfaces are placed. **It introduces no new
 governance state, no new import/promotion rule, no new bulk-operation
-outcome, and no new deletion behaviour** — every domain fact this ADR
+outcome, and no new deletion behaviour** — every domain fact this specification
 notifies about is a fact one of those six ADRs already decided how to
-reach; this ADR's own contribution is entirely about *who finds out, how,
+reach; this specification's own contribution is entirely about *who finds out, how,
 and through what durable record*.
 
 **Correcting one assumption the brief's own event list implies**: ADR-0031
@@ -43,11 +43,11 @@ success (a real, existing transition), and — for the promotion path
 specifically — `PromotionAttempt` reaching `CONFLICT` or an exhausted
 `FAILED` (ADR-0034's own terminal outcomes, already mapped by ADR-0035's
 own normative mapping table), which is the closest genuine analogue to
-"rejected" this decomposition actually has. This ADR does not invent a
+"rejected" this decomposition actually has. This specification does not invent a
 new rejection verb to fill the gap.
 
 ### Consumes ADR-0017's temporal-authority model exactly as accepted —
-### including one fact this ADR's own brief did not anticipate
+### including one fact this specification's own brief did not anticipate
 
 ADR-0017 computes `authority_start = max(effective_from, approved_at)`
 and a version's authority window **live, at query time, from stored
@@ -57,7 +57,7 @@ at that instant. **This means "scheduled activation completed" cannot be
 produced as a real-time-triggered event** — it can only be *detected*,
 after the fact, by a periodic scan noticing that `now() >=
 authority_start` for a version that was not yet authoritative at the
-previous scan. This ADR's reminder scheduler (below) is the first thing
+previous scan. This specification's reminder scheduler (below) is the first thing
 in this decomposition that performs such a scan, and is designed
 explicitly around that constraint rather than assuming a job that does
 not exist. ADR-0017's own "blocked" condition (a scheduled version whose
@@ -66,30 +66,30 @@ already superseded, so it never attains authority at all) is preserved
 and surfaced honestly, not silently dropped.
 
 ### Consumes ADR-0025's content-free historical-activity pattern as the
-### direct precedent for this ADR's own notification/domain-event
+### direct precedent for this specification's own notification/domain-event
 ### correlation design
 
 ADR-0025's "Content-free historical activity, independent of conversation
 deletion" section already solved, for a different subsystem, the exact
-problem this ADR faces: a durable record that must outlive the domain
+problem this specification faces: a durable record that must outlive the domain
 object it describes, without a live foreign key that would either block
 deletion or silently corrupt on cascade. Its answer — atomic same-
 transaction writes, a plain unique index (not an FK) for idempotency, and
 immutable **scalar** public identifiers rather than live relational
-joins — is reused directly for this ADR's own domain-event and
+joins — is reused directly for this specification's own domain-event and
 notification correlation design, not reinvented. ADR-0025's `Document
 DeletionOperation` "visibly stuck" administrative read model is likewise
 reused directly for surfacing a stuck/failed deletion as a notification,
-rather than this ADR inventing a second stuck-operation mechanism.
+rather than this specification inventing a second stuck-operation mechanism.
 
 ### Extends, but does not redefine, ADR-0008's transactional-outbox
 ### pattern — exercising the exact future decision ADR-0008 reserved
 
 ADR-0008's own "Scope boundaries" section states explicitly: *"a generic,
 platform-wide event bus for arbitrary future domain events... [is not
-defined by this ADR]... Any broader adoption of the outbox pattern for
+defined by this specification]... Any broader adoption of the outbox pattern for
 other future events should be a deliberate future decision, not an
-assumption extending from this ADR."* **This is that deliberate decision.**
+assumption extending from this specification."* **This is that deliberate decision.**
 Verified directly against the running implementation: the existing
 `outbox_events` table and `PublishIngestionOutbox` action are narrowly
 scoped to publishing `document.ingestion.requested`/
@@ -97,7 +97,7 @@ scoped to publishing `document.ingestion.requested`/
 consumption (`apps/api/app/Actions/Ingestion/PublishIngestionOutbox.php`
 validates only those two event types and calls `IngestionEventPublisher`,
 an SQS-backed contract) — it is not, and was never claimed to be, a
-general-purpose intra-Laravel event mechanism. This ADR introduces a
+general-purpose intra-Laravel event mechanism. This specification introduces a
 **new**, separate, Laravel-internal-only outbox table (below), following
 the same transactional discipline (atomic commit, claim-based polling,
 bounded retry, terminal-failure visibility) ADR-0008 already established,
@@ -113,13 +113,13 @@ and explicitly lists what the reference mock-up shows but the shell does
 **not** yet implement (search, bookmarks, reactions, a standalone
 conversation-history icon distinct from the sidebar) — **no notification
 bell, inbox, or unread-count affordance is mentioned or reserved
-anywhere in ADR-0027.** This ADR is the first to introduce one. It is
+anywhere in ADR-0027.** This specification is the first to introduce one. It is
 placed within the shell's existing stable primary region (account-
 controls area, alongside the theme toggle) rather than inventing a third
 navigation region, and is designed to the same accessibility/keyboard/
 theme baseline ADR-0027 already establishes, but the bell itself, its
 inbox surface, and its unread-count behaviour are new product surface
-this ADR defines from scratch, not a reserved seam being filled in.
+this specification defines from scratch, not a reserved seam being filled in.
 
 ### Restates, does not reopen, the Laravel/Python ownership boundary
 ### every prior ADR in this decomposition already fixes
@@ -140,7 +140,7 @@ direction — restated fully in "Non-negotiable ownership boundary" below.
   notification channel is used anywhere today.** Laravel's own built-in
   `notifications` table/`HasDatabaseNotifications` trait would need to be
   deliberately adopted or a purpose-built table introduced; neither
-  exists yet. This ADR introduces a purpose-built table (below) rather
+  exists yet. This specification introduces a purpose-built table (below) rather
   than adopting Laravel's generic polymorphic `notifiable_type`/
   `notifiable_id` default schema, for the same reason ADR-0025 rejected
   live polymorphic references elsewhere in this decomposition: a bounded,
@@ -156,28 +156,28 @@ direction — restated fully in "Non-negotiable ownership boundary" below.
   `conversation:reconcile-stale-runs`, `workspace-invitations:expire`,
   `observability:record-operational-snapshot`, all per-minute). **No
   daily-cadence scheduled command exists anywhere in this codebase
-  today** — this ADR's reminder/authority-transition scanner is the first
+  today** — this specification's reminder/authority-transition scanner is the first
   to need one. The mechanism (`Schedule::command()->dailyAt(...)`) is a
   standard, already-available Laravel facility; only the specific command
   is new.
 - `App\Enums\WorkspaceRole` is exactly `{Owner, Admin, Member}` — no
   fourth role exists. `User.disabled_at` is an existing nullable
   timestamp column, already the accepted signal for "this account cannot
-  act," reused directly by this ADR's recipient-eligibility rules,
+  act," reused directly by this specification's recipient-eligibility rules,
   exactly as ADR-0030/0031/0034/0035 already reuse it for owner/approver
   eligibility.
 - ADR-0017's `authority_start = max(effective_from, approved_at)` is
   computed live, with **no scheduled activation job today** (see
-  "Relationship to prior ADRs" above) — a fact this ADR's reminder design
+  "Relationship to prior ADRs" above) — a fact this specification's reminder design
   must, and does, account for rather than assume away.
 - No notification-preference table, workspace-notification-settings
   table, or digest-scheduling mechanism exists anywhere in the repository
-  today. Every such facility this ADR requires is reported as new work,
+  today. Every such facility this specification requires is reported as new work,
   below, not claimed as already present.
 - `apps/api/config/workspace_administration.php` establishes this
   codebase's existing pattern for simple, environment-driven, per-
   workspace-administrable configuration (`env()`-backed array config,
-  no database-backed settings table) — this ADR's own workspace email
+  no database-backed settings table) — this specification's own workspace email
   defaults follow the same shape, extended with an actual database-backed
   per-workspace override where the settled decision requires
   administrators to configure it from the product itself (an `env()`
@@ -198,18 +198,18 @@ preference, schedules a reminder, or sends an email. Python's only
 contribution is the **typed, already-authenticated technical outcomes**
 it already reports through ADR-0007/0009/0015/0016/0032/0034's existing
 contracts (an ingestion `complete`/`fail`/`cancel` callback, an extraction
-result, a clone-completeness report) — this ADR reads those existing
+result, a clone-completeness report) — this specification reads those existing
 outcomes to decide whether a domain event has occurred; it does not ask
 Python a new question, call a new Python endpoint, or grant Python any
 new authority. **No new Python endpoint or cross-language message is
-introduced by this ADR** — every technical outcome this ADR's event
+introduced by this specification** — every technical outcome this specification's event
 vocabulary depends on is already reported through an existing, accepted
 contract; no missing technical-outcome contract was discovered during
 this drafting.
 
 ### Six distinct record kinds, never conflated
 
-This ADR is, at its core, about keeping six related-but-distinct
+This specification is, at its core, about keeping six related-but-distinct
 projections honestly separate, because collapsing any two of them is
 exactly how a platform ends up either spamming users or losing an
 auditable trail:
@@ -231,7 +231,7 @@ auditable trail:
    projection of an in-product notification, gated by category/
    preference, never the authoritative record of anything.
 5. **An audit record** — ADR-0030/0031/0034/0035's own existing audit
-   tables, unmodified; this ADR never introduces a second audit
+   tables, unmodified; this specification never introduces a second audit
    mechanism, only correlates its own notifications back to them.
 6. **Operational telemetry** — bounded-cardinality counters/histograms
    under ADR-0012/0026's existing allowlist discipline, describing this
@@ -270,7 +270,7 @@ all (noted in "Deliberately excluded," below).
 | `import.item.match_ambiguous` | A family/version match needs human review | No individual notification | Work-queue item for owners/admins with approval capability | No |
 | `governance.version.approved` | `ApproveDocumentVersion` committed (ADR-0031's own action) | Yes — the original importing/uploading actor only, and only if they are not the approver | No | Yes |
 | `promotion.completed` | A `PromotionAttempt` reached `COMMITTED` — **ADR-0034's own state machine**; ADR-0035 only consumes it via its own normative mapping table, never owns it | Yes — the initiating actor | Recent-imports feed | Yes |
-| `promotion.failed` | A `PromotionAttempt` reached `CONFLICT`/exhausted `FAILED`/`ABANDONED`/`EXPIRED` — **ADR-0034's own terminal outcomes**, exactly as ADR-0035's own normative mapping table already classifies them for bulk consumption; this ADR reuses that same classification, attributed to its actual source | Yes — the initiating actor | Failed/warning-imports card | Yes |
+| `promotion.failed` | A `PromotionAttempt` reached `CONFLICT`/exhausted `FAILED`/`ABANDONED`/`EXPIRED` — **ADR-0034's own terminal outcomes**, exactly as ADR-0035's own normative mapping table already classifies them for bulk consumption; this specification reuses that same classification, attributed to its actual source | Yes — the initiating actor | Failed/warning-imports card | Yes |
 | `governance.authority.approaching` | A version's `effective_from` is inside the configured lead time, not yet authoritative | No individual notification (too routine) | Scheduled-changes card | No |
 | `governance.authority.attained` | A daily scan detects `authority_start` has newly passed | No individual notification (expected, routine outcome of a decision already made) | Scheduled-changes / recent-activity feed | No |
 | `governance.authority.blocked` | A version's schedule will never take effect — a successor already attained authority first (ADR-0017's own "blocked" condition) | Yes — document owner and workspace owners/admins | Scheduled-changes card, persistent until acknowledged | Yes |
@@ -278,7 +278,7 @@ all (noted in "Deliberately excluded," below).
 | `governance.review.overdue` | Review-due date has passed | Yes, once, then only a dashboard presence (no daily repeat) | Overdue-reviews card, persistent until resolved | Yes (grouped) |
 | `governance.ownership.reassignment_required` | A family's recorded owner lost eligibility (disabled, removed, or demoted below the required capability) | Yes — workspace owners/admins | Work-queue item, persistent until reassigned | Yes |
 | `applicability.successor.completed` | A `DocumentContentCloneOperation`/fallback reached its own success terminal state — **ADR-0031's own state machine**; ADR-0035 only consumes it via its own normative mapping table, never owns it | Yes — the initiating actor | Recent-activity feed | Yes |
-| `applicability.successor.failed` | The clone/fallback subordinate reached `failed_permanent` — **ADR-0031's own terminal outcome**, exactly as ADR-0035's own normative mapping table already classifies it for bulk consumption; this ADR reuses that same classification, attributed to its actual source | Yes — the initiating actor | Failed/warning-imports card | Yes |
+| `applicability.successor.failed` | The clone/fallback subordinate reached `failed_permanent` — **ADR-0031's own terminal outcome**, exactly as ADR-0035's own normative mapping table already classifies it for bulk consumption; this specification reuses that same classification, attributed to its actual source | Yes — the initiating actor | Failed/warning-imports card | Yes |
 | `bulk_operation.completed` | Terminal `completed` — **ADR-0035's own terminal-mapping function**, the one event family in this table ADR-0035 genuinely owns rather than merely consumes | Yes — the initiating actor only | Recent bulk-operation outcomes | Yes |
 | `bulk_operation.completed_with_exceptions` | Terminal `completed_with_exceptions` (ADR-0035's own terminal-mapping function) | Yes — the initiating actor, detail page explains exceptions per the settled decision | Recent bulk-operation outcomes | Yes |
 | `bulk_operation.failed_before_execution` | The freeze itself could not complete (ADR-0035's own terminal-mapping function) | Yes — the initiating actor | Recent bulk-operation outcomes | Yes |
@@ -308,7 +308,7 @@ continuous wait. Ordinary tag/category/owner/review-date metadata edits
 (ADR-0030's own actions) — routine, low-consequence, self-attributed
 edits a user just performed themselves.
 
-**ADR-0037 (export) may extend this vocabulary later; this ADR does not
+**ADR-0037 (export) may extend this vocabulary later; this specification does not
 pre-design export-specific events, and the event-key namespace
 (`domain.subject.outcome`) is chosen specifically so a future
 `export.*` family slots in without renaming anything here.**
@@ -346,7 +346,7 @@ independent row of its own to become stale.
 - **"Bulk operation completed with three exclusions" is one notification**
   whose detail page — the existing `/documents/bulk/{bulkOperationPublicId}`
   route ADR-0035 already defines — explains every exception with full
-  drill-down; this ADR adds no second, item-level notification per
+  drill-down; this specification adds no second, item-level notification per
   excluded/failed item, per the settled decision.
 
 **Batch-level, not per-document, is the default shape for every
@@ -492,7 +492,7 @@ pair that could not actually arise from any legitimate membership.
   `recipient_user_public_id` remains the row's own permanent history/
   idempotency authority, entirely unaffected, per "In-product
   notification model" above.
-- **This is the fourth place this ADR's own migration requires explicit,
+- **This is the fourth place this specification's own migration requires explicit,
   raw PostgreSQL DDL** (`DB::unprepared`) rather than Laravel's schema-
   builder abstraction alone, following the identical precedent every
   other cross-table trigger in this decomposition already establishes.
@@ -567,7 +567,7 @@ precise model, replacing all three:**
   **current** state of the target.
 - **The durable notification row itself is never rewritten when its
   target later disappears or becomes inaccessible** — there is no
-  deletion-time cascade this ADR performs against historical
+  deletion-time cascade this specification performs against historical
   notifications; the row's own scalar `target_kind`/`target_public_id`/
   `target_display_label` remain exactly as captured at creation,
   permanently, regardless of the target's later fate.
@@ -590,7 +590,7 @@ precise model, replacing all three:**
   navigates straight to a stale or now-foreign `target_public_id`'s own
   route hits that route's own existing, unmodified tenant-safe `404`
   behaviour (ADR-0006/0027), exactly as if they had typed the URL from
-  memory; this ADR adds no new path to that destination and therefore no
+  memory; this specification adds no new path to that destination and therefore no
   new way to bypass its existing concealment.
 
 **Pagination, retention, unread counts**: cursor-paginated by
@@ -600,7 +600,7 @@ exactly the case `recipient_user_id`'s remaining convenience role above
 is for, scoped to the authenticated user's own still-existing account,
 computed at read time, not cached; `expires_at` enforces bounded
 retention (below, "Retention and deletion") via the same daily scheduler
-this ADR already introduces for reminders.
+this specification already introduces for reminders.
 
 **Idempotent replay**: reprocessing the same domain event (a projector
 retry, an explicit reconciliation pass) is a plain `INSERT ... ON
@@ -625,7 +625,7 @@ transactional discipline ADR-0008 already established:
 | `payload` | JSON — safe, structured, allowlisted scalars only, the same discipline as notification `parameters` above, never raw content |
 | `correlation_id` | The originating domain operation's own scalar public identity (an `ImportBatch.public_id`, a `BulkOperation.public_id`, a `Document.public_id`) — **non-unique lineage for navigation/audit only**, per the correction below; never consulted for idempotency |
 | `occurrence_key` | **Non-nullable, immutable, computed deterministically by the calling Action before this row is ever inserted — the corrected idempotency authority, replacing `correlation_id`.** See "Event-occurrence identity, corrected" below for its exact construction per event family. |
-| `occurred_at`, `claimed_at`, `claim_token`, `published_at`, `failed_at`, `attempt_count`, `next_attempt_at`, `last_error` | The same claim/retry/terminal-failure shape `OutboxEvent` already establishes, structurally duplicated here (a separate table, not a shared one, since this outbox's consumer is an in-process Laravel projector, never SQS, and mixing the two would reintroduce exactly the cross-scope confusion this ADR's "Relationship to prior ADRs" section corrects) |
+| `occurred_at`, `claimed_at`, `claim_token`, `published_at`, `failed_at`, `attempt_count`, `next_attempt_at`, `last_error` | The same claim/retry/terminal-failure shape `OutboxEvent` already establishes, structurally duplicated here (a separate table, not a shared one, since this outbox's consumer is an in-process Laravel projector, never SQS, and mixing the two would reintroduce exactly the cross-scope confusion this specification's "Relationship to prior ADRs" section corrects) |
 
 **`UNIQUE (workspace_id, occurrence_key)`** — the domain-event-projection
 idempotency identity, distinct from (2)/(3) below.
@@ -752,12 +752,12 @@ already produce:**
   shape, `before`/`after` role values), inserts one row into
   `workspace_administration_audit_events`, whose own `event_id` (a
   `uuid`, unique) is generated fresh at write time — **verified this is
-  exactly the kind of immutable, per-event identity this ADR needs, not
+  exactly the kind of immutable, per-event identity this specification needs, not
   invented.**
 - **`OwnershipEligibilityReconciliation`** — a new, durable fan-out work
   item, with its own immutable public identity (`public_id`), created by
   extending each of the two Actions above (a required, named extension
-  point for whichever implementation session wires this ADR up — not
+  point for whichever implementation session wires this specification up — not
   yet present in the running code, stated honestly) to additionally
   capture, in the **same** transaction as the audit-event write: the
   affected workspace's own identity; the affected user's own `public_id`
@@ -783,7 +783,7 @@ and found not yet to have a producer at all**: `grep`-verified directly
 against `apps/api/app/Actions` — no existing Action currently *writes*
 `User.disabled_at` (`ManagePlatformAdministrator` only grants/revokes the
 *platform-administrator role*, and only *reads* `disabled_at` as an
-eligibility check; it never sets it). **This ADR does not invent that
+eligibility check; it never sets it). **This specification does not invent that
 future disablement Action's full design** — it states the contract this
 ADR requires of it, honestly, as a dependency on work not yet built:
 
@@ -849,24 +849,24 @@ search for any family/owner-reassignment Action returns nothing.
 stored-but-excluded actor/target/digest, a stored terminal result,
 matching-replay/conflicting-digest/independent-purpose rules) — but only
 as a pattern for its own `DocumentVersion` governance routes (approve/
-withdraw/reschedule/correct-timestamps); it names no table this ADR
+withdraw/reschedule/correct-timestamps); it names no table this specification
 could extend without reopening ADR-0031's own surface, and family-level
 owner change is not one of the capabilities ADR-0031 lists. **Corrected:
-this ADR defines its own, new, Laravel-owned command and idempotency
+this specification defines its own, new, Laravel-owned command and idempotency
 record — reusing ADR-0031's exact pattern (never inventing a second,
 competing idempotency shape) — because no existing table or Action
 genuinely covers this operation.**
 
-**`DocumentGovernanceCommand`** (new table, this ADR's own) — one row per
+**`DocumentGovernanceCommand`** (new table, this specification's own) — one row per
 attempted governance command, extensible to future family-governance
-commands beyond owner change via `purpose`, though this ADR defines only
+commands beyond owner change via `purpose`, though this specification defines only
 one:
 
 | Column | Constraint |
 |---|---|
 | `id`, `public_id` | Internal/public identity |
 | `workspace_id` | Scoping |
-| `purpose` | Non-nullable — `'document_family.owner.change'` for every command this ADR defines |
+| `purpose` | Non-nullable — `'document_family.owner.change'` for every command this specification defines |
 | `client_idempotency_key` | Non-nullable, caller-supplied |
 | `requested_by_user_id` | Nullable FK to `users`, `nullOnDelete()` — stored for audit, **excluded from the uniqueness constraint** |
 | `target_document_family_id` | **Corrected this pass — see "Composite workspace binding" immediately below.** Part of a composite FK `(target_document_family_id, workspace_id)` to `document_families (id, workspace_id)`, never a bare single-column FK to `document_families (id)` alone; **excluded from the uniqueness constraint**; immutable once the command row is created (below); **nulled, and only this column, on family deletion** — see the column-targeted referential action below |
@@ -882,10 +882,10 @@ one:
 `CHECK (purpose <> 'document_family.owner.change' OR
 (expected_current_owner_user_id IS NOT NULL AND
  expected_current_generation IS NOT NULL AND
- intended_new_owner_user_id IS NOT NULL))` — every command this ADR
+ intended_new_owner_user_id IS NOT NULL))` — every command this specification
 actually defines carries a complete, structural statement of intent, not
 merely an opaque digest. **This is also this table's purpose-scoped
-target-shape `CHECK`**: the only `purpose` this ADR defines requires
+target-shape `CHECK`**: the only `purpose` this specification defines requires
 exactly the family-owner-change target columns above; a future `purpose`
 this table does not yet define would add its own analogous branch,
 naming whichever target columns *that* command shape actually needs —
@@ -906,7 +906,7 @@ column-targeted `ON DELETE SET NULL` referential action retires it on
 family deletion (below). A same-row `CHECK` evaluates identically at
 `INSERT` and at that later retiring `UPDATE` — it cannot express "required
 at creation, but legitimately absent afterward" at all; a `CHECK` strict
-enough to require it always would reject the very retirement this ADR's
+enough to require it always would reject the very retirement this specification's
 own referential action performs, and a `CHECK` loose enough to permit
 retirement would equally permit a freshly inserted row with no target at
 all. **Corrected: an insert-sensitive trigger, never a same-row `CHECK`,**
@@ -1000,7 +1000,7 @@ action" flag) to distinguish a genuine retirement from a fabricated
 one.** Any such signal is set by, and therefore trusted from, the same
 restricted runtime role this boundary exists to constrain — indistinguishable,
 from the database's own point of view, from an ordinary forged claim.
-**Corrected: the existing privilege-controlled boundary this ADR already
+**Corrected: the existing privilege-controlled boundary this specification already
 uses everywhere else, never a session flag.** `rag_platform_app` receives
 **no `UPDATE` grant of any kind — table-level or column-level — on
 `document_governance_commands`**:
@@ -1092,15 +1092,15 @@ belongs to — nothing in the schema itself prevents a command row whose
 own `workspace_id` names one tenant from naming a `target_document_
 family_id` that actually belongs to a **different** tenant's family, a
 genuine cross-workspace reference the FK alone cannot reject. **Corrected:
-the same composite-FK-against-a-declared-`UNIQUE`-pair pattern this ADR
+the same composite-FK-against-a-declared-`UNIQUE`-pair pattern this specification
 already uses for `DocumentGovernanceEmailEnvelopeAttempt` and
 `DocumentGovernanceNotificationProjectionReceipt`, applied here:**
 
 - **`UNIQUE (id, workspace_id)` on `document_families`** — a new,
-  additive constraint this ADR introduces (ADR-0030 does not declare one
+  additive constraint this specification introduces (ADR-0030 does not declare one
   today), extending ADR-0030's own schema without changing any of its
   settled owner/metadata semantics, the same additive-extension pattern
-  this ADR already uses for `owner_assignment_generation` itself.
+  this specification already uses for `owner_assignment_generation` itself.
 - **`FOREIGN KEY (target_document_family_id, workspace_id) REFERENCES
   document_families (id, workspace_id)`** on `DocumentGovernanceCommand`
   — the exact matching column order, replacing the withdrawn
@@ -1151,7 +1151,7 @@ ALTER TABLE document_governance_commands
   `workspace_id` is untouched by the referential action itself and
   remains exactly what it always was: non-null, and — independently,
   per the immutability rule above — never rewritten by any code path in
-  this ADR either. A family deletion event and an ordinary application
+  this specification either. A family deletion event and an ordinary application
   `UPDATE` are the only two ways any column on this row could ever
   change, and neither is permitted to touch `workspace_id`.
 - **`target_document_family_public_id` (above) survives unconditionally**
@@ -1215,7 +1215,7 @@ differently-shaped authority**:
   independent commands.
 - **No Python involvement of any kind** — this command, its Action, and
   its table are exclusively Laravel-owned, consistent with every other
-  owner/eligibility mechanism in this ADR.
+  owner/eligibility mechanism in this specification.
 
 #### Atomic idempotency acquisition, corrected
 
@@ -1248,7 +1248,7 @@ RETURNING id;
 **Withdrawn: an Action-level `SELECT ... FOR UPDATE` on
 `document_governance_commands`, issued as `rag_platform_app`, as step 2
 of this algorithm.** Codex correctly identified a direct contradiction
-with the privilege model this ADR itself establishes: PostgreSQL
+with the privilege model this specification itself establishes: PostgreSQL
 requires `UPDATE` privilege on at least one column of a table to acquire
 a row lock (`FOR UPDATE`) against it — a plain `SELECT` and a locking
 `SELECT ... FOR UPDATE` are privilege-distinct operations — and
@@ -1367,15 +1367,15 @@ inconsistency, never retried blindly** — the Action raises a typed
 `owner_change_acquisition_inconsistency` error and performs no mutation;
 a blind retry could not distinguish a genuine, deeper corruption from an
 ordinary transient race, and retrying an already-anomalous read is never
-the safe default this ADR applies elsewhere.
+the safe default this specification applies elsewhere.
 
 Recovering from either exceptional shape above (confirming, out of band,
 whether the family mutation and audit actually occurred despite the
 missing `completed_at`, or reconciling a row that should be
 unreachable) is reserved for a future, explicitly designed operational-reconciliation
-procedure with its own evidence and locking requirements — this ADR does
+procedure with its own evidence and locking requirements — this specification does
 not speculatively design that procedure now, since no reachable path in
-this ADR's own algorithm produces the condition it would recover from.
+this specification's own algorithm produces the condition it would recover from.
 
 **Required tests, corrected acquisition privilege and concurrency** —
 provider-free, run against genuine PostgreSQL, exercising the corrected
@@ -1477,7 +1477,7 @@ the privilege-check stage regardless of the value supplied.
 
 **A real, verified tension, reconciled explicitly, not assumed away.**
 ADR-0035's own "complete runtime grant baseline" (frozen, unmodified by
-this ADR) applies "the repository's ordinary runtime DML grant set
+this specification) applies "the repository's ordinary runtime DML grant set
 (`SELECT`, `INSERT`, `UPDATE`, `DELETE`, as actually required) to **every
 existing application table**," and states that "this baseline is
 reconciled idempotently in local, CI, and deployed bootstrap" — meaning
@@ -1513,7 +1513,7 @@ ADR's own narrower column-level grant is written.
    explicitly granted" gap this pass's own required tests name.
 4. **No general "grant DML on all tables" reconciliation command may
    run *after* step 2 without also re-applying `document_families`' own
-   table-specific `REVOKE`** — this ADR's own reconciliation/verification
+   table-specific `REVOKE`** — this specification's own reconciliation/verification
    step (immediately below) is what actually guarantees this, by
    treating a rediscovered table-level `UPDATE` on this one table as a
    deployment-failing condition regardless of which prior step
@@ -1623,7 +1623,7 @@ through a membership chain the one-level join never traverses; `SET
 ROLE` authority reachable through a transitive chain rather than a
 direct grant; or an unrelated login role holding superuser/role-creation
 authority that would make the entire boundary moot regardless of any
-grant this ADR controls. A single one-level join proves one fact about
+grant this specification controls. A single one-level join proves one fact about
 one role; it is not an audit of the role graph. **Corrected: enumerate
 every login role in the instance, and evaluate each one's
 direct-or-transitive relationship to all three protected roles and to
@@ -1643,7 +1643,7 @@ WHERE rolcanlogin;
 **Withdrawn: omitting `rolcreatedb` from this enumeration.** Codex
 correctly identified that the allowlist matrix below states an exact
 expected `rolcreatedb` value for more than one row, yet the executable
-query this ADR's own audit runs never selected the column that
+query this specification's own audit runs never selected the column that
 comparison depends on — a matrix cell with nothing behind it. **Corrected:
 `rolcreatedb` is selected here, alongside every other attribute the
 matrix actually compares, so the query genuinely carries the data the
@@ -1744,7 +1744,7 @@ reused in the future against a less-constrained edge source that does
 not enforce acyclicity the way `pg_auth_members` itself does; an
 implementation error in the traversal logic itself; or unexpected
 environmental/catalogue corruption. It is the same defensive posture
-this ADR already applies elsewhere (checking things "anyway," never
+this specification already applies elsewhere (checking things "anyway," never
 assuming a structural guarantee makes the check unnecessary) — not
 evidence that the guarded-against state is normally reachable. Each path
 only ever extends through roles it has not already visited. This query's own `path` column
@@ -1784,7 +1784,7 @@ definition, an instance of "every other login role" below.
 that this combination is factually impossible — PostgreSQL's own
 superuser semantics grant a `rolsuper = true` role unrestricted, catalog-
 ACL-independent access to every object and the ability to assume any
-role; no `GRANT`/`REVOKE` statement, and no catalogue check this ADR
+role; no `GRANT`/`REVOKE` statement, and no catalogue check this specification
 defines, can make a genuine superuser's `effective_execute` or
 `set_role_owner` read `false`. A single row cannot honestly represent
 both "may or may not be superuser" and "definitely has no reach" at
@@ -1828,7 +1828,7 @@ manifest itself declares.
 `rolcreatedb`'s own values**: every one of these cells is expected
 `true` for a genuine superuser, because that is what `rolsuper = true`
 actually means in PostgreSQL — a superuser bypasses every catalog ACL
-this ADR's own `GRANT`/`REVOKE` statements establish, including the
+this specification's own `GRANT`/`REVOKE` statements establish, including the
 protected function's own `EXECUTE` grant and every protected role's own
 membership boundary. `pg_has_role()` and `has_function_privilege()`
 correctly report `true` here on their own, without any special-casing
@@ -1896,7 +1896,7 @@ catalog ACLs and role-membership boundaries do not, and cannot,
 constrain a genuine superuser, and this matrix does not claim otherwise.
 This is **not** treated as violating ordinary role isolation, because
 superuser authority inherently, definitionally bypasses the boundary
-this ADR builds for *ordinary* roles — its presence is accepted **only**
+this specification builds for *ordinary* roles — its presence is accepted **only**
 under this named, infrastructure-only exception. **`rolcreaterole` and
 `rolcreatedb` are each compared against this role's own exact,
 independently declared manifest value, never inferred from `rolsuper`
@@ -1936,7 +1936,7 @@ the explicitly named infrastructure superuser (or provider-managed
 administrative role) is inherently privileged but operationally
 isolated."** It is emphatically **not**: "no login of any kind can ever
 reach protected authority" — that claim is false the moment any
-PostgreSQL cluster has a superuser at all, and this ADR does not assert
+PostgreSQL cluster has a superuser at all, and this specification does not assert
 it.
 
 **An unnamed additional login role carrying `rolsuper`, `rolcreaterole`,
@@ -1951,7 +1951,7 @@ no effective `EXECUTE` on the protected function; no superuser or
 role-management capability of any kind. **If a genuinely new,
 legitimate application login must share `rag_platform_app`'s own
 authority, it is named explicitly in this matrix, with its own
-justification recorded alongside it** — this ADR never authorises a
+justification recorded alongside it** — this specification never authorises a
 wildcard "all service roles may reach `rag_platform_app`" shape, and
 never will.
 
@@ -2337,7 +2337,7 @@ test that, inside an isolated test transaction, deliberately issues
 table-level shape this section withdraws) and then runs the
 reconciliation/verification query, asserting it **detects** the
 resulting unexpected table-level grant; a follow-up assertion that
-running this ADR's own table-specific `REVOKE`-then-column-`GRANT`
+running this specification's own table-specific `REVOKE`-then-column-`GRANT`
 sequence again, idempotently, restores the intended final state,
 verified by re-running the same query; a schema-migration test
 adding a new, hypothetical mutable metadata column without an
@@ -2436,7 +2436,7 @@ already-committed intent.** Internally, under lock:
    `request_digest IS NOT NULL` (the row was fully constructed by the
    atomic acquisition sequence above, never a partially-written row from
    any other path).
-3. **Lock the target family — the second lock in this ADR's one
+3. **Lock the target family — the second lock in this specification's one
    consistent `command → family` order**: `SELECT ... FROM
    public.document_families WHERE id = commands.target_document_family_id
    FOR UPDATE`.
@@ -2521,7 +2521,7 @@ somehow bypassed the function — a genuine backstop against a future
 privilege-migration regression, exactly the same relationship ADR-0035's
 own guard trigger has to its column-level privilege grants — but the
 **column-level `UPDATE` revocation above is the load-bearing boundary**;
-the trigger proves consistency, never authority, and this ADR no longer
+the trigger proves consistency, never authority, and this specification no longer
 describes it as anything more.
 
 **Required tests, workspace binding** — provider-free, exercising both
@@ -2601,7 +2601,7 @@ command-or-family row is ever locked, and its own internal sequence
 5. Mutate and complete atomically (step 8), all under both locks still
    held.
 
-**No owner-change path in this ADR ever acquires these two locks in the
+**No owner-change path in this specification ever acquires these two locks in the
 reverse order**, and none ever could: since only one function ever locks
 either row, there is no second, independently-written code path whose
 own ordering could disagree with it.
@@ -2695,7 +2695,7 @@ own ordering could disagree with it.
 - **Initial family creation without an owner, if permitted**: **not
   permitted, verified directly against ADR-0030's own text** — "mandatory
   owner assignment at creation via a `restrictOnDelete()` foreign key to
-  `users.id`." This ADR does not design behaviour for a case ADR-0030
+  `users.id`." This specification does not design behaviour for a case ADR-0030
   itself does not allow.
 - **Assigning the first owner later**: not a distinct case — because
   owner is mandatory at creation (above), there is no "unowned" family
@@ -2705,7 +2705,7 @@ own ordering could disagree with it.
   below).
 - **Clearing an owner, if permitted**: **not permitted** — verified
   against the same mandatory, `restrictOnDelete()`-backed assignment
-  rule, and consistent with this ADR's own ownership-loss model, which
+  rule, and consistent with this specification's own ownership-loss model, which
   always calls for **reassignment to a new eligible owner**, never for
   clearing to an unowned state; `ChangeDocumentFamilyOwner` therefore
   never accepts a null proposed owner.
@@ -2915,7 +2915,7 @@ concurrency test using genuinely separate connections).
 #### identity construction, and why
 
 **A pre-existing ineligible-owner condition has no real causal audit
-event to bind to — it predates this ADR's own producer by definition —
+event to bind to — it predates this specification's own producer by definition —
 so it deliberately uses a different, but equally honest, identity
 construction, stated explicitly rather than left to look like the same
 rule as above.**
@@ -2943,12 +2943,12 @@ settled owner semantics.**
   ADR can name "which specific assignment act" produced a given
   `owner_user_id` value.
 - **Every actual owner assignment or reassignment goes exclusively
-  through `ChangeDocumentFamilyOwner`** — a new Action this ADR itself
+  through `ChangeDocumentFamilyOwner`** — a new Action this specification itself
   defines in full, immediately below ("Owner-change command and
   idempotency, corrected") — **increments the generation by exactly one,
   atomically, while the family row is locked**, in the same transaction
   as the ownership write itself, following the identical lock-then-
-  mutate discipline this ADR already establishes everywhere else. This
+  mutate discipline this specification already establishes everywhere else. This
   is new work, not an extension of any pre-existing Action: no owner-
   reassignment Action, idempotency table, or `document_families`
   migration exists anywhere in the repository today, verified directly.
@@ -3014,8 +3014,8 @@ brief's own worked example requires.
 #### Deletion stuck/failed producer and occurrence identity
 
 **Withdrawn: assuming ADR-0025's "visibly stuck" condition is itself a
-domain transition this ADR can hook into directly.** It is a **read-model
-observation** — a query, not an event ADR-0025 itself emits. **This ADR
+domain transition this specification can hook into directly.** It is a **read-model
+observation** — a query, not an event ADR-0025 itself emits. **This specification
 does not mutate ADR-0025's own deletion state machine in any way** — it
 only observes it.
 
@@ -3078,7 +3078,7 @@ suppressing the second, more severe fact.
   `condition_kind` that is part of the **occurrence identity** itself,
   not merely a rendering parameter.
 - **ADR-0025's own deletion state machine remains entirely unchanged** —
-  restated: this correction only refines how this ADR's own read-model
+  restated: this correction only refines how this specification's own read-model
   observer names what it saw; it adds no new field, state, or transition
   to ADR-0025's own tables.
 - **Recipient resolution and actionable-work behaviour**: unchanged from
@@ -3173,15 +3173,15 @@ attempt-group (immediate or digest alike):
 | `category_group` | The email category this envelope belongs to (e.g. `review_reminders`, or the notification's own `event_key` for a non-digested category) |
 | `digest_date` | Nullable — null for an immediate envelope; set to the **effective** digest date selected by the late-arrival rule below for a digest envelope |
 | `envelope_key` | **Non-nullable, deterministic, computed before creation** — `UNIQUE (workspace_id, envelope_key)`. For an **immediate** envelope: derived from the one notification's own `source_event_id`. For a **digest** envelope: derived from `(recipient_user_public_id, category_group, digest_date)`, where `digest_date` is the **effective** date the late-arrival rule below selects — never merely "today." |
-| `assembly_status` | Bounded enum: `assembling`, `ready`, `dispatching`, `sent`, `failed_permanent`, `suppressed` — see "Envelope assembly lifecycle, corrected" below for the complete state machine. **Withdrawn: a distinct `failed_retryable` envelope state** — no transition in this ADR's own state diagram ever entered it; retryability is represented by returning to `ready` (below), and a transient failure is classified at the **attempt** level (`DocumentGovernanceEmailEnvelopeAttempt.status`, below), never duplicated as a second, unused envelope-level state. `suppressed` is the new terminal, non-failure outcome "Send-time eligibility and terminal suppression" below introduces. |
+| `assembly_status` | Bounded enum: `assembling`, `ready`, `dispatching`, `sent`, `failed_permanent`, `suppressed` — see "Envelope assembly lifecycle, corrected" below for the complete state machine. **Withdrawn: a distinct `failed_retryable` envelope state** — no transition in this specification's own state diagram ever entered it; retryability is represented by returning to `ready` (below), and a transient failure is classified at the **attempt** level (`DocumentGovernanceEmailEnvelopeAttempt.status`, below), never duplicated as a second, unused envelope-level state. `suppressed` is the new terminal, non-failure outcome "Send-time eligibility and terminal suppression" below introduces. |
 | `sealed_at` | Nullable, set exactly once, atomically with the `assembling → ready` transition — see below |
 | `sealed_membership_digest` | Non-nullable once `sealed_at` is set — a canonical digest over **only** the sealed, ordered member identity list (who is in this envelope, and in what order) — a narrower, independently meaningful fact than `sealed_rendering_basis_digest` below, kept as its own field because it is knowable, and independently auditable, from the moment of sealing itself, before template/branding resolution is even considered relevant; **not** a redundant duplicate of the wider digest — see immediately below for the distinction |
 | `attempt_count`, `next_attempt_at`, `last_error` | Read-only, derived summary fields for convenient querying — **not** the dispatch authority; see "Durable dispatch-attempt authority" below for the actual authoritative record |
 | `provider_message_id` | Nullable — the mail provider's own returned message identity from the attempt that ultimately succeeded, retained for support/traceability; never sensitive content |
 | `dispatched_at` | Nullable, set once the provider accepts the send — **`sent`-specific provider-acceptance evidence only; never the general retention anchor, and never fabricated for a `failed_permanent` or `suppressed` envelope** (below) |
 | `terminal_at` | Nullable while `assembly_status ∈ {assembling, ready, dispatching}`; set exactly once, atomically with whichever of the three terminal transitions actually occurs (`dispatching → sent`, `dispatching → failed_permanent`, or `ready → suppressed`/`dispatching`'s own reclaim-driven `failed_permanent`); immutable thereafter — **the one common terminal timestamp shared by all three terminal states, and the actual anchor "Retention and deletion" below purges from** |
-| `suppression_reason` | **New this pass — previously used throughout this ADR's own text without ever being declared as a column.** Nullable bounded enum, populated if and only if `assembly_status = 'suppressed'`, immutable once set. **Closed V1 vocabulary, narrowed to only the values reachable as an *envelope-level* outcome** (below): `workspace_email_disabled`, `personal_opt_out`, `recipient_disabled`, `recipient_unverified`, `membership_removed`, `no_deliverable_members`. **`authority_lost` is deliberately excluded from this envelope-level vocabulary** — it is reachable only as a *per-member* decision reason (`DocumentGovernanceEmailEnvelopeMemberDecision`'s own, separate `suppression_reason`, per-notification, per "Send-time eligibility and terminal suppression" above), never as the envelope's own aggregate reason: if every member is suppressed for `authority_lost`, the envelope's own reason is `no_deliverable_members`, the correct aggregate fact, never a per-member reason promoted to the envelope level. |
-| `terminal_failure_category` | **New this pass.** Nullable bounded enum, populated if and only if `assembly_status = 'failed_permanent'`, immutable once set. **Closed V1 vocabulary, limited to the failure classes this ADR actually produces a reachable path for**: `provider_permanent_failure` (a single attempt's own provider-side rejection was inherently non-retryable, regardless of ceiling); `retry_ceiling_exhausted` (the bounded retry ceiling was exhausted via the ordinary caught-failure path, "Durable dispatch-attempt authority" step 5); `attempt_reclaim_ceiling_exhausted` (the ceiling was exhausted via the reclaim path specifically, step 6 — kept distinct from the previous value because the producing worker/process differs); `rendering_integrity_failure` (a `sealed_rendering_basis_digest` or `dispatch_decision_digest` mismatch at pre-call verification, step 9). **`configuration_failure` is deliberately not included in the V1 vocabulary** — this ADR describes no reachable path to a dispatch-time configuration failure (the Dolved branding fallback is a complete, always-available V1 state per "Email templates and tenant-branding seam" above, and template/branding resolution is fixed no later than sealing), so no enum value is added for a case this design does not produce; a future ADR introducing such a path would add the value then, not speculatively now. |
+| `suppression_reason` | **New this pass — previously used throughout this specification's own text without ever being declared as a column.** Nullable bounded enum, populated if and only if `assembly_status = 'suppressed'`, immutable once set. **Closed V1 vocabulary, narrowed to only the values reachable as an *envelope-level* outcome** (below): `workspace_email_disabled`, `personal_opt_out`, `recipient_disabled`, `recipient_unverified`, `membership_removed`, `no_deliverable_members`. **`authority_lost` is deliberately excluded from this envelope-level vocabulary** — it is reachable only as a *per-member* decision reason (`DocumentGovernanceEmailEnvelopeMemberDecision`'s own, separate `suppression_reason`, per-notification, per "Send-time eligibility and terminal suppression" above), never as the envelope's own aggregate reason: if every member is suppressed for `authority_lost`, the envelope's own reason is `no_deliverable_members`, the correct aggregate fact, never a per-member reason promoted to the envelope level. |
+| `terminal_failure_category` | **New this pass.** Nullable bounded enum, populated if and only if `assembly_status = 'failed_permanent'`, immutable once set. **Closed V1 vocabulary, limited to the failure classes this specification actually produces a reachable path for**: `provider_permanent_failure` (a single attempt's own provider-side rejection was inherently non-retryable, regardless of ceiling); `retry_ceiling_exhausted` (the bounded retry ceiling was exhausted via the ordinary caught-failure path, "Durable dispatch-attempt authority" step 5); `attempt_reclaim_ceiling_exhausted` (the ceiling was exhausted via the reclaim path specifically, step 6 — kept distinct from the previous value because the producing worker/process differs); `rendering_integrity_failure` (a `sealed_rendering_basis_digest` or `dispatch_decision_digest` mismatch at pre-call verification, step 9). **`configuration_failure` is deliberately not included in the V1 vocabulary** — this specification describes no reachable path to a dispatch-time configuration failure (the Dolved branding fallback is a complete, always-available V1 state per "Email templates and tenant-branding seam" above, and template/branding resolution is fixed no later than sealing), so no enum value is added for a case this design does not produce; a future ADR introducing such a path would add the value then, not speculatively now. |
 | `template_key`, `template_version` | Non-nullable once sealed — the exact, versioned rendering template selected for this envelope's `category_group` (an immediate per-category template, or the one digest template — see "Immediate versus digest template behaviour" below); fixed no later than sealing, never re-selected on retry |
 | `branding_configuration_identity` | Non-nullable once sealed — the resolved branding configuration this envelope will render with |
 | `workspace_display_name_snapshot` | Non-nullable once sealed — the safe workspace display name captured at sealing time, so a later workspace rename never changes an already-sealed envelope's own rendering |
@@ -3204,7 +3204,7 @@ immutable digest fields, each fixed at its own single moment and never
 touched again:**
 
 - **`sealed_rendering_basis_digest`** (renamed from `rendering_input_digest`,
-  same computation this ADR always intended for it) — fixed once, at
+  same computation this specification always intended for it) — fixed once, at
   sealing, over the rendering/branding/template facts and the sealed
   membership digest; never touched by the preflight, a retry, or
   reconciliation.
@@ -3222,7 +3222,7 @@ is a wider, composite fact computed from `sealed_membership_digest`
 itself plus the rendering-specific identities; the two are related by
 composition, not duplication, and each remains independently useful for
 audit (membership-only tampering versus full-rendering-basis tampering
-are two distinguishable failure classes, and this ADR's own tests, below,
+are two distinguishable failure classes, and this specification's own tests, below,
 exercise them separately).
 
 **Withdrawn: relying on `dispatched_at` as the retention anchor for every
@@ -3326,7 +3326,7 @@ window between sealing and the generation-1 claim, and non-null from the
 moment the generation-1 preflight completes onward, for every subsequent
 `ready` state a retryable failure ever returns the envelope to. No
 separate lifecycle marker or trigger is required, **because these are
-the only two `ready` sub-shapes this ADR's own state diagram produces**
+the only two `ready` sub-shapes this specification's own state diagram produces**
 (freshly sealed, or post-retryable-failure) — there is no third `ready`
 shape a marker would need to distinguish. This `CHECK` does **not**, by
 itself, prove that a genuine prior attempt actually exists for a
@@ -3359,7 +3359,7 @@ governs**: `terminal_at`, `suppression_reason`, `terminal_failure_
 category`, `sealed_rendering_basis_digest`, and `dispatch_decision_
 digest` are each written **at most once**, ever, on a given envelope
 row. None of the five has a dedicated immutability trigger of its own;
-each is protected the same way this ADR already protects every other
+each is protected the same way this specification already protects every other
 terminal or once-only field — every write path that sets any of them is
 itself a same-transaction `UPDATE ... WHERE assembly_status IN (...)`
 guarded to match only the specific prior status that write is allowed to
@@ -3380,9 +3380,9 @@ corrected here, closing the gap rather than leaving it implicit.
 
 #### Composite-FK sweep and deletion rules, corrected
 
-**Every composite FK this ADR claims, confirmed against an explicit,
+**Every composite FK this specification claims, confirmed against an explicit,
 matching unique constraint** — a full sweep, not merely the one gap
-found: this ADR declares exactly **three** composite foreign keys in
+found: this specification declares exactly **three** composite foreign keys in
 total — `DocumentGovernanceEmailEnvelopeAttempt`'s `(envelope_id,
 workspace_id)`, targeting `DocumentGovernanceEmailEnvelope (id,
 workspace_id)` per the `UNIQUE` constraint immediately above;
@@ -3399,13 +3399,13 @@ are safe for the identical reason: no parent row (an envelope, an event
 projection, or a family) is ever deleted independently of its own
 terminal retention purge or governance lifecycle, so `ON DELETE`
 behaviour is never exercised prematurely against any of them. Every other
-reference in this ADR
+reference in this specification
 (`DocumentGovernanceEmailEnvelopeMember.envelope_id`,
 `.notification_id`; `DocumentGovernanceNotification.recipient_
 workspace_membership_id`; each receipt's own `notification_public_id`)
 is a deliberately **single-column** reference, per the same single-
 column-to-avoid-composite-`SET NULL`-fan-out discipline established
-throughout this ADR and ADR-0035 — none of them requires a composite
+throughout this specification and ADR-0035 — none of them requires a composite
 target, and none is left implying one it does not have.
 
 **Deletion rules, stated once, for the whole envelope/member/attempt
@@ -3420,7 +3420,7 @@ family:**
   parent.
 - **Deleting an active or retryable envelope is prohibited**: envelope
   rows in `assembling`/`ready`/`dispatching` are never subject to any
-  delete path this ADR defines — retention (above) only ever considers
+  delete path this specification defines — retention (above) only ever considers
   **terminal** envelopes (`sent`/`failed_permanent`/`suppressed`) whose
   400-day window has elapsed; no operator or reconciliation action this
   ADR introduces deletes a non-terminal envelope.
@@ -3827,7 +3827,7 @@ its own reclaim:
 2. **Lock the envelope row `FOR UPDATE`.**
 3. **Verify, under that lock**: the envelope's own `id`/`workspace_id`
    match what the worker's held context expects; `assembly_status =
-   'dispatching'` (this ADR does not maintain a separate
+   'dispatching'` (this specification does not maintain a separate
    current-attempt-generation pointer column on the envelope —
    `assembly_status = 'dispatching'` combined with the partial
    one-open-attempt-per-envelope unique index below already establishes
@@ -4049,7 +4049,7 @@ reasonably believe they own. **Corrected — one normative invariant:**
   potentially valid until strictly past expiry), and the reclaimer itself
   runs on a bounded, configured poll interval that assumes ordinary,
   bounded clock skew between the process that set `lease_expires_at` and
-  the process evaluating it — this ADR does not introduce a distributed
+  the process evaluating it — this specification does not introduce a distributed
   clock-synchronisation mechanism of its own, consistent with the same
   assumption ADR-0025/0034's own existing lease-based mechanisms already
   make.
@@ -4246,7 +4246,7 @@ table, the queued jobs, the `DocumentGovernanceNotification`,
 `DocumentGovernanceEmailEnvelope`, `DocumentGovernanceEmailEnvelopeMember`,
 `DocumentGovernanceEmailEnvelopeAttempt`, and
 `DocumentGovernanceEmailEnvelopeMemberDecision` tables, and every
-migration/model/Action backing them are new application code this ADR
+migration/model/Action backing them are new application code this specification
 requires — nothing above is a relabelling of existing infrastructure.
 
 ### 6. Email policy and preferences
@@ -4292,7 +4292,7 @@ requires — nothing above is a relabelling of existing infrastructure.
   the same ordinary workspace-administration capability ADR-0025 already
   grants them for other workspace-level configuration, **never** a grant
   of platform-level authority (ADR-0026's separate, workspace-independent
-  platform-administrator plane is entirely untouched by this ADR).
+  platform-administrator plane is entirely untouched by this specification).
 - **Users cannot disable the corresponding in-product notification** —
   preference scope is delivery-channel only (email on/off); the
   authoritative in-product record (per the settled decision) is never
@@ -4325,7 +4325,7 @@ requires — nothing above is a relabelling of existing infrastructure.
   terminal email failure never retroactively affects the in-product
   notification's own already-durable existence.
 - **Rate limiting/notification storms**: the digest grouping above is the
-  primary defence for reminders; for everything else, this ADR's V1
+  primary defence for reminders; for everything else, this specification's V1
   bound is structural, not a separate rate limiter — because every event
   is batch/operation-scoped (never per-document), a single large import
   or bulk operation already produces exactly one notification/email, not
@@ -4375,7 +4375,7 @@ authority-transition occurrence. No separate reminder-log table exists.**
 The scanner's own idempotency step is simply
 `INSERT INTO document_governance_events (..., occurrence_key, ...)
 ... ON CONFLICT (workspace_id, occurrence_key) DO NOTHING` — the same
-statement shape every other event family in this ADR already uses, not a
+statement shape every other event family in this specification already uses, not a
 second mechanism.
 
 **Withdrawn, for the same reason: `governance.authority.attained`'s
@@ -4492,12 +4492,12 @@ uniformly to every reminder/transition kind.
 **Review date remains advisory, restated**: reaching a review-due date,
 or even passing it, **never** withdraws a version, changes its
 `authority_start`, or narrows retrieval eligibility — ADR-0017's own
-authority model is untouched; this ADR only observes and reminds.
+authority model is untouched; this specification only observes and reminds.
 
 ### 8. Dashboard and navigation projections
 
 **Every card below is a live query against authoritative domain tables,
-never a stored/cached count this ADR itself owns as independent
+never a stored/cached count this specification itself owns as independent
 authority** — consistent with "Notifications versus actionable work"
 above, applied uniformly.
 
@@ -4506,7 +4506,7 @@ table (e.g. `technical_status = 'INDEXED' AND governance_status =
 'DRAFT'` for "awaiting approval") as though they were a verified,
 authoritative restatement of ADR-0031/ADR-0033's own governance
 definitions.** Codex correctly flagged that a simplified predicate
-sketched inside this ADR risks silently omitting a legitimately
+sketched inside this specification risks silently omitting a legitimately
 actionable item, or including a technically-indexed-but-governance-
 ineligible one, if it ever drifts from what ADR-0031/0033 actually
 decided. **Corrected, as a standing rule for every row in this table:**
@@ -4514,20 +4514,20 @@ decided. **Corrected, as a standing rule for every row in this table:**
 - **The domain state machine defined by ADR-0017/0030/0031/0033/0034/
   0035 is the sole authority for what counts as "awaiting approval,"
   "processing," "failed," "scheduled," "review due," or any other
-  dashboard predicate this ADR presents.** This ADR does not redefine,
+  dashboard predicate this specification presents.** This specification does not redefine,
   narrow, or simplify any of them.
-- **Every dashboard query in this ADR is implemented as a named
+- **Every dashboard query in this specification is implemented as a named
   repository query object/projection that calls into, or is reviewed
   directly against, the frozen ADR's own accepted eligibility definition**
-  — never a bespoke predicate invented inside this ADR's own migration or
-  controller layer. Any SQL fragment shown in this ADR's own table below
+  — never a bespoke predicate invented inside this specification's own migration or
+  controller layer. Any SQL fragment shown in this specification's own table below
   is **illustrative of intent only** and must not be read as, or
   implemented as, a substitute for the frozen ADR's own definition; where
   the two could ever appear to differ, the frozen ADR governs and this
   ADR's own illustration is what must be corrected.
 - **Capabilities are rechecked twice, independently of the dashboard
   count itself**: once when the drill-down route is opened (that route's
-  own existing authorization check, unmodified by this ADR), and again
+  own existing authorization check, unmodified by this specification), and again
   when the underlying action is actually performed (that action's own
   existing authorization check) — a dashboard card's own count is a
   read-time convenience, never itself an authorization decision.
@@ -4548,7 +4548,7 @@ decided. **Corrected, as a standing rule for every row in this table:**
 **Every card drills into the relevant existing filtered route** (the
 library's own filter/query parameters, ADR-0033's own route hierarchy,
 ADR-0035's own `/documents/bulk/{bulkOperationPublicId}` detail route) —
-this ADR introduces no new, parallel "dashboard-only" data model
+this specification introduces no new, parallel "dashboard-only" data model
 duplicating what those routes already expose.
 
 **Empty states teach, they do not merely say "nothing here"**: a
@@ -4643,9 +4643,9 @@ accessibility behaviour; (14) removed-target/no-destination state.
   embeds a signed or unsigned object-storage URL of any kind.
 - **No document body, unreviewed/unsafe filename, extracted text,
   evidence excerpt, prompt, or provider output** in any email, log, or
-  telemetry surface this ADR produces — the same allowlist-over-blocklist
+  telemetry surface this specification produces — the same allowlist-over-blocklist
   discipline ADR-0035's own audit design already applies, restated and
-  enforced identically for every surface this ADR adds.
+  enforced identically for every surface this specification adds.
 - **Log-safe, stable event keys** (`import.batch.completed_with_exceptions`,
   never a raw filename or free-text description) as the only thing
   written to structured logs/metrics describing what happened.
@@ -4666,7 +4666,7 @@ accessibility behaviour; (14) removed-target/no-destination state.
   old notification never grants access to a now-restricted target**,
   since clicking through still re-runs that destination's own,
   unmodified authorization logic (ADR-0031/0033/0035's own existing
-  checks), unaffected by this ADR.
+  checks), unaffected by this specification.
 - **Safe historical display label, bounded**: `target_display_label`
   follows ADR-0035's own precedent exactly — captured once, at
   notification-creation time, bounded to 255 characters, escaped/safely
@@ -4680,7 +4680,7 @@ accessibility behaviour; (14) removed-target/no-destination state.
 - **Document/version/family deletion**: the notification and its
   originating outbox event remain, unmodified, readable via their own
   scalar identity and `target_display_label`; no route was ever stored to
-  become stale, so there is no write-time cascade this ADR would
+  become stale, so there is no write-time cascade this specification would
   otherwise need to perform against every historical notification on
   every deletion — the next render simply resolves no effective route,
   per "Reconciling stored target routes with live authorization" above.
@@ -4742,7 +4742,7 @@ closed V1 policy:**
   every terminal outcome, not only a successful send, must eventually
   age out.
 
-Both tables' retention is enforced by the same daily scheduler this ADR
+Both tables' retention is enforced by the same daily scheduler this specification
 already introduces. **None of the above describes the notification,
 event, or email tables as permanent audit storage** — every one of these
 windows is finite, and none of them substitutes for, extends, or competes
@@ -4796,7 +4796,7 @@ which other one" question the brief raises:**
    still checked explicitly, never assumed, as a genuine purge-time
    guard.
 5. **None of the above affects the authoritative audit records owned by
-   ADR-0030/0031/0034/0035** — restated, unchanged: this ADR's own tables
+   ADR-0030/0031/0034/0035** — restated, unchanged: this specification's own tables
    are notification/delivery projections with their own finite,
    independent retention, never a second audit mechanism those ADRs'
    own audit tables need to be reconciled against.
@@ -4827,7 +4827,7 @@ sentinel of any kind:
 | `state` | Bounded enum: `resolving`, `projecting`, `completed`, `failed` |
 | `resolved_recipient_set_digest` | Non-nullable once `state` leaves `resolving` — an immutable digest over the complete, frozen recipient set this projection resolved (below), including the deterministic empty-set digest when no recipient was found |
 | `started_at`, `completed_at` | `completed_at` non-nullable if and only if `state ∈ {completed, failed}` |
-| `attempt_count`, `last_error` | Bounded failure/retry evidence, the same discipline as every other bounded-retry mechanism in this ADR |
+| `attempt_count`, `last_error` | Bounded failure/retry evidence, the same discipline as every other bounded-retry mechanism in this specification |
 
 **`UNIQUE (workspace_id, source_event_id)`** — a genuine, unconditional
 uniqueness guarantee, since every column in the tuple is always
@@ -4897,7 +4897,7 @@ under a `completed` projection **is** that fact, honestly.
 
 **Subsequent workers process only the frozen receipt rows** — every
 per-recipient job claims a `pending` receipt (by the same `SELECT ... FOR
-UPDATE SKIP LOCKED` pattern this ADR already uses elsewhere), **never
+UPDATE SKIP LOCKED` pattern this specification already uses elsewhere), **never
 re-resolves current recipients for that historical occurrence**. For
 every recipient: notification creation and the transition of its own
 receipt to `notification_created` commit **atomically, in the same
@@ -4964,10 +4964,10 @@ an already-`completed` projection).
 
 **Neither table is content-bearing audit storage**: each carries only
 scalar identities, closed outcome enums, digests, and timestamps — the
-same discipline that already makes every other table in this ADR safe to
+same discipline that already makes every other table in this specification safe to
 retain past its source's own lifecycle, applied identically here.
 
-- **Content-free historical activity (ADR-0025)**: this ADR's own
+- **Content-free historical activity (ADR-0025)**: this specification's own
   recent-activity feed is a live query, not a competing historical-
   activity mechanism — it does not duplicate, replace, or need to
   reconcile with ADR-0025's Phase 19 aggregation, which remains the sole
@@ -4991,7 +4991,7 @@ audit correlation.
 and the typed outcomes it already reports through ADR-0007/0009/0015/
 0016/0032/0034's own accepted contracts.
 
-**Python must never, and does not, under this ADR**: send an email;
+**Python must never, and does not, under this specification**: send an email;
 create a user notification; choose a recipient; decide whether an event
 is important; render browser or email wording; inspect a notification
 preference; own a reminder schedule. **No new Python endpoint or cross-
@@ -5084,7 +5084,7 @@ routes with live authorization" above.
 ### Branding boundary — a narrow, provider-neutral input contract, not a
 ### feature
 
-**This ADR reserves a seam; it does not design tenant-branding
+**This specification reserves a seam; it does not design tenant-branding
 administration.** The resolved branding input consumed by the template
 renderer may contain only:
 
@@ -5096,16 +5096,16 @@ renderer may contain only:
 - the Dolved fallback identity;
 - a branding-configuration version/public identity.
 
-**A future tenant-branding phase — not this ADR — owns**: upload and
+**A future tenant-branding phase — not this specification — owns**: upload and
 replacement of tenant logos; validation and storage; accent-colour
 selection; branding preview; administration permissions; branding
-lifecycle and deletion. **This ADR creates no administration screens for
+lifecycle and deletion. **This specification creates no administration screens for
 any of the above, and does not reopen ADR-0027's design system** to
 accommodate them.
 
 **Until tenant branding is implemented, every email renders with the
 Dolved fallback — a complete, fully supported V1 state, never a
-temporary or broken placeholder.** Nothing in this ADR's own scope is
+temporary or broken placeholder.** Nothing in this specification's own scope is
 blocked on the later branding phase existing.
 
 **Tenant branding is presentation only.** It never affects: notification
@@ -5174,7 +5174,7 @@ already-sealed envelope.
 **Template-version lifetime guarantee, stated explicitly to close the
 brief's own named gap**: **a template version must remain renderable for
 at least the full retry/reconciliation lifetime of any envelope still
-referring to it** — concretely, for at least this ADR's own 400-day
+referring to it** — concretely, for at least this specification's own 400-day
 envelope/attempt retention window (per "Retention and deletion" below).
 **Removing or replacing a template definition in a later deployment must
 never make an older, still-pending or still-retained envelope
@@ -5244,7 +5244,7 @@ administrator has to resolve before their branding "works."
 
 **Reserved, not implemented**: a future authorised email-template preview
 facility, driven by the same renderer and safe sample parameters this
-ADR already establishes. This ADR does not implement or route such a
+ADR already establishes. This specification does not implement or route such a
 facility unless the later tenant-branding phase already requires it as
 part of its own scope — it is named here only so that phase does not need
 to invent a second, incompatible rendering path.
@@ -5282,14 +5282,14 @@ in a reasonable time.
 
 Rejected outright, per the brief's own settled decision — this is
 precisely the "turning every internal event into an email" failure mode
-this ADR exists to prevent; batch/operation-level notifications with
+this specification exists to prevent; batch/operation-level notifications with
 full item-level drill-down are the selected design throughout.
 
 ### Mutable dashboard counters
 
 Rejected — the exact "two fields that can disagree" hazard this
 decomposition has rejected repeatedly (ADR-0007, ADR-0017, ADR-0034,
-ADR-0035); every dashboard/work-queue projection in this ADR is a live
+ADR-0035); every dashboard/work-queue projection in this specification is a live
 query instead.
 
 ### Direct email sending inside the domain transaction
@@ -5311,7 +5311,7 @@ other ADR in this decomposition.
 
 Rejected — a `parameters`/`payload` field that accepted arbitrary prose
 would reopen exactly the "no document content in an email/log" hazard
-this ADR's own security section closes; a closed, allowlisted, versioned
+this specification's own security section closes; a closed, allowlisted, versioned
 template-parameter shape is selected instead.
 
 ### Polling domain tables directly, without a durable event record
@@ -5333,7 +5333,7 @@ preference model is required.
 
 ### User preferences overriding every critical event, with no floor
 
-Rejected — the settled decision (and this ADR's own precedence rule)
+Rejected — the settled decision (and this specification's own precedence rule)
 keeps the authoritative in-product record un-gateable by any preference;
 only the *email channel* is preference-controlled, never the
 notification's own durable existence.
@@ -5356,7 +5356,7 @@ channel set. A future ADR may add either if genuinely justified.
 ### A pseudo-event row (`import.approval.awaiting`) inside the closed
 ### event vocabulary
 
-This was an earlier design in this ADR and is withdrawn as internally
+This was an earlier design in this specification and is withdrawn as internally
 contradictory — Codex correctly identified that a table describing
 persistable events cannot coherently contain a row whose own description
 reads "not an event at all." "Awaiting approval" is a derived,
@@ -5367,7 +5367,7 @@ actionable work" and "Dashboard and navigation projections," never as an
 ### Target/operation correlation identity alone as event idempotency
 ### authority
 
-This was an earlier design in this ADR and is withdrawn as insufficient
+This was an earlier design in this specification and is withdrawn as insufficient
 for recurring facts — Codex correctly identified that a document family
 can legitimately receive several distinct, equally valid occurrences of
 the same `event_key` over time (successive review reminders across
@@ -5382,7 +5382,7 @@ scheduler happened to run.
 ### A nullable live recipient foreign key as the sole per-recipient
 ### uniqueness authority
 
-This was an earlier design in this ADR and is withdrawn because
+This was an earlier design in this specification and is withdrawn because
 PostgreSQL's own "`NULL` never equals `NULL`" rule means a hard-deleted
 user's nulled `recipient_user_id` could no longer meaningfully prevent a
 duplicate notification for that same departed recipient. The corrected
@@ -5393,7 +5393,7 @@ authority; the live FK is retained only as a current-query convenience.
 ### A single `email_enabled_by_default` field expressing both a workspace
 ### hard gate and an inheritable personal default
 
-This was an earlier design in this ADR and is withdrawn as ambiguous —
+This was an earlier design in this specification and is withdrawn as ambiguous —
 Codex correctly identified these as two different concepts a single
 boolean cannot express without conflating them. The corrected design
 introduces two explicit settings (`email_delivery_enabled`,
@@ -5402,7 +5402,7 @@ introduces two explicit settings (`email_delivery_enabled`,
 ### Claiming exactly-once email delivery from a database unique
 ### constraint alone
 
-This was an earlier design in this ADR and is withdrawn as overclaiming
+This was an earlier design in this specification and is withdrawn as overclaiming
 — a database constraint governs only Laravel's own durable state, not an
 external mail provider's own send, and cannot by itself close the crash
 window between provider-acceptance and Laravel recording that success.
@@ -5413,7 +5413,7 @@ it does not — never a false exactly-once claim.
 
 ### One delivery row per notification as the complete email model
 
-This was an earlier design in this ADR and is withdrawn as unable to
+This was an earlier design in this specification and is withdrawn as unable to
 represent a single digest email containing several notifications at
 once. The corrected design introduces a durable envelope
 (`DocumentGovernanceEmailEnvelope`) with append-only membership
@@ -5423,7 +5423,7 @@ delivery differ only in member count, never in a separately-coded path.
 ### A separate reminder-log table alongside the event table's own
 ### idempotency identity
 
-This was an earlier design in this ADR and is withdrawn as introducing
+This was an earlier design in this specification and is withdrawn as introducing
 exactly the "two fields that can disagree" hazard this decomposition
 already rejects elsewhere — two independently-enforced uniqueness
 boundaries for the same underlying fact could drift apart under a
@@ -5434,7 +5434,7 @@ authority transitions alike; no separate log table exists.
 ### A scheduler-run-relative ("since the previous scan") identity for
 ### authority-transition events
 
-This was an earlier design in this ADR and is withdrawn because no
+This was an earlier design in this specification and is withdrawn because no
 durable scan watermark was ever established to make "since the previous
 scan" a meaningful, checkable comparison — a missed run or an overlapping
 process could not be reasoned about safely against it. The corrected
@@ -5444,7 +5444,7 @@ delta against remembered prior scanner state.
 
 ### Storing a resolved `target_route` string on the notification row
 
-This was an earlier design in this ADR and is withdrawn as internally
+This was an earlier design in this specification and is withdrawn as internally
 inconsistent — the prior draft simultaneously claimed the stored route
 "becomes null" on deletion, that no deletion-time update ever touches
 historical notifications, and that availability is "checked lazily"
@@ -5457,11 +5457,11 @@ authorization check.
 ### Treating an illustrative dashboard-query predicate as an authoritative
 ### restatement of a frozen ADR's own eligibility rule
 
-This was an earlier design in this ADR and is withdrawn as a genuine risk
-— a simplified predicate sketched inside this ADR could silently drift
+This was an earlier design in this specification and is withdrawn as a genuine risk
+— a simplified predicate sketched inside this specification could silently drift
 from ADR-0031/0033's own actual accepted definition, omitting a
 legitimately actionable item or including an ineligible one. The
-corrected design treats every dashboard predicate shown in this ADR as
+corrected design treats every dashboard predicate shown in this specification as
 illustrative only, with the frozen ADR's own state machine as the sole
 authority and dashboard queries implemented as named projections of it.
 
@@ -5484,7 +5484,7 @@ any administration permission.
 ### A retention arithmetic error — describing `DocumentGovernanceEvent`'s
 ### 180-day window as longer than the 365-day notification window
 
-This was an earlier design in this ADR and is withdrawn as an
+This was an earlier design in this specification and is withdrawn as an
 arithmetic contradiction — 180 is shorter than 365, so the outbox event
 backing a `warning`/`action_required` notification could have expired
 before the notification's own longer window even elapsed. The corrected
@@ -5494,7 +5494,7 @@ longest notification window by construction.
 
 ### Unbounded digest-membership assembly with no cut-off or seal
 
-This was an earlier design in this ADR and is withdrawn as leaving a
+This was an earlier design in this specification and is withdrawn as leaving a
 genuine race — nothing previously prevented a late-arriving notification
 from being appended to a digest envelope that had already been
 dispatched. The corrected design introduces an explicit assembly
@@ -5506,7 +5506,7 @@ post-cut-off notification to the next digest date instead.
 ### Mutable envelope `status`/`attempt_count` as the complete dispatch-
 ### execution authority
 
-This was an earlier design in this ADR and is withdrawn as insufficient
+This was an earlier design in this specification and is withdrawn as insufficient
 to prevent two workers from concurrently dispatching the same envelope,
 or a stale worker from reporting against a reclaimed delivery. The
 corrected design introduces a durable, append-only
@@ -5517,7 +5517,7 @@ establishes for bulk-item attempts.
 ### Describing template/branding identity as recorded on the envelope in
 ### prose, without closing the actual envelope schema
 
-This was an earlier design in this ADR and is withdrawn as an
+This was an earlier design in this specification and is withdrawn as an
 unresolved gap between narrative and schema — the prose claimed each
 envelope records its rendering identity, but the displayed schema had no
 columns for it. The corrected design adds the complete rendering-snapshot
@@ -5526,7 +5526,7 @@ than sealing.
 
 ### Leaving four event families without a defined occurrence identity
 
-This was an earlier design in this ADR and is withdrawn as incomplete —
+This was an earlier design in this specification and is withdrawn as incomplete —
 `import.item.processing_failed`/`requires_user_action`/`match_ambiguous`
 and `governance.ownership.reassignment_required` were left without any
 stated occurrence-key construction, risking the same silent-collision
@@ -5539,7 +5539,7 @@ timestamp) rather than the item/family identity or event key alone.
 ### Assuming ownership-loss and deletion-stuck events have an obvious,
 ### unstated producer
 
-This was an earlier design in this ADR and is withdrawn as unspecified —
+This was an earlier design in this specification and is withdrawn as unspecified —
 neither event's actual Laravel-owned source was ever named. The corrected
 design defines a bounded, transactional fan-out-then-reconciler producer
 for ownership loss (never an unbounded fan-out inside one user-facing
@@ -5550,7 +5550,7 @@ state machine.
 ### A workspace-scoped query alone as the only tenancy guard on a
 ### notification row
 
-This was an earlier design in this ADR and is withdrawn as an
+This was an earlier design in this specification and is withdrawn as an
 application-layer guard mistaken for a database-enforced invariant. The
 corrected design adds `recipient_workspace_membership_id` and a
 before-write trigger structurally binding it to the notification's own
@@ -5560,7 +5560,7 @@ established tenancy-trigger pattern.
 ### A trigger observing `assembly_status`, with no shared row lock, as
 ### the append/seal race guard
 
-This was an earlier design in this ADR and is withdrawn as insufficient
+This was an earlier design in this specification and is withdrawn as insufficient
 under `READ COMMITTED` — a trigger's own read and a concurrent sealing
 transaction's own write are not serialised against each other without
 both acquiring the same row lock first. The corrected design requires
@@ -5571,7 +5571,7 @@ for a late arrival that loses the race.
 ### A reclaimer that abandons the stale attempt without converging the
 ### envelope
 
-This was an earlier design in this ADR and is withdrawn as capable of
+This was an earlier design in this specification and is withdrawn as capable of
 leaving an envelope permanently `dispatching` with no worker ever able to
 claim it again. The corrected design makes reclamation and envelope
 convergence one atomic sequence, deriving the durable ceiling and
@@ -5581,7 +5581,7 @@ the abandonment itself.
 ### Leaving the provider-call timeout unrelated to the attempt's own
 ### lease duration
 
-This was an earlier design in this ADR and is withdrawn as leaving an
+This was an earlier design in this specification and is withdrawn as leaving an
 avoidable ambiguous window in which both a reclaimer and a genuinely
 still-working worker could reasonably believe they own an attempt. The
 corrected design states a normative `L >= T + M` invariant, binding lease
@@ -5591,7 +5591,7 @@ result-recording margin.
 ### Trusting eligibility resolved at notification-creation time all the
 ### way through to actual dispatch
 
-This was an earlier design in this ADR and is withdrawn as stale by
+This was an earlier design in this specification and is withdrawn as stale by
 construction for anything that sits `assembling` for a meaningful period
 — a digest envelope in particular. The corrected design re-evaluates
 eligibility immediately before every dispatch attempt, introduces a
@@ -5601,7 +5601,7 @@ silent removal.
 
 ### The notification row as the only uniqueness evidence for replay
 
-This was an earlier design in this ADR and is withdrawn because a
+This was an earlier design in this specification and is withdrawn because a
 notification's own 90/365-day expiry is shorter than its source event's
 400-day replayability, risking a replay re-resolving an entirely new
 historical recipient set against current membership. The corrected
@@ -5611,17 +5611,17 @@ notified the first time.
 
 ### An undeclared composite-FK target
 
-This was an earlier design in this ADR and is withdrawn as an
+This was an earlier design in this specification and is withdrawn as an
 unimplementable reference — the attempt table's own composite FK assumed
 a unique `(id, workspace_id)` target on the envelope table that was never
 declared. The corrected design declares it explicitly and sweeps every
-other claimed reference in this ADR to confirm none of them silently
+other claimed reference in this specification to confirm none of them silently
 assumes one.
 
 ### An `eligibility_loss_cause_identity` built from membership columns
 ### that do not exist
 
-This was an earlier design in this ADR and is withdrawn as unverified —
+This was an earlier design in this specification and is withdrawn as unverified —
 direct inspection of the actual `workspace_memberships` migrations shows
 no dedicated removal or role-change timestamp column exists; removal
 deletes the row, and role changes are ordinary updates with no
@@ -5635,7 +5635,7 @@ column this codebase does not have.
 ### A nullable-recipient completion sentinel row for event-level
 ### projection completion
 
-This was an earlier design in this ADR and is withdrawn as
+This was an earlier design in this specification and is withdrawn as
 non-functional — PostgreSQL does not treat two `NULL` values as equal for
 uniqueness, so a `UNIQUE` constraint over an always-null completion
 column enforced nothing. The corrected design separates event-level
@@ -5647,7 +5647,7 @@ recipient, never a placeholder row for "no recipients").
 ### Re-evaluating full recipient eligibility on every retry, while also
 ### claiming retries reuse the original decision unchanged
 
-This was an earlier design in this ADR and is withdrawn as directly
+This was an earlier design in this specification and is withdrawn as directly
 self-contradictory. The corrected design performs full per-member
 preflight exactly once, before the first provider attempt, freezing the
 included/suppressed decision atomically with the first attempt's own
@@ -5658,7 +5658,7 @@ template, branding, and rendering digest verbatim.
 ### Opening a provider-facing dispatch attempt for an envelope already
 ### known to have zero deliverable members
 
-This was an earlier design in this ADR and is withdrawn as wasteful and
+This was an earlier design in this specification and is withdrawn as wasteful and
 ambiguous — it would have consumed retry ceiling and lease/open-attempt
 bookkeeping for a delivery that could never succeed. The corrected design
 converges such an envelope directly to terminal `suppressed` in the same
@@ -5667,7 +5667,7 @@ transaction as the first preflight, opening no attempt row at all.
 ### A legacy ownership-eligibility digest keyed on `(document_family_id,
 ### owner_user_id)` alone
 
-This was an earlier design in this ADR and is withdrawn as collision-
+This was an earlier design in this specification and is withdrawn as collision-
 prone — the same person can be legitimately reassigned as owner twice,
 with a different owner in between, and the resulting value-based digest
 is identical both times even though the two assignment *acts* are
@@ -5682,7 +5682,7 @@ act itself, never merely its resulting value.
 
 ### A deletion occurrence identity of `(operation, generation)` alone
 
-This was an earlier design in this ADR and is withdrawn as collision-
+This was an earlier design in this specification and is withdrawn as collision-
 prone — a `stuck` occurrence and a later `failed_permanent` occurrence
 recorded under the same still-current reclaim generation (generation
 only advances on an actual reclaim, not on a mere reclassification) would
@@ -5695,7 +5695,7 @@ coexist as genuinely distinct occurrences within the same generation.
 ### Locking the dispatch-attempt row before the envelope row at some
 ### points in the dispatch lifecycle
 
-This was an earlier design in this ADR and is withdrawn as a genuine
+This was an earlier design in this specification and is withdrawn as a genuine
 deadlock hazard — the claim step and the reclaimer already locked the
 envelope first, while pre-provider verification, provider-acceptance
 recording, and failure recording each locked the attempt first; two
@@ -5710,7 +5710,7 @@ locking the attempt first.
 ### Creating dispatch-attempt generation 1 unconditionally, before
 ### running the generation-1 member-eligibility preflight
 
-This was an earlier design in this ADR and is withdrawn as inconsistent
+This was an earlier design in this specification and is withdrawn as inconsistent
 with its own stated zero-deliverable rule — the claim step inserted an
 open attempt row and transitioned the envelope to `dispatching`
 *before* the preflight (deferred to a later "immediately before calling
@@ -5728,7 +5728,7 @@ attempt generation 1 (or the next retry generation) and transitions
 ### Anchoring the 400-day terminal-envelope retention window on
 ### `dispatched_at`
 
-This was an earlier design in this ADR and is withdrawn as
+This was an earlier design in this specification and is withdrawn as
 unenforceable for two of the three terminal outcomes — `dispatched_at`
 is set only when the provider actually accepts a send, so a
 `failed_permanent` or `suppressed` envelope, having no successful
@@ -5744,7 +5744,7 @@ anchor.
 ### Claiming ADR-0030 already supplies an owner-reassignment Action and
 ### idempotency contract
 
-This was an earlier design in this ADR and is withdrawn as unverified —
+This was an earlier design in this specification and is withdrawn as unverified —
 direct inspection of ADR-0030's own text finds no owner-reassignment
 Action named anywhere, and a repository search finds no such Action,
 migration, or idempotency table anywhere in `apps/api` today. The
@@ -5758,7 +5758,7 @@ a table that does not exist.
 ### One field, `rendering_input_digest`, immutable at sealing and
 ### recomputed at the generation-1 preflight
 
-This was an earlier design in this ADR and is withdrawn as internally
+This was an earlier design in this specification and is withdrawn as internally
 contradictory — the same column cannot honestly be both "fixed forever
 at sealing" and "recomputed once eligibility is decided." The corrected
 design splits it into two distinct, separately immutable fields:
@@ -5769,7 +5769,7 @@ chaining onto the sealed basis's own identity).
 ### Recording a delivery result against "the attempt is still `open`"
 ### as the only fencing check
 
-This was an earlier design in this ADR and is withdrawn as a weaker
+This was an earlier design in this specification and is withdrawn as a weaker
 shortcut than the envelope→attempt lock order it sits inside actually
 supports — `status = 'open'` alone cannot detect a wrong envelope, wrong
 workspace, wrong attempt identity, wrong generation, wrong token, or a
@@ -5782,16 +5782,16 @@ timeout, duplicate callback, and a suspended worker reporting after
 reclaim), writing nothing and converging nothing whenever any single
 check fails.
 
-### Using `rendering_input_digest`/`suppression_reason` in this ADR's own
+### Using `rendering_input_digest`/`suppression_reason` in this specification's own
 ### text without ever declaring them as envelope columns
 
-This was an earlier design in this ADR and is withdrawn as an
+This was an earlier design in this specification and is withdrawn as an
 undeclared-schema gap — `suppression_reason` was referenced throughout
 the envelope's own terminal-suppression narrative and `CHECK` without
 ever appearing in the envelope's own column table, and no
 `terminal_failure_category` existed at all despite `failed_permanent`
 needing one. The corrected design declares both columns explicitly, with
-closed V1 vocabularies narrowed to only the values this ADR's own
+closed V1 vocabularies narrowed to only the values this specification's own
 preflight/retry/failure model actually reaches (`authority_lost` and
 `configuration_failure` are each excluded, with the reachability
 argument stated directly), and closes the envelope's own same-row
@@ -5801,7 +5801,7 @@ exhaustively.
 ### A consistency trigger described as the authority boundary for
 ### `owner_user_id`/`owner_assignment_generation`
 
-This was an earlier design in this ADR and is withdrawn as
+This was an earlier design in this specification and is withdrawn as
 insufficient — a trigger that only checks "did the generation advance by
 exactly one alongside an owner change" proves the pair is internally
 consistent, never that the write came from `ChangeDocumentFamilyOwner`
@@ -5820,7 +5820,7 @@ retained only as defence in depth, no longer described as the authority.
 
 ### A "look up, then insert if absent" idempotency-acquisition algorithm
 
-This was an earlier design in this ADR and is withdrawn as non-atomic —
+This was an earlier design in this specification and is withdrawn as non-atomic —
 a plain `SELECT` followed by a conditional `INSERT` leaves a genuine race
 between two concurrent requests for the same, brand-new idempotency key,
 both of which can find nothing and both attempt to insert, with no
@@ -5836,7 +5836,7 @@ never silently re-executed).
 ### Describing a table-level `GRANT UPDATE` as harmless because two
 ### columns were "excluded from the column-level grant list"
 
-This was an earlier design in this ADR and is withdrawn as factually
+This was an earlier design in this specification and is withdrawn as factually
 false about PostgreSQL's own privilege model — privileges are additive,
 never subtractive by omission; a table-level `UPDATE` grant conveys
 `UPDATE` on every column regardless of what any earlier, narrower grant
@@ -5853,14 +5853,14 @@ broad grant is ever rediscovered.
 ### A bare, single-column `target_document_family_id` FK, with no
 ### workspace binding
 
-This was an earlier design in this ADR and is withdrawn as tenancy-
+This was an earlier design in this specification and is withdrawn as tenancy-
 incomplete — nothing in a single-column FK to `document_families (id)`
 prevents a command row from naming a family that belongs to a different
 workspace than the command's own `workspace_id`. The corrected design
 adds `UNIQUE (id, workspace_id)` to `document_families` and replaces the
 single-column FK with a composite `FOREIGN KEY (target_document_family_id,
 workspace_id) REFERENCES document_families (id, workspace_id)`, the same
-pattern this ADR already uses for its email-envelope tables, plus an
+pattern this specification already uses for its email-envelope tables, plus an
 independent runtime re-check inside `apply_document_family_owner_change`
 itself (`commands.workspace_id = family.workspace_id`, checked before
 both the no-op and genuine-mutation branches) as defence in depth against
@@ -5869,7 +5869,7 @@ the function actually ran.
 
 ### An ordinary composite `ON DELETE SET NULL` for the family FK
 
-This was an earlier design in this ADR and is withdrawn as destructive —
+This was an earlier design in this specification and is withdrawn as destructive —
 PostgreSQL's composite `ON DELETE SET NULL` (the same shape Laravel's
 `nullOnDelete()` schema-builder shorthand generates for a multi-column
 FK) nulls every referencing column together, which would null
@@ -5887,7 +5887,7 @@ FK.
 ### An `information_schema.role_table_grants` check keyed on a
 ### nonexistent `column_name`
 
-This was an earlier design in this ADR and is withdrawn as invalid SQL
+This was an earlier design in this specification and is withdrawn as invalid SQL
 against a real catalogue view — `role_table_grants` has no `column_name`
 column; it reports only genuinely table-level grants by its own
 definition, making any such disambiguation both impossible to write and
@@ -5904,7 +5904,7 @@ verification.
 ### A same-row `CHECK` required to enforce `target_document_family_id`
 ### non-null only for the owner-change purpose
 
-This was an earlier design in this ADR (implicitly, by omission) and is
+This was an earlier design in this specification (implicitly, by omission) and is
 withdrawn as unable to express the actual requirement — the column must
 be non-null at creation yet must legitimately become null later, when
 the column-targeted `ON DELETE SET NULL` referential action retires it
@@ -5920,7 +5920,7 @@ with a null target.
 
 ### An `aclexplode(proacl)` check asserting a fixed one-row result
 
-This was an earlier design in this ADR and is withdrawn as inconsistent
+This was an earlier design in this specification and is withdrawn as inconsistent
 with genuine PostgreSQL ACL behaviour — an object's ACL ordinarily
 contains an explicit owner entry alongside any runtime grant, `PUBLIC`
 is represented by grantee OID `0` rather than by absence, and a `NULL`
@@ -5937,11 +5937,11 @@ schema.
 ### An Action-level `SELECT ... FOR UPDATE` on the idempotency command
 ### table, issued by the restricted runtime role
 
-This was an earlier design in this ADR and is withdrawn as
+This was an earlier design in this specification and is withdrawn as
 unexecutable — it directly contradicts the privilege model this same
 ADR establishes: PostgreSQL requires `UPDATE` privilege on at least one
 column of a table to acquire a row lock against it, and `rag_platform_app`
-was, by this ADR's own correct design, already granted none. The
+was, by this specification's own correct design, already granted none. The
 corrected design never has the runtime lock a command row at all: it
 relies on `INSERT ... ON CONFLICT ... RETURNING id` and PostgreSQL's own
 conflict-wait semantics (a competing uncommitted insert is waited on,
@@ -5956,7 +5956,7 @@ necessary privilege as `rag_platform_owner`. No dummy or narrowly-scoped
 ### A role-membership check scoped to `rag_platform_app`'s own direct
 ### membership row alone
 
-This was an earlier design in this ADR and is withdrawn as an
+This was an earlier design in this specification and is withdrawn as an
 incomplete audit — a single one-level `pg_auth_members` join proves only
 that `rag_platform_app` itself holds no direct membership row in either
 privileged role; it cannot detect another login role directly or
@@ -5964,7 +5964,7 @@ transitively reaching `rag_platform_app`, `rag_platform_migrator`, or
 `rag_platform_owner`; inherited function execution flowing through a
 membership chain; `SET ROLE` authority reachable transitively; or an
 unrelated login role holding superuser/role-creation authority that
-would make the boundary moot regardless of any grant this ADR controls.
+would make the boundary moot regardless of any grant this specification controls.
 The corrected design enumerates every login role in the instance and
 evaluates each one's `MEMBER`/`USAGE`/`SET` relationship to all three
 protected roles via `pg_has_role()` (PostgreSQL's own authoritative
@@ -5977,9 +5977,9 @@ single hard-coded assertion.
 ### One combined "deployment/bootstrap" matrix row permitting
 ### `rolsuper` to vary while expecting no reachability
 
-This was an earlier design in this ADR and is withdrawn as internally
+This was an earlier design in this specification and is withdrawn as internally
 impossible — a genuine PostgreSQL superuser bypasses every catalog ACL
-and role-membership boundary this ADR establishes, so a row simultaneously
+and role-membership boundary this specification establishes, so a row simultaneously
 allowing `rolsuper = true` while requiring every membership/`USAGE`/
 `SET`/`effective_execute` cell `false` describes a state that cannot
 exist. The corrected design splits this into two named categories — a
@@ -5996,7 +5996,7 @@ superuser is inherently privileged but operationally isolated, never
 ### Claiming PostgreSQL permits constructing a circular role-membership
 ### grant, as the justification for a cycle guard
 
-This was an earlier design in this ADR and is withdrawn as factually
+This was an earlier design in this specification and is withdrawn as factually
 false — PostgreSQL's own `GRANT role TO role` rejects a circular
 membership grant at grant time; a genuine cyclic `pg_auth_members` graph
 is not a reachable state on a normally operating cluster. The corrected
@@ -6012,7 +6012,7 @@ fixture edge relation, never presented as evidence about real
 
 ### Omitting `rolcreatedb` from the executable login-role enumeration
 
-This was an earlier design in this ADR and is withdrawn as
+This was an earlier design in this specification and is withdrawn as
 unenforceable — the allowlist matrix stated an exact expected
 `rolcreatedb` value for more than one row, while neither of the two
 normative enumeration queries actually selected that column, leaving the
@@ -6024,7 +6024,7 @@ classification, mismatch diagnostics, and the provider-free tests.
 ### Hard-coding `rolcreaterole = true`/`rolcreatedb = true` for the
 ### named cluster-superuser matrix row
 
-This was an earlier design in this ADR and is withdrawn as factually
+This was an earlier design in this specification and is withdrawn as factually
 inaccurate — PostgreSQL represents `rolsuper`, `rolcreaterole`, and
 `rolcreatedb` as independent role attributes; a genuine superuser may
 legitimately hold either or both creation flags `false`. The corrected
@@ -6048,7 +6048,7 @@ either creation flag from `rolsuper` itself.
   counters) rather than merely discouraging them by convention.
 - Reusing ADR-0025's content-free-correlation pattern and ADR-0008's
   outbox discipline (as a new, analogous instance, not a shared table)
-  means this ADR introduces no genuinely new architectural pattern this
+  means this specification introduces no genuinely new architectural pattern this
   codebase hasn't already proven — only new tables and jobs following
   patterns already in production shape.
 
@@ -6076,16 +6076,16 @@ either creation flag from `rolsuper` itself.
 
 ## Scope boundaries
 
-This ADR does not define: ADR-0030–0035's own governance, import,
+This specification does not define: ADR-0030–0035's own governance, import,
 promotion, or bulk-operation rules; ADR-0037's export-specific event
-vocabulary (though this ADR's namespace is chosen to accommodate it);
+vocabulary (though this specification's namespace is chosen to accommodate it);
 push/SMS delivery (explicitly deferred, per "Settled V1 product values"
 below, with no speculative channel-abstraction layer built for a channel
 V1 does not implement); per-workspace timezone-aware reminder scheduling
 (V1 is UTC-date-based); a per-workspace-configurable "due soon" lead time
 (V1 is one deployment-wide value, default 14 days); a dedicated per-user
 email rate limiter beyond the structural batch-level bound already in
-place; whole-workspace deletion's interaction with this ADR's own tables
+place; whole-workspace deletion's interaction with this specification's own tables
 (deferred to whichever future ADR defines workspace deletion); a future
 tenant-branding administration surface (upload, validation, preview,
 lifecycle — reserved as a narrow input-contract seam only, per "Email
@@ -6139,7 +6139,7 @@ large-tenant-bounded-feed cases (Laravel feature/API); accessibility
 (bell/unread `aria-label`, keyboard-operable inbox, bounded live-region
 announcements, actionable-versus-informational non-colour distinction)
 (Frontend component); and a confirmation sweep that no Python contract,
-test, or fixture in this ADR's scope grants Python any notification/
+test, or fixture in this specification's scope grants Python any notification/
 email/recipient/preference authority (shared event-contract, Python
 integration).
 
@@ -6761,17 +6761,17 @@ dashboard card; dismissing the notification leaves the dashboard card's
 own count unaffected; light and dark themes; mobile layout; keyboard-only
 navigation through the inbox.
 
-No live-provider run is required to prove this ADR's own orchestration;
+No live-provider run is required to prove this specification's own orchestration;
 actual email deliverability against a real provider remains governed by
 whatever existing provider-smoke-test boundary this codebase's mail
-configuration already uses, unmodified by this ADR.
+configuration already uses, unmodified by this specification.
 
 ## Phase/session allocation
 
-Consuming ADR-0030–0035's own event-producing lifecycles, this ADR's
+Consuming ADR-0030–0035's own event-producing lifecycles, this specification's
 implementation is sequenced **after** those six ADRs' own primitives
 exist, within the same Import, Staging and Bulk Governance / Document
-Governance phase this decomposition has used throughout. **This ADR does
+Governance phase this decomposition has used throughout. **This specification does
 not invent or renumber final session identifiers**, since the phase's own
 session renumbering has not yet been reconciled in `tasks.json`; the
 allocation below states ownership and dependency order only.
@@ -6847,7 +6847,7 @@ allocation below states ownership and dependency order only.
   existence and `commands.workspace_id = family.workspace_id` re-checks
   run before both the no-op and mutation branches), reusing ADR-0035's
   own three-role foundation and protected-column pattern, extended by
-  this ADR's first non-trigger `SECURITY DEFINER` invocation; the
+  this specification's first non-trigger `SECURITY DEFINER` invocation; the
   deletion-stuck-detection scheduler, including `condition_kind` as
   the third occurrence-identity component disambiguating `stuck` from
   `failed_permanent` within one reclaim generation;
@@ -6928,7 +6928,7 @@ diagnostic query's own cycle guard.
 3. **Cluster-superuser matrix row**: `rolsuper = true` (the expected,
    truthful value, not a violation); every `MEMBER`/`USAGE`/`SET`/
    `effective_execute` cell honestly `true`, since a genuine superuser
-   bypasses every catalog ACL and role-membership boundary this ADR
+   bypasses every catalog ACL and role-membership boundary this specification
    establishes — `pg_has_role()`/`has_function_privilege()` report this
    correctly on their own, with no special-casing needed in the audit
    query itself. Accepted only as a named, infrastructure-only exception;

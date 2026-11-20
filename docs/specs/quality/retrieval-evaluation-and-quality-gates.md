@@ -1,4 +1,4 @@
-# ADR 0019: Define Retrieval Evaluation and Quality Gates
+# Retrieval Evaluation and Quality Gates
 
 ## Status
 
@@ -82,9 +82,9 @@ source-anchored ground truth, deliberate baseline promotion, absolute
 invariants that no comparative metric can offset — exists in service of
 that one purpose, not as independent process for its own sake.
 
-## What this ADR decides and does not decide
+## What this specification decides and does not decide
 
-This ADR defines: ownership of the evaluation corpus, its schema, its
+This specification defines: ownership of the evaluation corpus, its schema, its
 results, its baselines and its release-gate policy (the platform, never an
 external framework); corpus versioning and immutability once a version has
 been used for an accepted baseline; stable semantic case identity,
@@ -340,7 +340,7 @@ Four layers for V1, with a fifth named but not built:
 ### Deterministic retrieval metrics
 
 At minimum: Recall@K, Precision@K, MRR, and nDCG. Relevance grading for
-nDCG is illustrative, not a fixed schema this ADR mandates byte-for-byte:
+nDCG is illustrative, not a fixed schema this specification mandates byte-for-byte:
 an ordinal scale such as `0` (not relevant), `1` (partially or tangentially
 relevant), `2` (fully and directly relevant) is sufficient to make nDCG
 meaningful, with Recall@K/Precision@K/MRR treating any grade at or above a
@@ -769,7 +769,7 @@ unmeasured for however long Phase 16 through Phase 17's gap lasts.
 - Authoring genuinely synthetic or properly sanitised source material for
   every required case family, especially the temporal, applicability and
   adversarial families, is real, non-trivial content-creation work for
-  Stage 16.6, not a byproduct of this ADR.
+  Stage 16.6, not a byproduct of this specification.
 
 ## Architectural invariants
 

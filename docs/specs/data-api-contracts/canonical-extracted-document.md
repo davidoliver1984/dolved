@@ -1,4 +1,4 @@
-# ADR 0010: Define the Canonical Extracted Document Contract
+# Canonical Extracted Document Contract
 
 ## Status
 
@@ -34,7 +34,7 @@ about directly). Phase 10 needs the same discipline applied one level
 further in: at the seam between extraction and everything that consumes its
 output.
 
-This ADR is architecture-only. It defines what every extractor must produce
+This specification is architecture-only. It defines what every extractor must produce
 and why, not the exact classes, schemas, database tables, or which parsing
 library each extractor uses — those are Stage 10.2, 10.3, 10.4 and 10.5
 concerns.
@@ -107,7 +107,7 @@ Document identities that establish tenant context. Source format may also
 remain available as provenance. A new source format means writing a new
 extractor that produces this same contract; it does not mean exposing a new
 parser model to normalisation, chunking, embeddings, retrieval or citation
-code. This is the architectural boundary the rest of this ADR exists to
+code. This is the architectural boundary the rest of this specification exists to
 protect.
 
 ### Separation of responsibilities
@@ -170,7 +170,7 @@ new type, and a consumer that does not yet understand a new element type can
 reasonably treat it as an unrecognised block rather than failing outright).
 Without this, every new element type discovered in the wild would require
 renegotiating the shape of the contract itself, which is exactly the
-coupling this ADR exists to prevent.
+coupling this specification exists to prevent.
 
 Every consumer must implement a deliberate safe fallback for future or
 currently unrecognised `Element` types. A consumer may preserve, pass through
@@ -210,11 +210,11 @@ back without re-processing the original file.
 Every semantic element retains enough provenance to support citations,
 debugging, auditing, replay and future explainability — the ability to
 answer, later, "where in the source document did this come from, and which
-extractor produced it, and when." This ADR treats provenance as an
+extractor produced it, and when." This specification treats provenance as an
 architectural concern rather than a fixed field list: the exact shape of
 that provenance (offsets, page identifiers, extractor name and version,
 timestamps, or whatever else a given format can support) is an implementation
-decision for the stage that builds the contract, not a decision this ADR
+decision for the stage that builds the contract, not a decision this specification
 needs to fix in advance. What is architectural is the requirement that
 provenance exists at all, consistently, for every element the contract
 produces — without it, a citation feature or a debugging session has nothing
@@ -293,7 +293,7 @@ continuing through normalisation.
 ### Confidence
 
 Where an extractor can support it, semantic elements may carry an extraction
-confidence value. This ADR does not require every extractor to populate it,
+confidence value. This specification does not require every extractor to populate it,
 and does not mandate what a consumer does with it yet — it establishes the
 concept now so that a future quality-control feature (for example, flagging
 low-confidence extractions for review, or weighting retrieval differently
@@ -341,7 +341,7 @@ Using a specific parser library's own object model (or an external format
 such as an OOXML or HTML DOM tree) as the canonical representation was
 considered. Rejected: whichever library's shape "wins" becomes a hidden
 dependency for every other extractor and for every downstream consumer,
-recreating exactly the coupling problem this ADR exists to prevent, and
+recreating exactly the coupling problem this specification exists to prevent, and
 tying the platform's canonical model to that library's own versioning and
 design choices rather than the platform's own needs.
 
@@ -414,7 +414,7 @@ canonical representation.
   representation carries more than a flat string would.
 
 These costs are accepted because they are paid once, at the architectural
-boundary this ADR defines, in exchange for every later stage — chunking,
+boundary this specification defines, in exchange for every later stage — chunking,
 embeddings, retrieval, citations, and whatever future capability this
 platform adds — never having to pay the much larger cost of recovering
 information extraction already discarded, or of coupling itself to a
@@ -422,7 +422,7 @@ particular source format's parsing library.
 
 ## Scope boundaries
 
-This ADR does not define:
+This specification does not define:
 
 - the exact `ExtractedDocument` or `Element` class definitions, schemas, or
   serialisation format;

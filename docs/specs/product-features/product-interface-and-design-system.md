@@ -1,4 +1,4 @@
-# ADR 0027: Define the Product Interface and Design System
+# Product Interface and Design System
 
 ## Status
 
@@ -12,7 +12,7 @@ Accepted
 
 ### Consumes ADR-0006, ADR-0023, ADR-0024, ADR-0025 and ADR-0026 unchanged; this document does not reopen any of them
 
-This ADR makes no generation, retrieval, evidence-authority,
+This specification makes no generation, retrieval, evidence-authority,
 tenant-authorization or domain-semantics decision. It does make the bounded
 browser-facing presentation-contract and route decisions defined below;
 those additions do not alter the authority, validation or ownership
@@ -20,7 +20,7 @@ decisions established by the prior ADRs. Every
 role boundary (ADR-0006, ADR-0025), every conversation/streaming state (ADR-0024),
 every generation outcome (ADR-0023) and every observability/platform-admin
 boundary (ADR-0026) is treated as settled, verified-against-the-real-repository
-fact, not as something this document is free to redesign. Where this ADR
+fact, not as something this document is free to redesign. Where this specification
 describes an interface state, it is describing how an *already-decided* domain
 state is presented — never inventing a new one.
 
@@ -29,7 +29,7 @@ state is presented — never inventing a new one.
 Nothing here supersedes an accepted decision. Where the current frontend
 contradicts a decision made elsewhere (for example, `WorkspaceUsage` rendering
 conditionally on `role !== "member"` inline in a page component rather than as
-a distinct route), this ADR treats that as an implementation detail to carry
+a distinct route), this specification treats that as an implementation detail to carry
 forward faithfully into new component structure, not as an architectural
 question to relitigate.
 
@@ -110,10 +110,10 @@ guarantee (branding present, legacy name absent) is unchanged and must survive.
 The approved visual references are stored as stable, repository-relative
 assets under `docs/assets/design/phase-21/` (not as absolute paths under a
 user-specific `.codex`, Desktop or Pictures directory, which an earlier draft
-of this ADR cited directly and which would not resolve for anyone else, or
+of this specification cited directly and which would not resolve for anyone else, or
 even for the same user on a different machine). `docs/assets/design/phase-21/README.md`
 records each file's SHA-256 checksum and states explicitly that these are
-design/reference artifacts for this ADR and its implementation sessions, not
+design/reference artifacts for this specification and its implementation sessions, not
 runtime production assets bundled into `apps/web`.
 
 The approved mock-up (`docs/assets/design/phase-21/approved-chat-shell-dark.png`,
@@ -130,7 +130,7 @@ icons and a send button. It also shows a bookmark icon, a history-clock icon,
 a share icon, an overflow menu and thumbs-up/down reaction icons in the
 conversation header and under the answer — **none of these five controls
 correspond to anything the application actually implements**, and per the
-governing instruction for this ADR they are read as style/placement reference
+governing instruction for this specification they are read as style/placement reference
 only, not as approved scope. Section "Chat and evidence presentation" below
 states explicitly which mock-up controls are adopted and which are excluded.
 
@@ -152,11 +152,11 @@ what follows is a summary:
   structural precedent worth citing — but it is a chart-and-KPI-dense
   analytics dashboard with sparkline cards, donut charts and goal-progress
   bars fed by data this platform does not have. The user's brief explicitly
-  excludes "dashboards or charts unsupported by real data"; this ADR does
+  excludes "dashboards or charts unsupported by real data"; this specification does
   not adopt that visual density, none of its chart components are in scope,
   and Dolved must not reproduce this third party's branding, content or page
   composition verbatim. Its original source URL was not independently
-  verified during this ADR's drafting; it is recorded honestly as a
+  verified during this specification's drafting; it is recorded honestly as a
   product-owner-supplied inspiration screenshot with source unavailable,
   rather than inventing an attribution.
 - A "Coliner" font specimen screenshot is used as the wordmark's *stylistic*
@@ -164,7 +164,7 @@ what follows is a summary:
   tight tracking. The referenced *typeface's* license (verified directly,
   see "Typography and wordmark" below) is personal-use-only under the
   1001Fonts Free-For-Personal license; commercial use requires a paid
-  license from its foundry. This ADR therefore treats Coliner as a
+  license from its foundry. This specification therefore treats Coliner as a
   shape/character reference, not an adoptable asset, and recommends an
   open-licensed shortlist instead (section 4). The specimen screenshot's own
   source URL was likewise not independently verified; it is recorded
@@ -256,7 +256,7 @@ correct one:
 3. **Tailwind namespace bridge** — a single `@theme inline` block mapping the
    semantic tokens above into the Tailwind-recognized `--color-*`, `--font-*`
    and `--radius-*` namespaces, so utility classes actually generate. This is
-   the layer the original draft of this ADR under-specified: Tailwind v4's
+   the layer the original draft of this specification under-specified: Tailwind v4's
    utility generation is namespace-driven, so a plain `--surface` custom
    property does not itself produce a `bg-surface` utility — only a
    `--color-surface` entry in `@theme` (or `@theme inline`) does. The bridge
@@ -343,7 +343,7 @@ naming collision (which "`--accent`" does a component mean?), and the
 straightforward-looking fix — pointing shadcn's `--color-accent` at Dolved's
 brand green — would make every hovered dropdown item, selected tab and
 focused menu row render emerald-tinted, which is not the intended design.
-This ADR avoids the collision by naming Dolved's brand token `--brand` /
+This specification avoids the collision by naming Dolved's brand token `--brand` /
 `--brand-foreground` throughout, reserving Tailwind's `--color-accent` for
 shadcn's original hover-highlight role, bridged to the new `--surface-hover`
 token above instead. Dolved's brand color bridges to shadcn's `--primary`/
@@ -354,7 +354,7 @@ The reference image's brighter, gradient-lit green button is explicitly **not**
 a literal requirement — production controls use a flat, accessible `#007A57`.
 
 **Hover, active and disabled states are computed at the component-variant
-layer, not stored as separate named tokens.** An earlier draft of this ADR
+layer, not stored as separate named tokens.** An earlier draft of this specification
 referenced `--brand-hover`, `--brand-active` and `--brand-disabled` in prose
 without ever defining them as resolvable tokens in the bridge — exactly the
 "listing a token the architecture can't actually resolve" problem to avoid.
@@ -448,7 +448,7 @@ baked to a single static value at build time):
   --color-destructive: var(--status-destructive);
   --color-destructive-foreground: var(--status-destructive-foreground);
 
-  /* shadcn's Sidebar primitive contract — this ADR specifically selects the
+  /* shadcn's Sidebar primitive contract — this specification specifically selects the
      Sidebar component (section 5), so its full token set is mapped rather
      than left to inherit the base contract's defaults by accident. Reusing
      Dolved's existing semantic roles (no new primitives introduced). */
@@ -505,7 +505,7 @@ bridge) reuse the existing `--surface-raised`/`--foreground` semantic tokens
 rather than introducing a new primitive — a secondary button is visually a
 raised surface with ordinary foreground text, distinct from both `--primary`
 (brand-filled) and `--card`/`--popover` (non-interactive surfaces). The
-Sidebar-specific block is this ADR's best-documented mapping of shadcn's
+Sidebar-specific block is this specification's best-documented mapping of shadcn's
 publicly known Sidebar variable contract; R21-S01 verifies it against the
 actual generated `components/ui/sidebar.tsx` source once installed, per the
 token-completeness acceptance requirement in "Verification and acceptance"
@@ -514,13 +514,13 @@ slot is added before the component ships, not left to a default.
 
 With this bridge, `--color-border: var(--border)` is what makes the
 `border-border` utility exist and resolve correctly in both themes —
-`border-default`, used loosely in an earlier draft of this ADR, is not a name
+`border-default`, used loosely in an earlier draft of this specification, is not a name
 Tailwind v4 would generate from any token defined here and has been corrected
 throughout. Typography's size scale, spacing and breakpoints are **not**
 given a bespoke bridge — Tailwind v4's built-in `--text-*`, `--spacing` and
 `--breakpoint-*` primitives are adopted unmodified (see sections 4 and 11);
 inventing a parallel scale where the defaults already suffice would itself be
-the "second parallel styling system" this ADR elsewhere warns against.
+the "second parallel styling system" this specification elsewhere warns against.
 `--radius` (the one base primitive the bridge derives from) is defined once
 in Layer 1/2 CSS, outside the `@theme inline` block, exactly like every other
 primitive and semantic token above.
@@ -616,7 +616,7 @@ specifically modelled on the "Coliner" specimen the user supplied. Coliner
 itself is licensed under the 1001Fonts Free-For-Personal-Use terms —
 **verified directly, not assumed** — and is not usable in a shipped commercial
 product without purchasing a commercial or corporate license from its
-foundry (Jetsmax). This ADR does not recommend depending on it. Instead, of
+foundry (Jetsmax). This specification does not recommend depending on it. Instead, of
 the open-license (Google Fonts / SIL OFL) shortlist evaluated, **Sora**
 (ExtraBold/Black, variable) is the leading candidate: its geometric, rounded,
 single-story character sits closest among the shortlist to Coliner's rendered
@@ -638,7 +638,7 @@ option among several.** It is real DOM text (`dolved`) styled with the
 selected typeface, weight and letter-spacing via CSS, colored through the
 same semantic tokens as everything else (`text-foreground` or `text-brand`
 depending on placement), never a raster screenshot or PNG export, and never
-text converted to SVG path outlines. An earlier draft of this ADR listed
+text converted to SVG path outlines. An earlier draft of this specification listed
 "inline SVG built from live text/paths" as an equivalent alternative; it is
 not — text converted to SVG `<path>` outlines is no longer real text: it is
 not selectable, not copyable, and is not read as text by assistive
@@ -649,7 +649,7 @@ extra `aria-label` scaffolding — because it doesn't need any; it already is
 the string it needs to announce. A future, separate decorative icon/logo
 mark, distinct from the text wordmark, may use SVG if one is introduced in a
 later phase, governed by the redundant-versus-sole accessible-naming rule
-below — but no such mark is required or introduced by this ADR. V1's
+below — but no such mark is required or introduced by this specification. V1's
 wordmark is text, exclusively.
 
 **The wordmark glyph and the product's proper name are two distinct casing
@@ -789,7 +789,7 @@ with a "Back to chat" affordance in the contextual region for returning to
 the workspace's chat context — see section 6 for the full administration
 information architecture.
 
-**Route hierarchy and ownership.** An earlier draft of this ADR described the
+**Route hierarchy and ownership.** An earlier draft of this specification described the
 shell's regions and destinations without fixing the concrete route tree
 underneath them, leaving R21-S01/R21-S03 to invent it. The route hierarchy is
 fixed here instead:
@@ -831,7 +831,7 @@ workspace and the currently-selected durable conversation.** Concretely:
   message submission) is an R21-S03 implementation detail; the navigation
   *mechanic* — landing route first, `replace` to the canonical conversation
   URL once an identity exists, never a second POST triggered by that
-  navigation — is fixed by this ADR.
+  navigation — is fixed by this specification.
 - **Switching conversations must not disturb an independently running
   `GenerationRun`.** ADR-0024 already guarantees connection-independent
   execution and a resumable SSE projection — a run in flight continues
@@ -850,7 +850,7 @@ workspace and the currently-selected durable conversation.** Concretely:
   establishes ("cross-tenant requests return `404`... so a workspace's
   existence is not revealed to a party without access to it"), already
   implemented today via `app/app/workspaces/[workspacePublicId]/not-found.tsx`
-  and extended by this ADR to the new `conversations/{conversation}` and
+  and extended by this specification to the new `conversations/{conversation}` and
   `documents/{document}` dynamic segments on exactly the same terms — never a
   distinguishable error that would disclose whether a given identifier
   exists in a workspace the requester cannot access.
@@ -891,7 +891,7 @@ visually-hidden text. **Hidden navigation is a usability convenience only.**
 Every route it points to still performs its own server-side authorization
 check independently (as `/app/operations` already does today, redirecting on
 `unauthorized`/`forbidden`) — the shell hiding a link is not a security
-control and this ADR does not treat it as one, consistent with ADR-0006's
+control and this specification does not treat it as one, consistent with ADR-0006's
 "hidden convenience must never carry security meaning."
 
 ### 6. Administration information architecture
@@ -921,7 +921,7 @@ contextual-region sections; see "One adaptive application shell" (section 5)
 for why it lives solely in the shell's stable primary region.
 
 **Documents is one destination, not two — and it lives solely in the shell's
-stable primary region.** The brief asks this ADR to critique whether product
+stable primary region.** The brief asks this specification to critique whether product
 Documents and administration Documents should be separate. Verified against
 the actual capability model (`DocumentAdministration.tsx` today renders
 unconditionally for every workspace member, with retry/delete driven
@@ -997,7 +997,7 @@ evidence (compact citation chips — `[1]`, `[2]` — inline in answer text,
 each keyboard-focusable and operable, expanding to an evidence/source card
 following the reference's evidence-card layout, sourced from `EvidenceSnapshot`
 data ADR-0023 already defines plus a bounded, presentation-only contract
-extension defined precisely below — this ADR does not invent new *evidence
+extension defined precisely below — this specification does not invent new *evidence
 authority* or provenance fields, only a browser-facing representation of
 data Laravel already holds); clarification (now a **visually distinct** turn type —
 a clarification question is not styled identically to a completed answer,
@@ -1012,7 +1012,7 @@ session/run where allowed (existing retry action, restyled); cancellation
 stream (ADR-0024 guarantees fail-closed retraction and a typed terminal
 failure when a candidate stream becomes untrustworthy — it does **not**
 guarantee that corrected content will subsequently appear, and an earlier
-draft of this ADR overclaimed that with "retracted, corrected below" wording.
+draft of this specification overclaimed that with "retracted, corrected below" wording.
 The corrected treatment: provisional content is visibly retracted; the run
 ends with the appropriate failure/retry presentation, same as any other
 failed run; the user may retry where allowed; a corrected replacement answer
@@ -1331,7 +1331,7 @@ documentation and code disagree, the code is correct and the documentation is
 stale.
 
 A concise, repository-committed usage/accessibility reference (a markdown
-document under `apps/web/docs/` or equivalent, not a duplicate of this ADR)
+document under `apps/web/docs/` or equivalent, not a duplicate of this specification)
 records the token names and their intended semantic use, the required states
 per component, and the accessibility expectations from section 10 — a quick
 reference for whoever builds the next screen, not a second source of truth
@@ -1378,7 +1378,7 @@ verified at a point in time**, not the source of truth for what the system
 currently is — a screenshot can go stale the moment code changes; the token
 definitions and component source cannot silently drift the same way. The
 approved mock-up image itself remains permanently a **design-direction
-reference** cited by this ADR, never a production asset copied into the
+reference** cited by this specification, never a production asset copied into the
 running application.
 
 ### 14. Verification and acceptance
@@ -1424,7 +1424,7 @@ values in isolation.
 any later session builds further screens on top of an incomplete contract):
 
 - no installed shadcn component (including the Sidebar primitive) references
-  a theme variable this ADR's bridge (section 2) leaves undefined, in either
+  a theme variable this specification's bridge (section 2) leaves undefined, in either
   theme;
 - both `:root` and `.dark` resolve every semantic token the bridge maps —
   no token defined for one theme and silently missing from the other;
@@ -1442,7 +1442,7 @@ any later session builds further screens on top of an incomplete contract):
   merely "looks fine."
 
 This is implemented as CSS/token contract tests plus component rendering
-tests during R21-S01 — this ADR does not prescribe exact test filenames,
+tests during R21-S01 — this specification does not prescribe exact test filenames,
 only the guarantee itself. Any shadcn component generated into the
 repository **after** R21-S01 (a later addition during R21-S02/S03, or a
 future phase) undergoes the same token-contract review before it ships:
@@ -1452,7 +1452,7 @@ contract is not a one-time audit that decays as new components arrive.
 
 ### 15. ADR necessity and boundaries
 
-This ADR is justified for the reasons ADR index policy requires: it
+This specification is justified for the reasons ADR index policy requires: it
 establishes a foundational technology selection (Tailwind v4, shadcn/ui,
 Radix primitives, Lucide, `next-themes`) with real alternatives and
 trade-offs; it sets a durable visual/token identity that every future screen
@@ -1606,7 +1606,7 @@ avoids breaking working functionality" instruction.
   and tests over untouched surfaces (for example `lib/api.test.ts`,
   `lib/env/schema.test.ts`) are expected to keep passing unmodified. This is
   still real, bounded implementation cost across four sessions, not free.
-- The wordmark's exact final typeface is not fixed by this ADR — a real (if
+- The wordmark's exact final typeface is not fixed by this specification — a real (if
   small) risk that R21-S01's shortlist doesn't produce a result the user is
   happy with, requiring a further iteration before the identity is fully
   settled.
@@ -1623,5 +1623,5 @@ avoids breaking working functionality" instruction.
 - A temporary period (spanning R21-S01 through S03) where legacy
   `globals.css` and the new token/component system coexist is an accepted,
   bounded cost, but any slippage in retiring legacy styles as pages migrate
-  would leave the exact "permanent mixture of old and new" state this ADR
+  would leave the exact "permanent mixture of old and new" state this specification
   explicitly commits to avoiding.
