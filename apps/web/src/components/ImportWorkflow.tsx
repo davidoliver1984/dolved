@@ -117,7 +117,9 @@ export function ImportWorkflow({ workspacePublicId, initialBatchPublicId }: Read
             setFiles((current) => current.map((candidate, candidateIndex) => candidateIndex === index ? { ...candidate, progress } : candidate));
           });
         } catch (cause) {
-          setFiles((current) => current.map((candidate, candidateIndex) => candidateIndex === index ? { ...candidate, error: cause instanceof Error ? cause.message : "Upload failed." } : candidate));
+          const message = cause instanceof Error ? cause.message : "Upload or verification could not be started.";
+          setFiles((current) => current.map((candidate, candidateIndex) => candidateIndex === index ? { ...candidate, error: message } : candidate));
+          setError(message);
         }
       }));
       const updated = await getImportBatch(workspacePublicId, created.batch.public_id);
