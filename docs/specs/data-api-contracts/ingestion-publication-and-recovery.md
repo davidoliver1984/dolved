@@ -8,41 +8,41 @@ Accepted
 
 2026-08-06
 
-## Relationship to prior ADRs
+## Relationship to prior documents
 
-### Supersession of ADR-0015, in part
+### Supersession of [ingestion orchestration contract](../data-api-contracts/ingestion-orchestration-and-worker-results.md), in part
 
 ADR 0015 is accepted, committed and tagged at `R15-S01`, and is not rewritten
 by this document. A post-acceptance implementation review, before any Stage
 15.2/15.3 code existed, found three genuine gaps that this specification resolves by
-partial supersession rather than by reopening ADR-0015 wholesale:
+partial supersession rather than by reopening [ingestion orchestration contract](../data-api-contracts/ingestion-orchestration-and-worker-results.md) wholesale:
 
-- **Provisional-vector visibility.** ADR-0015 allowed Python to write vectors
+- **Provisional-vector visibility.** [ingestion orchestration contract](../data-api-contracts/ingestion-orchestration-and-worker-results.md) allowed Python to write vectors
   directly into a workspace's active corpus generation before Laravel
   accepted final completion, with nothing distinguishing those points from
   already-published ones. This specification replaces that with an explicit
   provisional-to-published lifecycle and a dual retrieval-visibility gate.
-- **Cross-worker chunk recovery.** ADR-0015 promised that a successor worker
+- **Cross-worker chunk recovery.** [ingestion orchestration contract](../data-api-contracts/ingestion-orchestration-and-worker-results.md) promised that a successor worker
   could resume an abandoned attempt using a predecessor's already-submitted
   chunks, without defining how the successor would obtain them. As
   "Context" below details, that promise is not achievable by recomputation
-  given how ADR-0010 and ADR-0011 derive identity — only by an explicit
+  given how [extraction contract](../data-api-contracts/canonical-extracted-document.md) and [chunking contract](../data-api-contracts/chunking-contract.md) derive identity — only by an explicit
   hand-off. This specification replaces the promise with a concrete sealed-attempt
   model and a bounded, authenticated resume contract.
-- **The complete purpose-scoped worker protocol.** ADR-0015 defined four
+- **The complete purpose-scoped worker protocol.** [ingestion orchestration contract](../data-api-contracts/ingestion-orchestration-and-worker-results.md) defined four
   `v2` purposes (`ingestion.claim`, `ingestion.chunks.submit`,
   `ingestion.complete`, `ingestion.fail`) but its own "Lease, visibility and
   acknowledgement coordination" section discusses lease renewal as an
   authenticated operation without ever adding it to that list — an internal
   gap, not a new requirement. This specification completes the purpose list.
 - **Any wording implying the distributed workflow is observationally atomic
-  as one unit.** ADR-0015 was already careful about this for lease/visibility
+  as one unit.** [ingestion orchestration contract](../data-api-contracts/ingestion-orchestration-and-worker-results.md) was already careful about this for lease/visibility
   renewal (see its own "Coordinated renewal, not atomic renewal"); this specification
   extends the same honesty to the publication saga introduced below, which
   spans PostgreSQL and Qdrant and is a recoverable saga of individually
   transactional steps, never one distributed transaction.
 
-Everything else ADR-0015 decided — service ownership, the unchanged Document
+Everything else [ingestion orchestration contract](../data-api-contracts/ingestion-orchestration-and-worker-results.md) decided — service ownership, the unchanged Document
 lifecycle, the processing lease's five claim outcomes, the trust boundary,
 domain-owned failure classification, the `v1`-to-`v2` migration policy, DLQ
 terminal reconciliation as an eventually-consistent invariant, and
@@ -69,15 +69,15 @@ side, not only the PostgreSQL side.
 
 ### Continuity with ADR-0009's supersession
 
-ADR-0015 already superseded ADR-0009's claim-only authentication scope with
+[ingestion orchestration contract](../data-api-contracts/ingestion-orchestration-and-worker-results.md) already superseded ADR-0009's claim-only authentication scope with
 the purpose-scoped `v2` protocol. This document extends that same protocol
 with four further purposes; it does not reach back to ADR-0009 directly, and
-ADR-0009 remains superseded only to the extent ADR-0015 already established.
+ADR-0009 remains superseded only to the extent [ingestion orchestration contract](../data-api-contracts/ingestion-orchestration-and-worker-results.md) already established.
 
 ## Context
 
 Phase 14 (ADR 0014) completed the storage foundation. Phase 15, Stage 15.1
-(ADR 0015) defined the cross-service orchestration contract connecting
+([ingestion orchestration contract](../data-api-contracts/ingestion-orchestration-and-worker-results.md)) defined the cross-service orchestration contract connecting
 Python's ingestion pipeline to Laravel's authoritative Document lifecycle,
 introducing the processing lease, the canonical chunk submission and
 completion contracts, and the trust boundary between what Laravel
@@ -107,7 +107,7 @@ guarantee was never actually extended to Qdrant.
 0010 is explicit that extraction assigns fresh identity every run: *"A new
 extraction run creates new element UUIDs. Stable identity across
 re-extraction is not required at this stage, and no deterministic
-cross-extraction identifier scheme is implied."* ADR 0011's chunk identity
+cross-extraction identifier scheme is implied."* [chunking contract](../data-api-contracts/chunking-contract.md)'s chunk identity
 is derived in part from *"its ordered provenance spans (which source
 elements, in what order, contributed to it),"* and traces through
 `NormalisedElement`, itself *"a `uuid5` derived from its source element's
@@ -118,14 +118,14 @@ determinism — because chunking's determinism guarantee is explicitly scoped
 to *"an identical `NormalisedDocument`"* already held as a fixed value, not
 to "the same document, re-extracted from scratch." A successor worker that
 has to re-run extraction cannot reproduce a predecessor's chunk ids by
-computation; it can only obtain them by being handed them. ADR 0011 itself
+computation; it can only obtain them by being handed them. [chunking contract](../data-api-contracts/chunking-contract.md) itself
 anticipated this would be someone else's problem to solve: *"whether a
 produced `ChunkingResult`... [is] persisted afterward is a legitimate and
 expected concern... [belonging] to later orchestration, vector-storage and
 operations phases."* This document is that later phase.
 
 **Why lease renewal needs its own purpose.** This is the narrowest of the
-three: an internal gap in ADR-0015's own text, corrected in "Lease renewal"
+three: an internal gap in [ingestion orchestration contract](../data-api-contracts/ingestion-orchestration-and-worker-results.md)'s own text, corrected in "Lease renewal"
 below.
 
 ## What this specification decides and does not decide
@@ -158,7 +158,7 @@ chunking, embedding, `VectorStore` and Qdrant (ADR 0002, 0007, 0010, 0011,
 0013, 0014, 0015). The Document lifecycle remains exactly
 `UPLOADING → UPLOADED → QUEUED → PROCESSING → INDEXED`, with `FAILED` from
 `PROCESSING`; no new public lifecycle state is introduced. Publication state
-belongs on the **processing-attempt record** — the same place ADR-0015
+belongs on the **processing-attempt record** — the same place [ingestion orchestration contract](../data-api-contracts/ingestion-orchestration-and-worker-results.md)
 already put the lease and its outcomes — not on the Document. From the
 Document's perspective, `PROCESSING → INDEXED` remains a single atomic
 transition; publication is internal machinery that has to happen before
@@ -268,7 +268,7 @@ verification now finds a different expected point set than the one
 authorised), publication must be re-authorised against the current evidence
 or rejected outright — it must never silently reuse an earlier authorisation
 for a conflicting point set. This is the same no-silent-loss, no-silent-
-substitution discipline this specification and ADR-0011 already apply everywhere else
+substitution discipline this specification and [chunking contract](../data-api-contracts/chunking-contract.md) already apply everywhere else
 a mismatch could otherwise be quietly papered over.
 
 Laravel's completion validation (step 12) checks the same binding in
@@ -348,7 +348,7 @@ anything decided here.
 
 **Open (incomplete) attempt.** Chunk batches submitted so far are
 provisional and `event_id`-scoped. The set is mutable only through
-authorised, idempotent submission (ADR-0015's existing acceptance rules,
+authorised, idempotent submission ([ingestion orchestration contract](../data-api-contracts/ingestion-orchestration-and-worker-results.md)'s existing acceptance rules,
 unchanged) and is **not a valid resume source** — embedding must not begin
 before the set is sealed. If the valid lease is lost before sealing, reclaim
 performs an idempotent reset, scoped strictly to that `event_id`, of:
@@ -386,7 +386,7 @@ Python for the first time — every other contract in this pipeline flows the
 opposite direction. This needs its own authenticated, purpose-scoped
 operation; reusing an existing purpose would let a signature intended for
 one operation authorise reading another attempt's content, exactly the
-cross-purpose risk ADR-0015's purpose-scoping already exists to prevent.
+cross-purpose risk [ingestion orchestration contract](../data-api-contracts/ingestion-orchestration-and-worker-results.md)'s purpose-scoping already exists to prevent.
 
 Named `ingestion.attempt.resume` rather than `ingestion.chunks.read`. Both
 were considered; `attempt.resume` is chosen because it groups this operation
@@ -417,22 +417,22 @@ only identifiers and outcomes.
 
 ### The complete `v2` purpose list
 
-Eight purposes, all under the `v2` protocol ADR-0015 already established (no
+Eight purposes, all under the `v2` protocol [ingestion orchestration contract](../data-api-contracts/ingestion-orchestration-and-worker-results.md) already established (no
 new signature-format version — the existing six-field string-to-sign already
 accommodates any purpose value):
 
 | Purpose | Introduced by | Role |
 |---|---|---|
-| `ingestion.claim` | ADR 0009 (superseded), ADR 0015 | Claim or reclaim a processing attempt |
-| `ingestion.lease.renew` | ADR 0016 | Renew the current processing lease |
-| `ingestion.chunks.submit` | ADR 0015 | Submit a bounded, provisional chunk batch |
-| `ingestion.chunks.seal` | ADR 0016 | Finalise and lock the complete chunk set |
-| `ingestion.attempt.resume` | ADR 0016 | A successor reads a predecessor's sealed chunks |
-| `ingestion.publication.authorise` | ADR 0016 | Request authorisation to publish verified vectors, bound to the exact evidence approved |
-| `ingestion.complete` | ADR 0015 (refined) | Report publication verified complete; triggers `INDEXED` |
-| `ingestion.fail` | ADR 0015 | Request a permanent `FAILED` transition |
+| `ingestion.claim` | ADR 0009 (superseded), [ingestion orchestration contract](../data-api-contracts/ingestion-orchestration-and-worker-results.md) | Claim or reclaim a processing attempt |
+| `ingestion.lease.renew` | [ingestion publication and recovery specification](../data-api-contracts/ingestion-publication-and-recovery.md) | Renew the current processing lease |
+| `ingestion.chunks.submit` | [ingestion orchestration contract](../data-api-contracts/ingestion-orchestration-and-worker-results.md) | Submit a bounded, provisional chunk batch |
+| `ingestion.chunks.seal` | [ingestion publication and recovery specification](../data-api-contracts/ingestion-publication-and-recovery.md) | Finalise and lock the complete chunk set |
+| `ingestion.attempt.resume` | [ingestion publication and recovery specification](../data-api-contracts/ingestion-publication-and-recovery.md) | A successor reads a predecessor's sealed chunks |
+| `ingestion.publication.authorise` | [ingestion publication and recovery specification](../data-api-contracts/ingestion-publication-and-recovery.md) | Request authorisation to publish verified vectors, bound to the exact evidence approved |
+| `ingestion.complete` | [ingestion orchestration contract](../data-api-contracts/ingestion-orchestration-and-worker-results.md) (refined) | Report publication verified complete; triggers `INDEXED` |
+| `ingestion.fail` | [ingestion orchestration contract](../data-api-contracts/ingestion-orchestration-and-worker-results.md) | Request a permanent `FAILED` transition |
 
-`ingestion.complete`'s meaning is refined, not renamed: under ADR-0015 it
+`ingestion.complete`'s meaning is refined, not renamed: under [ingestion orchestration contract](../data-api-contracts/ingestion-orchestration-and-worker-results.md) it
 meant "the whole attempt is done." Under this specification it retains exactly that
 meaning, but is now reachable only after publication has been performed
 *and independently verified complete* (step 10), not merely attempted —
@@ -444,13 +444,13 @@ publication mutation would otherwise leave open. Laravel's acceptance of
 durable authorisation it granted (see "Publication authorisation is bound to
 immutable evidence" above) — a completion report is never accepted purely
 on its own say-so. A signature valid for any one purpose must fail
-verification against every other endpoint, exactly as ADR-0015 already
+verification against every other endpoint, exactly as [ingestion orchestration contract](../data-api-contracts/ingestion-orchestration-and-worker-results.md) already
 requires; this document adds four purposes to that same rule, it does not
 relax it.
 
 The following non-secret protocol test vector is normative for
 `ingestion.lease.renew`, computed and verified using the same method as
-ADR-0015's own vectors, confirming the six-field canonicalisation extends to
+[ingestion orchestration contract](../data-api-contracts/ingestion-orchestration-and-worker-results.md)'s own vectors, confirming the six-field canonicalisation extends to
 a new purpose value without modification:
 
 ```text
@@ -496,17 +496,17 @@ Laravel's renewal decision must not depend on any claim about SQS visibility
 state. Laravel does not hold the SQS receipt handle and has no way to
 independently verify a worker's assertion about it — requiring or trusting
 such a claim would manufacture confidence in something Laravel fundamentally
-cannot see, the same honesty ADR-0015 already applies to Qdrant evidence.
+cannot see, the same honesty [ingestion orchestration contract](../data-api-contracts/ingestion-orchestration-and-worker-results.md) already applies to Qdrant evidence.
 Python may emit non-authoritative telemetry noting its own
 visibility-extension outcome alongside a renewal call, purely for
 diagnostics; Laravel's renewal logic never reads it. Lease validity and SQS
 visibility remain coordinated through timing — the shared heartbeat cadence
-ADR-0015 already establishes — never through a data dependency or an
+[ingestion orchestration contract](../data-api-contracts/ingestion-orchestration-and-worker-results.md) already establishes — never through a data dependency or an
 implied cross-system transaction.
 
 ### Unified cleanup and reconciliation
 
-Reclaim's reset (open-attempt case, above) and ADR-0015's DLQ terminal
+Reclaim's reset (open-attempt case, above) and [ingestion orchestration contract](../data-api-contracts/ingestion-orchestration-and-worker-results.md)'s DLQ terminal
 reconciliation are two different *triggers* for the same underlying
 obligation, and must be implemented as one coherent policy rather than two
 independently-built mechanisms that could disagree. That policy must be:
@@ -529,7 +529,7 @@ independently-built mechanisms that could disagree. That policy must be:
   results because a mechanism swept past them.
 
 The exact worker, command, scheduler, or DLQ-consumer mechanism remains
-Stage 15.3 implementation work, as ADR-0015 already deferred for DLQ
+Stage 15.3 implementation work, as [ingestion orchestration contract](../data-api-contracts/ingestion-orchestration-and-worker-results.md) already deferred for DLQ
 reconciliation specifically; this specification extends that same deferral to cover
 the reclaim-triggered case under one policy.
 
@@ -584,8 +584,8 @@ the reclaim-triggered case under one policy.
   duplicated effect. Conflicting requests (same `event_id`, disagreeing
   evidence — including a completion report whose evidence does not match
   the durable authorisation) fail closed as a typed error, never silently
-  resolved by picking one — the same no-silent-loss discipline ADR-0010 and
-  ADR-0011 already apply to their own boundaries.
+  resolved by picking one — the same no-silent-loss discipline [extraction contract](../data-api-contracts/canonical-extracted-document.md) and
+  [chunking contract](../data-api-contracts/chunking-contract.md) already apply to their own boundaries.
 
 ### Document deletion during publication
 
@@ -604,7 +604,7 @@ orchestration ADR-0006 and ADR-0007 already anticipate.
 
 Publication authorisation and publication completion are recorded in the
 business-audit layer ADR-0006 already established, not as telemetry alone —
-extending the same treatment ADR-0015 already gives `INDEXED`/`FAILED`
+extending the same treatment [ingestion orchestration contract](../data-api-contracts/ingestion-orchestration-and-worker-results.md) already gives `INDEXED`/`FAILED`
 transitions to the new intermediate event that actually makes content
 theoretically reachable under one of the two required gates. Safe audit
 facts: `workspace_id`, `document_id`, `event_id`, the corpus and
@@ -617,11 +617,11 @@ to the audit layer as well.
 
 ### Failure taxonomy
 
-Unchanged in principle from ADR-0015: only a failure Python's own processing
+Unchanged in principle from [ingestion orchestration contract](../data-api-contracts/ingestion-orchestration-and-worker-results.md): only a failure Python's own processing
 domain classifies as terminal, while a valid lease is still held, may become
 `ingestion.fail`. The detailed per-failure-category terminal/retry
 classification table remains Stage 15.3 implementation work, derived from
-the typed failure taxonomies extraction (ADR 0010), embedding (ADR 0013),
+the typed failure taxonomies extraction ([extraction contract](../data-api-contracts/canonical-extracted-document.md)), embedding (ADR 0013),
 and Qdrant persistence (ADR 0014) already each independently established.
 No additional ADR is required solely to produce that table.
 
@@ -636,19 +636,19 @@ patched around:
 
 ```text
 R15-S01 — Define End-to-End Ingestion Orchestration and Worker Result Contracts
-  completed; ADR-0015
+  completed; [ingestion orchestration contract](../data-api-contracts/ingestion-orchestration-and-worker-results.md)
 
 R15-S02 — Define Ingestion Publication and Recovery Semantics
-  architecture-only; ADR-0016 (this document)
+  architecture-only; [ingestion publication and recovery specification](../data-api-contracts/ingestion-publication-and-recovery.md) (this document)
 
 R15-S03 — Implement End-to-End Ingestion Orchestration
-  implementation of ADR-0015 and ADR-0016 together
+  implementation of [ingestion orchestration contract](../data-api-contracts/ingestion-orchestration-and-worker-results.md) and [ingestion publication and recovery specification](../data-api-contracts/ingestion-publication-and-recovery.md) together
 ```
 
 R15-S01's completed record, commit, and tag are unchanged and are not
 touched by this correction. R15-S02 is a newly inserted architecture stage;
 the former R15-S02 ("Implement End-to-End Ingestion Orchestration") becomes
-R15-S03, referencing both ADR-0015 and ADR-0016 as the settled contract it
+R15-S03, referencing both [ingestion orchestration contract](../data-api-contracts/ingestion-orchestration-and-worker-results.md) and [ingestion publication and recovery specification](../data-api-contracts/ingestion-publication-and-recovery.md) as the settled contract it
 implements.
 
 ## Alternatives considered
@@ -672,12 +672,12 @@ every time.
 
 ### Treating publication as a new public Document lifecycle state
 
-Considered and rejected, consistent with ADR-0015's own rejection of an
+Considered and rejected, consistent with [ingestion orchestration contract](../data-api-contracts/ingestion-orchestration-and-worker-results.md)'s own rejection of an
 `INDEXING` state. Publication state belongs on the processing-attempt
 record, where the lease and its outcomes already live, not on the Document
 — there is no benefit to a Document-facing state change here that the
 attempt-level record does not already provide, and adding one would
-reopen a question ADR-0015 already closed for the same reasons.
+reopen a question [ingestion orchestration contract](../data-api-contracts/ingestion-orchestration-and-worker-results.md) already closed for the same reasons.
 
 ### Encoding provisional/published status by minting a new generation id per attempt
 
@@ -745,7 +745,7 @@ synonymous, which a generic grant would not.
 - Cross-worker resumption is now something the platform can actually build,
   not a promise that was architecturally impossible to keep as previously
   written.
-- The `v2` purpose list is now internally consistent with ADR-0015's own
+- The `v2` purpose list is now internally consistent with [ingestion orchestration contract](../data-api-contracts/ingestion-orchestration-and-worker-results.md)'s own
   prose, which already assumed lease renewal existed as an authenticated
   operation.
 - The dual retrieval gate gives Phase 16 a clean, pre-decided invariant to
@@ -776,7 +776,7 @@ synonymous, which a generic grant would not.
   exposure window and an unbuildable resumption promise. Attempts using the
   resume path add a further authenticated operation.
 - The sealed-chunk model means a worker cannot begin embedding until sealing
-  succeeds, a hard sequencing constraint that did not exist in ADR-0015's
+  succeeds, a hard sequencing constraint that did not exist in [ingestion orchestration contract](../data-api-contracts/ingestion-orchestration-and-worker-results.md)'s
   original, less precisely ordered description.
 - Two payload fields and two new payload indexes are added to what was
   meant to be a deliberately minimal Qdrant schema — a real, if narrow,
@@ -858,7 +858,7 @@ This document does not define:
 - the exact reclaim-reset and DLQ-reconciliation worker, command, or
   scheduler implementation;
 - the per-failure-category terminal/retry classification table, derived
-  from taxonomies ADR-0010, ADR-0013 and ADR-0014 already each establish;
+  from taxonomies [extraction contract](../data-api-contracts/canonical-extracted-document.md), ADR-0013 and ADR-0014 already each establish;
 - the full Document/workspace deletion orchestration saga, already deferred
   by ADR-0006 and ADR-0007;
 - any change to service ownership, the Document lifecycle, the processing

@@ -8,26 +8,26 @@ Accepted
 
 2026-08-28
 
-## Relationship to prior ADRs
+## Relationship to prior documents
 
-### Consumes ADR-0027 and ADR-0033 as frozen; makes their reserved seams real
+### Consumes [product interface and design-system specification](../product-features/product-interface-and-design-system.md) and [knowledge-library specification](../product-features/knowledge-library-navigation.md) as frozen; makes their reserved seams real
 
-ADR-0027 establishes the shadcn/Tailwind/Lucide component system, the
-semantic-token/theme architecture, and the WCAG 2.2 AA baseline. ADR-0033
+[product interface and design-system specification](../product-features/product-interface-and-design-system.md) establishes the shadcn/Tailwind/Lucide component system, the
+semantic-token/theme architecture, and the WCAG 2.2 AA baseline. [knowledge-library specification](../product-features/knowledge-library-navigation.md)
 explicitly reserved a selection seam on the library table — "no checkbox
 column until this specification supplies a real action to select for" — and named
 the "select this page" versus "select every filtered result" distinction
 as a requirement this specification would define. This specification makes that seam real.
 
-### Consumes ADR-0030, ADR-0031, ADR-0034 as frozen (Proposed, Tier-2
+### Consumes [document metadata specification](../data-api-contracts/document-family-and-version-metadata.md), [version-governance specification](../product-features/version-governance-content-reuse-and-family-deletion.md), [import staging and promotion specification](../product-features/import-staging-and-promotion.md) as frozen (Proposed, Tier-2
 ### freeze-audited) without reopening or weakening them
 
 This specification invokes, per item, the **existing single-item domain actions**
 those ADRs already define — `ApproveDocumentVersion`,
 `WithdrawDocumentVersion`, `RescheduleDocumentVersion`,
-`CreateApplicabilityOnlySuccessor` (ADR-0031); the `PromotionAttempt`
+`CreateApplicabilityOnlySuccessor` ([version-governance specification](../product-features/version-governance-content-reuse-and-family-deletion.md)); the `PromotionAttempt`
 sequence and its shared `WorkspaceChecksumReservation` serialization
-primitive (ADR-0034); ADR-0030's metadata-mutation actions and audit
+primitive ([import staging and promotion specification](../product-features/import-staging-and-promotion.md)); [document metadata specification](../data-api-contracts/document-family-and-version-metadata.md)'s metadata-mutation actions and audit
 model. **It introduces no new governance rule, no new clone mechanism, no
 new checksum-serialization primitive, and no new promotion sequence** —
 every domain-level decision about *whether* and *how* a single target may
@@ -36,9 +36,9 @@ ADRs already put it. This specification's own contribution is orchestration: fre
 a target set, invoking the existing per-item action once per target under
 its own existing rules, and aggregating honest results.
 
-### Extends ADR-0025's precedent, not the reverse
+### Extends [administration and tenant-control specification](../product-features/administration-and-tenant-control.md)'s precedent, not the reverse
 
-ADR-0025's `DocumentDeletionOperation` already establishes this
+[administration and tenant-control specification](../product-features/administration-and-tenant-control.md)'s `DocumentDeletionOperation` already establishes this
 platform's shape for "one durable parent, real progress, idempotent
 retry, derived status" — verified directly, its
 `(document_id, idempotency_key)`-style single-open-operation pattern and
@@ -46,7 +46,7 @@ its "surfaced as visibly stuck" read-model language are the direct
 precedents this specification's own parent/item model and stuck-operation
 visibility reuse, generalised from one document to many.
 
-### Does not redecide ADR-0017's authority model, ADR-0007's technical
+### Does not redecide [versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md)'s authority model, ADR-0007's technical
 ### lifecycle, or any Laravel/Python ownership boundary
 
 Locations remain applicability/relevance facts, never access control; no
@@ -57,7 +57,7 @@ this specification's own operations touch them.
 ## Context
 
 **Verified directly, not assumed**: no `BulkOperation`-shaped domain exists
-anywhere in this codebase today — the closest analogue is ADR-0025's
+anywhere in this codebase today — the closest analogue is [administration and tenant-control specification](../product-features/administration-and-tenant-control.md)'s
 single-document `DocumentDeletionOperation`. Laravel's own application-
 owned database queue is already proven in production shape by
 `AdvanceDocumentDeletion` and `ExecuteGenerationRun`
@@ -67,7 +67,7 @@ via its own dedicated, explicitly named connection (`bulk`, "Idempotency
 and concurrency" below) **rather than depending on whatever the
 application's global default queue connection happens to be**.
 `RetryDocumentIngestion`'s `(document_id, idempotency_key)` shape,
-generalised in ADR-0034's `(workspace_id, import_item_id, actor_identity,
+generalised in [import staging and promotion specification](../product-features/import-staging-and-promotion.md)'s `(workspace_id, import_item_id, actor_identity,
 operation_kind, client_idempotency_key)` idempotency identity, is the
 direct precedent this specification's own request-idempotency model follows.
 `WorkspaceRole::{Owner, Admin, Member}` is the complete, unchanged
@@ -75,8 +75,8 @@ authorization vocabulary this specification gates against — no new role is
 introduced.
 
 This is the second of two ADRs completing the accepted Import, Staging and
-Bulk Governance phase (following ADR-0034); its browser surfaces are
-sequenced to appear only after ADR-0034's `ImportItem`/`PromotionAttempt`
+Bulk Governance phase (following [import staging and promotion specification](../product-features/import-staging-and-promotion.md)); its browser surfaces are
+sequenced to appear only after [import staging and promotion specification](../product-features/import-staging-and-promotion.md)'s `ImportItem`/`PromotionAttempt`
 primitives are implemented, per "Phase/session allocation" below.
 
 ## Decision
@@ -87,13 +87,14 @@ primitives are implemented, per "Phase/session allocation" below.
 selection, decides eligibility, authorises, approves, classifies an
 exclusion, determines retryability, aggregates a result, renders browser
 wording, or sends a notification. **A bulk applicability change invokes
-ADR-0031's already-accepted clone mechanism**, which crosses the existing
+the [version-governance specification](../product-features/version-governance-content-reuse-and-family-deletion.md)'s
+already-accepted clone mechanism**, which crosses the existing
 Laravel/Python boundary for bounded technical cloning work exactly as
-ADR-0031 already defines it — this gives Python no new authority; it
+[version-governance specification](../product-features/version-governance-content-reuse-and-family-deletion.md) already defines it — this gives Python no new authority; it
 performs the identical bounded Qdrant operation it would perform for a
 single, non-bulk applicability change. **No OpenAI or Voyage call is part
 of bulk preflight, membership freezing, or orchestration.** Where a
-single-item fallback legitimately triggers full ingestion (ADR-0031's own
+single-item fallback legitimately triggers full ingestion ([version-governance specification](../product-features/version-governance-content-reuse-and-family-deletion.md)'s own
 fail-closed fallback when a clone's compatibility proof does not hold),
 that fallback remains governed entirely by its existing ADR and
 evaluation/provider rules — this specification neither relaxes nor tightens them.
@@ -107,12 +108,12 @@ are deferred rather than casually included.
 | # | Operation | Included in V1 | Target type | Backing single-item action | Mutates metadata or creates a successor | Can leave a knowledge gap |
 |---|---|---|---|---|---|---|
 | 1 | Bulk approval | **Yes** | Version (`Document`) | `ApproveDocumentVersion` | Governance transition, no new row | No |
-| 2 | Bulk promotion of resolved staged `ImportItem`s | **Yes** | `ImportItem` | `PromotionAttempt` sequence (ADR-0034) | Creates a new `Document` | No |
-| 3 | Bulk applicability/location change | **Yes**, as a governed successor | Family (fans out to its current version) | `CreateApplicabilityOnlySuccessor` (ADR-0031) | Creates a governed successor, never edits in place | No — the predecessor's own authority window is unaffected until the successor genuinely attains authority |
-| 4 | Bulk family-owner assignment | **Yes** | Family | ADR-0030's owner-reassignment action | Metadata only | No |
-| 5 | Bulk category assignment/change | **Yes** | Family | ADR-0030's category-assignment action | Metadata only | No |
-| 6 | Bulk tag add/remove/replace | **Yes** | Family | ADR-0030's lock-based tag-assignment action | Metadata only | No |
-| 7 | Bulk review-due-date assignment | **Yes** | Family | ADR-0030's review-date action | Metadata only | No |
+| 2 | Bulk promotion of resolved staged `ImportItem`s | **Yes** | `ImportItem` | `PromotionAttempt` sequence ([import staging and promotion specification](../product-features/import-staging-and-promotion.md)) | Creates a new `Document` | No |
+| 3 | Bulk applicability/location change | **Yes**, as a governed successor | Family (fans out to its current version) | `CreateApplicabilityOnlySuccessor` ([version-governance specification](../product-features/version-governance-content-reuse-and-family-deletion.md)) | Creates a governed successor, never edits in place | No — the predecessor's own authority window is unaffected until the successor genuinely attains authority |
+| 4 | Bulk family-owner assignment | **Yes** | Family | [document metadata specification](../data-api-contracts/document-family-and-version-metadata.md)'s owner-reassignment action | Metadata only | No |
+| 5 | Bulk category assignment/change | **Yes** | Family | [document metadata specification](../data-api-contracts/document-family-and-version-metadata.md)'s category-assignment action | Metadata only | No |
+| 6 | Bulk tag add/remove/replace | **Yes** | Family | [document metadata specification](../data-api-contracts/document-family-and-version-metadata.md)'s lock-based tag-assignment action | Metadata only | No |
+| 7 | Bulk review-due-date assignment | **Yes** | Family | [document metadata specification](../data-api-contracts/document-family-and-version-metadata.md)'s review-date action | Metadata only | No |
 | 8 | Bulk deletion (family or version) | **Deferred from V1** | — | — | — | — |
 | 9 | Bulk withdrawal/rescheduling | **Deferred from V1** | — | — | — | — |
 | 10 | Retry of a previously failed/skipped bulk item | **Yes**, as its own distinct concept — see "Retry semantics" below, not a new operation type | Whichever the original item's target was | The original item's own backing action | — | — |
@@ -122,7 +123,7 @@ withdrawal/rescheduling are **not** in the V1 allowlist. Both are
 genuinely destructive or authority-affecting at scale, and this specification
 declines to introduce them casually. **The existing single-item path
 remains fully available for both** — an owner/admin may withdraw or
-delete documents one at a time through ADR-0031's existing governance
+delete documents one at a time through [version-governance specification](../product-features/version-governance-content-reuse-and-family-deletion.md)'s existing governance
 routes and family-deletion preview/confirm flow, entirely unaffected by
 this specification. A future ADR may extend this allowlist once a genuine,
 demonstrated need is established, following exactly the same pattern this
@@ -147,11 +148,11 @@ are both bound by these unchanged rules.
 |---|---|
 | `id`, `public_id` | Internal/public identity |
 | `workspace_id` | `restrictOnDelete()` |
-| `actor_type`, `actor_user_id`, `system_actor_code` | The same human/system XOR provenance ADR-0030 already establishes — reused, not reinvented; this is the **initiating** actor, permanently recorded, per "Authorization and tenancy" below |
-| `actor_identity` | **Non-nullable**, ADR-0034's own namespaced-string design (`user:{id}` / `system:{code}`), derived deterministically from whichever of `actor_type`/`actor_user_id`/`system_actor_code` is populated and written once, at creation, alongside them — **not** a second, independently-settable source of truth; it exists as its own stored column solely because the idempotency `UNIQUE` constraint below needs one non-nullable, directly-indexable column, closing the same nullable-column deduplication gap ADR-0034 already fixed for `PromotionAttempt` |
+| `actor_type`, `actor_user_id`, `system_actor_code` | The same human/system XOR provenance [document metadata specification](../data-api-contracts/document-family-and-version-metadata.md) already establishes — reused, not reinvented; this is the **initiating** actor, permanently recorded, per "Authorization and tenancy" below |
+| `actor_identity` | **Non-nullable**, [import staging and promotion specification](../product-features/import-staging-and-promotion.md)'s own namespaced-string design (`user:{id}` / `system:{code}`), derived deterministically from whichever of `actor_type`/`actor_user_id`/`system_actor_code` is populated and written once, at creation, alongside them — **not** a second, independently-settable source of truth; it exists as its own stored column solely because the idempotency `UNIQUE` constraint below needs one non-nullable, directly-indexable column, closing the same nullable-column deduplication gap [import staging and promotion specification](../product-features/import-staging-and-promotion.md) already fixed for `PromotionAttempt` |
 | `operation_type` | Bounded enum, exactly the seven included rows above |
 | `status` | Bounded enum — see "Parent state machine" below |
-| `canonical_payload`, `payload_schema_version` | The requested change, canonicalised (the same RFC 8785 rule ADR-0032/0034 already establish) — e.g. the applicability set for operation 3, the owner/category/tag/date value for operations 4–7 |
+| `canonical_payload`, `payload_schema_version` | The requested change, canonicalised (the same RFC 8785 rule ADR-0032 and the [import staging and promotion specification](../product-features/import-staging-and-promotion.md) already establish) — e.g. the applicability set for operation 3, the owner/category/tag/date value for operations 4–7 |
 | `selection_mode` | Bounded enum: `current_page`, `all_filtered` |
 | `filter_explanation` | The original filter/query, retained **only** for explanation and audit — never re-executed for membership |
 | `client_idempotency_key`, `request_digest` | See "Idempotency and concurrency" below |
@@ -199,7 +200,7 @@ references now lives on the one row it is defined against.**
 | `target_reference_status` | **Non-nullable**, bounded enum `live` \| `target_deleted`, defaults `live`, set to `target_deleted` **exactly once, only by the retirement trigger below — never by application code, and never reverted** — the discriminator the target-shape `CHECK` below branches on |
 | `target_kind` | **Non-nullable**, bounded enum `family` \| `version` \| `import_item`, set once at freeze time, **never nulled and never updated afterward** — the permanent record of what kind of target this item held, independent of whether the live FK above still resolves |
 | `target_public_id` | **Non-nullable**, the target's own `public_id`, copied as a plain scalar at freeze time — never a live join, never affected by the target's later deletion |
-| `target_display_label` | **Non-nullable**, a human-readable label captured at freeze time (the family's title, or the version's source filename, or the `ImportItem`'s staged filename), **bounded to 255 characters (truncated, never silently expanded) and rendered exactly as every other user-supplied string already is per ADR-0027 (escaped, never raw HTML/markup) — and, per "Audit and observability" below, excluded from structured logs and metrics, appearing only in the audit/history UI itself** — what a retained history view actually shows once the live FK is gone |
+| `target_display_label` | **Non-nullable**, a human-readable label captured at freeze time (the family's title, or the version's source filename, or the `ImportItem`'s staged filename), **bounded to 255 characters (truncated, never silently expanded) and rendered exactly as every other user-supplied string already is per [product interface and design-system specification](../product-features/product-interface-and-design-system.md) (escaped, never raw HTML/markup) — and, per "Audit and observability" below, excluded from structured logs and metrics, appearing only in the audit/history UI itself** — what a retained history view actually shows once the live FK is gone |
 | `expected_state_snapshot` | The specific state fact revalidated immediately before mutation — e.g. the version's governance status and `authority_start` inputs for approval, the family's current owner/category/tags for a metadata change, the `ImportItem`'s `preflight_status`/`match_status`/decision-snapshot identity for promotion |
 | `eligibility_status` | Bounded enum: `eligible`, `excluded` — fixed at confirmation, per "Preflight and exclusion model" below |
 | `exclusion_reason` | Nullable, bounded typed vocabulary — populated **if and only if** `eligibility_status = 'excluded'`, per the item-level database constraints below |
@@ -532,7 +533,7 @@ permanent audit lineage — none are cleared, including
 `subordinate_awaited_since`**, which continues to record when this item
 first began waiting, now read as historical fact rather than a
 "currently waiting since" marker. **A direct database-only action
-(approval, any ADR-0030 metadata action) never populates any of the four
+(approval, any [document metadata specification](../data-api-contracts/document-family-and-version-metadata.md) metadata action) never populates any of the four
 fields at all** — the all-or-none rule's "wholly absent" branch is the
 only shape such an item can ever have, for both its non-terminal and its
 terminal life.
@@ -651,13 +652,13 @@ every invariant this section requires database-enforced.
 **Withdrawn: the prior description of a target FK "becoming unusable" on
 deletion while history "survives" — a constrained foreign key cannot
 simply become unusable; `restrictOnDelete()` would block the very target
-deletion ADR-0025/ADR-0031 must remain free to perform, and an ordinary
+deletion [administration and tenant-control specification](../product-features/administration-and-tenant-control.md)/[version-governance specification](../product-features/version-governance-content-reuse-and-family-deletion.md) must remain free to perform, and an ordinary
 cascade would destroy the retained history this specification requires. Neither was
 actually specified before; both are now resolved explicitly.**
 
 - **Each target FK declares `nullOnDelete()`** — the same Laravel schema-
   builder method this decomposition already uses for exactly this
-  "preserve the row, drop the now-dangling reference" shape (ADR-0025's
+  "preserve the row, drop the now-dangling reference" shape ([administration and tenant-control specification](../product-features/administration-and-tenant-control.md)'s
   own correction of `EvidenceSnapshot.document_chunk_id`, from
   `restrictOnDelete()` to `nullOnDelete()`, is the direct precedent
   reused here, not reinvented) — **but, per the corrected `CHECK` above,
@@ -665,7 +666,7 @@ actually specified before; both are now resolved explicitly.**
   correctness-bearing mechanism**: see the retirement trigger immediately
   below for why. Deleting a family, a version, or an `ImportItem` that a
   `BulkOperationItem` references **never blocks** that deletion —
-  ADR-0025/ADR-0031's own deletion paths remain entirely free to proceed.
+  [administration and tenant-control specification](../product-features/administration-and-tenant-control.md)/[version-governance specification](../product-features/version-governance-content-reuse-and-family-deletion.md)'s own deletion paths remain entirely free to proceed.
 - **The retirement trigger, not the FK's own `ON DELETE SET NULL` action,
   is what actually performs the live→retained transition.** A new
   `BEFORE DELETE` trigger function, `retire_bulk_operation_item_targets()`,
@@ -830,7 +831,7 @@ boundary — not caller-provided context — is the database-enforced
 provenance that only the target-side trigger, or a genuine owner-executed
 migration, ever produces a retained-deleted row.
 - **Worked through, concretely**: a `DELETE FROM document_families WHERE
-  id = :id` (issued by `rag_platform_app`, ADR-0031's own deletion
+  id = :id` (issued by `rag_platform_app`, [version-governance specification](../product-features/version-governance-content-reuse-and-family-deletion.md)'s own deletion
   action) fires `retire_bulk_operation_item_targets()`; because the
   function is `SECURITY DEFINER` owned by `rag_platform_owner`, its own
   `UPDATE bulk_operation_items ...` executes as `rag_platform_owner`, is
@@ -852,13 +853,13 @@ migration, ever produces a retained-deleted row.
   ordinary frozen-membership `INSERT` that never names the column
   receives `'live'` from the column default and succeeds normally.
 - **Behaviour named explicitly per target type**: for a **family**
-  deletion, ADR-0031's family-deletion preview/confirm flow ultimately
+  deletion, [version-governance specification](../product-features/version-governance-content-reuse-and-family-deletion.md)'s family-deletion preview/confirm flow ultimately
   issues an ordinary `DELETE` against `document_families`, which the
   retirement trigger intercepts exactly as described above. For a
   **version** (`Document`) deletion, the same applies against `documents`.
   For an **`ImportItem`**, this specification distinguishes two genuinely different
   events that the brief's word "expiry" could mean: (1) **staging
-  expiry** — ADR-0034's own retention window elapsing — is a **status
+  expiry** — [import staging and promotion specification](../product-features/import-staging-and-promotion.md)'s own retention window elapsing — is a **status
   change** (`staging_expired`), never a row deletion; the `ImportItem` row
   continues to exist, so **no retirement-trigger transition ever occurs**
   for this case, and a bulk-promotion item targeting it is instead
@@ -926,7 +927,7 @@ migration, ever produces a retained-deleted row.
   Laravel's schema-builder abstraction alone** — alongside the
   cross-workspace trigger below, the schema builder has no API for
   authoring either the retirement trigger or its guard, exactly as it has
-  none for ADR-0017's own analogous guards.
+  none for [versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md)'s own analogous guards.
 - **Each target FK is deliberately single-column**, referencing only the
   target table's own `id` — **not** composite with `workspace_id`. This
   is the specific fix the prior draft's composite-FK design needed:
@@ -941,7 +942,7 @@ migration, ever produces a retained-deleted row.
 - **Cross-workspace safety for the target reference is therefore enforced
   by a database trigger, not the FK's own shape** — the same pattern this
   codebase already established for a cross-table invariant a plain
-  `CHECK` cannot express (ADR-0017's migration already defines
+  `CHECK` cannot express ([versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md)'s migration already defines
   `enforce_document_lineage()`/`enforce_organisational_location_hierarchy()`
   as raw, `DB::unprepared`-authored trigger functions for precisely this
   reason). A new trigger,
@@ -953,7 +954,7 @@ migration, ever produces a retained-deleted row.
   migration requires explicit, raw PostgreSQL DDL rather than Laravel's
   schema-builder abstraction alone**, alongside the retirement trigger and
   its guard above — the builder has no API for authoring any of the
-  three, exactly as it has none for ADR-0017's own analogous guards.
+  three, exactly as it has none for [versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md)'s own analogous guards.
   Setting a column to `NULL` (the retirement trigger's own path, above)
   never enters this trigger's violation branch, since a null target
   trivially has nothing to compare — the two triggers never conflict.
@@ -971,7 +972,7 @@ migration, ever produces a retained-deleted row.
   distinct from an `expected_state_snapshot` mismatch (below), and
   distinct from `authorization_insufficient`.
 - **A retained `BulkOperationItem` never blocks, and is never blocked by,**
-  ADR-0025's or ADR-0031's own deletion paths — satisfied structurally by
+  [administration and tenant-control specification](../product-features/administration-and-tenant-control.md)'s or [version-governance specification](../product-features/version-governance-content-reuse-and-family-deletion.md)'s own deletion paths — satisfied structurally by
   the retirement trigger performing the live-to-retained transition inside
   the deleting transaction itself, with no further coordination required
   between this specification and either of theirs.
@@ -1031,7 +1032,7 @@ rows it purports to summarise.
 ### Selection semantics and frozen membership
 
 **A stored query is never a frozen target set.** The library's selection
-control (ADR-0033's reserved seam) distinguishes:
+control ([knowledge-library specification](../product-features/knowledge-library-navigation.md)'s reserved seam) distinguishes:
 
 - **Current-page selection**: the rows visible on the current page,
   individually checked.
@@ -1048,9 +1049,9 @@ saved view after a selection has been made visibly clears the selection**
 
 1. Laravel resolves the current selection/filter **exactly once**, as one
    bounded, set-based `INSERT ... SELECT` (or an equivalent set-based
-   statement) against the **same library query contract ADR-0033 already
+   statement) against the **same library query contract [knowledge-library specification](../product-features/knowledge-library-navigation.md) already
    defines** (for family/version-targeted operations) or the **same
-   `ImportItem` query contract ADR-0034 already defines** (for
+   `ImportItem` query contract [import staging and promotion specification](../product-features/import-staging-and-promotion.md) already defines** (for
    promotion) — never a row-by-row loop issuing one browser request per
    target.
 2. Workspace scope and current authorization are enforced **inside** this
@@ -1267,7 +1268,7 @@ above.)*
 | `succeeded` | The invoked single-item action (or its resolved subordinate workflow) completed and committed | Yes |
 | `skipped` | Before any mutation, revalidation found the target gone (`target_no_longer_exists`) or its expected state changed (`expected_state_snapshot` mismatch) — a typed, honest non-mutation, never a failure | Yes |
 | `failed_retryable` | A transient failure within one attempt, durably recorded on that attempt's own `BulkOperationItemAttempt` row (below) and incorporated into the item — claimed directly (never routed back through `eligible` first) for another bounded attempt, below ceiling | **No, everywhere in this design** — never carries `completed_at`/`audit_event_id`, per the item-level constraints above |
-| `failed_permanent` | The durable attempt ceiling is exhausted (computed from `BulkOperationItemAttempt` rows, never a mutable counter), the single-item action itself rejected the mutation for a non-transient reason, or a subordinate workflow reached one of the terminal outcomes the ADR-0034/ADR-0031 mapping tables below classify as permanent | **Yes, everywhere in this design** |
+| `failed_permanent` | The durable attempt ceiling is exhausted (computed from `BulkOperationItemAttempt` rows, never a mutable counter), the single-item action itself rejected the mutation for a non-transient reason, or a subordinate workflow reached one of the terminal outcomes the [import staging and promotion specification](../product-features/import-staging-and-promotion.md)/[version-governance specification](../product-features/version-governance-content-reuse-and-family-deletion.md) mapping tables below classify as permanent | **Yes, everywhere in this design** |
 | `waiting_on_subordinate` | The bulk item's own initiating action has committed (a `PromotionAttempt` or clone/fallback operation now exists), and this item is waiting for that durable subordinate workflow to reach its own terminal outcome — see "Subordinate-waiting semantics" below | No |
 | `cancelled` | Cancellation converged while this item was still `eligible` and had not yet been attempted | Yes |
 
@@ -1297,8 +1298,8 @@ UNIQUE (workspace_id, actor_identity, operation_type, client_idempotency_key)
 ```
 
 with a canonical request digest stored alongside (the same RFC 8785/
-SHA-256 approach ADR-0032/0034 already establish) — `actor_identity`
-reuses ADR-0034's own non-nullable, human/system-namespaced column design
+SHA-256 approach ADR-0032 and the [import staging and promotion specification](../product-features/import-staging-and-promotion.md) already establish) — `actor_identity`
+reuses [import staging and promotion specification](../product-features/import-staging-and-promotion.md)'s own non-nullable, human/system-namespaced column design
 (`user:{id}` / `system:{code}`), closing the same nullable-column
 deduplication gap that correction already fixed there.
 
@@ -1317,7 +1318,7 @@ moment, in two different transactions, can each independently query the
 item distribution, each see the *other's* work as not-yet-committed, and
 each conclude a different (and potentially both-wrong) parent status,
 racing to write it. **Third — identified in this pass** — asserting that
-`ApproveDocumentVersion` and the ADR-0030 metadata actions "need no
+`ApproveDocumentVersion` and the [document metadata specification](../data-api-contracts/document-family-and-version-metadata.md) metadata actions "need no
 additional idempotency primitive because they are naturally idempotent"
 was true of their **domain effect** but false of their **auditable
 side-effects**: `ApproveDocumentVersion` requires `DRAFT`, sets
@@ -1343,7 +1344,7 @@ retaining an item lock, then follows exactly one of these sequences:**
    with no item or parent lock.
 4. **Subordinate initiation**: the subordinate action's complete target
    and identity lock set (`S`) in the deterministic order frozen by
-   ADR-0034 or ADR-0031, then attempt (`A`), then item (`I`) for the short
+   [import staging and promotion specification](../product-features/import-staging-and-promotion.md) or [version-governance specification](../product-features/version-governance-content-reuse-and-family-deletion.md), then attempt (`A`), then item (`I`) for the short
    atomic write of its current subordinate identity and waiting state.
    The item lock is released at commit before any external or subsequent
    subordinate execution.
@@ -1364,7 +1365,7 @@ ascending immutable internal ID order; revalidate the selected document
 from that set; then lock/fence the attempt and execute approval using the
 already-locked collection. Approval, `approved_at`, audit,
 governance-idempotency result, and attempt success commit atomically. This
-is a lock-order refactor only and changes no ADR-0017/ADR-0031 governance
+is a lock-order refactor only and changes no [versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md)/[version-governance specification](../product-features/version-governance-content-reuse-and-family-deletion.md) governance
 semantics.
 
 **Cycle-freedom with the real item write included**: mutation and
@@ -1647,7 +1648,7 @@ defines:**
    expired; a terminal attempt is routed to item finalisation, per rules 1
    and 2 of the corrected claim algorithm.
 
-2. **Database-local mutation — approval and every ADR-0030 metadata
+2. **Database-local mutation — approval and every [document metadata specification](../data-api-contracts/document-family-and-version-metadata.md) metadata
    action (lock-order sequence 2)**: **one outer Laravel database
    transaction**, opened fresh for this phase, that:
 
@@ -1672,16 +1673,16 @@ defines:**
       terminal item's `audit_event_id` invariant. A duplicate not-applied report uses a guarded
       open-to-terminal update and is an idempotent no-op.
    d. **Invokes the existing single-item domain action** (`ApproveDocument
-      Version`, an ADR-0030 metadata action), tagged with this attempt's
+      Version`, an [document metadata specification](../data-api-contracts/document-family-and-version-metadata.md) metadata action), tagged with this attempt's
       own `invocation_idempotency_key`.
    e. **Atomically, in this same transaction**: writes the domain
       mutation; writes that action's own existing governance/audit event
-      (ADR-0030/0031's existing audit tables, unmodified); writes this
+      ([document metadata specification](../data-api-contracts/document-family-and-version-metadata.md) and [version-governance specification](../product-features/version-governance-content-reuse-and-family-deletion.md)'s existing audit tables, unmodified); writes this
       attempt's own `status = 'succeeded'`, `success_kind =
       'database_local'`, `completed_at`, and `result_digest` (the canonical
       digest of the resulting state); commits.
 
-   **Withdrawn: describing `ApproveDocumentVersion` and the ADR-0030
+   **Withdrawn: describing `ApproveDocumentVersion` and the [document metadata specification](../data-api-contracts/document-family-and-version-metadata.md)
    metadata actions as needing no durable result/idempotency primitive
    because reapplying them is naturally safe.** `ApproveDocumentVersion`
    specifically **rejects** a second invocation once the version is no
@@ -1690,7 +1691,7 @@ defines:**
    failure rather than recognising the work as already done. **Corrected,
    per action family:**
 
-   - **Approval** explicitly **reuses ADR-0031's own governance-idempotency
+   - **Approval** explicitly **reuses [version-governance specification](../product-features/version-governance-content-reuse-and-family-deletion.md)'s own governance-idempotency
      record** — `UNIQUE (workspace_id, purpose, idempotency_key)` — binding
      this attempt's `invocation_idempotency_key` directly to that record's
      own `idempotency_key` column. The governance mutation, its audit
@@ -1700,7 +1701,7 @@ defines:**
      finds this attempt already `succeeded` never re-invokes
      `ApproveDocumentVersion` at all — it reads the governance-idempotency
      record's own terminal result directly.
-   - **Metadata actions**: ADR-0030 defines no separate request-idempotency
+   - **Metadata actions**: [document metadata specification](../data-api-contracts/document-family-and-version-metadata.md) defines no separate request-idempotency
      table of its own for these actions. **The `BulkOperationItemAttempt`
      row itself is the durable invocation/result authority** — step (b)'s
      fencing lock-and-verify **is** the "claim to act" step, and step (e)'s
@@ -1717,13 +1718,13 @@ defines:**
    (lock-order sequence 3)**: the already-selected design is preserved,
    restated as its own explicit atomic unit: **one outer transaction**
    that follows the subordinate action's own existing target/identity
-   lock order (ADR-0034's `PromotionAttempt` creation/adoption, or
-   ADR-0031's clone/fallback authorisation) — this attempt's own
+   lock order ([import staging and promotion specification](../product-features/import-staging-and-promotion.md)'s `PromotionAttempt` creation/adoption, or
+   [version-governance specification](../product-features/version-governance-content-reuse-and-family-deletion.md)'s clone/fallback authorisation) — this attempt's own
    `invocation_idempotency_key` is passed straight through and bound to
    that action's own existing idempotency primitive (`PromotionAttempt`'s
    `(workspace_id, import_item_id, actor_identity, operation_kind,
-   client_idempotency_key)` uniqueness, ADR-0034; `CreateApplicabilityOnly
-   Successor`'s equivalent governance-idempotency key, ADR-0031) — and,
+   client_idempotency_key)` uniqueness, [import staging and promotion specification](../product-features/import-staging-and-promotion.md); `CreateApplicabilityOnly
+   Successor`'s equivalent governance-idempotency key, [version-governance specification](../product-features/version-governance-content-reuse-and-family-deletion.md)) — and,
    within that same transaction, atomically: locks/fences the attempt;
    revalidates the expected-state snapshot (using the identical
    `not_applied`/`expected_state_mismatch` terminal path from phase 2 when
@@ -2094,7 +2095,7 @@ for every subordinate-backed item.
   own stable `public_id`; ordinary full-ingestion fallback has no row of
   its own to reference and is instead tracked through ADR-0007's real
   ingestion lineage `event_id` (the `document.ingestion.requested` event
-  ADR-0034 already names).
+  [import staging and promotion specification](../product-features/import-staging-and-promotion.md) already names).
 - **Expected terminal outcomes are exactly the subordinate's own,
   already-defined ones — this specification introduces no new subordinate
   vocabulary, only maps the existing one onto its own item outcome — via
@@ -2121,7 +2122,7 @@ for every subordinate-backed item.
   parent stays `running` until every such item resolves.
 - **Timeout/stuck visibility**: an item that remains
   `waiting_on_subordinate` past a bounded threshold is surfaced through
-  the same "visibly stuck" administrative read model ADR-0025 already
+  the same "visibly stuck" administrative read model [administration and tenant-control specification](../product-features/administration-and-tenant-control.md) already
   establishes — reused directly, not reinvented, and consistent with
   how that subordinate's own ADR already defines its own stuck-operation
   visibility.
@@ -2129,10 +2130,10 @@ for every subordinate-backed item.
   construction, since the reconciliation pass is itself a fresh, short,
   independently-scoped transaction each time it runs.
 
-#### Normative mapping table 1 — ADR-0034 `PromotionAttempt`, read directly
+#### Normative mapping table 1 — [import staging and promotion specification](../product-features/import-staging-and-promotion.md) `PromotionAttempt`, read directly
 #### from its actual state machine
 
-**ADR-0034's own `PromotionAttempt` state machine, verified directly**:
+**[import staging and promotion specification](../product-features/import-staging-and-promotion.md)'s own `PromotionAttempt` state machine, verified directly**:
 `RESERVED → COPYING → SOURCE_VERIFIED → COMMITTED`, branching to
 `CONFLICT` (from `SOURCE_VERIFIED`), to `FAILED` (technical exhaustion,
 from `COPYING` or `SOURCE_VERIFIED`), to `ABANDONED` (cancellation, from
@@ -2142,41 +2143,41 @@ other prose in this specification restates it.
 
 | `PromotionAttempt` state | Bulk item outcome | Typed reason | Notes |
 |---|---|---|---|
-| `RESERVED`, `COPYING`, `SOURCE_VERIFIED` (including any internal reclaim/retry ADR-0034 performs on its own ceiling) | Remains `waiting_on_subordinate` | — | A transient failure still being retried/reclaimed **inside** ADR-0034 never terminates the bulk item — the bulk layer only ever observes the subordinate's own terminal outcomes below |
+| `RESERVED`, `COPYING`, `SOURCE_VERIFIED` (including any internal reclaim/retry [import staging and promotion specification](../product-features/import-staging-and-promotion.md) performs on its own ceiling) | Remains `waiting_on_subordinate` | — | A transient failure still being retried/reclaimed **inside** [import staging and promotion specification](../product-features/import-staging-and-promotion.md) never terminates the bulk item — the bulk layer only ever observes the subordinate's own terminal outcomes below |
 | `COMMITTED` | `succeeded` | — | **Never earlier.** This never means the resulting `Document` is indexed, approved, or searchable — see "downstream pending work," per-operation matrix above, unaffected by this correction |
-| `CONFLICT` | `failed_permanent` | `promotion_conflict` | **Never `skipped`.** The subordinate workflow genuinely started and now requires a new, human-corrected decision snapshot per ADR-0034 — this is a permanent failure of *this* attempt, not a mere preflight mismatch |
-| `FAILED` (technical exhaustion) | `failed_permanent` | `promotion_technical_failure` | Reached only once ADR-0034's own ceiling is exhausted — never while ADR-0034 itself would still reclaim |
-| `ABANDONED` | `failed_permanent` | `promotion_abandoned_externally` | The bulk layer never requests cancellation of a subordinate `PromotionAttempt` (per "Cancellation behaviour" above) — an `ABANDONED` outcome can only arise from an independent, direct ADR-0034 cancellation of the same attempt; truthfully terminal from the bulk item's perspective, since the attempt will never itself complete |
-| `EXPIRED` | `failed_permanent` | `promotion_expired` | ADR-0034's own retention window elapsed with no valid lease; truthfully terminal for the same reason as `ABANDONED` |
+| `CONFLICT` | `failed_permanent` | `promotion_conflict` | **Never `skipped`.** The subordinate workflow genuinely started and now requires a new, human-corrected decision snapshot per [import staging and promotion specification](../product-features/import-staging-and-promotion.md) — this is a permanent failure of *this* attempt, not a mere preflight mismatch |
+| `FAILED` (technical exhaustion) | `failed_permanent` | `promotion_technical_failure` | Reached only once [import staging and promotion specification](../product-features/import-staging-and-promotion.md)'s own ceiling is exhausted — never while [import staging and promotion specification](../product-features/import-staging-and-promotion.md) itself would still reclaim |
+| `ABANDONED` | `failed_permanent` | `promotion_abandoned_externally` | The bulk layer never requests cancellation of a subordinate `PromotionAttempt` (per "Cancellation behaviour" above) — an `ABANDONED` outcome can only arise from an independent, direct [import staging and promotion specification](../product-features/import-staging-and-promotion.md) cancellation of the same attempt; truthfully terminal from the bulk item's perspective, since the attempt will never itself complete |
+| `EXPIRED` | `failed_permanent` | `promotion_expired` | [import staging and promotion specification](../product-features/import-staging-and-promotion.md)'s own retention window elapsed with no valid lease; truthfully terminal for the same reason as `ABANDONED` |
 
-**Bulk retry never bypasses ADR-0034's corrected-decision/adoption
+**Bulk retry never bypasses [import staging and promotion specification](../product-features/import-staging-and-promotion.md)'s corrected-decision/adoption
 rules**: every row above except `COMMITTED` resolves to `failed_permanent`
 — per "Retry semantics" below, a `failed_permanent` item never reopens
 within the same `BulkOperation`; acting again requires a new
 `BulkOperation`, whose fresh freeze picks up the `ImportItem` in
 whatever *current* state it holds (a corrected decision snapshot, for a
-prior `CONFLICT`) — never a bulk-level shortcut around ADR-0034's own
+prior `CONFLICT`) — never a bulk-level shortcut around [import staging and promotion specification](../product-features/import-staging-and-promotion.md)'s own
 correction workflow.
 
-#### Normative mapping table 2 — ADR-0031 clone/fallback, read directly
+#### Normative mapping table 2 — [version-governance specification](../product-features/version-governance-content-reuse-and-family-deletion.md) clone/fallback, read directly
 #### from its actual state machine
 
-**ADR-0031's own `DocumentContentCloneOperation` state machine, verified
+**[version-governance specification](../product-features/version-governance-content-reuse-and-family-deletion.md)'s own `DocumentContentCloneOperation` state machine, verified
 directly**: `AUTHORISED → COPYING → VERIFYING → INDEXED`, with
 `COPYING`/`VERIFYING` able to transition to `CLEANUP_REQUIRED →
 FALLBACK_READY → ordinary ingestion` on any layer's integrity-proof
 failure. This table is the **sole** source of the applicability/clone
 mapping; no other prose in this specification restates it.
 
-| ADR-0031 state / event | Bulk item outcome | Typed reason | Notes |
+| [version-governance specification](../product-features/version-governance-content-reuse-and-family-deletion.md) state / event | Bulk item outcome | Typed reason | Notes |
 |---|---|---|---|
 | Compatibility proof fails **before** any `DocumentContentCloneOperation` is created | Immediately enters `waiting_on_subordinate` with `subordinate_kind = 'full_ingestion_fallback'` | — | **Withdrawn: treating this as a skip.** No clone was ever authorised to fail; ordinary full-ingestion is initiated directly, tracked by its own ingestion `event_id` |
 | `AUTHORISED`, `COPYING`, `VERIFYING` | Remains `waiting_on_subordinate` | — | In progress |
 | `COPYING`/`VERIFYING` → `CLEANUP_REQUIRED` → `FALLBACK_READY` | Remains `waiting_on_subordinate`; the item's current pointer advances to `full_ingestion_fallback`/`event_id` when ordinary ingestion begins, while the append-only transition ledger retains both clone and fallback identities | — | **Withdrawn: mapping any point in this sequence to `failed_permanent`, or overwriting the only record of the clone.** Cleanup and fallback are still in progress; recovery remains possible and both identities remain directly correlated |
 | `INDEXED` | `succeeded` | — | Technical materialisation/indexing is complete at exactly this point — never described as "still pending" once reached |
 | Full-ingestion fallback reaches ADR-0007's own ingestion `INDEXED` | `succeeded` | — | Mapped at ingestion's own authoritative technical terminal state, not at upload/extraction/any earlier point |
-| Full-ingestion fallback reaches ADR-0007's own ingestion `FAILED` (ceiling exhausted) | `failed_permanent` | `full_ingestion_failed` | The **only** point in this entire table with no remaining cleanup/fallback/recovery path — ADR-0031's own design guarantees every clone failure routes through fallback, so this is the sole genuine dead end |
-| A checksum-serialization lock (`WorkspaceChecksumReservation`, ADR-0034) is briefly held by a concurrent operation | Remains an open attempt, ordinarily waiting on the lock | — | **Withdrawn: describing this as an exclusion or a skip.** Ordinary lock contention is not a semantic outcome at all |
+| Full-ingestion fallback reaches ADR-0007's own ingestion `FAILED` (ceiling exhausted) | `failed_permanent` | `full_ingestion_failed` | The **only** point in this entire table with no remaining cleanup/fallback/recovery path — [version-governance specification](../product-features/version-governance-content-reuse-and-family-deletion.md)'s own design guarantees every clone failure routes through fallback, so this is the sole genuine dead end |
+| A checksum-serialization lock (`WorkspaceChecksumReservation`, [import staging and promotion specification](../product-features/import-staging-and-promotion.md)) is briefly held by a concurrent operation | Remains an open attempt, ordinarily waiting on the lock | — | **Withdrawn: describing this as an exclusion or a skip.** Ordinary lock contention is not a semantic outcome at all |
 | The same lock wait exceeds a bounded timeout | Attempt-level `failed_retryable` (via the durable attempt authority above) | `checksum_lock_timeout` | A retryable **attempt** failure, reclaimed under the item's own ceiling exactly like any other transient failure — never simultaneously a preflight exclusion or a mutation-boundary skip |
 
 **After technical success, governance approval/authority may still be
@@ -2188,12 +2189,13 @@ pending work" for this operation names only the still-open **governance**
 step (separate approval before the successor can attain authority),
 never a second, contradictory "technical indexing still pending" claim.
 **Searchability still requires both the accepted technical rules
-(ADR-0007/ADR-0032) and the accepted governance rules (ADR-0017)** —
+(ADR-0007/ADR-0032) and the accepted governance rules in the
+[versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md)** —
 unchanged by this specification in either direction.
 
 **Laravel owns every reconciliation decision in both tables above. Python
 reports only its own already-bounded technical result** (a clone's
-completeness report, per ADR-0031) — this specification grants it no new authority
+completeness report, per [version-governance specification](../product-features/version-governance-content-reuse-and-family-deletion.md)) — this specification grants it no new authority
 over what a bulk item's own outcome means.
 
 ### Applicability/location bulk change — orchestration detail
@@ -2205,7 +2207,7 @@ weight that implies:
   add/remove specific locations from the current set — both are
   supported, both are explicit, mutually distinct choices at confirmation
   time, never inferred from a bare list of checked locations.
-- **Parent-location selection includes every descendant**, per ADR-0017's
+- **Parent-location selection includes every descendant**, per [versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md)'s
   existing hierarchy-extension rule, unmodified — selecting a region
   previews its full descendant-site coverage, not merely the region node
   itself.
@@ -2214,7 +2216,7 @@ weight that implies:
   its resulting applicability plainly, not merely the delta expression the
   user typed.
 - **Universal applicability** is represented explicitly as its own
-  selectable state (`UNIVERSAL`, per ADR-0017), never as "zero locations
+  selectable state (`UNIVERSAL`, per [versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md)), never as "zero locations
   selected" being silently reinterpreted as universal.
 - **Duplicate/no-op changes are excluded at preflight**, with the typed
   reason `no_op_unchanged_applicability` — a target whose resulting
@@ -2223,13 +2225,13 @@ weight that implies:
   having changed nothing.
 - **Per item, at the mutation boundary**, this operation invokes
   `CreateApplicabilityOnlySuccessor` exactly as a single, non-bulk request
-  would — ADR-0031's own compatibility proof (`materialisation_pipeline_
+  would — [version-governance specification](../product-features/version-governance-content-reuse-and-family-deletion.md)'s own compatibility proof (`materialisation_pipeline_
   fingerprint`, checksum, active-generation check) is evaluated
   unmodified, per target, never bypassed or batched.
-- **ADR-0034's shared `WorkspaceChecksumReservation` serialization is
+- **[import staging and promotion specification](../product-features/import-staging-and-promotion.md)'s shared `WorkspaceChecksumReservation` serialization is
   respected identically** — each item's clone invocation acquires the
   same workspace/checksum lock any concurrent import promotion would,
-  exactly as ADR-0034 already specifies; this bulk operation introduces
+  exactly as [import staging and promotion specification](../product-features/import-staging-and-promotion.md) already specifies; this bulk operation introduces
   no exemption from, and no new instance of, that primitive.
 - **Clone fallback/failure outcomes are governed entirely by normative
   mapping table 2 in "Subordinate-waiting semantics" above — restated
@@ -2241,7 +2243,7 @@ weight that implies:
   ADR-0007's `FAILED` after its own ceiling — never silently retried by
   this specification, and never presented as `succeeded` ahead of that subordinate's
   own genuine outcome.
-- **Why this never edits an authoritative version in place**: ADR-0017's
+- **Why this never edits an authoritative version in place**: [versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md)'s
   applicability snapshot is immutable per version, by design — this specification
   does not, and structurally cannot, alter that; every applicability
   change is, and remains, a new governed successor.
@@ -2250,7 +2252,7 @@ weight that implies:
 exposes only the existing organisational-location hierarchy; a future
 department/team axis's extension seam is preserved by not hard-coding
 this specification's own preview/confirmation UI to a single-hierarchy assumption
-beyond what ADR-0017 already requires — no inactive, greyed-out
+beyond what [versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md) already requires — no inactive, greyed-out
 department/team control is shown in V1.
 
 ### Per-operation contract matrix — closed, implementation-ready
@@ -2272,42 +2274,42 @@ already `APPROVED`/`WITHDRAWN`. Exclusion categories: `not_indexed`
 categories: `target_no_longer_exists`; `governance_inputs_changed`
 (the version's governance state changed since freeze — e.g. it was
 approved or withdrawn by another action in the meantime);
-`authority_window_conflict` (ADR-0017's own lineage-monotonicity check
+`authority_window_conflict` ([versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md)'s own lineage-monotonicity check
 rejects the approval, e.g. a successor already attained authority first).
 Retryable technical failure categories: an ordinary database/
 infrastructure error during `ApproveDocumentVersion`'s own transaction.
 Permanent failure categories: none beyond ceiling exhaustion — a rejected
 approval is always a `skipped` conflict, never a `failed_permanent`
-outcome, since ADR-0017's own governance rules are deterministic, not
+outcome, since [versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md)'s own governance rules are deterministic, not
 retryable-and-failable. Backing action: `ApproveDocumentVersion`
-(ADR-0031), unmodified. Item success: `ApproveDocumentVersion` commits;
+([version-governance specification](../product-features/version-governance-content-reuse-and-family-deletion.md)), unmodified. Item success: `ApproveDocumentVersion` commits;
 the version is now governance-`APPROVED`. Audit event:
 `bulk_operation_item.approved`. Downstream pending work: whether the
-version has genuinely *attained* authority depends on ADR-0017's
+version has genuinely *attained* authority depends on [versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md)'s
 `authority_start` derivation, unaffected by this specification — approval alone
 **never guarantees current/searchable authority**. Knowledge-gap
 behaviour: none — approval only ever adds authority, never removes it.
 
 **Bulk promotion** — target kind: `ImportItem`. Required capability:
 owner/admin. Payload shape: none (promotion uses the item's own current
-decision snapshot, per ADR-0034). Confirmation severity: standard.
+decision snapshot, per [import staging and promotion specification](../product-features/import-staging-and-promotion.md)). Confirmation severity: standard.
 Preflight eligibility: `preflight_status = 'verified'`,
-`match_status = 'resolved'`, and every ADR-0034 promotion-readiness
+`match_status = 'resolved'`, and every [import staging and promotion specification](../product-features/import-staging-and-promotion.md) promotion-readiness
 criterion satisfied. Exclusion categories: `preflight_not_verified`;
 `match_unresolved`; `readiness_criteria_incomplete` (required metadata/
 applicability missing). Mutation-boundary skip/conflict categories:
 `target_no_longer_exists`; `decision_snapshot_changed` (the item's current
 decision snapshot changed since freeze); `staging_expired` (the batch's
-retention window elapsed); `authorization_changed` (ADR-0034's own live-
+retention window elapsed); `authorization_changed` ([import staging and promotion specification](../product-features/import-staging-and-promotion.md)'s own live-
 authorization-at-commit check fails). Retryable technical failure
 categories: a transient `PromotionAttempt` `COPYING`/`SOURCE_VERIFIED`
-failure, reclaimed under ADR-0034's own ceiling. Permanent failure
+failure, reclaimed under [import staging and promotion specification](../product-features/import-staging-and-promotion.md)'s own ceiling. Permanent failure
 categories: **governed entirely by normative mapping table 1 in
 "Subordinate-waiting semantics" above** — `CONFLICT` (`promotion_conflict`),
 exhausted `FAILED` (`promotion_technical_failure`), `ABANDONED`
 (`promotion_abandoned_externally`), and `EXPIRED` (`promotion_expired`)
 all resolve to `failed_permanent`; no other prose restates this. Backing
-action/subordinate: the `PromotionAttempt` sequence (ADR-0034), via
+action/subordinate: the `PromotionAttempt` sequence ([import staging and promotion specification](../product-features/import-staging-and-promotion.md)), via
 `waiting_on_subordinate`. Item success: the `PromotionAttempt` reaches
 `COMMITTED`. Audit event: `bulk_operation_item.promoted`. Downstream
 pending work: the created `Document` still requires ordinary ingestion,
@@ -2336,11 +2338,11 @@ compatibility-proof failure initiates full-ingestion fallback via
 at all, and only a bounded lock-wait timeout is a retryable **attempt**
 failure, `checksum_lock_timeout`). Retryable technical failure
 categories: a transient clone-attempt infrastructure failure within
-ADR-0031's own ceiling, and `checksum_lock_timeout` (above). Permanent
+[version-governance specification](../product-features/version-governance-content-reuse-and-family-deletion.md)'s own ceiling, and `checksum_lock_timeout` (above). Permanent
 failure categories: **exactly one, per mapping table 2** — the
 full-ingestion fallback's own ingestion reaching ADR-0007's `FAILED`
 after its own ceiling (`full_ingestion_failed`); no other point in the
-clone/fallback lifecycle resolves here, since ADR-0031's own design
+clone/fallback lifecycle resolves here, since [version-governance specification](../product-features/version-governance-content-reuse-and-family-deletion.md)'s own design
 guarantees every clone failure routes through fallback first. Backing
 action/subordinate: `CreateApplicabilityOnlySuccessor`, then either a
 `DocumentContentCloneOperation` or a full-ingestion fallback, via
@@ -2354,24 +2356,24 @@ is `succeeded` (never described as "still pending" once reached); the
 successor must still be separately approved before it can attain
 authority. Knowledge-gap behaviour: **none** — the predecessor's own
 authority window is unaffected until the successor genuinely attains
-authority, exactly as ADR-0017 already guarantees.
+authority, exactly as [versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md) already guarantees.
 
 **Bulk owner assignment** — target kind: family. Required capability:
 owner/admin. Payload shape: the requested owner's stable user identity.
 Confirmation severity: standard. Preflight eligibility: the requested
-owner is a currently active workspace member (ADR-0030's eligibility
+owner is a currently active workspace member ([document metadata specification](../data-api-contracts/document-family-and-version-metadata.md)'s eligibility
 rule). Exclusion categories: `requested_owner_not_active_member`;
 `current_owner_already_matches` (a genuine no-op). Mutation-boundary skip
 categories: `target_no_longer_exists`; `membership_changed_before_
 mutation` (the requested owner's own membership lapsed between
 confirmation and this item's execution). Retryable technical failure
 categories: an ordinary database/infrastructure error. Permanent failure
-categories: none beyond ceiling exhaustion. Backing action: ADR-0030's
+categories: none beyond ceiling exhaustion. Backing action: [document metadata specification](../data-api-contracts/document-family-and-version-metadata.md)'s
 owner-reassignment action, unmodified. Item success: the reassignment
 commits. Audit event: `bulk_operation_item.owner_reassigned`. Downstream
 pending work: none — this is a pure metadata fact with no further
 lifecycle. Knowledge-gap behaviour: none — ownership carries no
-authorization or retrieval weight, per ADR-0030.
+authorization or retrieval weight, per [document metadata specification](../data-api-contracts/document-family-and-version-metadata.md).
 
 **Bulk category assignment** — target kind: family. Required capability:
 owner/admin. Payload shape: the requested category's stable identity, or
@@ -2383,33 +2385,33 @@ assigning; an archived category may still be cleared); `already_
 assigned` (a genuine no-op). Mutation-boundary skip categories: `target_
 no_longer_exists`. Retryable technical failure categories: an ordinary
 database/infrastructure error. Permanent failure categories: none beyond
-ceiling exhaustion. Backing action: ADR-0030's category-assignment
+ceiling exhaustion. Backing action: [document metadata specification](../data-api-contracts/document-family-and-version-metadata.md)'s category-assignment
 action, unmodified. Item success: the assignment commits. Audit event:
 `bulk_operation_item.category_assigned`. Downstream pending work: none.
 Knowledge-gap behaviour: none — categories never affect retrieval or
-authority, per ADR-0030.
+authority, per [document metadata specification](../data-api-contracts/document-family-and-version-metadata.md).
 
 **Bulk tag mutation** — target kind: family. Required capability: owner/
 admin. Payload shape: an explicit add-set, remove-set, or full-replace-
-set of tag values (never an ambiguous toggle, per ADR-0030's own
+set of tag values (never an ambiguous toggle, per [document metadata specification](../data-api-contracts/document-family-and-version-metadata.md)'s own
 set/add/remove discipline). Confirmation severity: standard. Preflight
 eligibility: the resulting tag set, after normalisation, would genuinely
-change the family's current tags, and would not exceed ADR-0030's
+change the family's current tags, and would not exceed [document metadata specification](../data-api-contracts/document-family-and-version-metadata.md)'s
 20-tag-per-family cap. Exclusion categories: `add_remove_replace_no_op`
 (the resulting set is identical to the current one); `tag_limit_
 exceeded`. Mutation-boundary skip categories: `target_no_longer_exists`;
 `requested_tag_set_changed_before_mutation` (another concurrent mutation
-already altered the family's tags since freeze, per ADR-0030's own
+already altered the family's tags since freeze, per [document metadata specification](../data-api-contracts/document-family-and-version-metadata.md)'s own
 lock-based tag Action — this item's own requested delta is re-evaluated
 against the current set at the mutation boundary, exactly as a single,
 non-bulk tag edit already would be, and skips rather than silently
 compounding onto a state it never previewed). Retryable technical failure
 categories: an ordinary database/infrastructure error. Permanent failure
-categories: none beyond ceiling exhaustion. Backing action: ADR-0030's
+categories: none beyond ceiling exhaustion. Backing action: [document metadata specification](../data-api-contracts/document-family-and-version-metadata.md)'s
 lock-based tag-assignment action, unmodified. Item success: the tag
 mutation commits. Audit event: `bulk_operation_item.tags_mutated`.
 Downstream pending work: none. Knowledge-gap behaviour: none — tags never
-affect retrieval or authority, per ADR-0030.
+affect retrieval or authority, per [document metadata specification](../data-api-contracts/document-family-and-version-metadata.md).
 
 **Bulk review-due-date assignment** — target kind: family. Required
 capability: owner/admin. Payload shape: a requested date, or an explicit
@@ -2421,17 +2423,17 @@ calendar date; a clear is always eligible. Exclusion categories:
 clear-when-already-unset). Mutation-boundary skip categories: `target_
 no_longer_exists`. Retryable technical failure categories: an ordinary
 database/infrastructure error. Permanent failure categories: none beyond
-ceiling exhaustion. Backing action: ADR-0030's review-date action,
+ceiling exhaustion. Backing action: [document metadata specification](../data-api-contracts/document-family-and-version-metadata.md)'s review-date action,
 unmodified. Item success: the assignment (or clear) commits. Audit
 event: `bulk_operation_item.review_date_assigned`. Downstream pending
-work: none beyond ADR-0036's future reminder scheduling, which this specification
+work: none beyond [governance notifications specification](../product-features/document-governance-notifications-and-reminders.md)'s future reminder scheduling, which this specification
 does not define. Knowledge-gap behaviour: none — review dates are
-advisory only, per ADR-0030, and never affect authority.
+advisory only, per [document metadata specification](../data-api-contracts/document-family-and-version-metadata.md), and never affect authority.
 
 ### Authorization and tenancy
 
 Owner/admin authority is sufficient for every V1 operation — **no
-four-eyes requirement**, matching ADR-0017/0031's own settled V1 rule.
+four-eyes requirement**, matching [versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md) and [version-governance specification](../product-features/version-governance-content-reuse-and-family-deletion.md)'s own settled V1 rule.
 "No four eyes" does not mean "no confirmation" or "no audit" — every
 operation still requires the explicit confirmation step above and
 produces the complete audit trail below.
@@ -2446,7 +2448,7 @@ produces the complete audit trail below.
   lost the required role or workspace membership by the time that item is
   claimed is `skipped`, with the typed reason
   `authorization_insufficient` at execution time — **fail-closed**,
-  consistent with ADR-0034's own live-authorization-at-commit rule; an
+  consistent with [import staging and promotion specification](../product-features/import-staging-and-promotion.md)'s own live-authorization-at-commit rule; an
   already-running system job never completes an item after the
   initiating actor's authority has lapsed, absent an existing accepted
   ADR requiring otherwise (none does).
@@ -2561,7 +2563,7 @@ own.
   typed terminal reason, the invoked action's own result identity, and the
   correlation chain: browser request → `BulkOperation.public_id` →
   `BulkOperationItem.id` → the invoked single-item action's own audit
-  record (ADR-0030/0031's existing audit tables) or, where a subordinate
+  record ([document metadata specification](../data-api-contracts/document-family-and-version-metadata.md) and [version-governance specification](../product-features/version-governance-content-reuse-and-family-deletion.md)'s existing audit tables) or, where a subordinate
   is involved, every append-only subordinate-transition row (a
   `PromotionAttempt.public_id`, a `DocumentContentCloneOperation.public_id`,
   and/or an ADR-0007 ingestion `event_id` for fallback), with the item's
@@ -2584,14 +2586,14 @@ own.
   a live join that a later deletion would break.
 - **Notification consumption, reserved, not designed here**: this specification
   emits the domain events (`bulk_operation.completed`,
-  `bulk_operation.completed_with_exceptions`) ADR-0036 may subscribe to
+  `bulk_operation.completed_with_exceptions`) [governance notifications specification](../product-features/document-governance-notifications-and-reminders.md) may subscribe to
   for notification delivery — this specification does not define delivery,
   recipients, or preferences, only that the events exist and carry safe,
   allowlisted content.
 
 ### Browser and UX contract
 
-**Route-backed, following ADR-0033's route hierarchy exactly**:
+**Route-backed, following [knowledge-library specification](../product-features/knowledge-library-navigation.md)'s route hierarchy exactly**:
 `/documents` gains its selection controls and bulk-action toolbar in
 place; a new `/documents/bulk/{bulkOperationPublicId}` route provides the
 operation-detail/result surface — a real, refresh-safe, deep-linkable,
@@ -2599,7 +2601,7 @@ tenant-concealed route, not a modal-only experience that loses state on
 refresh.
 
 **The library provides**: row checkboxes (only once this specification ships, per
-ADR-0033's own reserved seam); current-page selection; the explicit
+[knowledge-library specification](../product-features/knowledge-library-navigation.md)'s own reserved seam); current-page selection; the explicit
 all-filtered-results selection action with its visible exact frozen
 count; a bulk-action toolbar offering only the operations the current
 selection's target type and the viewer's role actually support;
@@ -2625,10 +2627,10 @@ allowlist keeps as two distinct operations); applicability; universal
 applicability; excluded; skipped; retryable failure; and the current-page-
 versus-every-filtered-result distinction. Every tooltip is concise, plain-
 language, keyboard-accessible, and never the sole carrier of essential
-information — the same rule ADR-0033 already establishes, applied here.
+information — the same rule [knowledge-library specification](../product-features/knowledge-library-navigation.md) already establishes, applied here.
 
 **Visual system**: shadcn/ui, Tailwind, and Lucide, consistent with
-ADR-0027/0033; deliberate surface/card contrast establishing hierarchy,
+[product interface and design-system specification](../product-features/product-interface-and-design-system.md) and [knowledge-library specification](../product-features/knowledge-library-navigation.md); deliberate surface/card contrast establishing hierarchy,
 never a page of indistinguishable same-colour panels; expand/collapse for
 detailed per-item exclusions/outcomes, with summary facts always visible
 without expanding anything.
@@ -2731,7 +2733,7 @@ cycle; the Laravel database-queue model is required instead.
 
 Rejected — every count is derived from `BulkOperationItem` rows at read
 time, closing the two-fields-that-can-disagree hazard this platform has
-repeatedly rejected elsewhere (ADR-0007, ADR-0017, ADR-0034).
+repeatedly rejected elsewhere (ADR-0007, [versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md), [import staging and promotion specification](../product-features/import-staging-and-promotion.md)).
 
 ### An unrestricted, generic `target_type` + `target_id` polymorphic
 ### column
@@ -2764,7 +2766,7 @@ composite `(target_family_id, workspace_id)` FK would null the item's own
 `workspace_id` the instant its target was deleted — destroying the
 tenancy scoping this specification's retained history depends on. Single-column
 target FKs, with cross-workspace safety enforced instead by a database
-trigger (the same pattern ADR-0017's migration already establishes for an
+trigger (the same pattern [versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md)'s migration already establishes for an
 analogous cross-table invariant), avoid this entirely.
 
 ### An unconditional target-shape `CHECK` with no live/retained
@@ -2777,7 +2779,7 @@ re-evaluates every `CHECK` constraint on a row as part of the very
 `ON DELETE SET NULL`, so a `CHECK` that unconditionally required a
 non-null target column for its `operation_type` would reject that
 `UPDATE` outright, coupling this specification's history retention to every
-deletion path in ADR-0025/ADR-0031 in a way neither of those ADRs'
+deletion path in [administration and tenant-control specification](../product-features/administration-and-tenant-control.md)/[version-governance specification](../product-features/version-governance-content-reuse-and-family-deletion.md) in a way neither of those ADRs'
 deletion designs can accept. The corrected design adds
 `target_reference_status` as an explicit discriminator, branches the
 `CHECK` on it, and performs the live-to-retained transition as a single
@@ -2789,7 +2791,7 @@ deletion it is meant to survive.
 ### `restrictOnDelete()` on the target foreign keys, to protect retained
 ### history
 
-Rejected — this would block ADR-0025's and ADR-0031's own deletion paths
+Rejected — this would block [administration and tenant-control specification](../product-features/administration-and-tenant-control.md)'s and [version-governance specification](../product-features/version-governance-content-reuse-and-family-deletion.md)'s own deletion paths
 from ever removing a family, version, or `ImportItem` that any bulk
 operation had ever targeted, permanently, which neither of those ADRs'
 deletion designs can accept. `nullOnDelete()`, with the permanently
@@ -2805,7 +2807,7 @@ This was an earlier design in this specification and is withdrawn as unsafely
 underspecified — a durable `claimed` row with no accompanying lease-
 generation, heartbeat, or expiry mechanism cannot structurally guarantee
 a crashed worker's claim is ever released, and adding that machinery
-would duplicate ADR-0025's `IngestionEventClaim` lease pattern for no
+would duplicate [administration and tenant-control specification](../product-features/administration-and-tenant-control.md)'s `IngestionEventClaim` lease pattern for no
 benefit a bulk item's own short, bounded execution actually needs.
 **Further corrected in a later pass**: the single-short-transaction
 design this entry originally proposed as the fix was itself withdrawn —
@@ -2916,7 +2918,7 @@ DEFINER` function owned by the non-login owner, and the real database-role
 identity described above. The rejected GUC design has no live or
 diagnostic role in the implementation.
 
-### Assuming `ApproveDocumentVersion` and the ADR-0030 metadata actions
+### Assuming `ApproveDocumentVersion` and the [document metadata specification](../data-api-contracts/document-family-and-version-metadata.md) metadata actions
 ### need no durable idempotency/result primitive because they are
 ### "naturally idempotent"
 
@@ -2929,7 +2931,7 @@ misinterpret that rejection as a failure. The corrected design commits
 the domain mutation, its audit event, a durable result/idempotency
 record, and the `BulkOperationItemAttempt`'s own `succeeded` status
 together, in one atomic transaction, per action family — reusing
-ADR-0031's governance-idempotency record for approval, and treating the
+[version-governance specification](../product-features/version-governance-content-reuse-and-family-deletion.md)'s governance-idempotency record for approval, and treating the
 attempt row itself as the durable authority for metadata actions, which
 have no separate idempotency table of their own.
 
@@ -3031,7 +3033,7 @@ execution-state-keyed primary table should not be overloaded to express.
 
 ### Positive
 
-- ADR-0033's reserved selection seam finally has a real, safe backing
+- [knowledge-library specification](../product-features/knowledge-library-navigation.md)'s reserved selection seam finally has a real, safe backing
   domain.
 - Every included operation reuses an existing, already-decided single-
   item action unmodified — no governance rule is duplicated or
@@ -3053,7 +3055,7 @@ execution-state-keyed primary table should not be overloaded to express.
   is more schema surface than a single generic pointer would have been —
   accepted because the generic alternative is structurally unsafe.
 - Bulk applicability change is the most complex operation in the
-  allowlist, inheriting the full weight of ADR-0031's clone lifecycle per
+  allowlist, inheriting the full weight of [version-governance specification](../product-features/version-governance-content-reuse-and-family-deletion.md)'s clone lifecycle per
   item — a real implementation cost, not a thin wrapper.
 - Retained, undeleted operation history grows unboundedly over a
   workspace's lifetime — an accepted, bounded-per-row storage cost, not a
@@ -3077,10 +3079,10 @@ execution-state-keyed primary table should not be overloaded to express.
 
 ## Scope boundaries
 
-This specification does not define: ADR-0030/0031's governance or metadata rules;
-ADR-0032's artefact/projection mechanics; ADR-0034's staging/promotion
+This specification does not define: [document metadata specification](../data-api-contracts/document-family-and-version-metadata.md) and [version-governance specification](../product-features/version-governance-content-reuse-and-family-deletion.md)'s governance or metadata rules;
+ADR-0032's artefact/projection mechanics; [import staging and promotion specification](../product-features/import-staging-and-promotion.md)'s staging/promotion
 mechanics beyond invoking its existing `PromotionAttempt` sequence and
-shared checksum-serialization primitive unmodified; ADR-0036's
+shared checksum-serialization primitive unmodified; [governance notifications specification](../product-features/document-governance-notifications-and-reminders.md)'s
 notification delivery, recipients, or preferences; ADR-0037's export;
 bulk deletion, withdrawal, or rescheduling (explicitly deferred); the
 exact numeric values for maximum target count, retry ceilings, or
@@ -3112,7 +3114,7 @@ finish, eligible items do not start); crash/`SKIP LOCKED` reclaim; retry
 option 2 touching only retryable items, never expanding membership;
 derived-aggregate correctness against underlying item rows; bulk approval
 under a lapsed authority window; applicability-successor initiation
-correctly acquiring ADR-0034's shared checksum-serialization lock; no-op
+correctly acquiring [import staging and promotion specification](../product-features/import-staging-and-promotion.md)'s shared checksum-serialization lock; no-op
 applicability exclusion; complete audit-chain correlation; bounded query-
 count/N+1 checks for the freeze and preflight queries; a measured
 benchmark of the bulk `INSERT ... SELECT` at a representative large
@@ -3202,12 +3204,12 @@ subordinate mapping tables)**:
   `failed_permanent` at the configured limit, never earlier and never
   later; the one-open-attempt-per-item partial unique index rejects a
   second concurrent open attempt for the same item.
-- **ADR-0034 mapping table**: every named `PromotionAttempt` state
+- **[import staging and promotion specification](../product-features/import-staging-and-promotion.md) mapping table**: every named `PromotionAttempt` state
   (`RESERVED`/`COPYING`/`SOURCE_VERIFIED`/`COMMITTED`/`CONFLICT`/`FAILED`/
   `ABANDONED`/`EXPIRED`) drives the bulk item to exactly the outcome the
   mapping table specifies, with the correct typed reason for each of the
   four `failed_permanent`-producing states.
-- **ADR-0031 clone/fallback mapping table**: an immediate compatibility-
+- **[version-governance specification](../product-features/version-governance-content-reuse-and-family-deletion.md) clone/fallback mapping table**: an immediate compatibility-
   proof failure correctly initiates full-ingestion fallback (never a
   skip); `CLEANUP_REQUIRED`/`FALLBACK_READY` correctly remain
   `waiting_on_subordinate`; a full-ingestion fallback reaching ADR-0007's
@@ -3298,7 +3300,7 @@ and crash recovery)**:
   after an approval's atomic mutation/audit/idempotency-record/attempt-success
   commit, but before item finalisation, is recovered by finalisation
   alone, with **zero** additional invocations of `ApproveDocumentVersion`;
-  the identical scenario for **each** ADR-0030 metadata action, recovered
+  the identical scenario for **each** [document metadata specification](../data-api-contracts/document-family-and-version-metadata.md) metadata action, recovered
   from the attempt's own `result_digest` with zero additional mutations; a
   simulated crash immediately after subordinate-identity creation commits,
   but before the item enters `waiting_on_subordinate` is observed by any
@@ -3393,10 +3395,10 @@ ADR-0029 boundary, unmodified by this specification.
 
 ## Phase/session allocation
 
-Consuming ADR-0034's `ImportItem`/`PromotionAttempt` primitives, this
-ADR's implementation follows ADR-0034's within the Import, Staging and
+Consuming [import staging and promotion specification](../product-features/import-staging-and-promotion.md)'s `ImportItem`/`PromotionAttempt` primitives, this
+ADR's implementation follows [import staging and promotion specification](../product-features/import-staging-and-promotion.md)'s within the Import, Staging and
 Bulk Governance phase; its browser preflight/result surfaces are
-sequenced after ADR-0034's own primitives exist, matching the
+sequenced after [import staging and promotion specification](../product-features/import-staging-and-promotion.md)'s own primitives exist, matching the
 decomposition's earlier stated intent.
 
 - **Foundation — PostgreSQL role/bootstrap boundary, before dependent

@@ -15778,25 +15778,31 @@ proof over an arbitrary tenant's corpus.
 ## Phase objective
 
 Complete the branding capability deliberately reserved, but not implemented,
-by ADR-0036. Provide a validated, authorised and accessible way to configure
+by the [Document Governance Notifications and Reminders specification](docs/specs/product-features/document-governance-notifications-and-reminders.md).
+Start from the [Product Interface and Design System](docs/specs/product-features/product-interface-and-design-system.md)
+and [Administration and Tenant Control Plane](docs/specs/product-features/administration-and-tenant-control.md)
+specifications. Provide a validated, authorised and accessible way to configure
 the Dolved display name, wordmark/logo, favicon and light/dark accent identity
 before the separately gated private pilot. Branding remains presentation only
 and never changes authorization, retrieval, governance or audit decisions.
 
-## Stage 29.1 — Freeze branding ownership and lifecycle
+## Stage 29.1 — Specify branding ownership and lifecycle
 
-Decide whether the first configurable identity is deployment-wide,
+Specify whether the first configurable identity is deployment-wide,
 workspace-owned, or a deliberately bounded combination. Record the authority
 allowed to change it, its version/lifecycle semantics, its storage boundary,
-and how it consumes ADR-0036's provider-neutral branding seam without making
+and how it consumes the governance notifications specification's
+provider-neutral branding seam without making
 branding relevant to authorization, retrieval, notification eligibility or
 audit decisions. Reconcile this phase with ADR-0041's stock-Dify delivery
 boundary.
 
-Acceptance requires an approved architecture decision covering the minimum
-branding identity contract (display name, wordmark/logo reference, favicon,
+Acceptance requires a bounded specification covering the minimum branding
+identity contract (display name, wordmark/logo reference, favicon,
 light/dark accents and fallback), upload validation, permissions, deletion,
 cache behaviour, accessibility and what remains deliberately deferred.
+Create an ADR only if this work makes a new consequential architectural choice;
+ordinary specification maintenance does not require one.
 
 ## Stage 29.2 — Implement configurable identity and administration
 

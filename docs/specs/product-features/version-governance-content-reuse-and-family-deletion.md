@@ -8,11 +8,11 @@ Accepted
 
 2026-08-28
 
-## Relationship to prior ADRs
+## Relationship to prior documents
 
-### Consumes ADR-0017's domain model without redesigning its authority calculation
+### Consumes [versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md)'s domain model without redesigning its authority calculation
 
-ADR-0017 already defines `DocumentFamily`, linear version lineage, the
+[versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md) already defines `DocumentFamily`, linear version lineage, the
 `authority_start` derivation, the `DRAFT → APPROVED → WITHDRAWN` governance
 model, and per-version immutable applicability snapshots. **This specification does
 not reopen any of that.** The domain logic implementing it already
@@ -22,34 +22,34 @@ exists — `ApproveDocumentVersion`, `WithdrawDocumentVersion`,
 `app/Actions/Documents/`. This specification's first decision is to expose the
 existing domain layer, not to redesign it.
 
-### Consumes ADR-0030's metadata classification and checksum state
+### Consumes [document metadata specification](../data-api-contracts/document-family-and-version-metadata.md)'s metadata classification and checksum state
 
 Every metadata field this specification's API surface reads or writes is defined by
-ADR-0030. **This specification requires `checksum_verification_status = 'verified'`
+[document metadata specification](../data-api-contracts/document-family-and-version-metadata.md). **This specification requires `checksum_verification_status = 'verified'`
 as the first element of its clone compatibility proof** — a `pending` or
 `unavailable` predecessor is simply ineligible for cloning, exactly as
-ADR-0030 already states.
+[document metadata specification](../data-api-contracts/document-family-and-version-metadata.md) already states.
 
 ### Consumes ADR-0032's canonical artefact, digests, and upload/projection
 ### machinery
 
 This specification's clone mechanism consumes ADR-0032's `DocumentExtractionArtifact`
 schema, its canonical serialisation/digest algorithm, and its lease-bound
-upload and atomic-projection-publication machinery. **ADR-0031's clone
+upload and atomic-projection-publication machinery. **[version-governance specification](../product-features/version-governance-content-reuse-and-family-deletion.md)'s clone
 orchestration cannot be implemented before ADR-0032's artefact/digest
 foundation exists** — see "Implementation order" below.
 
-### Extends ADR-0025's principles; the child deletion implementation is
+### Extends [administration and tenant-control specification](../product-features/administration-and-tenant-control.md)'s principles; the child deletion implementation is
 ### genuinely extended, not literally unmodified
 
-ADR-0025 already defines owner/admin-only deletion authorization, the
+[administration and tenant-control specification](../product-features/administration-and-tenant-control.md) already defines owner/admin-only deletion authorization, the
 ingestion-quiescence barrier, vector-scope enumeration, hard chunk
 deletion with `EvidenceSnapshot` lineage preserved, and a single-open-
 per-document idempotency rule. **This specification reuses those *principles*
 unmodified** — the quiescence barrier, the cleanup ordering, the
 citation-survival guarantee, and the retry discipline are not redesigned.
 **But the child deletion's actual implementation is genuinely extended**,
-because ADR-0025 predates every layer introduced since: it must now also
+because [administration and tenant-control specification](../product-features/administration-and-tenant-control.md) predates every layer introduced since: it must now also
 cover source-checksum state, artefact upload-authorisation records, the
 extraction artefact, every projection generation, extraction warnings,
 corpus assignments, clone manifests, clone-origin claims and their
@@ -57,14 +57,14 @@ materialisation lineage, and the `physical_removal_authorised_at` decision.
 **Stating the child deletion as "completely unmodified" — as an earlier
 working draft of this decomposition did — is corrected here**: the
 principles transfer; the concrete cleanup surface does not stay the same
-shape it was under ADR-0025 alone.
+shape it was under [administration and tenant-control specification](../product-features/administration-and-tenant-control.md) alone.
 
-### Consumes ADR-0014/0016/0018's vector and eligibility model
+### Consumes ADR-0014, the [ingestion publication and recovery specification](../data-api-contracts/ingestion-publication-and-recovery.md) and the [retrieval planning and eligibility contract](../data-api-contracts/retrieval-planning-eligibility-and-retriever.md)'s vector and eligibility model
 
 Verified: ADR-0014's minimal Qdrant payload is `workspace_id`,
 `document_id`, `chunk_id`, `workspace_corpus_generation_id`,
 `embedding_space_generation_id`, `event_id`, `publication_status`.
-Applicability is resolved entirely in Laravel by ADR-0018's
+Applicability is resolved entirely in Laravel by [retrieval planning and eligibility contract](../data-api-contracts/retrieval-planning-eligibility-and-retriever.md)'s
 `EligibilityResolver` and is never encoded in this payload.
 
 ## Context
@@ -79,7 +79,7 @@ the compatibility proof relied on comparing many individual fields rather
 than one durable, persisted identity; the clone-mapping manifest itself had
 no defined lifecycle or cleanup; family deletion could mutate state before
 any confirmation step; "discard `DRAFT`" risked being read as a new
-governance state; the child deletion's extension over ADR-0025 was
+governance state; the child deletion's extension over [administration and tenant-control specification](../product-features/administration-and-tenant-control.md) was
 described as "unmodified" when it is not; and the final transition to
 `INDEXED` was described narratively rather than as one atomic transaction.
 
@@ -112,7 +112,7 @@ throughout this specification:
 
 ### Implementation order — binding
 
-1. ADR-0030's schema, metadata, and checksum-state foundation.
+1. [document metadata specification](../data-api-contracts/document-family-and-version-metadata.md)'s schema, metadata, and checksum-state foundation.
 2. ADR-0032's canonical artefact schema, upload-authorisation record, and
    atomic projection-publication machinery.
 3. This specification's governance routes and idempotency model may proceed
@@ -156,7 +156,7 @@ browser.**
 | List a family's version history | (new read query) | Tenant-scoped |
 | Create an applicability-only successor | `CreateApplicabilityOnlySuccessor` | The only R23 route creating a successor with no fresh upload |
 | Approve a version | `ApproveDocumentVersion` | Unchanged eligibility rules |
-| Withdraw / cancel a scheduled version | `WithdrawDocumentVersion` | Single action per ADR-0017 |
+| Withdraw / cancel a scheduled version | `WithdrawDocumentVersion` | Single action per [versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md) |
 | Reschedule a not-yet-attained version | `RescheduleDocumentVersion` | Unchanged uniqueness constraint |
 | Correct a governance timestamp | `CorrectDocumentGovernanceTimestamps` | Elevated permission |
 
@@ -184,7 +184,7 @@ identity (populated only after execution).
 
 ### Applicability-only successor and the durable pipeline fingerprint
 
-Because ADR-0017 records applicability as an immutable per-version
+Because [versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md) records applicability as an immutable per-version
 snapshot, changing it requires a new governed version. This specification resolves
 whether that version must re-run extraction, chunking, and embedding
 against unchanged content.
@@ -225,7 +225,7 @@ the facts a fingerprint alone cannot express:**
   against a value already computed and stored at claim-creation time on
   both sides — **never a transient request header used as the sole
   contract identity**, which was the gap this correction closes.
-- `source_checksum_sha256`, in `verified` state (ADR-0030) — a content
+- `source_checksum_sha256`, in `verified` state ([document metadata specification](../data-api-contracts/document-family-and-version-metadata.md)) — a content
   identity, not a pipeline identity, and therefore checked separately from
   the fingerprint.
 - The predecessor's claim is fully `Completed` with recorded publication
@@ -252,7 +252,7 @@ fact**, never encoded into a Qdrant payload.
 Unchanged: `CreateApplicabilityOnlySuccessor` is the only R23 browser-
 facing route creating a new version; no existing route accepts a target-
 family identity for an upload; ordinary content successors wait for
-ADR-0034/R25.
+[import staging and promotion specification](../product-features/import-staging-and-promotion.md)/R25.
 
 ### Independent clone ownership — six layers, none shared
 
@@ -347,7 +347,7 @@ proceeds through the same `PublicationAuthorised → Completed` states
 ordinary ingestion uses, and cloned Qdrant points are explicitly
 transitioned `PROVISIONAL → PUBLISHED` via the existing `publish(scope)`
 mechanism, scoped to the target claim's own `event_id` — satisfying
-ADR-0016's dual gate for cloned content exactly as it already applies to
+[ingestion publication and recovery specification](../data-api-contracts/ingestion-publication-and-recovery.md)'s dual gate for cloned content exactly as it already applies to
 ordinarily-ingested content.
 
 ### Clone-manifest lifecycle
@@ -496,7 +496,7 @@ prior draft described this narratively rather than as one atomic unit.
 ### Family deletion: preview, then confirm — no mutation before confirmation
 
 **A destructive, family-wide operation requires an explicit two-step flow**
-— a materially higher blast radius than ADR-0025's own single-version
+— a materially higher blast radius than [administration and tenant-control specification](../product-features/administration-and-tenant-control.md)'s own single-version
 deletion, which this specification does not retroactively change.
 
 **Preview (read-only, no mutation of any kind):**
@@ -599,7 +599,7 @@ survives as a tombstone. No restoration in V1.**
 - Hold creation refuses outright if that decision already exists.
 - Deletion cannot write that decision while a live, unexpired export hold
   exists — it defers, using the same bounded stuck-operation reclaim
-  mechanism ADR-0025 already provides.
+  mechanism [administration and tenant-control specification](../product-features/administration-and-tenant-control.md) already provides.
 - Once the decision is committed, physical object/vector/chunk deletion
   may proceed outside the transaction.
 - Family deletion applies this protocol independently to every child
@@ -612,7 +612,7 @@ mutex identity and the lock-then-decide protocol.
 
 ### EvidenceSnapshots
 
-Unchanged: ADR-0025's citation-survival design is unconditionally preserved
+Unchanged: [administration and tenant-control specification](../product-features/administration-and-tenant-control.md)'s citation-survival design is unconditionally preserved
 by every deletion path in this specification, extended by this specification's claim-linkage
 design so a citation against cloned content captures the target claim's
 own `event_id`, never the predecessor's.
@@ -622,7 +622,7 @@ own `event_id`, never the predecessor's.
 ### Sharing chunk/vector rows across versions via reference counting
 
 Rejected — `document_chunks.document_id` is a hard, single-owner foreign
-key, and ADR-0025's chunk-immutability guard is unconditional.
+key, and [administration and tenant-control specification](../product-features/administration-and-tenant-control.md)'s chunk-immutability guard is unconditional.
 
 ### Full re-ingestion for every applicability-only change
 
@@ -668,7 +668,7 @@ This was the prior draft's shape, and is corrected: a family-wide
 destructive operation's blast radius is large enough, and the gap between
 "what the user saw" and "what is actually true at execution time" long
 enough, to justify a genuine preview-then-confirm flow with a state-bound
-digest — a stronger guarantee than ADR-0025's own single-version deletion
+digest — a stronger guarantee than [administration and tenant-control specification](../product-features/administration-and-tenant-control.md)'s own single-version deletion
 needed, and not retroactively applied to it.
 
 ### Introducing a `discarded` governance status for family-deleted drafts
@@ -678,11 +678,11 @@ approved," and the version's actual removal is a technical, not a
 governance, fact. A new governance status would duplicate what
 `DRAFT` plus the technical `DELETED` state already say together, honestly.
 
-### Describing ADR-0025's reuse as "completely unmodified"
+### Describing [administration and tenant-control specification](../product-features/administration-and-tenant-control.md)'s reuse as "completely unmodified"
 
 This was the prior draft's wording and is withdrawn: the underlying
 *principles* are reused, but the actual cleanup surface a child deletion
-must now cover is genuinely larger than ADR-0025 alone ever specified.
+must now cover is genuinely larger than [administration and tenant-control specification](../product-features/administration-and-tenant-control.md) alone ever specified.
 
 ### Laravel independently reconstructing and running `verify_completeness`
 ### against Qdrant itself
@@ -692,7 +692,7 @@ contradicting the accepted ownership boundary.
 
 ### One `DocumentDeletionOperation` handling an entire family directly
 
-Rejected — the parent/child model reuses ADR-0025's already-correct
+Rejected — the parent/child model reuses [administration and tenant-control specification](../product-features/administration-and-tenant-control.md)'s already-correct
 single-document scoping unmodified instead of re-deriving it.
 
 ## Consequences
@@ -736,11 +736,11 @@ single-document scoping unmodified instead of re-deriving it.
 
 This specification does not define:
 
-- Any change to ADR-0017's temporal-authority derivation.
+- Any change to [versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md)'s temporal-authority derivation.
 - Restoration of a deleted family or version.
 - Restricted, permission-scoped, or confidential document-access groups.
-- Import staging, matching, or promotion — ADR-0034.
-- The generic bulk-operation domain — ADR-0035.
+- Import staging, matching, or promotion — [import staging and promotion specification](../product-features/import-staging-and-promotion.md).
+- The generic bulk-operation domain — [bulk document operations specification](../product-features/bulk-document-operations.md).
 - The concrete `ExportSourceHold` mechanism — ADR-0037.
 - Any UI implementation.
 - The exact numeric values of clone-manifest runtime limits, or the exact

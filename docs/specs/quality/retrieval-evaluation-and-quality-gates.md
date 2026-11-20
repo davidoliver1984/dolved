@@ -8,7 +8,7 @@ Accepted
 
 2026-08-07
 
-## Relationship to prior ADRs
+## Relationship to prior documents
 
 ### Fulfils ADR-0013's forward evaluation commitment
 
@@ -21,9 +21,9 @@ subjective judgement."* This document is that harness's architecture. It
 does not reopen ADR-0013's Voyage selection or `Embedder` boundary; it
 gives the evaluation commitment ADR-0013 already made its actual shape.
 
-### Consumes ADR-0017 and ADR-0018 without reopening them
+### Consumes [versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md) and [retrieval planning and eligibility contract](../data-api-contracts/retrieval-planning-eligibility-and-retriever.md) without reopening them
 
-This document treats ADR-0017's temporal-authority model and ADR-0018's
+This document treats [versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md)'s temporal-authority model and [retrieval planning and eligibility contract](../data-api-contracts/retrieval-planning-eligibility-and-retriever.md)'s
 `RetrievalPlanner`/`RetrievalPlan`/`EligibilityResolver`/`EligibleRetrievalScope`/
 `Retriever`/`RetrievalResult` contracts and outcome taxonomy as settled and
 authoritative. Where this document needs to evaluate whether a system
@@ -38,17 +38,17 @@ ADR-0013 (dated 2026-08-03) names *"Phase 15, Stage 15.4"* as this
 document's home, and separately names *"Phase 16, Stage 16.4"* as where
 generation-specific evaluation metrics would extend it. Both predate the
 Phase 15→16 restructuring and Phase 16's own later restructuring (see
-ADR-0018's "Citation correction" for the first) and are now stale in two
+[retrieval planning and eligibility contract](../data-api-contracts/retrieval-planning-eligibility-and-retriever.md)'s "Citation correction" for the first) and are now stale in two
 different ways: this document is actually Phase 16, Stage 16.5 (`R16-S05`),
 and *generation* is Phase 17, not Phase 16 at all — its answer-evaluation
 session is Stage 17.4 ("Add Answer Evaluation"). Neither ADR-0013 nor any
 other accepted ADR is rewritten; this is the same citation-drift correction
-ADR-0013 and ADR-0018 have each already performed for an earlier ADR's
+ADR-0013 and [retrieval planning and eligibility contract](../data-api-contracts/retrieval-planning-eligibility-and-retriever.md) have each already performed for an earlier ADR's
 forward reference.
 
 ## Context
 
-Phase 16 built a retrieval pipeline (ADR-0017, ADR-0018) with genuine
+Phase 16 built a retrieval pipeline ([versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md), [retrieval planning and eligibility contract](../data-api-contracts/retrieval-planning-eligibility-and-retriever.md)) with genuine
 architectural complexity: a derived temporal-authority model, an
 LLM-backed planner, a deterministic eligibility boundary, and a
 provider-neutral retriever. None of that complexity is worth anything if
@@ -59,7 +59,7 @@ pipeline it broke.
 Stage 16.6 (Implement Retrieval Evaluation) was about to begin
 implementation work directly against a thin, four-year-old stub
 (`IMPLEMENTATION_GUIDE.md`'s original Stage 16.5 "Planned decisions") that
-predates ADR-0017 and ADR-0018 entirely, and that collapses retrieval
+predates [versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md) and [retrieval planning and eligibility contract](../data-api-contracts/retrieval-planning-eligibility-and-retriever.md) entirely, and that collapses retrieval
 metrics and generation metrics (faithfulness, answer correctness, citation
 support, abstention accuracy) into one undifferentiated *"metrics
 catalogue"* — exactly the composite-score anti-pattern this document
@@ -138,7 +138,7 @@ schema, stable identities, deterministic metrics, the result format,
 baselines, or what counts as a passing release. This mirrors the same
 Open/Closed, provider-neutral discipline already applied at every other
 AI-pipeline seam this platform has built — `Embedder` (ADR-0013),
-`VectorStore` (ADR-0014), `RetrievalPlanner` and `Retriever` (ADR-0018) —
+`VectorStore` (ADR-0014), `RetrievalPlanner` and `Retriever` ([retrieval planning and eligibility contract](../data-api-contracts/retrieval-planning-eligibility-and-retriever.md)) —
 extended here to evaluation tooling itself. A framework is one
 replaceable implementation plugged into this architecture; it is never
 the architecture, and Ragas being genuinely wired in for a real V1 metric
@@ -160,7 +160,7 @@ mislabelled expectation, fixing a case's source material, or adding new
 cases all produce a **new** corpus version rather than silently changing
 what an already-accepted baseline's numbers actually mean — the same
 immutable-snapshot discipline this platform already applies to
-`ChunkingConfiguration`'s fingerprint (ADR-0011) and `EmbeddingProfile`'s
+`ChunkingConfiguration`'s fingerprint ([chunking contract](../data-api-contracts/chunking-contract.md)) and `EmbeddingProfile`'s
 fingerprint (ADR-0013), applied here to the evaluation corpus itself. A
 baseline recorded against corpus version 3 is only ever compared against a
 candidate run also using corpus version 3; comparing across corpus
@@ -186,12 +186,13 @@ still individually inspectable.
 ### Stable evidence identity: anchored to source content, never to a pipeline-generated identifier
 
 This is the sharpest correction this document makes to the brief it was
-drafted against, and it follows directly and unavoidably from ADR-0010 and
-ADR-0011's own accepted identity rules, not from a stylistic preference.
+drafted against, and it follows directly and unavoidably from [extraction contract](../data-api-contracts/canonical-extracted-document.md) and
+the [chunking contract](../data-api-contracts/chunking-contract.md)'s accepted
+identity rules, not from a stylistic preference.
 
 **Why chunk identity cannot be the ground-truth anchor.** Chunk identity is
 derived, in part, from the chunking strategy and configuration fingerprint
-(ADR-0011) — the evaluation harness's own explicit purpose is to compare
+([chunking contract](../data-api-contracts/chunking-contract.md)) — the evaluation harness's own explicit purpose is to compare
 different chunking configurations against each other, so anchoring ground
 truth to an identifier that is *itself* a function of the variable being
 evaluated is circular by construction, not merely fragile.
@@ -199,9 +200,9 @@ evaluated is circular by construction, not merely fragile.
 **Why source-element identity cannot be the ground-truth anchor either —
 this is the correction.** The brief proposed *"source element identity
 where sufficiently stable"* as a fallback. It is not sufficiently stable at
-any level: ADR-0010 is explicit that *"a new extraction run creates new
+any level: [extraction contract](../data-api-contracts/canonical-extracted-document.md) is explicit that *"a new extraction run creates new
 element UUIDs... no deterministic cross-extraction identifier scheme is
-implied,"* and ADR-0016's Context section already traced the direct
+implied,"* and [ingestion publication and recovery specification](../data-api-contracts/ingestion-publication-and-recovery.md)'s Context section already traced the direct
 consequence — *"two independent extraction runs over byte-identical source
 content therefore produce different `NormalisedElement` ids, and therefore
 different chunk ids, regardless of chunking's own determinism."* This is
@@ -209,7 +210,7 @@ not a hypothetical edge case this document needs to hedge against; it is
 the documented, accepted behaviour of the extraction stage. An evaluation
 corpus anchored to `ExtractedElement` or `NormalisedElement` identity would
 silently invalidate itself the moment a parser library is upgraded — the
-exact scenario ADR-0010 names as expected, ordinary evolution, not a rare
+exact scenario [extraction contract](../data-api-contracts/canonical-extracted-document.md) names as expected, ordinary evolution, not a rare
 failure. No pipeline-generated identifier, at any stage from extraction
 through chunking, survives independently of the specific run that produced
 it.
@@ -217,7 +218,7 @@ it.
 **The actual answer.** Ground truth is anchored to **source content the
 corpus author can verify directly against the original document**, never
 to anything the pipeline generates: the `Document`/`DocumentFamily`/version
-identity (Laravel-owned, durable per ADR-0007/ADR-0017), together with a
+identity (Laravel-owned, durable per ADR-0007/[versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md)), together with a
 **canonical text excerpt** — a short, human-verified quotation from the
 source document that a corpus author confirms actually appears in, and
 answers, the case. A page, section, or heading reference may additionally
@@ -238,7 +239,7 @@ code, can be compared against the same underlying ground truth*, because
 that ground truth was never coupled to any of those things in the first
 place.
 
-### Separate expectation layers, matching ADR-0018's own pipeline stages
+### Separate expectation layers, matching [retrieval planning and eligibility contract](../data-api-contracts/retrieval-planning-eligibility-and-retriever.md)'s own pipeline stages
 
 The corpus records expectations separately per pipeline stage, never as
 one undifferentiated "expected" object, so a failed case can answer *which*
@@ -252,14 +253,14 @@ stage failed:
   `DocumentFamily`/version set; expected temporal-authority resolution;
   expected applicability resolution; expected controlled eligibility
   outcome (`NO_ELIGIBLE_EVIDENCE`, `COMPARISON_SCOPE_INCOMPLETE`, etc., per
-  ADR-0018's taxonomy); and, for isolation/security cases, the expected
+  [retrieval planning and eligibility contract](../data-api-contracts/retrieval-planning-eligibility-and-retriever.md)'s taxonomy); and, for isolation/security cases, the expected
   *absence* of any unauthorised or ineligible version from the resolved
   scope.
 - **Retrieval relevance expectations** — the expected relevant evidence
   (per the source-anchored identity above), graded where nDCG needs a
   grade, and the required evidence set for a multi-evidence case. For a
   `COMPARE` case, expectations are recorded per side (`PRIMARY`/
-  `COMPARISON`, matching ADR-0018's own labels), never merged.
+  `COMPARISON`, matching [retrieval planning and eligibility contract](../data-api-contracts/retrieval-planning-eligibility-and-retriever.md)'s own labels), never merged.
 - **Outcome expectations** — the expected `RetrievalResult` classification,
   where the case is specifically testing outcome behaviour rather than
   evidence content (an empty-scope case expecting `NO_ELIGIBLE_EVIDENCE`,
@@ -277,14 +278,14 @@ The corpus deliberately exercises the architecture actually built, not a
 generic RAG checklist: natural-language robustness (exact wording,
 paraphrase, synonymous terminology); document structure (prose, tables,
 multi-evidence, evidence spanning multiple chunks); the full temporal
-surface ADR-0017 defines (`CURRENT`, `VALID_AT_DATE`, `COMPARE`, a
+surface [versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md) defines (`CURRENT`, `VALID_AT_DATE`, `COMPARE`, a
 scheduled future version, a version approved late, a withdrawn version, a
 version that never attained authority, an authority gap, and the
-predecessor-resurrection case ADR-0017's own worked example describes);
+predecessor-resurrection case [versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md)'s own worked example describes);
 the full applicability surface (`UNIVERSAL`, site-specific,
 region-specific with descendant-site inheritance, a location alias, and an
 ambiguous applicability reference that must produce `CLARIFICATION_REQUIRED`
-per ADR-0018); security/isolation (cross-workspace exclusion, unauthorised
+per [retrieval planning and eligibility contract](../data-api-contracts/retrieval-planning-eligibility-and-retriever.md)); security/isolation (cross-workspace exclusion, unauthorised
 evidence, an access-limited case); the retrieval outcome taxonomy itself
 (empty eligible scope, zero retrieval candidates, clarification required,
 comparison-side incomplete, temporal scope unresolved where a case can
@@ -350,7 +351,7 @@ that grading be recorded explicitly in the corpus, not inferred at
 evaluation time. Metrics must be reproducible from the same deterministic
 inputs — a metric that can silently vary run to run for identical inputs
 is not a deterministic metric and must not be presented as one. Raw vector
-similarity scores (ADR-0018) are never treated as ground truth or as a
+similarity scores ([retrieval planning and eligibility contract](../data-api-contracts/retrieval-planning-eligibility-and-retriever.md)) are never treated as ground truth or as a
 substitute for a human-authored relevance grade; a metric is computed
 against the corpus's own labelled expectations, not against what the
 system under test happened to think was similar. No release threshold or
@@ -419,7 +420,7 @@ the schema being coupled to whichever providers happen to be selected
 today: repository commit; corpus version; quality-gate-policy version;
 evaluation-harness version; planner provider/model/configuration; the
 embedding-profile fingerprint (ADR-0013); chunking strategy/configuration;
-retrieval configuration and `candidate_k` (ADR-0018); evaluator
+retrieval configuration and `candidate_k` ([retrieval planning and eligibility contract](../data-api-contracts/retrieval-planning-eligibility-and-retriever.md)); evaluator
 identity/configuration (which metric implementations, and which framework
 adapter versions, if any, actually ran); execution timestamp; latency;
 token usage; and estimated provider cost. Fields anticipating hybrid
@@ -634,11 +635,11 @@ A's adapter boundary does not already provide.
 
 Considered, as the brief's own proposed fallback, and rejected — see
 "Stable evidence identity" above. `NormalisedElement` identity is derived
-from `ExtractedElement` identity, which ADR-0010 explicitly does not
+from `ExtractedElement` identity, which [extraction contract](../data-api-contracts/canonical-extracted-document.md) explicitly does not
 guarantee stable across independent extraction runs; anchoring ground
 truth to it would silently invalidate the corpus's relevance labels the
 first time a parser library changes, which is named, expected, ordinary
-evolution under ADR-0010, not a rare edge case.
+evolution under [extraction contract](../data-api-contracts/canonical-extracted-document.md), not a rare edge case.
 
 ### A single composite "RAG score"
 
@@ -743,7 +744,7 @@ unmeasured for however long Phase 16 through Phase 17's gap lasts.
 - Text-containment relevance matching is real implementation work, and is
   a softer signal than exact-identifier matching would have been if
   pipeline identifiers were actually stable enough to use — accepted
-  because they are not, per ADR-0010/ADR-0016, not by choice.
+  because they are not, per [extraction contract](../data-api-contracts/canonical-extracted-document.md)/[ingestion publication and recovery specification](../data-api-contracts/ingestion-publication-and-recovery.md), not by choice.
 - Building the `ModelAssistedEvaluator` contract and the `RagasEvaluator`
   adapter in Stage 16.6 is real additional implementation surface beyond
   the deterministic metrics alone — a live LLM-judge dependency, its own

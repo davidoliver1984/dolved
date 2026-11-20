@@ -1173,8 +1173,9 @@ presentation.
 
 Produce the first current-code, live-provider body of evidence for how
 Dolved performs on retrieval and grounded generation, separately and end to
-end, over a realistic versioned organisational corpus, after ADR-0030
-through ADR-0036 are implemented and before Phase 31 reviews the connected
+end, over a realistic versioned organisational corpus, after the accepted
+document metadata, governance, library, import, bulk-operations and
+notifications specifications are implemented and before Phase 31 reviews the connected
 product visually. All existing engineering/calibration/held-out
 evaluation-independence rules carry forward unchanged; this phase adds a
 live, current-commit run on top of that governance rather than relaxing it.
@@ -1265,9 +1266,12 @@ retrieval, governance or audit decisions.
 
 ### Sessions
 
-- R29-S01: decide and freeze branding scope, ownership and lifecycle,
-  reconciling ADR-0036's reserved seam and ADR-0041's single-client delivery
-  boundary.
+- R29-S01: specify or extend the bounded branding behaviour, ownership,
+  lifecycle and acceptance criteria from the Product Interface and Design
+  System, Administration and Tenant Control Plane, and Document Governance
+  Notifications and Reminders specifications. ADR-0041 remains the
+  single-client delivery constraint; add another ADR only if a new
+  consequential architectural choice is required.
 - R29-S02: implement validated logo/wordmark, product name, favicon and
   light/dark accent configuration, with authorised administration, preview,
   lifecycle and safe Dolved fallbacks.

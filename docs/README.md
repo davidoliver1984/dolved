@@ -2,17 +2,24 @@
 
 Use the document type that matches the material's purpose. Requirements and behaviour belong in specifications; significant choices and their rationale belong in architecture decision records; sequenced work belongs in delivery plans; operating procedures belong in runbooks.
 
+Implementation tasks should link to the specification that defines their behaviour,
+constraints, interfaces and acceptance criteria. Ordinary specification maintenance does
+not require an ADR. Add an ADR only when the work makes a significant architectural choice
+whose rationale and alternatives need a durable decision record.
+
 ## Product and feature specifications
 
-See [Product and feature specifications](specs/README.md#product-and-feature-specifications).
+See [current Dolved and Dify-facing product requirements](specs/README.md#current-dolved-and-dify-facing-product-requirements)
+and [shared governance and product requirements](specs/README.md#shared-governance-and-product-requirements).
 
 ## Data and API contracts
 
-See [Data and API contract specifications](specs/README.md#data-and-api-contract-specifications).
+See the [specification applicability index](specs/README.md), which distinguishes
+Dolved-owned contracts from retained custom RAG contracts.
 
 ## Quality specifications
 
-See [Quality specifications](specs/README.md#quality-specifications).
+See the quality entries under [retained custom RAG contracts](specs/README.md#retained-custom-rag-contracts).
 
 ## Architecture and decision records
 
@@ -47,3 +54,15 @@ Evidence packages, journals and historical delivery records retain the terminolo
 - Files explicitly marked `initial`, archived, sealed or checksummed remain historical evidence and are not current navigation targets.
 
 See [Documentation Classification](DOCUMENTATION_CLASSIFICATION.md) for the classification and provenance map.
+
+## Forward workflow: bounded branding
+
+The next bounded platform-admin branding task starts from the
+[Product Interface and Design System](specs/product-features/product-interface-and-design-system.md),
+[Administration and Tenant Control Plane](specs/product-features/administration-and-tenant-control.md)
+and the branding seam in
+[Document Governance Notifications and Reminders](specs/product-features/document-governance-notifications-and-reminders.md).
+Specify or extend the bounded behaviour and acceptance criteria before implementation.
+[ADR-0041](adr/0041-use-stock-self-hosted-dify-for-single-client-delivery.md)
+continues to constrain the single-client Dify delivery architecture. A further ADR is
+needed only if branding introduces a new consequential architectural choice.

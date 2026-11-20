@@ -12,7 +12,7 @@ Accepted by David, 16 November 2026, in the conditional Stop 1 acceptance of com
 
 Development experiments suggest useful question-level pooling but do not establish production reliability. Document authority does not fully express requested information scope. A current document may describe history, and a single need may contain both current and historical requests. Presentation currently has several competing projections of persisted answer parts and notices.
 
-Preserve ADR-0002 service responsibilities, ADR-0005 authentication, ADR-0006 tenancy, ADR-0017 authority, ADR-0021 ranking, ADR-0024 durable conversations and ADR-0039 scope facts. This establishes profile-scoped exceptions to ADR-0018/0022/0038 interpretation and ADR-0023 generation ownership/presentation, not global removal of legacy paths.
+Preserve ADR-0002 service responsibilities, ADR-0005 authentication, ADR-0006 tenancy, [versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md) authority, ADR-0021 ranking, [conversation and streaming specification](../product-features/conversations-and-streaming.md) durable conversations and ADR-0039 scope facts. This establishes profile-scoped exceptions to [retrieval planning and eligibility contract](../data-api-contracts/retrieval-planning-eligibility-and-retriever.md), [temporal and location-reference contract](../data-api-contracts/retrieval-planning-temporal-and-location-reference.md) and ADR-0038 interpretation and [grounded generation contract](../data-api-contracts/grounded-generation.md) generation ownership/presentation, not global removal of legacy paths.
 
 ## Decision
 

@@ -8,17 +8,19 @@ Accepted
 
 2026-08-28
 
-## Relationship to prior ADRs
+## Relationship to prior documents
 
 This specification sits entirely upstream of the existing ingestion outbox/claim
-pipeline (ADR-0008/0015/0016): no `document.ingestion.requested` event is
-published before promotion commits. It consumes ADR-0030 (metadata
-classification, checksum state), ADR-0031 (`CreateDocumentVersion`,
+pipeline (ADR-0008, the [ingestion orchestration contract](../data-api-contracts/ingestion-orchestration-and-worker-results.md)
+and the [ingestion publication and recovery specification](../data-api-contracts/ingestion-publication-and-recovery.md)):
+no `document.ingestion.requested` event is
+published before promotion commits. It consumes [document metadata specification](../data-api-contracts/document-family-and-version-metadata.md) (metadata
+classification, checksum state), [version-governance specification](../product-features/version-governance-content-reuse-and-family-deletion.md) (`CreateDocumentVersion`,
 `CreateApplicabilityOnlySuccessor`, governance actions, family-lineage
 locking), and ADR-0032 (canonical artefact, conditional-create/write-once
 object protection) as frozen Tier 1 (`TIER_1_READY_TO_FREEZE`) without
 reopening any of their decisions. It supplies the `ImportItem`/
-`PromotionAttempt` primitives ADR-0035's bulk operations, ADR-0036's
+`PromotionAttempt` primitives [bulk document operations specification](../product-features/bulk-document-operations.md)'s bulk operations, [governance notifications specification](../product-features/document-governance-notifications-and-reminders.md)'s
 notification triggers, and ADR-0037's export will consume.
 
 ## Context
@@ -178,7 +180,7 @@ database now structurally proves about the references between them.
 **No promotion may begin before `preflight_status = 'verified'` and
 `match_status = 'resolved'`, plus the full readiness criteria already
 established** (checksum/size/media verified; exactly one family/successor
-decision; every required ADR-0030 field present; applicability resolved;
+decision; every required [document metadata specification](../data-api-contracts/document-family-and-version-metadata.md) field present; applicability resolved;
 no unresolved duplicate; no unresolved matching ambiguity).
 
 **Decision snapshot** — a dedicated, immutable row, not a bare JSON blob
@@ -199,7 +201,7 @@ what lets `PromotionAttempt` bind to a snapshot **and** structurally
 guarantee it belongs to the same item, below.
 
 **Exact included fields**: the family/successor decision (new family, or a
-named existing family's `public_id` as predecessor target), every ADR-0030
+named existing family's `public_id` as predecessor target), every [document metadata specification](../data-api-contracts/document-family-and-version-metadata.md)
 field under review (title, description, category, tags, owner, review
 date, publisher/source label, source URL), and the applicability
 selection. **No uncontrolled or raw source content of any kind** — never
@@ -214,7 +216,7 @@ place; a changed decision produces a new snapshot row entirely.
 |---|---|
 | `id`, `public_id` | |
 | `import_item_id`, `workspace_id` | Composite FK, mirroring `ImportItem`'s own workspace binding |
-| `decision_snapshot_id`, `import_item_id` | **Composite FK** `(decision_snapshot_id, import_item_id)` references `(id, import_item_id)` on the decision-snapshot table — **structurally**, not merely by convention, prevents a `PromotionAttempt` from ever referencing a snapshot belonging to a different `ImportItem`, the same composite-FK pattern ADR-0017 already uses for `documents_predecessor_workspace_family_foreign` |
+| `decision_snapshot_id`, `import_item_id` | **Composite FK** `(decision_snapshot_id, import_item_id)` references `(id, import_item_id)` on the decision-snapshot table — **structurally**, not merely by convention, prevents a `PromotionAttempt` from ever referencing a snapshot belonging to a different `ImportItem`, the same composite-FK pattern [versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md) already uses for `documents_predecessor_workspace_family_foreign` |
 | `attempt_ordinal` | **`UNIQUE (import_item_id, attempt_ordinal)`** — unique within its item, monotonically increasing, so attempts have a stable, human-legible sequence independent of timing |
 | `status` | Bounded enum, exactly the state-machine vocabulary below |
 | `reserved_object_key` | The content-addressed permanent key (below) |
@@ -299,7 +301,7 @@ summarises. Any materialised projection or cache used for display
 performance is rebuildable from the underlying rows at any time and is
 never itself authoritative.
 
-**Actor/system provenance** — the same explicit XOR pattern ADR-0030
+**Actor/system provenance** — the same explicit XOR pattern [document metadata specification](../data-api-contracts/document-family-and-version-metadata.md)
 already establishes for its audit table, reused here rather than
 reinvented: `actor_type` is `human` or `system`; a human row requires
 `actor_user_id IS NOT NULL` and `system_actor_code IS NULL`; a system row
@@ -324,11 +326,12 @@ verification task, not an open decision.
 ### Preflight — selected transport: asynchronous, worker-topology-consistent
 
 **Selected, after inspecting the actual worker topology**: verified that
-Python's role throughout ADR-0008/0015/0016 is exclusively as an
+Python's role throughout ADR-0008 and the ingestion orchestration
+specifications is exclusively as an
 SQS-consuming worker claiming outbox-published events — there is no
 existing precedent for Laravel calling Python synchronously in the
 ingestion-adjacent pipeline (the one synchronous Laravel-to-Python
-protocol in this codebase, ADR-0018's `rc1`, belongs to retrieval/
+protocol in this codebase, [retrieval planning and eligibility contract](../data-api-contracts/retrieval-planning-eligibility-and-retriever.md)'s `rc1`, belongs to retrieval/
 generation, a materially different, latency-sensitive subsystem preflight
 has no reason to imitate). **Asynchronous, outbox/worker-topology-
 consistent preflight is selected accordingly:**
@@ -435,7 +438,7 @@ version's governance standing.
   proceeds as an ordinary new-family or new-version decision — explicitly
   distinguished from a blocking duplicate against live content.
 - **If identical bytes match a live version and the intended change is
-  applicability-only**, the UI directs the user to ADR-0031's
+  applicability-only**, the UI directs the user to [version-governance specification](../product-features/version-governance-content-reuse-and-family-deletion.md)'s
   `CreateApplicabilityOnlySuccessor` action instead of re-uploading
   identical content through this specification's promotion path — the two are
   different operations, and this specification's duplicate guard exists to prevent
@@ -474,7 +477,7 @@ organisational metadata with content identity.
 
 ### Shared workspace/checksum serialization primitive
 
-**Corrected: an earlier design excluded ADR-0031's applicability-only
+**Corrected: an earlier design excluded [version-governance specification](../product-features/version-governance-content-reuse-and-family-deletion.md)'s applicability-only
 clone from this specification's checksum-reservation mechanism entirely, on the
 reasoning that a clone's identical checksum is intentional, not a
 duplicate.** That reasoning is correct about *duplicate rejection*, but
@@ -482,12 +485,12 @@ it does not follow that clone should skip *serialization* — without a
 shared lock, an import promotion and a concurrent clone for the same
 underlying bytes could each read the current `Document` set before the
 other commits, producing exactly the phantom-duplicate/phantom-absence
-race this mechanism exists to prevent. **Verified against ADR-0031's own
+race this mechanism exists to prevent. **Verified against [version-governance specification](../product-features/version-governance-content-reuse-and-family-deletion.md)'s own
 text: it defines no workspace-checksum lock, reservation, or serialization
 mechanism of any kind, and states nothing that would forbid one — there is
 no Tier-1 contradiction here, and this correction is resolved entirely
 within this specification, as the consumer-side specification both this specification's own
-promotion path and ADR-0031's clone operation must follow.**
+promotion path and [version-governance specification](../product-features/version-governance-content-reuse-and-family-deletion.md)'s clone operation must follow.**
 
 **`WorkspaceChecksumReservation`** — one durable row per
 `(workspace_id, source_checksum_sha256)`:
@@ -513,11 +516,11 @@ promotion path and ADR-0031's clone operation must follow.**
   inside the already-short, already-bounded final transaction** each
   consuming operation already performs — promotion's
   own final revalidation-and-commit transaction (step 6–7 below), and
-  ADR-0031's clone operation's own analogous final transaction (its
+  [version-governance specification](../product-features/version-governance-content-reuse-and-family-deletion.md)'s clone operation's own analogous final transaction (its
   `SOURCE_VERIFIED → COMMITTED`-equivalent step, where it verifies
   six-layer completeness and transitions the target to `INDEXED`). The
   checksum lock is acquired before the existing item/family/version locks;
-  once it is held, each consumer retains ADR-0031's family-first
+  once it is held, each consumer retains [version-governance specification](../product-features/version-governance-content-reuse-and-family-deletion.md)'s family-first
   deterministic order for every remaining family/version lock. **No
   lease is required for this lock**: because it is acquired and released
   entirely within one ordinary, already-bounded database transaction —
@@ -553,7 +556,7 @@ promotion path and ADR-0031's clone operation must follow.**
 4. **An applicability-only clone may bypass duplicate *rejection*** —
    because its matching-checksum content is intentional — **but never
    bypasses this lock**. It still acquires the same lock, still performs
-   the same fresh re-query, and then proceeds to satisfy ADR-0031's own
+   the same fresh re-query, and then proceeds to satisfy [version-governance specification](../product-features/version-governance-content-reuse-and-family-deletion.md)'s own
    clone invariants (the compatibility proof, the predecessor's current
    claim state) against that fresh, lock-protected view. **"Clone bypasses
    duplicate detection" never means "clone bypasses serialization"** —
@@ -584,7 +587,7 @@ byte-identical content never contend with each other.
 
 ### Metadata review and promotion readiness
 
-Unchanged: exactly ADR-0030's classified fields reviewed with sensible
+Unchanged: exactly [document metadata specification](../data-api-contracts/document-family-and-version-metadata.md)'s classified fields reviewed with sensible
 defaults, clearly-optional fields, collapsible advanced detail, no forced
 setup. Promotion readiness requires: checksum/size/media verified; exactly
 one family/successor decision; every required field present; applicability
@@ -683,7 +686,7 @@ ownership transfers. The reserved-key cleanup sweep must lock the
 references the exact key before ever deleting it; a key is deleted only
 when no committed `Document` owns it and no open attempt or valid lease
 may still write to it. Deletion of the resulting `Document` later is
-exclusively ADR-0025/ADR-0031's concern; this specification's sweep never touches
+exclusively [administration and tenant-control specification](../product-features/administration-and-tenant-control.md)/[version-governance specification](../product-features/version-governance-content-reuse-and-family-deletion.md)'s concern; this specification's sweep never touches
 that key again once ownership has transferred. Cleanup and commit are
 serialised by this same lock, never two independently-timed checks.
 
@@ -753,7 +756,7 @@ possibly-stale record.
    `SOURCE_VERIFIED` with the bound evidence.
 6. **A fresh, final short transaction**: idempotently ensure and lock the
    workspace-checksum reservation row **first**; then lock the
-   `ImportItem` and relevant family/version rows in ADR-0031's existing
+   `ImportItem` and relevant family/version rows in [version-governance specification](../product-features/version-governance-content-reuse-and-family-deletion.md)'s existing
    family-first deterministic order; re-verify lease/decision/
    cancellation/authorization currency (above); re-run the exact-duplicate
    query; re-run the conflicting-successor check; re-verify metadata and
@@ -998,7 +1001,7 @@ Rejected — this admits a genuine concurrent duplicate in the gap between
 the two statements. A dedicated, uniquely-constrained reservation row
 closes it.
 
-### Excluding ADR-0031's applicability-only clone from the checksum
+### Excluding [version-governance specification](../product-features/version-governance-content-reuse-and-family-deletion.md)'s applicability-only clone from the checksum
 ### reservation/lock entirely
 
 This was an earlier design in this specification and is withdrawn: it correctly
@@ -1061,9 +1064,9 @@ different authorised actor, are required instead.
 ## Scope boundaries
 
 This specification does not define: the ingestion outbox/claim/lease protocol
-itself; ADR-0031's governance actions or family-deletion flow; ADR-0032's
-artefact/projection mechanics; ADR-0035's bulk-operation mechanics beyond
-the primitives it consumes; ADR-0036's notification triggers; ADR-0037's
+itself; [version-governance specification](../product-features/version-governance-content-reuse-and-family-deletion.md)'s governance actions or family-deletion flow; ADR-0032's
+artefact/projection mechanics; [bulk document operations specification](../product-features/bulk-document-operations.md)'s bulk-operation mechanics beyond
+the primitives it consumes; [governance notifications specification](../product-features/document-governance-notifications-and-reminders.md)'s notification triggers; ADR-0037's
 export; the exact numeric values for staging retention windows beyond the
 seven-day default, drain-window duration, failure-ceiling counts, or
 matching-score thresholds (bounded, tested, R25 implementation
@@ -1096,14 +1099,14 @@ proof and its backend-unsupported fail-closed path; **the complete legacy-
 marker bootstrap sequence** (pre-existing rows, rows racing the cutover
 transaction, idempotent restart) and the legacy cutover/drain sequence for
 every pre-cutover state; and the projection lifecycle tests specified in
-ADR-0033 for `document_family_activity_summary`, since this specification's own
+[knowledge-library specification](../product-features/knowledge-library-navigation.md) for `document_family_activity_summary`, since this specification's own
 promotion commit is one of that projection's allowlisted producers.
 
 Required Playwright journeys: one-file import; mixed multi-file import;
 resuming an unfinished batch; a duplicate-then-corrected-retry cycle; a
 `CONFLICT`-then-adoption-by-a-different-authorised-actor cycle; promoting,
 approving/indexing, and reaching genuine searchable readiness (the same
-terminal condition ADR-0033's onboarding journey asserts).
+terminal condition [knowledge-library specification](../product-features/knowledge-library-navigation.md)'s onboarding journey asserts).
 
 ## Implementation and session allocation (R25)
 
@@ -1128,5 +1131,5 @@ terminal condition ADR-0033's onboarding journey asserts).
   ingestion-worker-protocol changes outside this specification's scope).
 - **R25-S07 — Tests and Playwright journeys.** The complete list above.
 
-Not allocated here: ADR-0035's bulk-execution UI, ADR-0036's notification
+Not allocated here: [bulk document operations specification](../product-features/bulk-document-operations.md)'s bulk-execution UI, [governance notifications specification](../product-features/document-governance-notifications-and-reminders.md)'s notification
 UI, ADR-0037's export UI.

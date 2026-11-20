@@ -8,22 +8,22 @@ Accepted
 
 2026-08-07
 
-## Relationship to ADR-0019
+## Relationship to [retrieval evaluation and quality-gates specification](../quality/retrieval-evaluation-and-quality-gates.md)
 
 **ADR-0019 remains Accepted and authoritative.** This document does not
-reopen, redesign, or re-litigate any part of ADR-0019's architecture:
+reopen, redesign, or re-litigate any part of [retrieval evaluation and quality-gates specification](../quality/retrieval-evaluation-and-quality-gates.md)'s architecture:
 repository ownership of the corpus, schema, results, baselines and
 quality-gate policy; corpus versioning and immutability; layered planner/
 eligibility/retrieval/operational evaluation; first-class slices; the
 absolute-invariant/comparative-quality distinction; deliberate baseline
 promotion; the initial human-reviewed release gate; the framework-neutral
 `ModelAssistedEvaluator` boundary with a concrete `RagasEvaluator` in V1;
-and the evaluation/generation separation all stand exactly as ADR-0019
+and the evaluation/generation separation all stand exactly as [retrieval evaluation and quality-gates specification](../quality/retrieval-evaluation-and-quality-gates.md)
 already decided them.
 
 Before `R16-S06` implementation began, Codex performed a pre-implementation
 review of accepted ADR-0019 and found several implementation-significant
-issues — some factual corrections to what ADR-0019's text implied, some
+issues — some factual corrections to what [retrieval evaluation and quality-gates specification](../quality/retrieval-evaluation-and-quality-gates.md)'s text implied, some
 underspecified points implementation would otherwise have had to guess at.
 Because ADR-0019 was already committed and tagged (`phase-16-s05`) by the
 time this review happened, this document follows this repository's own
@@ -31,7 +31,7 @@ immutability rule: **an accepted ADR is not rewritten in place; a
 correction or clarification is recorded as a new, narrower ADR that says
 explicitly what it changes and what it leaves standing.** This document is
 that narrow follow-up. It clarifies and, only for the bounded points listed
-below, partially supersedes ADR-0019; every other part of ADR-0019 is
+below, partially supersedes [retrieval evaluation and quality-gates specification](../quality/retrieval-evaluation-and-quality-gates.md); every other part of [retrieval evaluation and quality-gates specification](../quality/retrieval-evaluation-and-quality-gates.md) is
 unchanged and this document must not be read as reopening it.
 
 **Which points are clarification versus partial supersession**, stated
@@ -40,12 +40,12 @@ deterministic-metric semantics over it, the digest/lineage additions,
 case-first aggregation, the deterministic-versus-stochastic distinction,
 the offline/live test policy, and the `RagasEvaluator` model-injection and
 failure-handling requirements are all **clarifications and additions** —
-they make explicit what ADR-0019's stated intent already implied, without
-changing what ADR-0019 decided. The adversarial-case ownership correction,
+they make explicit what [retrieval evaluation and quality-gates specification](../quality/retrieval-evaluation-and-quality-gates.md)'s stated intent already implied, without
+changing what [retrieval evaluation and quality-gates specification](../quality/retrieval-evaluation-and-quality-gates.md) decided. The adversarial-case ownership correction,
 the narrowed V1 `ModelAssistedEvaluationRequest` shape, and the corrected
 Ragas context-relevance semantics are **partial supersessions** — each
-corrects a specific claim ADR-0019's text made (or a specific field its
-text permitted) that does not hold up against ADR-0018's actual contract
+corrects a specific claim [retrieval evaluation and quality-gates specification](../quality/retrieval-evaluation-and-quality-gates.md)'s text made (or a specific field its
+text permitted) that does not hold up against [retrieval planning and eligibility contract](../data-api-contracts/retrieval-planning-eligibility-and-retriever.md)'s actual contract
 or Ragas's actual documented behaviour. Both kinds are recorded in one
 document because both were found in the same review and both are bounded,
 not because this document treats them as the same kind of change.
@@ -57,22 +57,22 @@ directly against accepted ADR-0019. Before doing so, Codex performed the
 pre-implementation review this repository's workflow already expects of an
 architecture stage before its implementation session starts, and found
 issues an implementer would otherwise have had to resolve unilaterally, or
-would have implemented incorrectly against ADR-0019's literal text. Two
-were factual corrections: ADR-0019's adversarial-case framing implied
+would have implemented incorrectly against [retrieval evaluation and quality-gates specification](../quality/retrieval-evaluation-and-quality-gates.md)'s literal text. Two
+were factual corrections: [retrieval evaluation and quality-gates specification](../quality/retrieval-evaluation-and-quality-gates.md)'s adversarial-case framing implied
 document content could reach and corrupt `RetrievalPlanner`, which
-contradicts ADR-0018's own contract (the planner receives only the
-question and an evaluation instant, never documents); and ADR-0019's
+contradicts [retrieval planning and eligibility contract](../data-api-contracts/retrieval-planning-eligibility-and-retriever.md)'s own contract (the planner receives only the
+question and an evaluation instant, never documents); and [retrieval evaluation and quality-gates specification](../quality/retrieval-evaluation-and-quality-gates.md)'s
 `ModelAssistedEvaluationRequest` description simultaneously permitted a
 reference answer in the V1 request while elsewhere correctly stating that
 Phase 17 would define answer-dependent fields — an internal contradiction.
-The remainder were genuine underspecifications: ADR-0019 committed to
+The remainder were genuine underspecifications: [retrieval evaluation and quality-gates specification](../quality/retrieval-evaluation-and-quality-gates.md) committed to
 source-anchored relevance ground truth without naming the ground-truth
 unit itself; committed to Ragas integration without settling model
 ownership, test policy, or failure isolation; and left several lineage and
 aggregation questions (content digests, phrasing-variant weighting,
 stochastic reproducibility) implicit rather than stated.
 
-None of these findings challenge ADR-0019's architecture. All of them are
+None of these findings challenge [retrieval evaluation and quality-gates specification](../quality/retrieval-evaluation-and-quality-gates.md)'s architecture. All of them are
 exactly the kind of bounded precision a pre-implementation review is
 supposed to surface before an implementer has to guess.
 
@@ -81,7 +81,7 @@ supposed to surface before an implementer has to guess.
 This specification decides, and only this: the corrected adversarial-case ownership
 split (planner-robustness versus retrieval-robustness versus generation-
 robustness); the repository-owned `EvidenceUnit` contract as the stable
-ground-truth anchor ADR-0019's source-anchoring direction requires;
+ground-truth anchor [retrieval evaluation and quality-gates specification](../quality/retrieval-evaluation-and-quality-gates.md)'s source-anchoring direction requires;
 distinct-evidence-unit semantics for Recall@K/Precision@K/MRR/nDCG, with
 deterministic, versioned, recorded duplicate-credit handling (exact formula
 left to `R16-S06`); reaffirmation that `ModelAssistedEvaluator` →
@@ -97,7 +97,7 @@ content digests as part of experiment/baseline lineage; case-first
 aggregation of phrasing variants; the distinction between deterministic
 metric reproducibility and stochastic live-model reproducibility; and
 confirmation that `R16-S06` remains the correct implementation owner for
-all of the above. It does not decide anything ADR-0019 already settled and
+all of the above. It does not decide anything [retrieval evaluation and quality-gates specification](../quality/retrieval-evaluation-and-quality-gates.md) already settled and
 does not mention above — that architecture is untouched, referenced here
 by cross-reference, never restated as if newly decided.
 
@@ -105,9 +105,9 @@ by cross-reference, never restated as if newly decided.
 
 ### Adversarial-case ownership, corrected
 
-ADR-0019's adversarial-content discussion is corrected — this is a partial
-supersession of ADR-0019's "Required V1 case families" section, not an
-extension of it. ADR-0018 is explicit that `RetrievalPlanner` receives only
+[retrieval evaluation and quality-gates specification](../quality/retrieval-evaluation-and-quality-gates.md)'s adversarial-content discussion is corrected — this is a partial
+supersession of [retrieval evaluation and quality-gates specification](../quality/retrieval-evaluation-and-quality-gates.md)'s "Required V1 case families" section, not an
+extension of it. [retrieval planning and eligibility contract](../data-api-contracts/retrieval-planning-eligibility-and-retriever.md) is explicit that `RetrievalPlanner` receives only
 the user's question text and an authoritative evaluation instant; it never
 receives retrieved documents, and never touches PostgreSQL or Qdrant. A
 document's content therefore cannot corrupt `RetrievalPlanner` — there is
@@ -133,18 +133,18 @@ component actually receives each kind of adversarial input:
   actually influencing a *generated answer* (instruction-following effects,
   prompt injection reaching the generation model) requires a generation
   step this pipeline does not yet have. Remains Stage 17.4's concern,
-  exactly as ADR-0019 already deferred it; only the *ownership split above*
+  exactly as [retrieval evaluation and quality-gates specification](../quality/retrieval-evaluation-and-quality-gates.md) already deferred it; only the *ownership split above*
   is corrected here, not the deferral itself.
 
 ### The repository-owned `EvidenceUnit` contract
 
-ADR-0019 commits to anchoring relevance ground truth to source content
+[retrieval evaluation and quality-gates specification](../quality/retrieval-evaluation-and-quality-gates.md) commits to anchoring relevance ground truth to source content
 rather than any pipeline-generated identifier, but does not name the
 ground-truth unit itself. This document supplies it, as a clarification of
-ADR-0019's "Stable evidence identity" section, not a change to its
+[retrieval evaluation and quality-gates specification](../quality/retrieval-evaluation-and-quality-gates.md)'s "Stable evidence identity" section, not a change to its
 direction: `ExtractedElement`, `NormalisedElement`, and `Chunk` identity
-remain rejected as ground-truth anchors, exactly as ADR-0019 already
-established, because ADR-0010/ADR-0011 do not guarantee those identities
+remain rejected as ground-truth anchors, exactly as [retrieval evaluation and quality-gates specification](../quality/retrieval-evaluation-and-quality-gates.md) already
+established, because [extraction contract](../data-api-contracts/canonical-extracted-document.md)/[chunking contract](../data-api-contracts/chunking-contract.md) do not guarantee those identities
 stable across independent reprocessing or chunking-configuration changes.
 
 An `EvidenceUnit` is the stable, repository-owned ground-truth concept — a
@@ -179,7 +179,7 @@ evidence, never accidental chunk boundaries.**
 
 ### Deterministic metrics, defined over distinct evidence units
 
-A clarification of ADR-0019's "Deterministic retrieval metrics" section,
+A clarification of [retrieval evaluation and quality-gates specification](../quality/retrieval-evaluation-and-quality-gates.md)'s "Deterministic retrieval metrics" section,
 restating each metric precisely against `EvidenceUnit` coverage:
 
 - **Recall@K** — denominator is the count of *distinct* required
@@ -201,7 +201,7 @@ restating each metric precisely against `EvidenceUnit` coverage:
 
 Multi-evidence-case completeness is measured by coverage of the declared,
 distinct `EvidenceUnit` set — never by chunk count. Nothing here changes
-ADR-0019's own position that no numerical release threshold or regression
+[retrieval evaluation and quality-gates specification](../quality/retrieval-evaluation-and-quality-gates.md)'s own position that no numerical release threshold or regression
 tolerance is fixed in advance of `R16-S06`'s first measured baseline.
 
 ### `ModelAssistedEvaluator` → `RagasEvaluator`: reaffirmed, not reopened
@@ -225,15 +225,15 @@ configuration-owned dependency** — it never instantiates a provider or
 model implicitly inside the adapter. This is the same explicit-
 configuration discipline this platform already applies to `Embedder`'s
 provider selection and to `RetrievalPlanner`'s own model configuration,
-applied here to close a gap ADR-0019's adapter description left open. No
+applied here to close a gap [retrieval evaluation and quality-gates specification](../quality/retrieval-evaluation-and-quality-gates.md)'s adapter description left open. No
 Ragas-specific type — dataset object, metric class, exception type,
 configuration structure — appears anywhere outside the `RagasEvaluator`
-adapter, exactly as ADR-0019 already required; injected model ownership is
+adapter, exactly as [retrieval evaluation and quality-gates specification](../quality/retrieval-evaluation-and-quality-gates.md) already required; injected model ownership is
 what makes that isolation testable rather than merely asserted (see
 "Offline and live test policy" below).
 
 **Model-assisted experiment lineage** additionally records, beyond what
-ADR-0019's general experiment-lineage requirements already cover: the
+[retrieval evaluation and quality-gates specification](../quality/retrieval-evaluation-and-quality-gates.md)'s general experiment-lineage requirements already cover: the
 evaluator implementation identity; the Ragas library version; the judge
 provider and judge model identity; relevant evaluator prompt/settings/
 configuration; temperature and seed where the provider supports them;
@@ -272,7 +272,7 @@ repository regression and dependency-compatibility verification during
 
 ### The Phase 16 `ModelAssistedEvaluationRequest` is retrieval-specific
 
-A partial supersession of ADR-0019's request description, which
+A partial supersession of [retrieval evaluation and quality-gates specification](../quality/retrieval-evaluation-and-quality-gates.md)'s request description, which
 simultaneously permitted a reference answer in the V1 request while
 elsewhere correctly stating Phase 17 would define answer-dependent fields
 — an internal contradiction resolved here in favour of the narrower
@@ -287,12 +287,12 @@ merely to future-proof against metrics Phase 16 does not use. When Stage
 17.4 introduces answer-dependent metrics, it extends or versions this
 application-owned request type with the fields those metrics genuinely
 require — an additive change to a type this platform already owns, not a
-redesign, and not something this document or ADR-0019 needs to anticipate
+redesign, and not something this document or [retrieval evaluation and quality-gates specification](../quality/retrieval-evaluation-and-quality-gates.md) needs to anticipate
 the exact shape of now.
 
 ### Ragas context-relevance: aggregate judgement, never candidate-level attribution
 
-A partial supersession correcting an overclaim risk in how ADR-0019
+A partial supersession correcting an overclaim risk in how [retrieval evaluation and quality-gates specification](../quality/retrieval-evaluation-and-quality-gates.md)
 described the Phase 16 Ragas signal. Ragas's context-relevance metric
 evaluates the **supplied retrieved-context set as an aggregate**, against
 the question — it is not, and must not be described as, a mechanism that
@@ -304,13 +304,13 @@ investigation, but it must never be presented as candidate-level
 attribution unless a future, specifically-selected metric actually
 provides that property. Deterministic `EvidenceUnit` matching remains the
 sole authoritative mechanism for candidate-level relevance judgement,
-exactly as ADR-0019 already establishes for deterministic metrics
+exactly as [retrieval evaluation and quality-gates specification](../quality/retrieval-evaluation-and-quality-gates.md) already establishes for deterministic metrics
 generally; the Ragas signal is a second, coarser, aggregate-level opinion
 alongside it, not a replacement or a refinement of it.
 
 ### V1 access/isolation cases match the permission model actually implemented
 
-A clarification of ADR-0019's "Required V1 case families" security/
+A clarification of [retrieval evaluation and quality-gates specification](../quality/retrieval-evaluation-and-quality-gates.md)'s "Required V1 case families" security/
 isolation coverage. ADR-0006 establishes workspace membership as V1's
 access boundary; there is no document-level or access-group-level granular
 permission model implemented, and `R16-S06` must not invent one merely to
@@ -325,7 +325,7 @@ actually exists to test.
 
 ### Canonical corpus/policy content digests
 
-A clarification and addition to ADR-0019's corpus-immutability and
+A clarification and addition to [retrieval evaluation and quality-gates specification](../quality/retrieval-evaluation-and-quality-gates.md)'s corpus-immutability and
 experiment-lineage requirements. A version label alone cannot prove an
 allegedly immutable corpus or quality-gate policy was not edited in place.
 Every corpus version and every quality-gate-policy version therefore also
@@ -344,7 +344,7 @@ silently mean different content.
 
 ### Case-first aggregation of phrasing variants
 
-A clarification of ADR-0019's stable semantic case identity. Every
+A clarification of [retrieval evaluation and quality-gates specification](../quality/retrieval-evaluation-and-quality-gates.md)'s stable semantic case identity. Every
 phrasing variant is evaluated independently, but variant results are
 aggregated *within* their semantic case before that case contributes to
 corpus- or slice-level metrics; every semantic case then carries equal
@@ -358,7 +358,7 @@ number, never what is recorded or inspectable.
 
 ### Deterministic metric reproducibility versus live model-output determinism
 
-A clarification, not a weakening, of ADR-0019's reproducibility
+A clarification, not a weakening, of [retrieval evaluation and quality-gates specification](../quality/retrieval-evaluation-and-quality-gates.md)'s reproducibility
 requirement. **Deterministic metric implementations must reproduce exactly
 for the same recorded inputs** — given the same retrieved-candidate list
 and the same `EvidenceUnit` set, Recall@K/Precision@K/MRR/nDCG compute the
@@ -376,12 +376,12 @@ planner configuration; temperature; seed, where the provider supports one;
 per-trial results; aggregate statistics; and variance/dispersion across
 trials. This document does not mandate how many trials are required or
 what variance is acceptable — those remain numerical quality-gate-policy
-decisions, calibrated from evidence, exactly as ADR-0019 already defers
+decisions, calibrated from evidence, exactly as [retrieval evaluation and quality-gates specification](../quality/retrieval-evaluation-and-quality-gates.md) already defers
 metric tolerances generally.
 
 ### `R16-S06` implementation ownership, confirmed and corrected
 
-`R16-S06` remains the correct implementation owner for everything ADR-0019
+`R16-S06` remains the correct implementation owner for everything [retrieval evaluation and quality-gates specification](../quality/retrieval-evaluation-and-quality-gates.md)
 already assigned it, now including every clarification above: the
 repository-owned corpus/schema; `EvidenceUnit`s and deterministic matching;
 Recall@K/Precision@K/MRR/nDCG over distinct evidence units; slicing;
@@ -398,19 +398,19 @@ implementation before this specification itself is reviewed and accepted.
 
 ## Alternatives considered
 
-### Rewriting ADR-0019 in place
+### Rewriting [retrieval evaluation and quality-gates specification](../quality/retrieval-evaluation-and-quality-gates.md) in place
 
-Rejected, and the reason this document exists at all. ADR-0019 was already
+Rejected, and the reason this document exists at all. [retrieval evaluation and quality-gates specification](../quality/retrieval-evaluation-and-quality-gates.md) was already
 committed and tagged (`phase-16-s05`) before this review happened; this
 repository's immutability rule for accepted ADRs applies regardless of how
 bounded or clearly-correct a change is. A narrow, explicit follow-up ADR
 preserves the historical record of what was actually decided when, exactly
 as this repository has done for every prior correction of this kind.
 
-### Treating this as a full re-review of ADR-0019 requiring a new ADR-0019-equivalent draft
+### Treating this as a full re-review of [retrieval evaluation and quality-gates specification](../quality/retrieval-evaluation-and-quality-gates.md) requiring a new [retrieval evaluation and quality-gates specification](../quality/retrieval-evaluation-and-quality-gates.md)-equivalent draft
 
 Rejected. Every finding was bounded and implementation-significant, not a
-disagreement with ADR-0019's architecture — repository ownership, corpus
+disagreement with [retrieval evaluation and quality-gates specification](../quality/retrieval-evaluation-and-quality-gates.md)'s architecture — repository ownership, corpus
 versioning, layering, slicing, baselines, and the gate model were all
 explicitly confirmed unchanged. Drafting a full replacement would
 misrepresent the scope of what was actually found and would obscure, not
@@ -418,9 +418,9 @@ clarify, which parts of the accepted record still stand.
 
 ### Describing adversarial document content as a `RetrievalPlanner` robustness concern
 
-This was ADR-0019's original framing, and is corrected here — see
+This was [retrieval evaluation and quality-gates specification](../quality/retrieval-evaluation-and-quality-gates.md)'s original framing, and is corrected here — see
 "Adversarial-case ownership" above. It implied document content could
-corrupt planner classification, directly contradicting ADR-0018's actual
+corrupt planner classification, directly contradicting [retrieval planning and eligibility contract](../data-api-contracts/retrieval-planning-eligibility-and-retriever.md)'s actual
 contract.
 
 ### A nullable `generated_answer`/`reference_answer` field on the V1 request, for convenience against an anticipated Stage 17.4 need
@@ -481,7 +481,7 @@ property that mattered.
 - Corpus and policy content digests turn "this accepted baseline's inputs
   were not silently edited" into a checkable fact.
 - The corrected adversarial-case ownership keeps this platform's threat
-  model consistent with ADR-0018's actual contract, rather than asserting
+  model consistent with [retrieval planning and eligibility contract](../data-api-contracts/retrieval-planning-eligibility-and-retriever.md)'s actual contract, rather than asserting
   a planner attack surface that does not exist.
 - Injected, configuration-owned model ownership for `RagasEvaluator`, plus
   the offline/live test policy, makes the adapter genuinely testable
@@ -499,7 +499,7 @@ property that mattered.
   a design preference.
 - Building `EvidenceUnit`, its deterministic matching, and the digest/
   lineage additions is real implementation surface for `R16-S06` beyond
-  what ADR-0019 alone would have specified.
+  what [retrieval evaluation and quality-gates specification](../quality/retrieval-evaluation-and-quality-gates.md) alone would have specified.
 - Adding the concrete Ragas dependency introduces a substantial transitive
   dependency set, per Codex's own compatibility review, requiring a full
   repository regression and dependency-compatibility verification during
@@ -558,22 +558,22 @@ property that mattered.
 - Deterministic metric implementations must reproduce exactly for
   identical recorded inputs; this never implies or requires byte-identical
   output from a live `RetrievalPlanner` or model-assisted judge call.
-- `R16-S06` remains the correct implementation owner for ADR-0019's
+- `R16-S06` remains the correct implementation owner for [retrieval evaluation and quality-gates specification](../quality/retrieval-evaluation-and-quality-gates.md)'s
   architecture and every clarification this document adds.
 
 ## Scope boundaries
 
-This document does not define, and leaves exactly where ADR-0019 (or later
+This document does not define, and leaves exactly where [retrieval evaluation and quality-gates specification](../quality/retrieval-evaluation-and-quality-gates.md) (or later
 stages) already leaves them:
 
-- anything ADR-0019 already decided and does not appear as a clarified or
+- anything [retrieval evaluation and quality-gates specification](../quality/retrieval-evaluation-and-quality-gates.md) already decided and does not appear as a clarified or
   corrected point above;
 - hybrid retrieval architecture, sparse/dense fusion, or a reranker
   contract — `R16-S07`;
 - calibrated evidence thresholds;
 - generation evaluation's exact answer-dependent metrics or corpus
   extensions — Stage 17.4, extending the `ModelAssistedEvaluator`/
-  `RagasEvaluator` adapter ADR-0019 builds;
+  `RagasEvaluator` adapter [retrieval evaluation and quality-gates specification](../quality/retrieval-evaluation-and-quality-gates.md) builds;
 - granular per-document or access-group permission cases — mandatory only
   once such a permission model is actually implemented;
 - the exact JSON-Schema document, corpus file layout,
@@ -587,5 +587,5 @@ stages) already leaves them:
   implementation and verification work, informed but not fixed by Codex's
   compatibility review.
 
-These remain open for the stages named above, and for ADR-0019 itself, to
+These remain open for the stages named above, and for [retrieval evaluation and quality-gates specification](../quality/retrieval-evaluation-and-quality-gates.md) itself, to
 decide with the context this document establishes.

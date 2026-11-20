@@ -8,7 +8,7 @@ Accepted
 
 2026-08-06
 
-## Relationship to prior ADRs
+## Relationship to prior documents
 
 ### Supersession of ADR-0007, in part
 
@@ -64,8 +64,8 @@ version is, what lineage means, what "authoritative at time T" means, and
 the invariants that keep that meaning consistent. It does not own how
 retrieval consumes that model. That split mirrors how ADR-0007 (the Document
 domain model) relates to ADR-0008 (the publication mechanics that consume
-it), and how ADR-0014 (the storage domain model) relates to ADR-0015/0016
-(the orchestration that consumes it) — Stage 16.2 (ADR-0018) is the
+it), and how ADR-0014 (the storage domain model) relates to [ingestion orchestration contract](../data-api-contracts/ingestion-orchestration-and-worker-results.md) and [ingestion publication and recovery specification](../data-api-contracts/ingestion-publication-and-recovery.md)
+(the orchestration that consumes it) — Stage 16.2 ([retrieval planning and eligibility contract](../data-api-contracts/retrieval-planning-eligibility-and-retriever.md)) is the
 consumer here, not this document.
 
 ## What this specification decides and does not decide
@@ -79,7 +79,7 @@ versions and their cancellation/rescheduling semantics; a minimum governance
 (approval) state model, orthogonal to the existing technical lifecycle; and
 the domain shape for optional, hierarchical location applicability. It does
 not decide `RetrievalPlanner`, `EligibilityResolver`, or the Retriever
-contract (ADR-0018); it does not decide evaluation or reranking (Stage 16.4,
+contract ([retrieval planning and eligibility contract](../data-api-contracts/retrieval-planning-eligibility-and-retriever.md)); it does not decide evaluation or reranking (Stage 16.4,
 Stage 16.6); it does not decide the Laravel-to-Python synchronous call
 contract retrieval will eventually need (recorded as required Stage 16.2
 work, not designed here); and it does not decide administrative CRUD,
@@ -554,7 +554,7 @@ hierarchy.
 
 **Applicability is recorded per version, as an immutable snapshot — not as
 mutable state on the family.** A version's own content, structure and
-provenance are already immutable once created (ADR 0007, ADR 0010, ADR
+provenance are already immutable once created (ADR 0007, [extraction contract](../data-api-contracts/canonical-extracted-document.md), ADR
 0011); which locations it applied to is exactly the same kind of fact, and
 treating it any less permanently would let a later, unrelated change to
 "the family's applicability" silently rewrite the context every past version
@@ -584,17 +584,17 @@ and configuration UX are Phase 19 (Administration) concerns. This specification
 defines only the domain shape retrieval eligibility and durable historical
 data require.
 
-### Interaction with ADR-0016's dual retrieval gate
+### Interaction with [ingestion publication and recovery specification](../data-api-contracts/ingestion-publication-and-recovery.md)'s dual retrieval gate
 
 Unchanged, restated for clarity because it is easy to get this wrong once a
-temporal dimension exists: ADR-0016's dual gate — a published Qdrant point
+temporal dimension exists: [ingestion publication and recovery specification](../data-api-contracts/ingestion-publication-and-recovery.md)'s dual gate — a published Qdrant point
 **and** PostgreSQL `INDEXED` — remains the unconditional structural
 prerequisite for a chunk to be retrievable at all. `INDEXED` continues to
-mean exactly what ADR-0007 and ADR-0016 already say it means: the complete,
+mean exactly what ADR-0007 and [ingestion publication and recovery specification](../data-api-contracts/ingestion-publication-and-recovery.md) already say it means: the complete,
 verified searchable representation exists. It is never redefined, here or
 anywhere, to mean `CURRENT` or "temporally authoritative." This specification's
 governance and temporal-authority model is a **third, additive gate**,
-applied on top of the existing two by `EligibilityResolver` (ADR-0018) — a
+applied on top of the existing two by `EligibilityResolver` ([retrieval planning and eligibility contract](../data-api-contracts/retrieval-planning-eligibility-and-retriever.md)) — a
 version can be fully `INDEXED` and structurally retrievable while still
 failing this third gate (not yet approved, not yet effective, or withdrawn),
 and that is the expected, common case for a scheduled future version.
@@ -729,7 +729,7 @@ forward only.
 
 Considered and rejected as premature, consistent with this platform's
 repeated preference to defer scope until a demonstrated need exists (ADR
-0006's deferred permission engine, ADR 0010's loss-minimisation principle,
+0006's deferred permission engine, [extraction contract](../data-api-contracts/canonical-extracted-document.md)'s loss-minimisation principle,
 ADR 0013's decision not to self-host embeddings). A three-state governance
 model is the minimum that makes `CURRENT`/`VALID_AT_DATE`/`COMPARE`
 resolvable honestly; multi-step sign-off, delegation and notification are
@@ -740,7 +740,7 @@ anticipate speculatively.
 
 ### Positive
 
-- Retrieval (ADR-0018) inherits one settled, honestly-derived definition of
+- Retrieval ([retrieval planning and eligibility contract](../data-api-contracts/retrieval-planning-eligibility-and-retriever.md)) inherits one settled, honestly-derived definition of
   "authoritative," rather than having to invent one under implementation
   pressure.
 - `CURRENT` and `VALID_AT_DATE` sharing one derivation rule means they
@@ -875,7 +875,7 @@ anticipate speculatively.
 - Location applicability defaults to `UNIVERSAL` when unset, extends to
   descendant locations, and is always evaluated independently of user
   access.
-- ADR-0016's dual gate (published Qdrant point plus PostgreSQL `INDEXED`)
+- [ingestion publication and recovery specification](../data-api-contracts/ingestion-publication-and-recovery.md)'s dual gate (published Qdrant point plus PostgreSQL `INDEXED`)
   remains the unconditional prerequisite for retrievability; this specification's
   governance/temporal gate is additive, never a redefinition of `INDEXED`.
 - `DocumentFamily`, version lineage, governance state and
@@ -888,9 +888,9 @@ This document does not define:
 
 - `RetrievalPlanner`, `EligibilityResolver`, or the Retriever contract,
   including how `COMPARE`'s two sides are resolved and returned — Stage
-  16.2 (ADR-0018);
+  16.2 ([retrieval planning and eligibility contract](../data-api-contracts/retrieval-planning-eligibility-and-retriever.md));
 - the authenticated, bounded, synchronous Laravel-to-Python call contract
-  retrieval will need — required Stage 16.2 (ADR-0018) work, explicitly not
+  retrieval will need — required Stage 16.2 ([retrieval planning and eligibility contract](../data-api-contracts/retrieval-planning-eligibility-and-retriever.md)) work, explicitly not
   designed here;
 - evaluation corpus design, metrics, or quality gates — Stage 16.4;
 - hybrid retrieval or reranking — Stage 16.6;

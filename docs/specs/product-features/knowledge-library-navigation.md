@@ -8,9 +8,9 @@ Accepted
 
 2026-08-28
 
-## Relationship to prior ADRs
+## Relationship to prior documents
 
-ADR-0027 establishes the `AppShell`'s stable/contextual navigation model,
+[product interface and design-system specification](../product-features/product-interface-and-design-system.md) establishes the `AppShell`'s stable/contextual navigation model,
 the semantic-token/theme architecture, the chat evidence/citation
 presentation contract (including `source_route` as the canonical field
 naming `/app/workspaces/{workspace}/documents/{document}` as a citation's
@@ -22,17 +22,17 @@ inside the shell's existing contextual slot, verified directly against
 Administration and Platform Operations but not yet for Documents.
 
 **This specification preserves `/app/workspaces/{workspace}/documents/{document}`
-exactly as ADR-0027 already fixed it** — no reinterpretation of that
+exactly as [product interface and design-system specification](../product-features/product-interface-and-design-system.md) already fixed it** — no reinterpretation of that
 route segment as a family identity is made anywhere in this document.
 Every existing citation `source_route`, bookmark, and live route continues
 to resolve unchanged.
 
-This specification consumes ADR-0030 (metadata classification, checksum state),
-ADR-0031 (governance actions, clone mechanism, family deletion), and
+This specification consumes [document metadata specification](../data-api-contracts/document-family-and-version-metadata.md) (metadata classification, checksum state),
+[version-governance specification](../product-features/version-governance-content-reuse-and-family-deletion.md) (governance actions, clone mechanism, family deletion), and
 ADR-0032 (canonical extraction artefact, projection, source delivery) as
 frozen Tier 1 (`TIER_1_READY_TO_FREEZE`) without reopening any of their
-decisions. It does not redecide ADR-0017's authority/applicability rules,
-ADR-0035's bulk-operation semantics, ADR-0036's notification/activity-feed
+decisions. It does not redecide [versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md)'s authority/applicability rules,
+[bulk document operations specification](../product-features/bulk-document-operations.md)'s bulk-operation semantics, [governance notifications specification](../product-features/document-governance-notifications-and-reminders.md)'s notification/activity-feed
 architecture, or ADR-0037's export design.
 
 ## Context
@@ -46,7 +46,7 @@ already exists and is reusable; `GetWorkspaceUsage.php`, read in full,
 counts every technical-status-active document (including `DRAFT`-
 governance and `failed`) with no governance or applicability filtering and
 also returns cost/token data, so it cannot back a member-safe searchable
-count; `WorkspaceMembership` carries no location field, and ADR-0018's own
+count; `WorkspaceMembership` carries no location field, and [retrieval planning and eligibility contract](../data-api-contracts/retrieval-planning-eligibility-and-retriever.md)'s own
 resolution flow states that an undirected query applies no location
 narrowing at all — there is no per-member location-assignment concept
 anywhere in the accepted architecture. This revision responds to Codex's
@@ -68,14 +68,14 @@ statements.
 /documents/families/{familyPublicId}/compare
     ?from={documentPublicId}&to={documentPublicId}   — comparison
 /documents/{documentPublicId}                        — version detail/source,
-                                                        exactly as ADR-0027
+                                                        exactly as [product interface and design-system specification](../product-features/product-interface-and-design-system.md)
                                                         already fixes it
 /documents/scheduled
 /documents/attention
 /documents/saved/{savedViewPublicId}
 /documents/settings/categories
-/documents/imports        — appears once ADR-0034's read model exists
-/documents/deleted        — appears once ADR-0031's family-deletion
+/documents/imports        — appears once [import staging and promotion specification](../product-features/import-staging-and-promotion.md)'s read model exists
+/documents/deleted        — appears once [version-governance specification](../product-features/version-governance-content-reuse-and-family-deletion.md)'s family-deletion
                              tombstone data exists (R23-S02c)
 /documents/export         — appears once ADR-0037 exists
 ```
@@ -95,16 +95,16 @@ correct active item.
 
 **The canonical row is exactly one row per `DocumentFamily`.**
 
-**Family-owned fields**, sourced from `DocumentFamily`/ADR-0030 and
+**Family-owned fields**, sourced from `DocumentFamily`/[document metadata specification](../data-api-contracts/document-family-and-version-metadata.md) and
 **never** from any individual version row:
 
 | Field | Source | Notes |
 |---|---|---|
-| Human title | `DocumentFamily` (backing `document_families.name`, ADR-0030) | Primary display identity |
+| Human title | `DocumentFamily` (backing `document_families.name`, [document metadata specification](../data-api-contracts/document-family-and-version-metadata.md)) | Primary display identity |
 | Description | `DocumentFamily` | Shown in expanded/detail context only |
 | Category | `DocumentFamily.category_id` | Omitted, not blank, when none |
-| Tags | Family-tag assignment (ADR-0030) | Up to 20, omitted when none |
-| Owner | `DocumentFamily.owner_user_id` | Displays "Needs reassignment" using ADR-0030's derived eligibility, never a blank |
+| Tags | Family-tag assignment ([document metadata specification](../data-api-contracts/document-family-and-version-metadata.md)) | Up to 20, omitted when none |
+| Owner | `DocumentFamily.owner_user_id` | Displays "Needs reassignment" using [document metadata specification](../data-api-contracts/document-family-and-version-metadata.md)'s derived eligibility, never a blank |
 | Review-due date | `DocumentFamily` | Omitted when unset |
 
 **These six fields are read from the family row exactly once per row** —
@@ -115,7 +115,7 @@ applicability-only clone creates a new current version while the family's
 own title/description/category/tags/owner/review-date are untouched).
 
 **Version-derived fields**, sourced from the family's **currently
-authoritative version**, resolved by ADR-0017's own `CURRENT` derivation —
+authoritative version**, resolved by [versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md)'s own `CURRENT` derivation —
 never a bare "most recently created version" query, and never a stored
 flag:
 
@@ -124,9 +124,9 @@ flag:
 | Technical status | `Document.status` | ADR-0007's lifecycle |
 | Source filename | `Document.source_filename` | Immutable |
 | Media type / size | `Document` | Immutable |
-| Checksum / verification status | `Document.source_checksum_sha256` / `checksum_verification_status` | ADR-0030 |
-| Governance status / effective dates | `Document.governance_status`, `effective_from`, `approved_at`, `withdrawn_at` | ADR-0017 |
-| Current-authority badge | Derived from ADR-0017's `CURRENT` derivation applied at read time | Never a stored boolean |
+| Checksum / verification status | `Document.source_checksum_sha256` / `checksum_verification_status` | [document metadata specification](../data-api-contracts/document-family-and-version-metadata.md) |
+| Governance status / effective dates | `Document.governance_status`, `effective_from`, `approved_at`, `withdrawn_at` | [versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md) |
+| Current-authority badge | Derived from [versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md)'s `CURRENT` derivation applied at read time | Never a stored boolean |
 | Scheduled-state summary | A bounded existence check against approved, not-yet-attained versions in the family | See below |
 | Extraction warning/failure state | `Document`'s existing warning/failure fields (ADR-0007), plus ADR-0032's extraction-warning count for the current version | |
 
@@ -150,7 +150,7 @@ flag:
 4. **A family with withdrawn/historical versions only** (every version has
    attained and then lost authority, none currently holds it): the row
    shows "No current version" with the most recent withdrawal date, per
-   ADR-0017's own "this is a real state, not a bug" language — version-
+   [versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md)'s own "this is a real state, not a bug" language — version-
    derived fields remain absent.
 5. **A newly created family/version still processing** (technical status
    before `INDEXED`): the row shows the real technical status
@@ -165,16 +165,16 @@ flag:
 explicit allowlist of event types, the **latest** of:
 
 - A family metadata mutation (title, description, category, tags, owner,
-  review date — ADR-0030's audit mechanism).
+  review date — [document metadata specification](../data-api-contracts/document-family-and-version-metadata.md)'s audit mechanism).
 - A version creation.
 - A governance transition (approve, withdraw, reschedule, timestamp
-  correction — ADR-0017/0031).
+  correction — [versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md) and [version-governance specification](../product-features/version-governance-content-reuse-and-family-deletion.md)).
 - A technical-state transition reaching `INDEXED` or `FAILED`.
-- An applicability-only successor (clone) creation — ADR-0031.
+- An applicability-only successor (clone) creation — [version-governance specification](../product-features/version-governance-content-reuse-and-family-deletion.md).
 - A new extraction warning recorded against the current version.
 
 **Explicitly excluded**: viewing, searching, pagination, any audit event
-unrelated to the allowlist above, and notification delivery (ADR-0036) —
+unrelated to the allowlist above, and notification delivery ([governance notifications specification](../product-features/document-governance-notifications-and-reminders.md)) —
 none of these are "the document changed."
 
 **`document_family_activity_summary` — complete operational lifecycle**,
@@ -185,12 +185,12 @@ one row per family, storing `family_id` (unique) and
   from scratch, purely from the timestamps on the authoritative rows and
   append-only events that prove each allowlisted change:
   family-scoped `document_governance_audit_events.occurred_at` rows with
-  ADR-0030's allowlisted metadata-mutation actions for family metadata;
+  [document metadata specification](../data-api-contracts/document-family-and-version-metadata.md)'s allowlisted metadata-mutation actions for family metadata;
   `documents.created_at` for version creation;
   `document_governance_audit_events.occurred_at` for governance changes;
   `ingestion_audit_events.occurred_at` for the allowlisted terminal
   `publication_completed → INDEXED` and `processing_failed → FAILED`
-  transitions; the durable ADR-0031 clone-operation/audit timestamp for
+  transitions; the durable [version-governance specification](../product-features/version-governance-content-reuse-and-family-deletion.md) clone-operation/audit timestamp for
   clone creation; and the durable ADR-0032 artefact/publication timestamp
   that records a persisted extraction warning. For an extraction warning,
   the allowlist predicate is
@@ -238,7 +238,7 @@ one row per family, storing `family_id` (unique) and
   governance events are Laravel-initiated directly; a technical status
   transition and an extraction warning are recorded by Laravel while
   processing Python's ingestion-worker completion/failure callback, which
-  Laravel already handles transactionally (ADR-0015/0016). **Because every
+  Laravel already handles transactionally ([ingestion orchestration contract](../data-api-contracts/ingestion-orchestration-and-worker-results.md) and [ingestion publication and recovery specification](../data-api-contracts/ingestion-publication-and-recovery.md)). **Because every
   producer already commits inside a Laravel transaction, same-transaction
   projection maintenance is used uniformly for all six event types** — an
   `UPSERT` (`INSERT ... ON CONFLICT (family_id) DO UPDATE`) is issued in
@@ -310,7 +310,7 @@ This is genuine new Laravel work, allocated to R24-S02 below.
 
 1. One base query against `document_families`, filtered to the workspace,
    **excluding** any family with an open family-deletion tombstone
-   (ADR-0031), **`LEFT JOIN`ed** to `document_family_activity_summary`
+   ([version-governance specification](../product-features/version-governance-content-reuse-and-family-deletion.md)), **`LEFT JOIN`ed** to `document_family_activity_summary`
    (falling back to the family's own `created_at` where the join finds no
    row, per "Last meaningful update" above) for sorting.
 2. **Current-authority selection** through one deterministic subquery/join
@@ -344,10 +344,10 @@ versions — never one top-level row per version.
 Category, tags, and title/filename search exist only for library
 organisation and filtering — never altering embeddings, retrieval ranking,
 or evidence eligibility, and never silently entering a chat query.
-Applicability remains a separate, location-based ADR-0017 eligibility
+Applicability remains a separate, location-based [versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md) eligibility
 fact, resolved independently of anything this filtering surface does. V1
 has organisational locations only, no departments or teams; the future
-second-applicability-axis seam ADR-0017 already reserves is preserved,
+second-applicability-axis seam [versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md) already reserves is preserved,
 not built. "Applicability is not confidentiality" appears verbatim in
 every user-facing explanation this specification specifies.
 
@@ -359,8 +359,8 @@ every user-facing explanation this specification specifies.
 |---|---|---|
 | `public_id` | UUID, unique | Browser-facing identity — `savedViewPublicId` in every route/API reference, matching this repository's established public-identity convention |
 | `workspace_id` | FK, `restrictOnDelete()` | Composite-scoped with every other field below |
-| `user_id` | FK to `users.id`, `restrictOnDelete()`, reconciled directly against the real schema — a saved view has no `WorkspaceMembership`-row reference, since (per ADR-0030's own owner-identity precedent) the durable identity is the `User`, not the membership row, so a view survives a membership's later end exactly long enough for its own cleanup rule (below) to act on it, never orphaned by a dangling membership FK | |
-| `name` | Bounded string, max 100 characters, plus a normalized form (NFC, trim, whitespace-collapse, case-fold) for uniqueness comparison, mirroring ADR-0030's category/tag normalization rule exactly | **Unique on `(workspace_id, user_id, normalized_name)`** — a user cannot have two saved views that are the "same" name modulo case/whitespace |
+| `user_id` | FK to `users.id`, `restrictOnDelete()`, reconciled directly against the real schema — a saved view has no `WorkspaceMembership`-row reference, since (per [document metadata specification](../data-api-contracts/document-family-and-version-metadata.md)'s own owner-identity precedent) the durable identity is the `User`, not the membership row, so a view survives a membership's later end exactly long enough for its own cleanup rule (below) to act on it, never orphaned by a dangling membership FK | |
+| `name` | Bounded string, max 100 characters, plus a normalized form (NFC, trim, whitespace-collapse, case-fold) for uniqueness comparison, mirroring [document metadata specification](../data-api-contracts/document-family-and-version-metadata.md)'s category/tag normalization rule exactly | **Unique on `(workspace_id, user_id, normalized_name)`** — a user cannot have two saved views that are the "same" name modulo case/whitespace |
 | `definition_schema_version` | Integer | Versioned, so a later schema change can be detected and degraded honestly (below) |
 | `definition` | JSON, canonical/versioned, max bounded size (a configured cap, R24 implementation measurement) | See allowed keys below |
 | `created_at` / `updated_at` | Timestamps | |
@@ -381,7 +381,7 @@ reinterpreted, never a crash.
 
 **Archived category / retired location referenced by a saved filter**:
 continues to filter correctly — both remain valid historical values under
-ADR-0030/ADR-0017 — never treated as "unsupported."
+[document metadata specification](../data-api-contracts/document-family-and-version-metadata.md)/[versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md) — never treated as "unsupported."
 
 **Rename and delete**: authorised to the owning user only — no
 `owner`/`admin` override in V1, since a saved view carries no shared or
@@ -395,7 +395,7 @@ cross-workspace.
 
 **Cleanup**: removed automatically when the owning membership ends (a
 saved view has no provenance value worth preserving once its owner can no
-longer use it — unlike ADR-0030's document-owner field, which is
+longer use it — unlike [document metadata specification](../data-api-contracts/document-family-and-version-metadata.md)'s document-owner field, which is
 preserved for provenance/audit reasons a saved view has none of). If the
 underlying `User` account is disabled rather than removed from the
 workspace, the saved view is retained but inert (not resolvable through
@@ -408,7 +408,7 @@ decomposition, using safe identities only.
 **No governance weight of any kind** — a saved view cannot grant, imply,
 or substitute for any authorization, and **stores no frozen result set** —
 it is re-evaluated against live data every time it is opened, the
-deliberate opposite of ADR-0035's frozen bulk-operation membership.
+deliberate opposite of [bulk document operations specification](../product-features/bulk-document-operations.md)'s frozen bulk-operation membership.
 
 **Future ADR-0037 seam**: exportable as user-owned portable configuration,
 keyed by the owner's stable public identity — not designed further here.
@@ -416,8 +416,8 @@ keyed by the owner's stable public identity — not designed further here.
 ### Category settings
 
 A route-backed Library settings surface (`/documents/settings/categories`)
-supporting ADR-0030's full lifecycle: create, rename (audited), archive
-(never hard-delete while referenced, reusing ADR-0030's
+supporting [document metadata specification](../data-api-contracts/document-family-and-version-metadata.md)'s full lifecycle: create, rename (audited), archive
+(never hard-delete while referenced, reusing [document metadata specification](../data-api-contracts/document-family-and-version-metadata.md)'s
 `OrganisationalLocation`-derived safe-deletion rule), archived categories
 remaining visible on existing families while excluded from new-assignment
 pickers. Not placed in Platform Operations. Tags remain freeform with no
@@ -432,26 +432,26 @@ answer from them. One or more: the exact, truthful count, always.
 
 **Verified, decisive finding this count's definition is built on**: no
 accepted ADR or existing schema defines a per-user or per-membership
-assignment to one or more organisational locations, and ADR-0018's own
+assignment to one or more organisational locations, and [retrieval planning and eligibility contract](../data-api-contracts/retrieval-planning-eligibility-and-retriever.md)'s own
 resolution flow states that an undirected query applies **no** location
 narrowing at all. The count therefore mirrors that exactly: distinct
 `DocumentFamily` rows (never one row per applicability-location join —
 proven by `COUNT(DISTINCT family)`, never a join-row count) whose current
-version (ADR-0017's `CURRENT` derivation) is technically `INDEXED`,
+version ([versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md)'s `CURRENT` derivation) is technically `INDEXED`,
 governance-`APPROVED`-and-current, and not `DELETING`/`DELETED`/`FAILED` —
 with **no applicability-based exclusion**, because that is exactly what
-undirected eligibility already means under ADR-0018.
+undirected eligibility already means under [retrieval planning and eligibility contract](../data-api-contracts/retrieval-planning-eligibility-and-retriever.md).
 
 This count is named "currently searchable within your workspace's
 knowledge base," never a per-question promise: a question naming one
 specific location narrows the actually-retrieved set to a real subset of
-this baseline, resolved at query time by ADR-0018's unmodified
+this baseline, resolved at query time by [retrieval planning and eligibility contract](../data-api-contracts/retrieval-planning-eligibility-and-retriever.md)'s unmodified
 `EligibilityResolver`, independent of this count.
 
 A new, member-safe Laravel query answers this directly over the same
 accepted `DocumentFamily`/`Document`/`OrganisationalLocation`/
 applicability-snapshot tables and the same `CURRENT`-derivation rule
-ADR-0017 fixes — never a call to `EligibilityResolver` itself (which
+[versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md) fixes — never a call to `EligibilityResolver` itself (which
 answers a query-plan-shaped question, not a bare aggregate), never a
 retrieval call, never Python, never a provider call. The endpoint is
 available to any authenticated workspace member and returns only the
@@ -475,30 +475,30 @@ produced, starter questions are omitted entirely.
 
 ### Deleted/history — ownership
 
-ADR-0031 owns family-deletion tombstone semantics and persistence (its
+[version-governance specification](../product-features/version-governance-content-reuse-and-family-deletion.md) owns family-deletion tombstone semantics and persistence (its
 own R23-S02c session). This specification owns the `/documents/deleted` route and
 presentation contract, once that tombstone data exists — an owner/admin-
 only view listing family tombstones with recorded deletion reason/date and
-audit reference. ADR-0036 may contribute activity-feed events referencing
+audit reference. [governance notifications specification](../product-features/document-governance-notifications-and-reminders.md) may contribute activity-feed events referencing
 a deletion, but owns neither the tombstone data nor this route.
 
 ### Family/version detail — complete behaviour
 
 **Family detail** (`/documents/families/{family}`): family metadata
 (title, description, category, tags, owner, review date), editable inline
-per ADR-0031's API where authorised; the current authoritative version,
+per [version-governance specification](../product-features/version-governance-content-reuse-and-family-deletion.md)'s API where authorised; the current authoritative version,
 visually distinct from every other listed version by governance state, not
 a cosmetic highlight; every historical, draft, scheduled, and withdrawn
 version with its own truthful status and dates and no added general prose
 explanation for non-current status; applicability, source metadata
-(publisher/label/validated URL, ADR-0030), extraction warnings (ADR-0032);
-every governance action ADR-0031's API actually authorises for the
+(publisher/label/validated URL, [document metadata specification](../data-api-contracts/document-family-and-version-metadata.md)), extraction warnings (ADR-0032);
+every governance action [version-governance specification](../product-features/version-governance-content-reuse-and-family-deletion.md)'s API actually authorises for the
 viewer's role and the version's current state, never an action rendered
 available that the API would reject; entry points to source viewing,
 extracted-text inspection, and version comparison; audit/history entry
-points where ADR-0031's audit read model exists. **Preserved citations to
+points where [version-governance specification](../product-features/version-governance-content-reuse-and-family-deletion.md)'s audit read model exists. **Preserved citations to
 older versions are explicitly not exposed on this page in V1**, matching
-ADR-0025's existing no-reverse-citation-listing invariant.
+[administration and tenant-control specification](../product-features/administration-and-tenant-control.md)'s existing no-reverse-citation-listing invariant.
 
 **Source viewing** (from any version-specific context): opens ADR-0032's
 authorised source route, `/app/workspaces/{workspace}/documents/{document}`,
@@ -509,7 +509,7 @@ unsupported source shows a truthful unavailable state with **no dead
 "View source" control at all** — its absence is the honest signal.
 Historical (non-current) sources that remain retrievable show the same
 safe status treatment; a source whose bytes have been deleted under
-ADR-0025/0031 shows the existing "source removed" treatment, matching
+[administration and tenant-control specification](../product-features/administration-and-tenant-control.md) and [version-governance specification](../product-features/version-governance-content-reuse-and-family-deletion.md) shows the existing "source removed" treatment, matching
 citation display exactly.
 
 **Extracted text**: presents ADR-0032's ordered projection only — **never**
@@ -556,10 +556,10 @@ raw JSON dump.
   by-element, from ADR-0032's ordered projection; unchanged sections
   collapse by default for large documents; extraction warnings and
   partial-extraction conditions are shown within the comparison.
-- **Family-editable metadata (ADR-0030) and version-governed/immutable
+- **Family-editable metadata ([document metadata specification](../data-api-contracts/document-family-and-version-metadata.md)) and version-governed/immutable
   source fields are shown in clearly separated sections** — a comparison
   never implies that a title, description, category, tags, owner, or
-  **review-due date** "changed between versions," because ADR-0030
+  **review-due date** "changed between versions," because [document metadata specification](../data-api-contracts/document-family-and-version-metadata.md)
   classifies every one of these as family-owned, not version-owned — they
   cannot differ per version at all, by construction. **Only true
   version-level facts — publisher/source label, source URL, applicability,
@@ -591,9 +591,9 @@ never appear in user-facing copy.
 **Ten distinguished states, never collapsed into one another:**
 
 1. Selected/uploading.
-2. Safely staged (ADR-0034).
+2. Safely staged ([import staging and promotion specification](../product-features/import-staging-and-promotion.md)).
 3. Matching/details unresolved.
-4. Promoted/queued (ADR-0034's `COMMITTED`, ADR-0007's `UPLOADED`/`QUEUED`).
+4. Promoted/queued ([import staging and promotion specification](../product-features/import-staging-and-promotion.md)'s `COMMITTED`, ADR-0007's `UPLOADED`/`QUEUED`).
 5. Processing (ADR-0007's technical `PROCESSING`).
 6. Awaiting approval (technically `INDEXED`, governance `DRAFT`).
 7. Approved but not yet technically ready, where this ordering is possible
@@ -626,18 +626,18 @@ using the corrected count above, with two real actions, **Ask Dolved** and
 alone:
 
 1. Start with a newly provisioned workspace.
-2. Import approximately ten representative documents through ADR-0034's
+2. Import approximately ten representative documents through [import staging and promotion specification](../product-features/import-staging-and-promotion.md)'s
    `ImportBatch` flow.
 3. Resolve every matching/details decision.
 4. Promote (reach `COMMITTED`).
 5. Reach real technical processing completion (`INDEXED`).
-6. Approve/current-authorise as required by ADR-0017/0031.
+6. Approve/current-authorise as required by [versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md) and [version-governance specification](../product-features/version-governance-content-reuse-and-family-deletion.md).
 7. **Assert the readiness count reflects genuinely searchable documents**
    using this specification's corrected count definition — not a raw upload or
    promotion count.
 8. Ask a question genuinely supported by the imported corpus.
 9. Receive a grounded answer with valid evidence/citation behaviour
-   (ADR-0023/0024/0027's existing contract).
+   ([grounded generation contract](../data-api-contracts/grounded-generation.md), [conversation and streaming specification](../product-features/conversations-and-streaming.md) and [product interface and design-system specification](../product-features/product-interface-and-design-system.md)'s existing contract).
 
 **The journey must not pass on upload or indexing alone** — step 9's
 grounded-answer assertion is the journey's actual pass condition.
@@ -662,7 +662,7 @@ never closes a user-facing session.
 ### family identity
 
 Rejected as unsafe — it would silently break every existing citation's
-`source_route`, ADR-0027's already-fixed route, and any bookmark.
+`source_route`, [product interface and design-system specification](../product-features/product-interface-and-design-system.md)'s already-fixed route, and any bookmark.
 
 ### A single navigation-matching code snippet prescribed in the ADR
 
@@ -676,7 +676,7 @@ active destination) plus acceptance tests is the correct level.
 Rejected on inspection: this would silently misrepresent family-level
 facts as version-level ones, and would break the moment a family's own
 metadata and its current version's identity diverge — exactly the
-scenario an applicability-only clone (ADR-0031) creates routinely. Family-
+scenario an applicability-only clone ([version-governance specification](../product-features/version-governance-content-reuse-and-family-deletion.md)) creates routinely. Family-
 owned fields are read from `DocumentFamily` directly, always.
 
 ### Recomputing "last meaningful update" from a live scan of every
@@ -706,7 +706,7 @@ existence/content into a UI surface scoped to another.
 ### location" scope
 
 Rejected on verification: no accepted ADR or schema defines a per-user
-location assignment, and ADR-0018 itself applies no location narrowing to
+location assignment, and [retrieval planning and eligibility contract](../data-api-contracts/retrieval-planning-eligibility-and-retriever.md) itself applies no location narrowing to
 an undirected question. The corrected count mirrors that exactly.
 
 ### Generating starter questions with an LLM call
@@ -734,7 +734,7 @@ implying an unsupported fact.
 
 - The `document_family_activity_summary` projection is new, real
   write-path work touching every existing audited-mutation Action across
-  ADR-0030/0031 — a genuine cross-cutting change, not confined to one
+  [document metadata specification](../data-api-contracts/document-family-and-version-metadata.md) and [version-governance specification](../product-features/version-governance-content-reuse-and-family-deletion.md) — a genuine cross-cutting change, not confined to one
   session.
 - The library table's bounded query plan is more complex to implement
   correctly than a naive per-row loop, and requires its own performance
@@ -744,10 +744,10 @@ implying an unsupported fact.
 
 ## Scope boundaries
 
-This specification does not define: ADR-0027's design system or shell mechanics;
-ADR-0031's governance action semantics or family-deletion flow; ADR-0032's
-source-delivery security mechanics; ADR-0035's bulk-operation mechanics
-beyond the row-contract seam it will consume; ADR-0036's notification
+This specification does not define: [product interface and design-system specification](../product-features/product-interface-and-design-system.md)'s design system or shell mechanics;
+[version-governance specification](../product-features/version-governance-content-reuse-and-family-deletion.md)'s governance action semantics or family-deletion flow; ADR-0032's
+source-delivery security mechanics; [bulk document operations specification](../product-features/bulk-document-operations.md)'s bulk-operation mechanics
+beyond the row-contract seam it will consume; [governance notifications specification](../product-features/document-governance-notifications-and-reminders.md)'s notification
 centre or activity feed; ADR-0037's export UI; the exact Next.js API used
 for segment-aware navigation matching; the exact numeric caps for saved-
 view definition size or starter-question title-suitability rules.
@@ -757,7 +757,7 @@ view definition size or starter-question title-suitability rules.
 | Destination | R24 | R25 | R26 | R27 |
 |---|---|---|---|---|
 | Library, family detail, version history/comparison, saved views, category settings | ✅ | | | |
-| Deleted/history (route + presentation; data from ADR-0031 R23-S02c) | ✅ | | | |
+| Deleted/history (route + presentation; data from [version-governance specification](../product-features/version-governance-content-reuse-and-family-deletion.md) R23-S02c) | ✅ | | | |
 | Needs attention (failed/warning, awaiting approval only) | ✅ | expands | expands | |
 | Imports | | ✅ | | |
 | Needs attention (adds review-due, scheduled-change conflicts) | | | ✅ | |
@@ -771,11 +771,11 @@ view definition size or starter-question title-suitability rules.
   concealment tests for both identifier kinds independently; truthful
   empty states.
 - **R24-S02 — Library table.** Full row contract; `document_family_activity_summary`
-  projection and its write-path integration across ADR-0030/0031's
+  projection and its write-path integration across [document metadata specification](../data-api-contracts/document-family-and-version-metadata.md) and [version-governance specification](../product-features/version-governance-content-reuse-and-family-deletion.md)'s
   audited actions, the ingestion completion/failure callbacks, and
   ADR-0032 warning publication; bounded query plan with its required
   query-count test; URL-backed search/filter/sort/page-size; responsive
-  column reduction; no selection column (deferred to ADR-0035).
+  column reduction; no selection column (deferred to [bulk document operations specification](../product-features/bulk-document-operations.md)).
 - **R24-S03 — Family detail.** Metadata, version list, current-authority
   distinction, governance actions gated by the API's own authorisation.
 - **R24-S04 — Source viewing and extracted text.** Consuming ADR-0032's
@@ -790,16 +790,16 @@ view definition size or starter-question title-suitability rules.
 - **R24-S08 — Playwright: small-corpus readiness journey.** The complete
   import-through-grounded-answer journey specified above.
 - **R24-S09 — Deleted/history route.** The presentation surface for
-  ADR-0031's family-deletion tombstone data.
+  [version-governance specification](../product-features/version-governance-content-reuse-and-family-deletion.md)'s family-deletion tombstone data.
 
-Not allocated here: ADR-0035's bulk-execution UI, ADR-0036's notification
+Not allocated here: [bulk document operations specification](../product-features/bulk-document-operations.md)'s bulk-execution UI, [governance notifications specification](../product-features/document-governance-notifications-and-reminders.md)'s notification
 UI, ADR-0037's export UI.
 
 ### Post-acceptance implementation-sequencing clarification — 2026-08-30
 
 The required Playwright journey above remains normative and unchanged, but its
 original R24-S08 execution allocation created an impossible dependency cycle:
-steps 2–4 require ADR-0034's real `ImportBatch`, `ImportItem`, matching, review
+steps 2–4 require [import staging and promotion specification](../product-features/import-staging-and-promotion.md)'s real `ImportBatch`, `ImportItem`, matching, review
 and promotion implementation, while that implementation is owned by Phase 25
 and Phase 25 originally followed the Phase 24 gate.
 
@@ -807,13 +807,13 @@ R24-S08 contains no independently executable remainder once R24-S07's count,
 starter-question and onboarding-model work is complete. The complete
 import-through-grounded-answer journey therefore executes as a mandatory part
 of R25-S07, after R25-S01 through R25-S06 have implemented and visually
-reviewed the real ADR-0034 workflow. It is not completed, skipped or weakened
+reviewed the real [import staging and promotion specification](../product-features/import-staging-and-promotion.md) workflow. It is not completed, skipped or weakened
 by this clarification. The legacy direct-upload path is explicitly not an
 acceptable substitute.
 
-R24-S09 may proceed after R24-S07 because it depends only on ADR-0031's existing
+R24-S09 may proceed after R24-S07 because it depends only on [version-governance specification](../product-features/version-governance-content-reuse-and-family-deletion.md)'s existing
 family-deletion tombstone data. The Phase 24 gate accepts only the independently
-implemented ADR-0033 product surfaces through R24-S09; it does not claim final
+implemented [knowledge-library specification](../product-features/knowledge-library-navigation.md) product surfaces through R24-S09; it does not claim final
 import-flow acceptance. The Phase 25 gate must not pass until R25-S07 has run
 the complete nine-step journey above, including the genuinely searchable count
 and grounded-answer-with-valid-evidence assertion.

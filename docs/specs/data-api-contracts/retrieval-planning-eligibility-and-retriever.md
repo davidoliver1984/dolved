@@ -8,38 +8,38 @@ Accepted
 
 2026-08-07
 
-## Relationship to prior ADRs
+## Relationship to prior documents
 
-### Consumes ADR-0017; decides nothing about it
+### Consumes [versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md); decides nothing about it
 
-ADR-0017 defines the domain model this specification builds a consumer against:
+[versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md) defines the domain model this specification builds a consumer against:
 `DocumentFamily`, explicit linear version lineage, the derived
 `CURRENT`/`VALID_AT_DATE` temporal-authority rule, the minimal
 `DRAFT → APPROVED → WITHDRAWN` governance model, and per-version
 `OrganisationalLocation` applicability. This specification treats every one of those
 as settled and authoritative. It does not redefine, re-derive, or reopen any
-part of ADR-0017's domain model or invariants — it only decides how a
+part of [versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md)'s domain model or invariants — it only decides how a
 retrieval request consumes them. Where this document needs to name a
-concept ADR-0017 owns (attained authority, an authority window, a
-governance state), it uses ADR-0017's own vocabulary rather than inventing
+concept [versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md) owns (attained authority, an authority window, a
+governance state), it uses [versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md)'s own vocabulary rather than inventing
 a parallel one.
 
-### Extends ADR-0016's dual gate; does not redefine it
+### Extends [ingestion publication and recovery specification](../data-api-contracts/ingestion-publication-and-recovery.md)'s dual gate; does not redefine it
 
-ADR-0016's dual retrieval-visibility gate — a published Qdrant point **and**
+[ingestion publication and recovery specification](../data-api-contracts/ingestion-publication-and-recovery.md)'s dual retrieval-visibility gate — a published Qdrant point **and**
 PostgreSQL `INDEXED` — remains the unconditional structural prerequisite for
-a chunk to be retrievable at all, exactly as ADR-0016 and ADR-0017 both
+a chunk to be retrievable at all, exactly as [ingestion publication and recovery specification](../data-api-contracts/ingestion-publication-and-recovery.md) and [versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md) both
 already state. This specification's eligibility model is a **third, additive gate**,
 applied on top of the existing two, never a substitute for either and never
-a redefinition of what `INDEXED` means. A chunk can pass ADR-0016's dual
+a redefinition of what `INDEXED` means. A chunk can pass [ingestion publication and recovery specification](../data-api-contracts/ingestion-publication-and-recovery.md)'s dual
 gate and still be correctly excluded by this specification's eligibility model (not
 yet approved, not effective, withdrawn, or out of the authorised or
 applicable scope) — that is the expected, common case, not an edge case to
 design around.
 
-### A new, independent protocol — not a supersession of ADR-0009, ADR-0015 or ADR-0016
+### A new, independent protocol — not a supersession of ADR-0009, [ingestion orchestration contract](../data-api-contracts/ingestion-orchestration-and-worker-results.md) or [ingestion publication and recovery specification](../data-api-contracts/ingestion-publication-and-recovery.md)
 
-ADR-0009, ADR-0015 and ADR-0016 together define a purpose-scoped HMAC
+ADR-0009, [ingestion orchestration contract](../data-api-contracts/ingestion-orchestration-and-worker-results.md) and [ingestion publication and recovery specification](../data-api-contracts/ingestion-publication-and-recovery.md) together define a purpose-scoped HMAC
 protocol (`v1`, superseded in part by `v2`) authenticating the Python
 ingestion worker's asynchronous, lease-based requests to Laravel. This
 document introduces a **separate, independently-versioned protocol** for a
@@ -49,7 +49,7 @@ attempt to resume, and no asynchronous delivery semantics. "Retrieval
 planning, eligibility and the retriever contract" below explains why
 reusing the existing protocol's shape was considered and rejected, not
 silently avoided. This document does not touch, reopen, or reinterpret
-ADR-0009, ADR-0015 or ADR-0016's own protocol in any way; the two protocols
+ADR-0009, [ingestion orchestration contract](../data-api-contracts/ingestion-orchestration-and-worker-results.md) or [ingestion publication and recovery specification](../data-api-contracts/ingestion-publication-and-recovery.md)'s own protocol in any way; the two protocols
 are independent, distinguished by principal, key ring and purpose
 namespace, and are expected to evolve independently.
 
@@ -61,7 +61,7 @@ decomposition, evaluation and hybrid retrieval/reranking — accurate under
 the roadmap sequencing at the time each was written. Phase 15 was
 subsequently restructured to "Ingestion Orchestration" and retrieval moved
 to Phase 16 (recorded in `IMPLEMENTATION_GUIDE.md`'s Phase 16 restructuring
-note, 2026-08-03, and carried through ADR-0017). This is the same citation
+note, 2026-08-03, and carried through [versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md)). This is the same citation
 drift ADR-0013 itself already corrected for ADR-0006's forward reference to
 `R13-S01` — this document performs the equivalent correction for ADR-0013's
 and ADR-0014's forward references to "Phase 15," rather than leaving a
@@ -115,7 +115,7 @@ and relevance from being conflated; `AuthorisedKnowledgeScope` as
 Laravel-owned and access-only; the provider-neutral, LLM-backed
 `RetrievalPlanner` boundary and the typed `RetrievalPlan` it produces;
 `EligibilityResolver` as Laravel-owned, deterministic, narrowing-only
-domain logic that consumes ADR-0017's data; how per-version location
+domain logic that consumes [versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md)'s data; how per-version location
 applicability is resolved, kept separate from access; `EligibleRetrievalScope`
 as the provider-neutral, storage-neutral evidence boundary Python is
 allowed to search; `COMPARE`'s two-sided resolution and result semantics;
@@ -146,7 +146,7 @@ Authenticated user
   -> Laravel's EligibilityResolver combines:
        - the RetrievalPlan
        - AuthorisedKnowledgeScope
-       - authoritative DocumentFamily/version/governance/temporal data (ADR-0017)
+       - authoritative DocumentFamily/version/governance/temporal data ([versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md))
   -> Laravel produces an EligibleRetrievalScope
   -> Laravel calls Python's Retriever (rc1: retrieval.search)
   -> Python searches only inside the resolved scope
@@ -204,7 +204,7 @@ universe based on an unverified guess about intent — exactly the kind of
 prompt-controlled access this document exists to prevent.
 
 **Location is the one deliberate, narrow exception to "descriptive terms
-are never hard filters," and only because ADR-0017 independently defines
+are never hard filters," and only because [versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md) independently defines
 applicability as a hard eligibility dimension in its own right** — not
 because location is somehow a more trustworthy category of word than
 "HR." A question naming a specific place (*"the medication procedure at
@@ -216,7 +216,7 @@ and the same "never invented, never guessed" discipline this section
 already requires applies to it exactly as it applies to every other field.
 This exception must not be read as license to extend the same treatment to
 any other descriptive field a future feature might want to treat
-specially; it exists here solely because ADR-0017, not this document, made
+specially; it exists here solely because [versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md), not this document, made
 applicability an authoritative eligibility fact.
 
 ### `AuthorisedKnowledgeScope`: the maximum search universe, Laravel-owned
@@ -322,14 +322,14 @@ mechanisms, and evolve on different schedules:
   boundary ADR-0013 already requires, satisfying the same commitment, not
   reopening or redesigning it.
 - **`temporal_mode`** — the axis this document newly introduces, made
-  possible only now that ADR-0017 gives it a settled meaning: `CURRENT`,
+  possible only now that [versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md) gives it a settled meaning: `CURRENT`,
   `VALID_AT_DATE` (an explicit instant or a bounded temporal selector),
   `COMPARE` (two symbolic anchors), or `CLARIFICATION_REQUIRED` (a
   controlled reason).
 - **`applicability_reference`** — an optional, single, semantic-only
   reference to an organisational location the question appears to name
   (for example, `"Blackpool"`), deliberately kept as narrow as this
-  document could make it while still carrying the fact ADR-0017's
+  document could make it while still carrying the fact [versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md)'s
   applicability model needs. See below for its full contract.
 
 These three axes compose without conflict: V1 always resolves exactly one
@@ -394,29 +394,29 @@ document could make it:
 application/domain logic — not an AI component, not probabilistic, and not
 reachable through the `rc1` protocol, because it never crosses the
 Laravel-to-Python boundary at all. Its input is the `RetrievalPlan`,
-`AuthorisedKnowledgeScope`, and ADR-0017's authoritative
+`AuthorisedKnowledgeScope`, and [versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md)'s authoritative
 `DocumentFamily`/version/governance/temporal data, read directly from
 PostgreSQL. Its output is an `EligibleRetrievalScope`.
 
 It resolves, deterministically:
 
-- `CURRENT` and `VALID_AT_DATE`, using ADR-0017's derivation rule exactly
-  as ADR-0017 defines it — this document does not restate or approximate
+- `CURRENT` and `VALID_AT_DATE`, using [versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md)'s derivation rule exactly
+  as [versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md) defines it — this document does not restate or approximate
   that derivation, it calls it;
 - `COMPARE`'s two symbolic anchors, independently, into two resolved sides
   (see "`COMPARE`" below);
-- approval/governance eligibility and temporal authority (ADR-0017);
+- approval/governance eligibility and temporal authority ([versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md));
 - version lineage, where `PREVIOUS` requires walking one step back through
-  ADR-0017's attained-authority ordering from whatever `PRIMARY` resolved
+  [versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md)'s attained-authority ordering from whatever `PRIMARY` resolved
   to;
-- ADR-0016's dual gate prerequisites (published Qdrant point and
+- [ingestion publication and recovery specification](../data-api-contracts/ingestion-publication-and-recovery.md)'s dual gate prerequisites (published Qdrant point and
   PostgreSQL `INDEXED`) — `EligibilityResolver` never treats a
   not-yet-`INDEXED` version as eligible evidence, regardless of its
   governance or temporal state;
 - an optional `applicability_reference`, resolved deterministically against
   authoritative `OrganisationalLocation` names and aliases, validated
   against `AuthorisedKnowledgeScope`, and — once resolved and validated —
-  applied through ADR-0017's existing per-version applicability rules
+  applied through [versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md)'s existing per-version applicability rules
   exactly as any other applicability fact already is; see "Location and
   applicability" below for the full resolution flow, including what
   happens when it cannot be resolved;
@@ -435,16 +435,16 @@ and no broad or "just search everything current" fallback occurs. An
 unresolved question produces a controlled outcome asking the user to
 clarify, never a wider, unintended search.
 
-### Location and applicability: consuming ADR-0017's model, kept separate from access
+### Location and applicability: consuming [versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md)'s model, kept separate from access
 
-`EligibilityResolver` consumes ADR-0017's `OrganisationalLocation`
-hierarchy and per-version applicability snapshots exactly as ADR-0017
+`EligibilityResolver` consumes [versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md)'s `OrganisationalLocation`
+hierarchy and per-version applicability snapshots exactly as [versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md)
 defines them, deciding nothing new about their shape. Access and
 applicability remain two separate questions, resolved by two separate
 mechanisms, and must never be conflated: authorisation answers *"what may
 this user see?"* (`AuthorisedKnowledgeScope`, Security metadata);
 applicability answers *"where does this version apply?"* (Eligibility
-metadata, ADR-0017). A location reference appearing in a user's question —
+metadata, [versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md)). A location reference appearing in a user's question —
 *"the medication procedure at Blackpool"* — cannot grant access on its own,
 and only ever becomes an eligibility-narrowing fact after passing through
 the deterministic resolution below; it is never treated as raw text for
@@ -469,11 +469,11 @@ after `AuthorisedKnowledgeScope` is already established and before
    but the step exists structurally now so that a future granular,
    location-scoped permission engine has a defined place to plug into
    without this contract being redesigned when it lands. The validated
-   location is then applied through ADR-0017's existing per-version
+   location is then applied through [versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md)'s existing per-version
    applicability rules exactly as any other applicability fact: `UNIVERSAL`
    applicability matches every location; a `Region`-level applicability
    extends to its descendant `Site`s; a version whose recorded applicability
-   does not cover the resolved location is excluded, precisely as ADR-0017
+   does not cover the resolved location is excluded, precisely as [versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md)
    already specifies.
 4. **Zero matches, or more than one ambiguous match** (for example, two
    distinct `OrganisationalLocation`s that happen to share a name in
@@ -526,7 +526,7 @@ retrieval safely and efficiently:
   large enough that an explicit identifier list is impractical, that is
   measured evidence for a follow-up decision to introduce a more compact
   scope representation — consistent with this platform's repeated
-  preference (ADR-0010, ADR-0013, ADR-0014) not to solve an unmeasured
+  preference ([extraction contract](../data-api-contracts/canonical-extracted-document.md), ADR-0013, ADR-0014) not to solve an unmeasured
   problem speculatively — not something V1 needs to design against now;
 - a bounded candidate limit (`candidate_k`; see "Retriever" below).
 
@@ -541,7 +541,7 @@ two independently-resolved sides, never merged (see below).
 the 2022 version,"* and *"how has this policy changed"* are all real
 questions this platform commits to answering correctly from V1. The planner
 expresses only symbolic anchors (`CURRENT`, `AT_DATE(date)`, `PREVIOUS`);
-`EligibilityResolver` resolves each side independently, using ADR-0017's
+`EligibilityResolver` resolves each side independently, using [versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md)'s
 derivation for each anchor on its own terms.
 
 The two sides are labelled `PRIMARY` and `COMPARISON` — deliberately not
@@ -550,7 +550,7 @@ The two sides are labelled `PRIMARY` and `COMPARISON` — deliberately not
 mode is CURRENT" or "this side's anchor is CURRENT." `PRIMARY`'s anchor is
 resolved first; `COMPARISON`'s `PREVIOUS` anchor, where used, is resolved
 relative to whatever `PRIMARY` actually resolved to — one step back through
-ADR-0017's attained-authority lineage ordering, never an independent
+[versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md)'s attained-authority lineage ordering, never an independent
 "second-latest" computation that could disagree with what `PRIMARY` turned
 out to be.
 
@@ -562,7 +562,7 @@ attribution would make a comparison answer indistinguishable from a single
 confused one.
 
 If either side cannot be resolved safely — `PRIMARY` finds no
-authoritative version at all (a real ADR-0017 outcome, not an error);
+authoritative version at all (a real [versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md) outcome, not an error);
 `AT_DATE` names a date with no authoritative version; `PREVIOUS` has
 nothing to be previous *to*, because `PRIMARY` itself resolved to "no
 current version" — the whole request produces `COMPARISON_SCOPE_INCOMPLETE`
@@ -749,7 +749,7 @@ responds by widening the search.
 ### The Laravel → Python synchronous retrieval-call protocol (`rc1`)
 
 **Why the existing worker protocol does not fit.** ADR-0009's `v1` and
-ADR-0015/0016's `v2` protocols share a specific shape: Python is the
+[ingestion orchestration contract](../data-api-contracts/ingestion-orchestration-and-worker-results.md) and [ingestion publication and recovery specification](../data-api-contracts/ingestion-publication-and-recovery.md)'s `v2` protocols share a specific shape: Python is the
 signer, Laravel is the verifier; the caller is a single fixed principal
 (`ingestion-worker`) that holds a processing lease against a durable
 `event_id`; requests are part of an asynchronous, at-least-once-delivered,
@@ -890,7 +890,7 @@ or purpose value with, ingestion's `v1`/`v2` protocol:
   already requires of document processing retries, applied here to a
   synchronous call instead of an asynchronous one.
 - **Bounded request size**: `EligibleRetrievalScope`'s eligible-identifier
-  list and `candidate_k` are both bounded, for the same reason ADR-0015's
+  list and `candidate_k` are both bounded, for the same reason [ingestion orchestration contract](../data-api-contracts/ingestion-orchestration-and-worker-results.md)'s
   chunk submission batches are bounded — an unbounded request body is never
   an acceptable shape for an internal contract, synchronous or not.
 - **Workspace context**: `workspace_id` is mandatory in both the signed
@@ -1023,23 +1023,23 @@ modify any of them. `R16-S01` (ADR-0017, accepted) currently has no
 explicit implementation session: Phase 16's stage sequence, as it stands,
 moves directly from defining the versioning/temporal-authority domain model
 to defining this document, without a session that actually builds
-ADR-0017's relational/domain foundation (the `DocumentFamily` backfill
+[versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md)'s relational/domain foundation (the `DocumentFamily` backfill
 migration, the lineage and governance tables, the structural constraints
 "Unambiguous temporal succession" fixes) before retrieval implementation
 would need it. The corrected sequence:
 
 ```text
 R16-S01 — Define Document Versioning and Temporal Authority
-  completed; ADR-0017
+  completed; [versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md)
 
 R16-S02 — Define Retrieval Planning, Eligibility and the Retriever Contract
-  architecture-only; ADR-0018 (this document)
+  architecture-only; [retrieval planning and eligibility contract](../data-api-contracts/retrieval-planning-eligibility-and-retriever.md) (this document)
 
 R16-S03 — Implement Document Versioning and Temporal Authority Foundation
-  implementation of ADR-0017's relational/domain model
+  implementation of [versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md)'s relational/domain model
 
 R16-S04 — Implement Semantic Retrieval
-  implementation of ADR-0018 (this document) against the completed
+  implementation of [retrieval planning and eligibility contract](../data-api-contracts/retrieval-planning-eligibility-and-retriever.md) (this document) against the completed
   Stage 16.3 foundation
 
 R16-S05 — Define Evaluation and Quality-Gate Architecture
@@ -1072,7 +1072,7 @@ understanding badly. A rule-based implementation remains legitimate as a
 test double, deterministic fallback, evaluation baseline, or comparator —
 never as the thing V1 actually runs in production.
 
-### Reusing ADR-0009/0015/0016's worker HMAC protocol unmodified for retrieval calls
+### Reusing ADR-0009 and the ingestion orchestration specifications' worker HMAC protocol unmodified for retrieval calls
 
 Considered and rejected — see "The Laravel → Python synchronous
 retrieval-call protocol" above for the full reasoning. The existing
@@ -1172,7 +1172,7 @@ document allows fully auditable inside Laravel.
 Considered and rejected. This would reintroduce exactly the "prompt term
 becomes a search-time filter" pattern "Metadata classification" and the
 `department_id = HR` alternative above already reject, only relocated to
-Qdrant instead of PostgreSQL — and it would bypass ADR-0017's applicability
+Qdrant instead of PostgreSQL — and it would bypass [versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md)'s applicability
 rules entirely (`UNIVERSAL` matching, `Region`-to-`Site` extension), since
 Qdrant has no notion of either. The reference must be resolved and
 validated before it can narrow anything, which requires PostgreSQL access
@@ -1190,7 +1190,7 @@ one of several interact with the others?) with no concrete case to design
 against yet. A single reference is the smaller, more conservative contract;
 widening it to a bounded list later, if a genuine need appears, is additive
 to this shape, not a redesign — the same "don't solve an unmeasured
-problem speculatively" reasoning this platform applies elsewhere (ADR-0010,
+problem speculatively" reasoning this platform applies elsewhere ([extraction contract](../data-api-contracts/canonical-extracted-document.md),
 ADR-0013, ADR-0014).
 
 ### Silently ignoring an unresolved or ambiguous `applicability_reference`
@@ -1259,7 +1259,7 @@ already uses `CURRENT` as one of its own values; reusing the same word as a
 side label would make "the mode is CURRENT" and "this side's anchor is
 CURRENT" ambiguous in exactly the kind of subtle way this platform has
 repeatedly preferred to name precisely rather than gloss over (mirroring
-ADR-0017's own insistence on precise terminology for "attained authority").
+[versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md)'s own insistence on precise terminology for "attained authority").
 
 ### `NO_SEMANTIC_MATCH`, defined as a raw-score quality judgement
 
@@ -1284,7 +1284,7 @@ see "`RetrievalResult` and the retrieval outcome taxonomy" above.
 ### Positive
 
 - Retrieval inherits one settled definition of "eligible evidence,"
-  combining ADR-0017's temporal-authority model with access and
+  combining [versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md)'s temporal-authority model with access and
   applicability, rather than each future retrieval-touching change having
   to re-derive what "eligible" means.
 - The LLM-backed planner is bounded to exactly the task it is good at
@@ -1324,7 +1324,7 @@ see "`RetrievalResult` and the retrieval outcome taxonomy" above.
   correctly from V1 onward, without either silently ignoring the location
   or letting a prompt term become an unverified hard filter — the one
   narrow exception this document makes to "descriptive terms are never
-  filters" is bounded, deterministic, and justified entirely by ADR-0017's
+  filters" is bounded, deterministic, and justified entirely by [versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md)'s
   own applicability model, not by a general relaxation of that rule.
 - `rc1`'s confidentiality requirement and replay defence are stated
   explicitly rather than left to be inferred from an existing pattern or
@@ -1413,7 +1413,7 @@ see "`RetrievalResult` and the retrieval outcome taxonomy" above.
   all) or by `EligibilityResolver` itself (an unresolved
   `applicability_reference`, mid-resolution); no broad or fallback search
   ever occurs in its place.
-- ADR-0016's dual gate (published Qdrant point plus PostgreSQL `INDEXED`)
+- [ingestion publication and recovery specification](../data-api-contracts/ingestion-publication-and-recovery.md)'s dual gate (published Qdrant point plus PostgreSQL `INDEXED`)
   remains the unconditional prerequisite for retrievability; this
   document's eligibility model is additive, never a redefinition of
   `INDEXED`.

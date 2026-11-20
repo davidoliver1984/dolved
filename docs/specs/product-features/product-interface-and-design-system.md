@@ -8,17 +8,17 @@ Accepted
 
 2026-08-21
 
-## Relationship to prior ADRs
+## Relationship to prior documents
 
-### Consumes ADR-0006, ADR-0023, ADR-0024, ADR-0025 and ADR-0026 unchanged; this document does not reopen any of them
+### Consumes ADR-0006, [grounded generation contract](../data-api-contracts/grounded-generation.md), [conversation and streaming specification](../product-features/conversations-and-streaming.md), [administration and tenant-control specification](../product-features/administration-and-tenant-control.md) and ADR-0026 unchanged; this document does not reopen any of them
 
 This specification makes no generation, retrieval, evidence-authority,
 tenant-authorization or domain-semantics decision. It does make the bounded
 browser-facing presentation-contract and route decisions defined below;
 those additions do not alter the authority, validation or ownership
 decisions established by the prior ADRs. Every
-role boundary (ADR-0006, ADR-0025), every conversation/streaming state (ADR-0024),
-every generation outcome (ADR-0023) and every observability/platform-admin
+role boundary (ADR-0006, [administration and tenant-control specification](../product-features/administration-and-tenant-control.md)), every conversation/streaming state ([conversation and streaming specification](../product-features/conversations-and-streaming.md)),
+every generation outcome ([grounded generation contract](../data-api-contracts/grounded-generation.md)) and every observability/platform-admin
 boundary (ADR-0026) is treated as settled, verified-against-the-real-repository
 fact, not as something this document is free to redesign. Where this specification
 describes an interface state, it is describing how an *already-decided* domain
@@ -87,7 +87,7 @@ workspace page below `DocumentUploadPanel` and `DocumentAdministration`, with
 members server-side.
 
 The chat interface (`ChatWorkspace.tsx`, ~420 lines, everything inlined in one
-component) already implements substantially more of ADR-0024's state machine
+component) already implements substantially more of [conversation and streaming specification](../product-features/conversations-and-streaming.md)'s state machine
 than the visual reference implies: provisional streaming answer parts,
 per-stage progress labels, citation disclosure with raw JSON provenance dumps,
 retry of failed retryable runs, cancellation of in-flight runs, and a generic
@@ -749,7 +749,7 @@ one navigation model with two regions instead:
 is in chat or administration context, each item subject to its own
 authorization gate: the `dolved` wordmark; the workspace selector; "New
 conversation"; `Documents`; `Administration` (present only if the current
-membership grants any administration capability per ADR-0025 — hidden, not
+membership grants any administration capability per [administration and tenant-control specification](../product-features/administration-and-tenant-control.md) — hidden, not
 shown disabled, for a `member` with no administrative capability at all,
 since a `member` cannot even view the member directory today); `Platform
 operations` (present only for users with live platform-administrator access
@@ -833,7 +833,7 @@ workspace and the currently-selected durable conversation.** Concretely:
   URL once an identity exists, never a second POST triggered by that
   navigation — is fixed by this specification.
 - **Switching conversations must not disturb an independently running
-  `GenerationRun`.** ADR-0024 already guarantees connection-independent
+  `GenerationRun`.** [conversation and streaming specification](../product-features/conversations-and-streaming.md) already guarantees connection-independent
   execution and a resumable SSE projection — a run in flight continues
   server-side regardless of which conversation route is currently mounted.
   Navigating away from and back to a conversation with an in-flight run must
@@ -841,7 +841,7 @@ workspace and the currently-selected durable conversation.** Concretely:
   correlated with the conversation route param), never start, cancel or
   duplicate a run as a side effect of navigation. This is a correctness
   requirement on how the streaming subscription is keyed in R21-S03's
-  implementation, not a new guarantee ADR-0024 doesn't already make — this
+  implementation, not a new guarantee [conversation and streaming specification](../product-features/conversations-and-streaming.md) doesn't already make — this
   ADR is only making explicit that route-driven navigation must not
   accidentally violate it.
 - **Invalid, deleted, inaccessible or cross-workspace conversation and
@@ -863,9 +863,11 @@ workspace and the currently-selected durable conversation.** Concretely:
   draft text, in-flight streaming/provisional state — not to "which
   conversation is currently shown," which the URL already answers.
 - **No conversation branching.** This route hierarchy adds no
-  branch-selection affordance and does not touch ADR-0024's reserved future
+  branch-selection affordance and does not touch [conversation and streaming specification](../product-features/conversations-and-streaming.md)'s reserved future
   branching seam; a conversation route resolves to exactly one linear
-  conversation, unchanged from ADR-0024's accepted model.
+  conversation, unchanged from the
+  [conversation and streaming specification](../product-features/conversations-and-streaming.md)'s
+  accepted model.
 
 **Not introduced**: Search, bookmarks, reactions (thumbs up/down), sharing, or
 a standalone conversation-history icon-button distinct from the sidebar's own
@@ -897,7 +899,7 @@ control and this specification does not treat it as one, consistent with ADR-000
 ### 6. Administration information architecture
 
 Administration becomes route-backed, addressable sections instead of a fixed
-stack of `<details>` widgets, built strictly against ADR-0025's real
+stack of `<details>` widgets, built strictly against [administration and tenant-control specification](../product-features/administration-and-tenant-control.md)'s real
 capability model — no simplified or invented permission set. The concrete
 routes (`/app/workspaces/{workspace}/administration`,
 `.../administration/people`, `.../administration/invitations`,
@@ -912,9 +914,9 @@ endpoint — with a deep link to the top-level `Documents` destination for
 anything document-related, replacing today's bare welcome heading with
 something that actually orients an admin); `People & roles` (member
 directory, promote/demote, ownership transfer, removal — all owner/admin-gated
-exactly as ADR-0025 specifies); `Invitations` (issue, view, revoke,
+exactly as [administration and tenant-control specification](../product-features/administration-and-tenant-control.md) specifies); `Invitations` (issue, view, revoke,
 expiry/already-accepted state); `Usage` (the existing `WorkspaceUsage`
-content, still withheld from `member`-role users, per ADR-0025's
+content, still withheld from `member`-role users, per [administration and tenant-control specification](../product-features/administration-and-tenant-control.md)'s
 tenant-scoped-usage-visibility decision — not opened up further by this
 phase). `Documents` is deliberately **not** one of administration's
 contextual-region sections; see "One adaptive application shell" (section 5)
@@ -939,7 +941,7 @@ stable-primary-region navigation entry, reachable identically from chat and
 administration context**, with role-aware actions rendered from the real
 capability object, never a duplicated page or a second navigation entry.
 
-Every capability boundary ADR-0025 defines is made **visible**, not just
+Every capability boundary [administration and tenant-control specification](../product-features/administration-and-tenant-control.md) defines is made **visible**, not just
 enforced: promote-to-admin and transfer-ownership controls render only for an
 `owner`; an `admin` sees member removal and invitation issuance (as `MEMBER`
 only — the invite form's role selector never offers `ADMIN` to anyone but an
@@ -979,8 +981,8 @@ requirement.
 
 ### 7. Chat and evidence presentation
 
-ADR-0024 is preserved exactly; this section is presentation only. Every state
-ADR-0024 defines gets a designed interface treatment:
+[conversation and streaming specification](../product-features/conversations-and-streaming.md) is preserved exactly; this section is presentation only. Every state
+[conversation and streaming specification](../product-features/conversations-and-streaming.md) defines gets a designed interface treatment:
 
 conversation history and new-conversation (sidebar "Recent" list plus "New
 conversation," per section 5); `USER`/`ASSISTANT` message turns (avatar +
@@ -996,7 +998,7 @@ the provisional treatment to the final one, not a jarring swap); citations and
 evidence (compact citation chips — `[1]`, `[2]` — inline in answer text,
 each keyboard-focusable and operable, expanding to an evidence/source card
 following the reference's evidence-card layout, sourced from `EvidenceSnapshot`
-data ADR-0023 already defines plus a bounded, presentation-only contract
+data [grounded generation contract](../data-api-contracts/grounded-generation.md) already defines plus a bounded, presentation-only contract
 extension defined precisely below — this specification does not invent new *evidence
 authority* or provenance fields, only a browser-facing representation of
 data Laravel already holds); clarification (now a **visually distinct** turn type —
@@ -1009,7 +1011,7 @@ failure, closing today's gap where timeout falls through the same
 `run_failed` handling as every other failure); retry of the same
 session/run where allowed (existing retry action, restyled); cancellation
 (existing composer "Cancel" action, restyled); retraction after a rejected
-stream (ADR-0024 guarantees fail-closed retraction and a typed terminal
+stream ([conversation and streaming specification](../product-features/conversations-and-streaming.md) guarantees fail-closed retraction and a typed terminal
 failure when a candidate stream becomes untrustworthy — it does **not**
 guarantee that corrected content will subsequently appear, and an earlier
 draft of this specification overclaimed that with "retracted, corrected below" wording.
@@ -1025,7 +1027,7 @@ referenced in history no longer resolves, rather than a broken navigation);
 bounded remembered conversation context (no interface change required — this
 is a backend context-window property, not something the UI represents
 directly, beyond conversations behaving consistently with it); no branching
-in V1 (no branch-selector UI is built, preserving the future seam ADR-0024
+in V1 (no branch-selector UI is built, preserving the future seam [conversation and streaming specification](../product-features/conversations-and-streaming.md)
 already reserves).
 
 **Citation presentation-contract extension (bounded, presentation-only).**
@@ -1035,7 +1037,7 @@ ADR permits a bounded extension to the browser-facing conversation
 presentation contract, letting an authorised citation expose the
 presentation metadata the card actually needs:
 
-- stable citation/evidence identity (already part of ADR-0023's model);
+- stable citation/evidence identity (already part of [grounded generation contract](../data-api-contracts/grounded-generation.md)'s model);
 - the document's public identity, present only when the live document
   remains available;
 - a safe display name and a safe media/type label, derived server-side from
@@ -1043,7 +1045,7 @@ presentation metadata the card actually needs:
   through unfiltered;
 - file size, when known;
 - an explicit removed/unavailable state;
-- the existing cited excerpt and provenance fields ADR-0023 already defines,
+- the existing cited excerpt and provenance fields [grounded generation contract](../data-api-contracts/grounded-generation.md) already defines,
   carried through unchanged;
 - an authorised source destination — a `source_route` field, present **only**
   when Laravel has confirmed one genuinely exists (the document is still
@@ -1072,17 +1074,17 @@ say "View source" over only unavailable metadata, and must never emit a dead
 link, fabricated file metadata, a raw object-storage URL or a cross-workspace
 identifier.
 
-This preserves ADR-0025's deletion semantics exactly: the durable
+This preserves [administration and tenant-control specification](../product-features/administration-and-tenant-control.md)'s deletion semantics exactly: the durable
 `EvidenceSnapshot` already carries the cited excerpt and provenance
 independently of the live document's lifecycle (that durability is the point
 of a snapshot), so those fields remain available from an answer regardless of
 whether the underlying document is later deleted. Ordinary document deletion
-under ADR-0025 does not touch a citation's historical validity — it only
+under [administration and tenant-control specification](../product-features/administration-and-tenant-control.md) does not touch a citation's historical validity — it only
 removes the *live* document, which is exactly the condition `source_route`'s
 absence already covers.
 
 This entire extension is presentation-only: it does not alter evidence
-authority, citation validation, or generation ownership as ADR-0023/ADR-0024
+authority, citation validation, or generation ownership as [grounded generation contract](../data-api-contracts/grounded-generation.md)/[conversation and streaming specification](../product-features/conversations-and-streaming.md)
 define them — it is a new, bounded shape for data Laravel already
 authoritatively holds, exposed to the browser under the same tenancy and
 authorization rules as every other citation field. The Laravel API/resource
@@ -1098,7 +1100,7 @@ bracketed number). Provisional citation references are visually and
 semantically marked provisional (a distinct treatment, `aria-live`-appropriate
 announcement only at meaningful transitions — see section 10) and are never
 presented with the same visual finality as a reconciled citation before
-ADR-0024's reconciliation completes, so a user never mistakes an in-flight,
+[conversation and streaming specification](../product-features/conversations-and-streaming.md)'s reconciliation completes, so a user never mistakes an in-flight,
 possibly-revised reference for a settled one.
 
 **Adopted from the mock-up**: restrained message layout, numbered/structured
@@ -1387,7 +1389,7 @@ An explicit acceptance matrix, checked at R21-S04, crossing: chat, documents,
 workspace administration, platform operations, authentication; desktop and
 mobile; dark and light; owner/admin/member/platform-administrator
 authorization (each role's actually-visible navigation and actually-available
-actions, verified against ADR-0025/0026's real matrices, not an assumed
+actions, verified against [administration and tenant-control specification](../product-features/administration-and-tenant-control.md)/0026's real matrices, not an assumed
 simplification); and the full interface-state list from section 7/12
 (loading, empty, success, partial, unavailable, failure, deleting, revoked,
 expired).
@@ -1468,7 +1470,7 @@ It deliberately does **not** become a page-by-page implementation
 specification — exact spacing values, exact component prop APIs and exact
 per-page layout decisions remain implementation detail for R21-S01–S04, not
 ADR content — and it does not reopen any accepted backend, domain, contract
-or authorization decision from ADR-0006, ADR-0023, ADR-0024, ADR-0025 or
+or authorization decision from ADR-0006, [grounded generation contract](../data-api-contracts/grounded-generation.md), [conversation and streaming specification](../product-features/conversations-and-streaming.md), [administration and tenant-control specification](../product-features/administration-and-tenant-control.md) or
 ADR-0026.
 
 ### Acceptance record

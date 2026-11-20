@@ -5370,7 +5370,7 @@
       "guide_start_line": 15213,
       "guide_end_line": 15470,
       "status": "in_progress",
-      "objective": "Produce the first current-code, live-provider body of evidence for how Dolved performs on retrieval and grounded generation, separately and end to end, over a realistic versioned organisational corpus, after ADR-0030 through ADR-0036 are implemented and before Phase 31 reviews the connected product visually. Preserves all existing engineering/calibration/held-out split governance; adds a live current-commit run on top of it rather than relaxing it.",
+      "objective": "Produce the first current-code, live-provider body of evidence for how Dolved performs on retrieval and grounded generation, separately and end to end, over a realistic versioned organisational corpus, after the accepted document metadata, governance, library, import, bulk-operations and notifications specifications are implemented and before Phase 31 reviews the connected product visually. Preserves all existing engineering/calibration/held-out split governance; adds a live current-commit run on top of it rather than relaxing it.",
       "sessions": [
         {
           "id": "R28-S01",
@@ -5486,17 +5486,25 @@
       "guide_start_line": 15776,
       "guide_end_line": 15836,
       "status": "not_started",
-      "objective": "Provide validated, authorised and accessible Dolved display-name, wordmark/logo, favicon and light/dark accent configuration without allowing arbitrary presentation code or affecting security and evidence decisions.",
+      "objective": "Specify, then implement, validated, authorised and accessible Dolved display-name, wordmark/logo, favicon and light/dark accent configuration without allowing arbitrary presentation code or affecting security and evidence decisions.",
+      "specification_references": [
+        "docs/specs/product-features/product-interface-and-design-system.md",
+        "docs/specs/product-features/administration-and-tenant-control.md",
+        "docs/specs/product-features/document-governance-notifications-and-reminders.md"
+      ],
+      "architecture_constraints": [
+        "ADR-0041"
+      ],
       "sessions": [
         {
           "id": "R29-S01",
-          "guide_stage": "Stage 29.1 — Freeze branding ownership and lifecycle",
-          "title": "Freeze Branding Ownership and Lifecycle",
+          "guide_stage": "Stage 29.1 — Specify branding ownership and lifecycle",
+          "title": "Specify Branding Ownership and Lifecycle",
           "status": "not_started",
-          "objective": "Approve the deployment/workspace ownership boundary, version and lifecycle contract, permissions, storage, fallbacks and accessibility rules for configurable branding.",
-          "session_mode": "architecture",
-          "requires_architecture_review": true,
-          "requires_adr": true,
+          "objective": "Specify or extend the bounded deployment/workspace ownership boundary, version and lifecycle contract, permissions, storage, fallbacks and accessibility rules for configurable branding before implementation. Add an ADR only if a new consequential architectural choice is required.",
+          "session_mode": "specification",
+          "requires_architecture_review": false,
+          "requires_adr": false,
           "depends_on": [
             "R28-GATE"
           ],

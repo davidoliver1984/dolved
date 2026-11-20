@@ -8,7 +8,7 @@ Accepted
 
 2026-08-06
 
-## Relationship to prior ADRs
+## Relationship to prior documents
 
 ### Supersession of ADR-0009, in part
 
@@ -70,7 +70,7 @@ question this platform has not yet had to answer anywhere else: **how do two
 independently deployed, independently failing services cooperate to produce
 one authoritative outcome?** Laravel owns the Document lifecycle absolutely
 (ADR 0007) and Python owns everything that happens to a Document's content
-while it is `PROCESSING` (ADR 0002, ADR 0010, ADR 0011, ADR 0013, ADR 0014).
+while it is `PROCESSING` (ADR 0002, [extraction contract](../data-api-contracts/canonical-extracted-document.md), [chunking contract](../data-api-contracts/chunking-contract.md), ADR 0013, ADR 0014).
 Between those two facts sits a real seam: Python computes a result Laravel
 alone is authorised to act on, across a boundary that can partially fail in
 ways neither service can single-handedly observe or repair — a crashed
@@ -109,7 +109,7 @@ Laravel remains the sole owner of PostgreSQL, Document identity and
 lifecycle, canonical chunk text, and both generation lifecycles (ADR 0007,
 ADR 0014). Python remains the sole owner of extraction, normalisation,
 chunking, embedding, `VectorStore`, Qdrant, and vector-side completeness
-verification (ADR 0002, ADR 0010, ADR 0011, ADR 0013, ADR 0014). Nothing in
+verification (ADR 0002, [extraction contract](../data-api-contracts/canonical-extracted-document.md), [chunking contract](../data-api-contracts/chunking-contract.md), ADR 0013, ADR 0014). Nothing in
 this specification moves any of that. The gap this specification closes is the protocol by which
 Python's computed results cross into Laravel's domain so Laravel — and only
 Laravel — can perform the writes and transitions it alone is authorised to
@@ -351,7 +351,7 @@ Each submission call carries:
 - a bounded item count and a bounded body size (exact bounds are a Stage
   15.2 decision, informed by the provider batch limits ADR 0013 already
   requires `Embedder` to respect);
-- for each chunk: its deterministic chunk identity (ADR 0011), ordinal,
+- for each chunk: its deterministic chunk identity ([chunking contract](../data-api-contracts/chunking-contract.md)), ordinal,
   token count, source provenance, canonical content, and a digest computed
   over that content and provenance;
 - no raw vectors, ever.
@@ -371,10 +371,10 @@ Laravel's acceptance behaviour:
 - a conflicting submission for the same `event_id` and chunk identity — an
   identical identity paired with a *different* digest — is rejected as a
   typed conflict and never silently overwritten, regardless of which lease
-  submitted the original: the same no-silent-loss discipline ADR 0010 and
-  ADR 0011 already apply to their own boundaries;
+  submitted the original: the same no-silent-loss discipline [extraction contract](../data-api-contracts/canonical-extracted-document.md) and
+  [chunking contract](../data-api-contracts/chunking-contract.md) already apply to their own boundaries;
 - a chunk is never implicitly adopted across a different `event_id`.
-  Deterministic chunk identity (ADR 0011) can coincide across two
+  Deterministic chunk identity ([chunking contract](../data-api-contracts/chunking-contract.md)) can coincide across two
   independent attempts at the same underlying content — for example, an
   explicit retry that creates a fresh `event_id` per ADR 0007 — and
   `event_id`, not chunk identity alone, is the durable scope idempotency and
@@ -410,7 +410,7 @@ vectors. A completion request carries:
 - a bounded, structured warning summary (count- and size-capped; codes and
   brief messages only, never chunk text or vectors) for recoverable
   compromises worth recording but not worth failing over — the same
-  semantic-warning discipline ADR 0010 and ADR 0011 already use.
+  semantic-warning discipline [extraction contract](../data-api-contracts/canonical-extracted-document.md) and [chunking contract](../data-api-contracts/chunking-contract.md) already use.
 
 Laravel's acceptance is a single atomic transaction: it independently
 **recomputes** the chunk count and the chunk-manifest digest from what it has
@@ -469,7 +469,7 @@ a formality:
 
 Classification follows domain ownership. Python classifies failures within
 its own domain — extraction, chunking, provider, Qdrant — using the same
-transient/permanent taxonomy ADR 0010 and ADR 0013 already established.
+transient/permanent taxonomy [extraction contract](../data-api-contracts/canonical-extracted-document.md) and ADR 0013 already established.
 Laravel classifies failures in the request itself: a malformed manifest, a
 generation mismatch, an invalid transition, a stale lease. **Only Laravel
 ever performs a `FAILED` transition.** Python requests it, authenticated and
@@ -495,10 +495,10 @@ terminal for the attempt (for example, an embedding provider's rate limiting
 that never clears within the retry budget, or a Qdrant write that keeps
 failing validation). Reported this way, with a failure code distinguishing
 "retries exhausted" from an outright permanent cause, this extends ADR
-0008's and ADR 0010's existing avoid-infinite-retry-loop principle to this
+0008's and [extraction contract](../data-api-contracts/canonical-extracted-document.md)'s existing avoid-infinite-retry-loop principle to this
 boundary rather than looping forever on work that will never succeed. A
 permanent failure carries both a machine-readable failure code and a
-human-readable explanation, mirroring ADR 0010's existing requirement for
+human-readable explanation, mirroring [extraction contract](../data-api-contracts/canonical-extracted-document.md)'s existing requirement for
 extraction failures.
 
 **What retry exhaustion must never automatically become a Document
@@ -746,7 +746,7 @@ across both services instead of resolving it once.
 Rejected for V1, not permanently. Genuinely useful if multiple independent
 downstream consumers of "document indexed" exist someday, but that need is
 not demonstrated today — building for it now is the same premature-
-infrastructure pattern ADR 0010 and ADR 0013 already argue against
+infrastructure pattern [extraction contract](../data-api-contracts/canonical-extracted-document.md) and ADR 0013 already argue against
 elsewhere in this pipeline. Nothing in the HTTP design forecloses adding one
 later; a future `document.indexed` domain event, once other consumers
 exist, is additive.

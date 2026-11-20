@@ -17,7 +17,9 @@ Accepted
 ### Why this clarification is required
 
 R18-S02 implementation-readiness review found one genuine architectural
-gap in the accepted decision: ADR-0018's retrieval contract has eight
+gap in the accepted decision: the
+[retrieval planning and eligibility contract](../data-api-contracts/retrieval-planning-eligibility-and-retriever.md)
+has eight
 controlled `RetrievalResult` outcomes —
 
 ```text
@@ -31,7 +33,7 @@ CLARIFICATION_REQUIRED
 RETRIEVAL_FAILED
 ```
 
-— and the accepted ADR-0024 completely defines only two paths through
+— and the accepted conversation and streaming specification completely defines only two paths through
 them: `EVIDENCE_FOUND` reaching successful grounded generation, and
 contextualiser-originated clarification. It does not define how the
 remaining six controlled outcomes become a `GenerationRun` transition, a
@@ -39,7 +41,7 @@ visible assistant turn (or the deliberate absence of one), an
 authoritative persistent record, safe display text, a retryable or
 non-retryable result, or a future conversation-history item. Left
 unresolved, R18-S02 would have had to invent this mapping during
-implementation — exactly what ADR-0024 exists to prevent — and could
+implementation — exactly what [conversation and streaming specification](../product-features/conversations-and-streaming.md) exists to prevent — and could
 easily have collapsed several legitimately distinct controlled retrieval
 outcomes into the single, generic `RETRIEVAL_FAILED` failure code, losing
 real audit and evaluation precision along the way. This clarification
@@ -54,7 +56,7 @@ set. Every other retrieval outcome short-circuits before
 `GenerationRequest` assembly, before any call to `generation.stream` or
 `generation.answer`, before any provider generation call, and before any
 `GeneratedAnswer`, authoritative `AnswerPart`, or `EvidenceSnapshot` is
-created for that turn. Laravel owns this handoff, unchanged from ADR-0024's
+created for that turn. Laravel owns this handoff, unchanged from [conversation and streaming specification](../product-features/conversations-and-streaming.md)'s
 existing ownership boundary: Python never reclassifies a `RetrievalResult`
 and never decides whether generation may proceed — it simply never
 receives the request for any outcome other than `EVIDENCE_FOUND`.
@@ -107,7 +109,7 @@ GenerationOutcome::INSUFFICIENT_EVIDENCE
   → the Generator was called and reasoned over that evidence
   → a validated GeneratedAnswer exists, with a required insufficiency_reason
   → conversation-domain result: COMPLETED / GROUNDED_ANSWER Message,
-    display text sourced from insufficiency_reason exactly as ADR-0024
+    display text sourced from insufficiency_reason exactly as [conversation and streaming specification](../product-features/conversations-and-streaming.md)
     already defines for this outcome
 ```
 
@@ -119,7 +121,7 @@ versa — precisely the kind of collapse this clarification exists to
 prevent.
 
 **`TEMPORAL_SCOPE_UNRESOLVED` is a defensive, expected-to-be-rare
-*structural* failure (ADR-0018), not an ordinary user-resolvable
+*structural* failure ([retrieval planning and eligibility contract](../data-api-contracts/retrieval-planning-eligibility-and-retriever.md)), not an ordinary user-resolvable
 ambiguity** — those cases are already represented by
 `CLARIFICATION_REQUIRED` with a typed reason. It therefore maps to
 `FAILED` (`RETRIEVAL_SCOPE_UNRESOLVED` or an equivalent explicit internal
@@ -138,7 +140,7 @@ deterministic contract or configuration problem.
 ### Retrieval-originated clarification: a second, distinct source
 
 Retrieval-originated clarification is not the same thing as
-contextualiser-originated clarification, and ADR-0024's original text —
+contextualiser-originated clarification, and [conversation and streaming specification](../product-features/conversations-and-streaming.md)'s original text —
 which described every `CLARIFICATION` `Message` as sourced from a
 contextualisation-result snapshot — is superseded on this specific point
 (see "What this clarification supersedes" below). Two genuinely different
@@ -146,7 +148,7 @@ sources now exist, both producing the same visible shape:
 
 ```text
 CONTEXTUALISER
-  source:  ContextualisationResultSnapshot (ADR-0024, unchanged)
+  source:  ContextualisationResultSnapshot ([conversation and streaming specification](../product-features/conversations-and-streaming.md), unchanged)
   content: a bounded, model-generated clarification_question
 
 RETRIEVAL
@@ -173,7 +175,7 @@ must therefore carry, for a `CLARIFICATION_REQUIRED` outcome: the source
 structural metadata the renderer needs; and the relevant retrieval/planner
 lineage — Laravel never infers the source or semantic meaning of a
 clarification from an uncontrolled string. Reason families already
-established by ADR-0018/ADR-0022 include, illustratively: `PLANNER` —
+established by [retrieval planning and eligibility contract](../data-api-contracts/retrieval-planning-eligibility-and-retriever.md)/[temporal and location-reference contract](../data-api-contracts/retrieval-planning-temporal-and-location-reference.md) include, illustratively: `PLANNER` —
 `UNCLASSIFIABLE_TEMPORAL_INTENT`; `ELIGIBILITY_RESOLVER` —
 `AMBIGUOUS_AUTHORITY_WINDOW_FOR_PERIOD`,
 `UNRESOLVABLE_TEMPORAL_PERIOD`, `AMBIGUOUS_HISTORICAL_REFERENCE`,
@@ -182,13 +184,13 @@ established by ADR-0018/ADR-0022 include, illustratively: `PLANNER` —
 Exact user-facing templates are R18-S02 implementation detail, but every
 template must be deterministic, bounded, versioned, application-owned,
 security-safe, free of citations, and structurally incapable of asserting
-a factual answer — the same discipline ADR-0024 already requires of
+a factual answer — the same discipline [conversation and streaming specification](../product-features/conversations-and-streaming.md) already requires of
 contextualiser-originated clarification text, applied here to a second
 source.
 
 ### A third `Message.kind`: `NO_ANSWER`
 
-ADR-0024's `Message.kind` set is extended from two values to three:
+[conversation and streaming specification](../product-features/conversations-and-streaming.md)'s `Message.kind` set is extended from two values to three:
 
 ```text
 GROUNDED_ANSWER
@@ -212,7 +214,7 @@ ASSISTANT + NO_ANSWER
     renderer — never from arbitrary prose
 ```
 
-ADR-0024's own rule that every assistant `Message` has exactly one durably
+[conversation and streaming specification](../product-features/conversations-and-streaming.md)'s own rule that every assistant `Message` has exactly one durably
 persisted record explaining its content is extended, not broken, by this
 third case:
 
@@ -240,7 +242,7 @@ clarification renderer used; and a retryability classification where
 applicable. It must never contain raw provider reasoning, unauthorised
 evidence, uncontrolled provider prose, user-facing wording masquerading
 as a typed reason, or cross-workspace identifiers — the same
-allowlist-first, minimum-necessary discipline ADR-0012 and ADR-0024
+allowlist-first, minimum-necessary discipline ADR-0012 and [conversation and streaming specification](../product-features/conversations-and-streaming.md)
 already apply everywhere else in this domain. For `EVIDENCE_FOUND`,
 existing retrieval/evidence lineage already recorded elsewhere may satisfy
 some or all of this requirement; this clarification does not require
@@ -270,7 +272,7 @@ model-generated; it has no `AnswerPart`s, `EvidenceSnapshot`s, or
 citations; its text is selected through a versioned, deterministic
 renderer, never composed freely; it is written atomically with the
 assistant `Message` and the run's terminal transition, in one atomic
-write, exactly as ADR-0024 already requires for the `GROUNDED_ANSWER`
+write, exactly as [conversation and streaming specification](../product-features/conversations-and-streaming.md) already requires for the `GROUNDED_ANSWER`
 case; it is immutable once written; and it preserves the underlying
 internal retrieval outcome even where several outcomes deliberately share
 identical public wording. Retrieval-originated `CLARIFICATION` content may
@@ -284,7 +286,7 @@ into `GeneratedAnswer`'s shape.
 A successfully persisted `NO_ANSWER` `Message` is a real, visible
 conversational turn, and — like a `CLARIFICATION` turn — is eligible to
 enter the bounded three-turn contextualisation window described in
-ADR-0024's "Contextualisation" section. It remains context only, never
+[conversation and streaming specification](../product-features/conversations-and-streaming.md)'s "Contextualisation" section. It remains context only, never
 evidence, exactly as the governing principle already requires of every
 other kind of prior turn:
 
@@ -294,7 +296,7 @@ Eligible assistant history:
   CLARIFICATION    from a run that reached CLARIFICATION_REQUIRED
   NO_ANSWER        from a run that reached RETRIEVAL_NO_ANSWER
 
-Ineligible history (unchanged from ADR-0024):
+Ineligible history (unchanged from [conversation and streaming specification](../product-features/conversations-and-streaming.md)):
   failed runs; cancelled runs; provisional AnswerPartAcceptedForDisplay
   projections; progress events; operational error projections
 ```
@@ -328,7 +330,7 @@ TEMPORAL_SCOPE_UNRESOLVED, RETRIEVAL_FAILED
 `RETRIEVAL_NO_ANSWER` is a legitimate, controlled terminal state, not a
 failure — it joins `COMPLETED` and `CLARIFICATION_REQUIRED` as an outcome
 the system reached correctly, not one it failed to reach. Retry
-eligibility, extended: `FAILED` and `CANCELLED` retain ADR-0024's existing
+eligibility, extended: `FAILED` and `CANCELLED` retain [conversation and streaming specification](../product-features/conversations-and-streaming.md)'s existing
 retry rules, unchanged. `RETRIEVAL_NO_ANSWER` is **not** automatically
 failure-retryable — retrying an identical request against the same
 authorised evidence set would deterministically reach the same outcome
@@ -408,35 +410,35 @@ precedence**:
 `AnswerPartAcceptedForDisplay` streaming and validation; delivery-versus-
 authoritative persistence; SSE as the browser transport; queued,
 connection-independent execution; single-active-run linear conversations;
-and every tenancy, deletion, and observability rule ADR-0024 already
+and every tenancy, deletion, and observability rule [conversation and streaming specification](../product-features/conversations-and-streaming.md) already
 established. Laravel retains every outcome-mapping and deterministic-
 rendering decision introduced here; Python receives a generation request
 only for `EVIDENCE_FOUND` and never phrases, classifies, or renders any
 retrieval-layer controlled outcome; Redis remains outside the
 candidate-streaming path, unchanged.
 
-## Relationship to prior ADRs
+## Relationship to prior documents
 
-### Consumes ADR-0023's generation contract and invariants; reopens nothing about generation semantics
+### Consumes [grounded generation contract](../data-api-contracts/grounded-generation.md)'s generation contract and invariants; reopens nothing about generation semantics
 
-ADR-0023 defines the provider-neutral `Generator` boundary, the
+[grounded generation contract](../data-api-contracts/grounded-generation.md) defines the provider-neutral `Generator` boundary, the
 `ANSWERED`/`QUALIFIED`/`INSUFFICIENT_EVIDENCE` outcome model, `answer_parts[]`
 as the sole authoritative generated representation, durable
 `EvidenceSnapshot`s, deterministic validation, and the central invariant this
 document inherits verbatim: *"no generated content becomes authoritative,
 user-visible answer content before the generation contract and citation
-validation have passed"* (ADR-0023, "The end-to-end flow"). ADR-0023's own
+validation have passed"* ([grounded generation contract](../data-api-contracts/grounded-generation.md), "The end-to-end flow"). [grounded generation contract](../data-api-contracts/grounded-generation.md)'s own
 "Streaming deferral" section explicitly records that it does not design
 Phase 18 streaming, names `answer_parts[]` as "a useful future
 validated-streaming unit," and commits only to keeping that structure
 first-class for later use. This document is that later use. It does not
 redefine sufficiency, the outcome taxonomy, grounding rules, context
 packing, or generation lineage — where it needs those concepts it uses
-ADR-0023's own vocabulary.
+[grounded generation contract](../data-api-contracts/grounded-generation.md)'s own vocabulary.
 
 ### Extends `rc1` with a new purpose for streamed responses — correcting this document's own first-draft misreading of what the HMAC actually constrains
 
-`generation.answer` (ADR-0023, ADR-0018's `rc1`) is a synchronous,
+`generation.answer` ([grounded generation contract](../data-api-contracts/grounded-generation.md), [retrieval planning and eligibility contract](../data-api-contracts/retrieval-planning-eligibility-and-retriever.md)'s `rc1`) is a synchronous,
 HMAC-signed, whole-body **request**: the canonical string-to-sign binds
 `body-sha256` of the complete request body
 (`apps/api/app/Services/Retrieval/RetrievalCallSigner.php:38-46`), and
@@ -462,7 +464,7 @@ authentication.
 This document therefore adds one new `rc1` purpose, `generation.stream`,
 under the existing `retrieval-caller` principal, key ring and signing
 mechanism — no new principal, no change to the canonical string-to-sign
-shape, exactly the extension path ADR-0018 committed to and ADR-0021/0023
+shape, exactly the extension path [retrieval planning and eligibility contract](../data-api-contracts/retrieval-planning-eligibility-and-retriever.md) committed to and ADR-0021 and [grounded generation contract](../data-api-contracts/grounded-generation.md)
 already exercised. `generation.stream`'s *request* is authenticated
 identically to `generation.answer`'s. Its *response* is a streamed
 sequence of framed, provider-neutral events terminating in one complete
@@ -478,19 +480,19 @@ signature valid for `generation.stream` is never accepted for
 correction this document makes to its own first draft, surfaced explicitly
 rather than quietly revised away.
 
-### Consumes, does not reopen, ADR-0018's retrieval boundary
+### Consumes, does not reopen, [retrieval planning and eligibility contract](../data-api-contracts/retrieval-planning-eligibility-and-retriever.md)'s retrieval boundary
 
 Retrieval planning, eligibility resolution and the `Retriever` contract
-(ADR-0018, extended by ADR-0021/0022) are unchanged. This document corrects
+([retrieval planning and eligibility contract](../data-api-contracts/retrieval-planning-eligibility-and-retriever.md), extended by ADR-0021 and [temporal and location-reference contract](../data-api-contracts/retrieval-planning-temporal-and-location-reference.md)) are unchanged. This document corrects
 one piece of stale planning language this brief itself flagged (see
 "Reconciling the preliminary Phase 18 wording" below) but does not touch
 `RetrievalPlanner`, `EligibilityResolver`, `EligibleRetrievalScope`, or the
 retrieval outcome taxonomy.
 
-### Consumes, does not reopen, ADR-0017's temporal-authority model
+### Consumes, does not reopen, [versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md)'s temporal-authority model
 
 Contextualisation and generation reflect whatever `EligibilityResolver`
-already resolved (ADR-0017's `authority_start`/`authority_end` derivation);
+already resolved ([versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md)'s `authority_start`/`authority_end` derivation);
 neither the query contextualiser nor conversation history re-derives
 temporal authority, applicability, or eligibility.
 
@@ -534,7 +536,7 @@ than introducing Eloquent soft-deletes as a new, inconsistent convention.
 
 `IMPLEMENTATION_GUIDE.md` Stage 18.2's planned flow currently states step
 4 as *"AI retrieves tenant-filtered context."* Read literally, against
-ADR-0023 and ADR-0018, this is wrong: Python never retrieves, never
+[grounded generation contract](../data-api-contracts/grounded-generation.md) and [retrieval planning and eligibility contract](../data-api-contracts/retrieval-planning-eligibility-and-retriever.md), this is wrong: Python never retrieves, never
 resolves tenancy, and never chooses evidence — Laravel does, before
 Python is ever called. This document does not silently design around that
 wording; it flags it as a documentation correction owed to
@@ -594,7 +596,7 @@ persistence shape, including deterministic per-conversation message
 ordering; the single authenticated `generation.stream` transport between
 Laravel and Python and why it replaces this document's own withdrawn
 first-draft side-channel design; part-local versus whole-answer validation
-and the precise, narrow sense in which ADR-0023's "authoritative" invariant
+and the precise, narrow sense in which [grounded generation contract](../data-api-contracts/grounded-generation.md)'s "authoritative" invariant
 is clarified (not amended) for provisional display; the distinction
 between bounded, non-authoritative delivery persistence and atomic
 authoritative persistence; citation delivery; progress events; transport
@@ -612,7 +614,7 @@ job class names, exact frontend component structure, exact database column
 types beyond what's structurally required, calibrated timeout durations or
 numerical SLOs without operational evidence, Phase 19 administration
 features, or any implementation belonging to R18-S02/S03/S04. It does not
-redecide anything ADR-0023, ADR-0018, ADR-0017, ADR-0012 or ADR-0006 already
+redecide anything [grounded generation contract](../data-api-contracts/grounded-generation.md), [retrieval planning and eligibility contract](../data-api-contracts/retrieval-planning-eligibility-and-retriever.md), [versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md), ADR-0012 or ADR-0006 already
 settled.
 
 ## Decision
@@ -635,7 +637,7 @@ answer said.
 
 ### Reconciled Laravel/Python ownership boundary
 
-ADR-0023's split is preserved and restated precisely because Stage 18.2's
+[grounded generation contract](../data-api-contracts/grounded-generation.md)'s split is preserved and restated precisely because Stage 18.2's
 preliminary wording drifted from it:
 
 **Laravel owns:** authentication and authorisation; workspace tenancy;
@@ -723,7 +725,8 @@ collapsed:**
   history. A `Message` is a visible turn; it is created once and, once
   created, its role and authorship never change.
 - **Grounding domain** (`GeneratedAnswer`, `AnswerPart`, `EvidenceSnapshot`)
-  — why an accepted answer is trustworthy. Unchanged from ADR-0023: still
+  — why an accepted answer is trustworthy. Unchanged from the
+  [grounded generation contract](../data-api-contracts/grounded-generation.md): still
   the sole authoritative generated representation, still evidence-bound,
   still validated before persistence.
 - **Execution domain** (`GenerationRun`) — what happened while attempting
@@ -763,10 +766,10 @@ contradicted itself about whether every ASSISTANT `Message` has a
   The two kinds are never conflated and never share a row shape.
 - Within `kind = GROUNDED_ANSWER`, a `GeneratedAnswer` has one or more
   `AnswerPart`s for `ANSWERED`/`QUALIFIED`, and zero for
-  `INSUFFICIENT_EVIDENCE` — exactly ADR-0023's own invariant table, applied
+  `INSUFFICIENT_EVIDENCE` — exactly [grounded generation contract](../data-api-contracts/grounded-generation.md)'s own invariant table, applied
   here without exception (see "INSUFFICIENT_EVIDENCE rendering" below for
   how that Message's display text is sourced when there are zero parts).
-- `EvidenceSnapshot` cardinality and reuse is unchanged from ADR-0023:
+- `EvidenceSnapshot` cardinality and reuse is unchanged from [grounded generation contract](../data-api-contracts/grounded-generation.md):
   per-answer scope, one snapshot reusable by every `AnswerPart` in that
   answer that cites the same evidence.
 
@@ -784,7 +787,7 @@ it produces a real, visible ASSISTANT turn, just not a grounded one.
 `TOOL` are provider chat abstractions, not conversation-domain concepts,
 and are never persisted as messages — they belong to `GenerationRequest`
 construction (Laravel-owned) and provider-specific rendering (Python-owned,
-ADR-0023), not to visible conversation history. Operational notices
+[grounded generation contract](../data-api-contracts/grounded-generation.md)), not to visible conversation history. Operational notices
 (searching, checking evidence, provider timeout, cancellation, validation
 failure) are never fabricated assistant speech — they are `run.progress`
 and terminal-status events (see "Application-owned progress events" and
@@ -849,7 +852,7 @@ arbitrary natural-language prose contains no implicit factual assertion.
 Structural bounds (source field, length, absence of citations) are
 enforced; genuine semantic compliance — that the contextualiser's question
 never smuggles in a fact — is not something deterministic code can verify
-from prose alone. This residual risk is managed the same way ADR-0023
+from prose alone. This residual risk is managed the same way [grounded generation contract](../data-api-contracts/grounded-generation.md)
 already manages the equivalent risk for generation: the contextualiser
 contract and prompt explicitly prohibit factual answering, the output is
 bounded to a single clarification-question field with no room for an
@@ -908,16 +911,16 @@ Query Contextualiser
       ↓
 RESOLVED (standalone query) | CLARIFICATION_REQUIRED
       ↓
-Laravel-authorised retrieval (ADR-0018, unchanged)
+Laravel-authorised retrieval ([retrieval planning and eligibility contract](../data-api-contracts/retrieval-planning-eligibility-and-retriever.md), unchanged)
       ↓
 current authorised evidence
       ↓
-GenerationRequest (ADR-0023, unchanged)
+GenerationRequest ([grounded generation contract](../data-api-contracts/grounded-generation.md), unchanged)
 ```
 
 Ownership is deliberately separated: the contextualiser answers *"what is
-the user asking now?"*; `RetrievalPlanner` (ADR-0018) answers *"how should
-the resolved query be retrieved?"*; `Generator` (ADR-0023) answers *"what
+the user asking now?"*; `RetrievalPlanner` ([retrieval planning and eligibility contract](../data-api-contracts/retrieval-planning-eligibility-and-retriever.md)) answers *"how should
+the resolved query be retrieved?"*; `Generator` ([grounded generation contract](../data-api-contracts/grounded-generation.md)) answers *"what
 grounded answer follows from the currently supplied evidence?"* The
 contextualiser never answers the user and never manufactures a factual
 premise — its only output is a resolved query or a request for
@@ -939,7 +942,7 @@ ContextualisationResult
   clarification_question: string | null (present iff CLARIFICATION_REQUIRED,
                                          user-facing)
   contextualiser_version: string        (lineage/versioning — mirrors
-                                         ADR-0023's prompt_version discipline)
+                                         [grounded generation contract](../data-api-contracts/grounded-generation.md)'s prompt_version discipline)
   # bounded failure is a typed GenerationRun failure category
   # (CONTEXTUALISATION_FAILED — see "Failure taxonomy"), not a field on
   # this result
@@ -956,7 +959,7 @@ must not become a second provider adapter. Once that constraint holds, the
 operation necessarily crosses the Laravel/Python service boundary, and a
 typed, cross-service, provider-neutral operation is what a service
 boundary *is* in this codebase — the same reasoning that gives `Generator`
-its shape (ADR-0023), `RetrievalPlanner` its shape (ADR-0018), and
+its shape ([grounded generation contract](../data-api-contracts/grounded-generation.md)), `RetrievalPlanner` its shape ([retrieval planning and eligibility contract](../data-api-contracts/retrieval-planning-eligibility-and-retriever.md)), and
 `Embedder`/`SparseEncoder`/`Reranker` theirs. The first draft's "only one
 provider implementation exists today" reasoning was the wrong test — every
 one of those boundaries was introduced with exactly one V1 implementation
@@ -975,10 +978,10 @@ QueryContextualizer.contextualize(
 This is deliberately the smallest real boundary the behaviour justifies,
 not a second grounded-generation-sized subsystem: one request type, one
 result type, contract versioning, prompt/model/configuration lineage
-(`contextualiser_version`, mirroring ADR-0023's `prompt_version`
+(`contextualiser_version`, mirroring [grounded generation contract](../data-api-contracts/grounded-generation.md)'s `prompt_version`
 discipline exactly), Python-owned provider rendering and invocation,
 bounded transient retry and typed provider failure mapping (the same
-categories ADR-0023 already established for generation, reused rather
+categories [grounded generation contract](../data-api-contracts/grounded-generation.md) already established for generation, reused rather
 than re-invented), and Laravel-owned orchestration and acceptance of the
 typed result. It carries its own `rc1` purpose,
 `conversation.contextualize`, under the same principal, key ring and
@@ -995,7 +998,7 @@ question; plus safe structured interpretation metadata and lineage. It
 must not retrieve, answer the factual question, manufacture an
 authoritative premise, treat prior assistant content as evidence, change
 temporal authority or applicability, or gain any autonomous tool
-capability — every one of these is the same discipline ADR-0023 already
+capability — every one of these is the same discipline [grounded generation contract](../data-api-contracts/grounded-generation.md) already
 requires of `Generator`, applied here to a different, narrower operation.
 
 ### Durable contextualisation-result persistence
@@ -1082,45 +1085,46 @@ applied here).
 taxonomy" for the full lifecycle enum); contextualisation lineage
 (`contextualiser_version`, resolved-query digest — never the raw resolved
 query in telemetry, per "Observability"); retrieval lineage (existing
-`RetrievalResult`/plan identifiers, unchanged shape from ADR-0018);
-`generation_fingerprint` (ADR-0023, extended — see "Generation lineage");
+`RetrievalResult`/plan identifiers, unchanged shape from [retrieval planning and eligibility contract](../data-api-contracts/retrieval-planning-eligibility-and-retriever.md));
+`generation_fingerprint` ([grounded generation contract](../data-api-contracts/grounded-generation.md), extended — see "Generation lineage");
 correlation identifiers; usage metadata (recordable even on failure —
 see "Generation lineage and usage"); timings (queued/started/first-
 progress/first-part-accepted-for-display/completed, per stage); `failure_code`
 (nullable, typed); cancellation state (see "Cancellation"); stream/event
 sequence cursor (see "Candidate and browser event separation").
 
-**`GeneratedAnswer`:** unchanged in shape from ADR-0023's existing
+**`GeneratedAnswer`:** unchanged in shape from [grounded generation contract](../data-api-contracts/grounded-generation.md)'s existing
 `generated_answers` table, extended with `assistant_message_id` and
 `generation_run_id` foreign keys (the additive schema work Phase 17's flat
 table anticipates, per "Context" above) — `outcome`, `answer_parts` (via
 `AnswerPart`), `unsupported_aspects`, `insufficiency_reason`, validation
 timestamp, and the existing fingerprint/lineage fields, all unchanged.
 
-`EvidenceSnapshot` and citation persistence preserve ADR-0023's accepted
+`EvidenceSnapshot` and citation persistence preserve the
+[grounded generation contract](../data-api-contracts/grounded-generation.md)'s accepted
 semantics exactly — no change is made or needed here.
 
 **No second independently generated answer representation is created.**
 `answer_parts[]` remains the sole authoritative generated content for
 `ANSWERED`/`QUALIFIED`. **The first draft's claim that a
 `GROUNDED_ANSWER` Message's display text is "always" concatenated from
-`AnswerPart`s was incomplete — corrected here.** ADR-0023's own invariant
+`AnswerPart`s was incomplete — corrected here.** [grounded generation contract](../data-api-contracts/grounded-generation.md)'s own invariant
 table gives `INSUFFICIENT_EVIDENCE` zero `AnswerPart`s and a required,
 non-null `insufficiency_reason`; a `GROUNDED_ANSWER` Message for that
 outcome has nothing to concatenate. The deterministic rendering rule,
 covering all three outcomes without exception: for `ANSWERED`/`QUALIFIED`,
 display text is `AnswerPart`s concatenated in part order, exactly as
-ADR-0023's `GenerationResult::renderedText()` already does today
+[grounded generation contract](../data-api-contracts/grounded-generation.md)'s `GenerationResult::renderedText()` already does today
 (`apps/api/app/Support/Generation/GenerationResult.php:20-23`); for
 `INSUFFICIENT_EVIDENCE`, display text is the `GeneratedAnswer`'s
 `insufficiency_reason` verbatim. This is not a second generated
 representation and not a free-prose escape hatch — `insufficiency_reason`
-is already part of the one typed `GenerationResult` ADR-0023 defines, it
-is permitted *only* when `outcome = INSUFFICIENT_EVIDENCE`, and ADR-0023's
+is already part of the one typed `GenerationResult` [grounded generation contract](../data-api-contracts/grounded-generation.md) defines, it
+is permitted *only* when `outcome = INSUFFICIENT_EVIDENCE`, and [grounded generation contract](../data-api-contracts/grounded-generation.md)'s
 own grounding rules already forbid it from carrying a cited factual
 assertion (it describes an absence, never asserts a fact). Rendering it
 verbatim as the Message's display text adds no new capability and no new
-risk beyond what ADR-0023 already constrains. In neither case is display
+risk beyond what [grounded generation contract](../data-api-contracts/grounded-generation.md) already constrains. In neither case is display
 text an independently stored or independently editable string. **A
 denormalised rendered-text projection on `Message` is useful** (it avoids re-joining
 `AnswerPart`s on every conversation read) **provided equivalence is
@@ -1128,7 +1132,7 @@ structurally guaranteed, not merely conventionally maintained**: it is
 written exactly once, atomically with the `AnswerPart`s that produced it,
 inside the same transaction that promotes a run to `COMPLETED` (see "Per-
 part and whole-answer validation" below), and it is never independently
-updatable thereafter — the same discipline ADR-0017 already applies to
+updatable thereafter — the same discipline [versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md) already applies to
 derived facts (*"a derived fact, computed at query time... never a stored,
 flipped boolean"*), adapted here to *write-once-derived* rather than
 *computed-at-read* only because read-time joins across `AnswerPart`s on
@@ -1138,7 +1142,7 @@ reason to pay.
 ### Validated AnswerPart streaming: the trust model, and the single streamed transport that makes it honest
 
 **Raw provider token streaming to the browser is rejected, unchanged from
-ADR-0023's own "Alternatives considered."** So is buffering the complete
+[grounded generation contract](../data-api-contracts/grounded-generation.md)'s own "Alternatives considered."** So is buffering the complete
 result and animating its reveal — that is not streaming, it is a client-
 side special effect, and calling it streaming would misrepresent what the
 system actually did.
@@ -1198,7 +1202,7 @@ Laravel's own validation before anything is authoritative.**
 `GenerationCompleted` carries everything needed to whole-answer-validate a
 `GenerationResult` in full: `outcome`, the complete ordered `AnswerPart`s,
 `unsupported_aspects`, `insufficiency_reason`, `usage`, and the generation
-lineage ADR-0023 requires — but it is Python's report of what generation
+lineage [grounded generation contract](../data-api-contracts/grounded-generation.md) requires — but it is Python's report of what generation
 produced, not Laravel's acceptance of it (see "Candidate and browser event
 separation" below for why no `GenerationStreamEvent`, including this one,
 is ever described as application-authoritative). Laravel does **not**
@@ -1216,7 +1220,7 @@ different framing — `rc1` already treats purpose binding as a security
 property (a signature valid for one purpose is never accepted for
 another), and reusing `generation.answer` for two structurally different
 response shapes would blur exactly the boundary purpose-scoping exists to
-keep sharp, the same reasoning ADR-0018 already gave for not folding
+keep sharp, the same reasoning [retrieval planning and eligibility contract](../data-api-contracts/retrieval-planning-eligibility-and-retriever.md) already gave for not folding
 retrieval's synchronous calls into ingestion's asynchronous protocol.
 Keeping `generation.answer` completely untouched also means providers or
 models that cannot support safe streaming continue using a contract that
@@ -1236,7 +1240,7 @@ Python's adapter selection," without saying how Laravel would know that
 before calling either one.**
 
 The resolution: `delivery_mode` is a **declared, versioned property of the
-`GenerationProfile`** (ADR-0023's existing provider/model/adapter-version
+`GenerationProfile`** ([grounded generation contract](../data-api-contracts/grounded-generation.md)'s existing provider/model/adapter-version
 identity) — decided in advance, at configuration time, not discovered at
 call time:
 
@@ -1255,7 +1259,7 @@ GenerationProfile
 
 **Laravel owns selecting the configured, versioned `GenerationProfile` as
 part of ordinary orchestration** — the same profile-selection authority
-ADR-0023 already gives Laravel — and, once a profile is selected, Laravel
+[grounded generation contract](../data-api-contracts/grounded-generation.md) already gives Laravel — and, once a profile is selected, Laravel
 inspects only its declared, provider-neutral `delivery_mode` to choose the
 endpoint, never provider name, model name, OpenAI-specific behaviour,
 response timing, or any provider-native event type:
@@ -1266,7 +1270,7 @@ STREAMING_PARTS
     delivered incrementally, exactly as described above.
 
 COMPLETE_RESULT_ONLY
-  → call rc1 generation.answer (unchanged, synchronous, ADR-0023); the
+  → call rc1 generation.answer (unchanged, synchronous, [grounded generation contract](../data-api-contracts/grounded-generation.md)); the
     browser receives progress events during the wait, then one
     AnswerCompleted event carrying the whole validated answer — never a
     faked incremental reveal of a result that arrived all at once.
@@ -1375,7 +1379,7 @@ question was truly covered — "cross-part contradictions," named as a
 deterministic check in an earlier version of this document, is corrected
 here to what it actually is: a semantic property, governed by constrained
 prompts, typed contracts, model/provider behaviour, and Stage 17.4-style
-model-assisted evaluation (ADR-0023's own residual-risk posture, not
+model-assisted evaluation ([grounded generation contract](../data-api-contracts/grounded-generation.md)'s own residual-risk posture, not
 re-litigated here), never a capability this document claims Laravel's
 deterministic layer possesses. Part-local validation never proves the
 whole answer is complete or final, and an `AnswerPartAcceptedForDisplay`
@@ -1456,11 +1460,11 @@ already resolved for the authoritative `GenerationRequest` — never lazily
 on first citation click and never ahead of validation, both of which would
 risk persisting evidence tied to an answer that never actually completed.
 
-**Does this require a clarification to ADR-0023's "authoritative"
-wording?** A narrow one, stated here rather than by editing ADR-0023
+**Does this require a clarification to [grounded generation contract](../data-api-contracts/grounded-generation.md)'s "authoritative"
+wording?** A narrow one, stated here rather than by editing [grounded generation contract](../data-api-contracts/grounded-generation.md)
 itself (this repository's own accepted-ADR immutability convention, and
 the lesson already learned once during Phase 17's own reconciliation):
-ADR-0023's invariant governs when content is presented **as the finished
+[grounded generation contract](../data-api-contracts/grounded-generation.md)'s invariant governs when content is presented **as the finished
 answer**. It does not, and was never written to, address a state that did
 not exist at the time: content shown **explicitly and visibly marked as
 still in progress**, belonging to a run that has not yet reached
@@ -1468,10 +1472,10 @@ whole-answer completion. This document's position is that
 `AnswerPartAcceptedForDisplay` projections — clearly distinguished in the
 UI from a completed answer, persisted only as non-authoritative,
 bounded-retention delivery events, retractable in full if whole-answer
-validation fails — do not violate ADR-0023's invariant, because they are
+validation fails — do not violate [grounded generation contract](../data-api-contracts/grounded-generation.md)'s invariant, because they are
 never presented as authoritative in the first place. This is recorded as
 this document's own decision, binding for Phase 18, not as an edit to
-ADR-0023's text.
+[grounded generation contract](../data-api-contracts/grounded-generation.md)'s text.
 
 **The security/trust guarantee, stated plainly:** raw provider tokens are
 never exposed to the browser; only complete parts that passed part-local
@@ -1482,7 +1486,7 @@ persisted as authoritative history.
 
 ### Citation behaviour while streaming
 
-Unchanged in spirit from ADR-0023: the model never generates user-facing
+Unchanged in spirit from [grounded generation contract](../data-api-contracts/grounded-generation.md): the model never generates user-facing
 citation numbering, and citation display never exposes `AnswerPart` IDs,
 evidence handles, internal source IDs, model-generated "Claim 1"
 structures, or provider-specific identifiers.
@@ -1625,7 +1629,7 @@ earlier over-broad claim that no queue infrastructure existed at all.
 framework capability is configured but unused, not absent. The only
 existing precedent for "work that survives the
 initiating process" is the transactional-outbox-plus-SQS-plus-external-
-worker-lease pattern built for ingestion (ADR-0008, ADR-0015, ADR-0016) —
+worker-lease pattern built for ingestion (ADR-0008, [ingestion orchestration contract](../data-api-contracts/ingestion-orchestration-and-worker-results.md), [ingestion publication and recovery specification](../data-api-contracts/ingestion-publication-and-recovery.md)) —
 `IngestionEventClaim`'s claim/lease/renew/complete/fail lifecycle, designed
 for a long-running, externally-polled, potentially minutes-long worker
 attempt.
@@ -1735,7 +1739,7 @@ is enforced with a database constraint or transaction-scoped lock (for
 example, a partial unique index on `(conversation_id)` for non-terminal
 `GenerationRun` rows, or an equivalent serialising check inside the
 message-submission transaction) — not left to application-level
-convention alone, for the same reason ADR-0017's structural integrity
+convention alone, for the same reason [versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md)'s structural integrity
 requirements are enforced at the database layer rather than trusted to
 application code.
 
@@ -1834,7 +1838,7 @@ intent (the run keeps running — see "Connection-independent execution").
 
 Business answer outcomes and execution failures are never collapsed.
 `ANSWERED`/`QUALIFIED`/`INSUFFICIENT_EVIDENCE` remain, unchanged from
-ADR-0023, successful semantic outcomes — `INSUFFICIENT_EVIDENCE` is not an
+[grounded generation contract](../data-api-contracts/grounded-generation.md), successful semantic outcomes — `INSUFFICIENT_EVIDENCE` is not an
 infrastructure failure and `CLARIFICATION_REQUIRED` is not insufficiency
 and not necessarily an error.
 
@@ -1852,8 +1856,8 @@ above) — duplicating it as a failure code would blur "the user stopped
 this" with "something went wrong," which are different facts the UI and
 telemetry both need to keep separate:
 
-`CONTEXTUALISATION_FAILED`; `RETRIEVAL_FAILED` (ADR-0018's own outcome,
-surfaced here); `GENERATION_CONTEXT_BUDGET_EXCEEDED` (ADR-0023, a
+`CONTEXTUALISATION_FAILED`; `RETRIEVAL_FAILED` ([retrieval planning and eligibility contract](../data-api-contracts/retrieval-planning-eligibility-and-retriever.md)'s own outcome,
+surfaced here); `GENERATION_CONTEXT_BUDGET_EXCEEDED` ([grounded generation contract](../data-api-contracts/grounded-generation.md), a
 structural context-packing failure, explicitly distinct from both
 `INSUFFICIENT_EVIDENCE` and from any provider/infrastructure failure
 below — it means the evidence may be entirely sufficient but the
@@ -2019,13 +2023,13 @@ policies can be written directly against each table — the same
 denormalisation reasoning ADR-0006 already applies elsewhere for
 enforceable tenant constraints, not a new pattern invented here.
 
-Provider-boundary data minimisation is unchanged from ADR-0023: only the
+Provider-boundary data minimisation is unchanged from [grounded generation contract](../data-api-contracts/grounded-generation.md): only the
 bounded context genuinely required for contextualisation and generation
 crosses the provider boundary — never full conversation history beyond the
 configured window, never other workspaces' anything. Retrieved evidence
 remains untrusted data. Conversation context grants the model no
 autonomous retrieval, browsing, state-changing tools, or provider-native
-tool capability — unchanged from ADR-0023's own prompt-injection boundary,
+tool capability — unchanged from [grounded generation contract](../data-api-contracts/grounded-generation.md)'s own prompt-injection boundary,
 extended here to cover conversational context the same way.
 
 ### Observability and privacy
@@ -2049,12 +2053,12 @@ debug."
 
 ### Generation lineage and usage
 
-ADR-0023's `generation_fingerprint` (provider, model, contract version,
+[grounded generation contract](../data-api-contracts/grounded-generation.md)'s `generation_fingerprint` (provider, model, contract version,
 prompt version, adapter version, quality-affecting configuration) is
 preserved unchanged. Phase 18 extends lineage only where it introduces
 genuinely new quality-affecting components: `contextualiser_version`
 (contract/prompt/model/configuration for contextualisation, mirroring
-ADR-0023's own prompt-versioning discipline); a conversation-context
+[grounded generation contract](../data-api-contracts/grounded-generation.md)'s own prompt-versioning discipline); a conversation-context
 policy version (turn count, token ceiling — whatever the configured
 policy actually is at run time); a streaming/orchestration contract
 version where the candidate-event mechanism itself is versioned. Usage
@@ -2257,7 +2261,7 @@ case.
 ### Sending the complete raw transcript to retrieval/generation, with no bounded window or contextualiser
 
 Rejected. Grows the provider payload unboundedly with conversation length,
-directly violates ADR-0023's data-minimisation principle, and conflates
+directly violates [grounded generation contract](../data-api-contracts/grounded-generation.md)'s data-minimisation principle, and conflates
 "what does history suggest the user means" with "what may the system
 claim," exactly the distinction the governing principle exists to prevent.
 
@@ -2271,10 +2275,10 @@ seam is preserved, not foreclosed.
 
 ### Raw provider tokens directly to the browser
 
-Rejected, unchanged from ADR-0023's own alternatives analysis, restated
+Rejected, unchanged from [grounded generation contract](../data-api-contracts/grounded-generation.md)'s own alternatives analysis, restated
 here because streaming makes the temptation concrete: unvalidated,
 unauthorised content reaching a user before validation is exactly the
-failure mode ADR-0023's central invariant exists to prevent.
+failure mode [grounded generation contract](../data-api-contracts/grounded-generation.md)'s central invariant exists to prevent.
 
 ### Buffer the complete result, then reveal it with staggered/simulated timing
 
@@ -2461,8 +2465,8 @@ required; exact `ChatDeliveryEvent` retention window; calibrated timeout
 durations or numerical SLOs without operational evidence; the detailed
 title-generation truncation bound; Phase 19 administration features; the
 future regenerate-a-completed-answer operation; or any of
-R18-S02/S03/S04's implementation. It does not redecide anything ADR-0023,
-ADR-0018, ADR-0017, ADR-0012 or ADR-0006 already settled. The
+R18-S02/S03/S04's implementation. It does not redecide anything [grounded generation contract](../data-api-contracts/grounded-generation.md),
+[retrieval planning and eligibility contract](../data-api-contracts/retrieval-planning-eligibility-and-retriever.md), [versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md), ADR-0012 or ADR-0006 already settled. The
 `IMPLEMENTATION_GUIDE.md` Stage 18.2 wording correction identified above
 is noted, not applied — this document does not modify
 `IMPLEMENTATION_GUIDE.md`, `PROJECT_ROADMAP.md`, or `tasks.json`, per this

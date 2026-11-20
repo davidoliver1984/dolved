@@ -58,11 +58,11 @@ This explicitly approved clarification is not a precedent for silently
 editing Accepted ADRs. A substantive change to an accepted architectural
 decision still requires a new or superseding ADR.
 
-## Relationship to prior ADRs
+## Relationship to prior documents
 
-### Consumes ADR-0018 and ADR-0021's final evidence; decides nothing about retrieval
+### Consumes [retrieval planning and eligibility contract](../data-api-contracts/retrieval-planning-eligibility-and-retriever.md) and ADR-0021's final evidence; decides nothing about retrieval
 
-ADR-0018 defines `RetrievalPlanner`, `EligibilityResolver` and the
+[retrieval planning and eligibility contract](../data-api-contracts/retrieval-planning-eligibility-and-retriever.md) defines `RetrievalPlanner`, `EligibilityResolver` and the
 `Retriever` boundary; ADR-0021 extends that pipeline with dense+sparse
 fusion, reranking and `EvidenceThresholdPolicy`, ending in "Final evidence
 set -> generation (Phase 17)". This document treats a `RetrievalResult` in
@@ -77,12 +77,12 @@ phase (V3 engineering confirmation, case-first Recall@K 0.9667; see
 
 ### Extends `rc1` with a new purpose, rather than inventing a new protocol
 
-ADR-0018 established `rc1` (Retrieval Call, v1) as the synchronous,
+[retrieval planning and eligibility contract](../data-api-contracts/retrieval-planning-eligibility-and-retriever.md) established `rc1` (Retrieval Call, v1) as the synchronous,
 HMAC-signed, `retrieval-caller`-principal protocol for Laravel calling
 Python inside a user request's critical path, and named `retrieval.plan`
 and `retrieval.search` as its initial purposes. ADR-0021 added
 `retrieval.rerank` to the same protocol without changing its signature
-format, exactly the extension path ADR-0018 committed to: *"a new purpose
+format, exactly the extension path [retrieval planning and eligibility contract](../data-api-contracts/retrieval-planning-eligibility-and-retriever.md) committed to: *"a new purpose
 to this same protocol without requiring a new signature format."* Grounded
 generation is the same call shape — synchronous, inside the same request's
 critical path, Laravel-signed, Python-verified, no processing lease, no
@@ -96,14 +96,14 @@ during repository reconciliation.
 
 `Generator` is the fifth application of the same Open/Closed shape this
 platform has now used four times: `Embedder` (ADR-0013), `VectorStore`
-(ADR-0014), `RetrievalPlanner`/`Retriever` (ADR-0018), `SparseEncoder`/
+(ADR-0014), `RetrievalPlanner`/`Retriever` ([retrieval planning and eligibility contract](../data-api-contracts/retrieval-planning-eligibility-and-retriever.md)), `SparseEncoder`/
 `Reranker` (ADR-0021). Nothing about a provider-neutral generation boundary
 is architecturally new; this document applies an already-proven shape to a
 fifth external AI capability.
 
 ### Extends the snapshot-plus-fingerprint lineage idiom, not a new one
 
-`ChunkingResult`'s configuration (ADR-0011), `EmbeddingProfile` (ADR-0013)
+`ChunkingResult`'s configuration ([chunking contract](../data-api-contracts/chunking-contract.md)), `EmbeddingProfile` (ADR-0013)
 and `SparseEmbeddingProfile` (ADR-0021) each retain a canonical, inspectable
 snapshot and a deterministic `sha256`-of-canonical-JSON fingerprint derived
 from it. This document applies the identical idiom to generation
@@ -115,16 +115,16 @@ prompt-template and generation-configuration links."*
 ### Resolves the citation/re-extraction design constraint
 
 `PROJECT_ROADMAP.md`'s "Design constraint — Citations and re-extraction"
-(recorded 2026-07-30, arising from ADR-0010's extraction-run-scoped element
+(recorded 2026-07-30, arising from [extraction contract](../data-api-contracts/canonical-extracted-document.md)'s extraction-run-scoped element
 identity) was deliberately deferred *"until retrieval and answer generation
 provide enough context to define the actual citation requirements."* This
 document is that resolution — see "Durable evidence identity" below.
 
-### Reuses ADR-0019/0020's evaluator boundary; does not build a new one
+### Reuses [retrieval evaluation and quality-gates specification](../quality/retrieval-evaluation-and-quality-gates.md) and [retrieval evaluation semantics specification](../quality/retrieval-evaluation-evidence-and-model-assisted-semantics.md)'s evaluator boundary; does not build a new one
 
-ADR-0019 built the provider-neutral `ModelAssistedEvaluator` boundary with a
+[retrieval evaluation and quality-gates specification](../quality/retrieval-evaluation-and-quality-gates.md) built the provider-neutral `ModelAssistedEvaluator` boundary with a
 concrete `RagasEvaluator` adapter in V1, and states directly: *"Stage 17.4
-reuses the same `RagasEvaluator` adapter."* ADR-0020 confirms the same
+reuses the same `RagasEvaluator` adapter."* [retrieval evaluation semantics specification](../quality/retrieval-evaluation-evidence-and-model-assisted-semantics.md) confirms the same
 extension point. This document's evaluation section (see "Evaluation
 implications" below) does not define a new evaluation subsystem — it
 describes what Stage 17.4 adds to an extension point that already exists.
@@ -138,10 +138,10 @@ document's lineage and persistence decisions populate fields ADR-0006
 already named as forward direction; it does not invent a new audit
 mechanism.
 
-### Consumes, does not reopen, ADR-0017's authority/applicability model
+### Consumes, does not reopen, [versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md)'s authority/applicability model
 
 Temporal authority and location applicability are resolved once, upstream,
-by `EligibilityResolver` against ADR-0017's domain model, before evidence
+by `EligibilityResolver` against [versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md)'s domain model, before evidence
 ever reaches this document's boundary. Generation reflects that resolution;
 it never re-derives or second-guesses it (see "Grounding rules" below).
 
@@ -162,7 +162,7 @@ For correctly scoped evidence, all 36 expected `EvidenceUnit`s survived
 every pipeline stage: Dense → Sparse → Union → Fusion → Reranker →
 Threshold → Final evidence. This is an engineering-only confirmation
 against the project's own repository-owned exam, not a held-out or
-production-promoted result (see the evaluation conventions ADR-0019/0020
+production-promoted result (see the evaluation conventions [retrieval evaluation and quality-gates specification](../quality/retrieval-evaluation-and-quality-gates.md) and [retrieval evaluation semantics specification](../quality/retrieval-evaluation-evidence-and-model-assisted-semantics.md)
 already establish), but it is the settled basis Phase 17 now builds on.
 
 An independent architecture review of the proposed Phase 17 direction (the
@@ -209,7 +209,7 @@ presentation-layer concern this document deliberately does not own); exact
 retry counts or backoff constants (implementation, following the pattern
 already established); Phase 18 streaming design (recorded only as an
 inherited constraint below); or anything about retrieval, planning,
-eligibility, fusion, reranking or the evidence threshold (ADR-0018,
+eligibility, fusion, reranking or the evidence threshold ([retrieval planning and eligibility contract](../data-api-contracts/retrieval-planning-eligibility-and-retriever.md),
 ADR-0021 — closed).
 
 ## Decision
@@ -302,7 +302,7 @@ contract regardless of which adapter is active, and a future provider
 change is an additive adapter plus (where the generation contract version
 changes) a controlled lineage transition, not a pipeline redesign.
 gpt-5-mini is an economical initial choice, and not a new provider
-relationship: ADR-0018 already selected OpenAI/gpt-5-mini as the production
+relationship: [retrieval planning and eligibility contract](../data-api-contracts/retrieval-planning-eligibility-and-retriever.md) already selected OpenAI/gpt-5-mini as the production
 `RetrievalPlanner` model, so this stage reuses an already-operational
 provider integration rather than introducing a second one to evaluate.
 That reuse does not make gpt-5-mini a permanent generation-quality
@@ -312,14 +312,14 @@ document deliberately defers to Stage 17.4's evaluation (see below), not
 one this specification claims to have settled by picking a model. Before R17-S03
 begins implementation, the selected model must still be confirmed to
 support the required strict structured-output behaviour reliably for
-*generation* specifically — a model's suitability as ADR-0018's narrow
+*generation* specifically — a model's suitability as [retrieval planning and eligibility contract](../data-api-contracts/retrieval-planning-eligibility-and-retriever.md)'s narrow
 structured classifier does not, by itself, confirm its suitability for
 open-ended grounded generation, so this verification step is not skipped
 merely because the model is already in production use elsewhere.
 
 ### Generation owns sufficiency; no separate LLM sufficiency judge
 
-Retrieval's `EVIDENCE_FOUND` (ADR-0018) means relevant, authorised evidence
+Retrieval's `EVIDENCE_FOUND` ([retrieval planning and eligibility contract](../data-api-contracts/retrieval-planning-eligibility-and-retriever.md)) means relevant, authorised evidence
 was retrieved. It does not guarantee every requested fact can be answered.
 Retrieval-threshold calibration already exposed cases — no fixed
 medicine-quarantine duration, no universal police-call timer, no mandatory
@@ -486,7 +486,7 @@ generation call. Laravel alone owns their mapping to canonical identity;
 Python never resolves, invents, or needs to know it.
 
 This resolves the deferred "Design constraint — Citations and
-re-extraction": ADR-0010 scopes extracted-element UUIDs to a single
+re-extraction": [extraction contract](../data-api-contracts/canonical-extracted-document.md) scopes extracted-element UUIDs to a single
 immutable extraction run, so a citation resolved only against a live
 `chunk_id` risks silently pointing at different content after a future
 re-extraction. On a successful `ANSWERED`/`QUALIFIED` result, after
@@ -510,7 +510,7 @@ on the source extraction run's rows still existing. A future re-extraction
 can proceed freely without any retention or garbage-collection policy for
 old extraction runs being load-bearing for historical-answer correctness —
 old `EvidenceSnapshot`s already hold their own copy of what was cited. This
-mirrors the "disposable snapshot" treatment ADR-0010 already applies to
+mirrors the "disposable snapshot" treatment [extraction contract](../data-api-contracts/canonical-extracted-document.md) already applies to
 extraction itself, applied here to citation.
 
 Snapshot scope is per generated answer, not a global, deduplicated,
@@ -571,7 +571,7 @@ stage alongside ADR-0021's six — no reranking or re-scoring happens here.
 
 **Ownership split.** Laravel owns: the authorised evidence set;
 `PRIMARY`/`COMPARISON` structural requirements where `RetrievalResult`
-carries them (ADR-0018's `COMPARE` semantics); evidence order/priority; the
+carries them ([retrieval planning and eligibility contract](../data-api-contracts/retrieval-planning-eligibility-and-retriever.md)'s `COMPARE` semantics); evidence order/priority; the
 configured context policy; which evidence, if any, that policy permits
 omitting; and fail-closed behaviour when the policy cannot be satisfied.
 Python's adapter owns: deterministic provider-specific rendering, and
@@ -656,7 +656,7 @@ explain, audit and justify if that provider were ever compromised.
   must not claim otherwise.
 - **Authority and applicability are application-owned, reflected not
   re-derived.** The generator states which version/scope is authoritative
-  only as `EligibilityResolver` already resolved it (ADR-0017); it never
+  only as `EligibilityResolver` already resolved it ([versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md)); it never
   independently chooses another authoritative version or applicability
   scope.
 - **Material modality is preserved.** *"must"*, *"should"* and *"may"* in
@@ -698,7 +698,7 @@ outcomes (`ANSWERED`, `QUALIFIED`, `INSUFFICIENT_EVIDENCE`), which are
 never provider failures. Only genuinely transient categories — transport
 failure, rate limit, timeout — are retried, with bounded, capped
 exponential backoff and jitter, following the same pattern ADR-0007,
-ADR-0008, ADR-0010 and ADR-0013 already establish for every other provider
+ADR-0008, [extraction contract](../data-api-contracts/canonical-extracted-document.md) and ADR-0013 already establish for every other provider
 or infra dependency in this platform, rather than a new retry philosophy
 invented here. Malformed typed provider output, deterministic contract
 validation failures, unsupported citations, and `GENERATION_CONTEXT_BUDGET_EXCEEDED`
@@ -714,7 +714,7 @@ Voyage's exact retry constants to its implementation stage.
 ### Generation lineage and fingerprint
 
 Every generated answer persists a `generation_fingerprint`, following the
-same canonical-snapshot-plus-deterministic-fingerprint idiom ADR-0011 and
+same canonical-snapshot-plus-deterministic-fingerprint idiom [chunking contract](../data-api-contracts/chunking-contract.md) and
 ADR-0013 already established:
 
 ```text
@@ -743,8 +743,8 @@ used"* field ADR-0006's Search/RAG audit layer already anticipated.
 ### Laravel/Python ownership
 
 **Laravel owns:** authentication/authorisation; tenancy; retrieval
-orchestration (unchanged, ADR-0018/0021); the final authorised evidence
-package; authority/applicability truth (ADR-0017, unchanged); deterministic
+orchestration (unchanged, [retrieval planning and eligibility contract](../data-api-contracts/retrieval-planning-eligibility-and-retriever.md)/0021); the final authorised evidence
+package; authority/applicability truth ([versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md), unchanged); deterministic
 context packing; canonical `GenerationRequest` assembly; request-scoped
 evidence-identity mapping; deterministic `GenerationResult` validation;
 durable `EvidenceSnapshot` and `GeneratedAnswer` persistence; API contract
@@ -753,7 +753,7 @@ enforcement; and Search/RAG audit persistence (ADR-0006).
 **Python owns:** the provider-neutral `Generator` interface; deterministic
 provider-specific input rendering; the provider adapter and provider call;
 bounded provider retry, following the pattern already established in
-ingestion (ADR-0015) rather than having Laravel orchestrate low-level
+ingestion ([ingestion orchestration contract](../data-api-contracts/ingestion-orchestration-and-worker-results.md)) rather than having Laravel orchestrate low-level
 generation retries; typed response parsing; and provider usage/latency
 metadata and failure mapping.
 
@@ -768,12 +768,12 @@ produces the same provider input. This is what makes `prompt_version` a
 meaningful fingerprint component, and what allows hostile-document fixtures
 and adapter regression tests to be reproduced offline, without a live
 provider call, mirroring the deterministic-fake testing discipline
-ADR-0013 and ADR-0018 already require of `Embedder` and `RetrievalPlanner`.
+ADR-0013 and [retrieval planning and eligibility contract](../data-api-contracts/retrieval-planning-eligibility-and-retriever.md) already require of `Embedder` and `RetrievalPlanner`.
 
 ### The `rc1` protocol extension
 
 A new `rc1` purpose, `generation.answer`, is added under the existing
-`retrieval-caller` principal, key ring and signing mechanism ADR-0018
+`retrieval-caller` principal, key ring and signing mechanism [retrieval planning and eligibility contract](../data-api-contracts/retrieval-planning-eligibility-and-retriever.md)
 established and ADR-0021 already extended once — no new protocol version,
 no new principal, no change to the canonical string-to-sign shape. The
 existing purpose-binding discipline applies unchanged: a signature valid
@@ -781,7 +781,7 @@ for `generation.answer` is never accepted for `retrieval.plan`,
 `retrieval.search` or `retrieval.rerank`, and vice versa. This call sits in
 the same user-request critical path as the existing three purposes, so the
 same mandatory-TLS, replay-suppression, and bounded-timeout requirements
-ADR-0018 already established apply to it without restatement.
+[retrieval planning and eligibility contract](../data-api-contracts/retrieval-planning-eligibility-and-retriever.md) already established apply to it without restatement.
 
 ### Streaming deferral
 
@@ -802,7 +802,7 @@ considered").
 ### Evaluation implications (Stage 17.4)
 
 Stage 17.4 extends the existing `ModelAssistedEvaluator`/`RagasEvaluator`
-boundary ADR-0019 built and ADR-0020 confirmed — it does not define a new
+boundary [retrieval evaluation and quality-gates specification](../quality/retrieval-evaluation-and-quality-gates.md) built and [retrieval evaluation semantics specification](../quality/retrieval-evaluation-evidence-and-model-assisted-semantics.md) confirmed — it does not define a new
 evaluation subsystem. Deterministic checks, runnable without a model judge:
 `GenerationResult` structural validity; the outcome invariants above;
 citation membership (the same check Laravel's validation layer already
@@ -816,7 +816,7 @@ sufficiency cases already diagnosed during retrieval-threshold calibration
 (medicine quarantine, police-call timer, receipt-chasing count, visitor-
 badge grace period) become permanent generation-evaluation fixtures.
 Evaluation records reuse the existing repository-owned experiment
-convention (immutable, versioned run directories; see ADR-0019); this
+convention (immutable, versioned run directories; see [retrieval evaluation and quality-gates specification](../quality/retrieval-evaluation-and-quality-gates.md)); this
 document does not invent a parallel record format. Retrieval threshold
 calibration is not reopened by this evaluation work.
 
@@ -917,11 +917,11 @@ lineage — never a semantic judgement about whether cited text is truly
 entailed by its evidence. Blending a "probably fine" semantic check into
 the deterministic layer would misrepresent what that layer actually
 guarantees, exactly the honesty this platform's evaluation architecture
-(ADR-0019/0020) already insists on for retrieval metrics.
+([retrieval evaluation and quality-gates specification](../quality/retrieval-evaluation-and-quality-gates.md) and [retrieval evaluation semantics specification](../quality/retrieval-evaluation-evidence-and-model-assisted-semantics.md)) already insists on for retrieval metrics.
 
 ### A new internal protocol for Laravel-to-Python generation calls
 
-Rejected. ADR-0018 already committed to `rc1` accepting new purposes
+Rejected. [retrieval planning and eligibility contract](../data-api-contracts/retrieval-planning-eligibility-and-retriever.md) already committed to `rc1` accepting new purposes
 "without requiring a new signature format," and ADR-0021 already exercised
 that commitment once (`retrieval.rerank`). Generation is the same call
 shape as the existing three purposes; a new protocol would duplicate
@@ -940,7 +940,7 @@ provide.
 Rejected for V1. No demonstrated requirement exists for deduplicating
 evidence snapshots across different answers; per-answer scope is the
 smaller, more conservative contract, consistent with this platform's
-repeated preference (ADR-0010, ADR-0013, ADR-0014, ADR-0018) not to solve
+repeated preference ([extraction contract](../data-api-contracts/canonical-extracted-document.md), ADR-0013, ADR-0014, [retrieval planning and eligibility contract](../data-api-contracts/retrieval-planning-eligibility-and-retriever.md)) not to solve
 an unmeasured problem speculatively.
 
 ### A provider-generated `AnswerPart` identifier

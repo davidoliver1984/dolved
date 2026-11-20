@@ -10,7 +10,7 @@ Accepted
 
 ## Context
 
-Phase 10 (ADR 0010) established a canonical, immutable pipeline:
+Phase 10 ([extraction contract](../data-api-contracts/canonical-extracted-document.md)) established a canonical, immutable pipeline:
 `ExtractedDocument`, produced by a format-specific extractor, is transformed by
 a structural normaliser into an immutable `NormalisedDocument` — already a
 self-describing domain model carrying its own `workspace_id` and
@@ -21,7 +21,7 @@ Phase 11 must take that `NormalisedDocument` and produce chunks: the
 retrieval-sized units that Phase 13 will embed, that Phase 15 will retrieve,
 and that Phase 16 will eventually cite. Before any of that can happen, the
 platform needs an architectural contract chunking conforms to — the same way
-ADR 0010 defined what every extractor must produce before Stage 10.2–10.4
+[extraction contract](../data-api-contracts/canonical-extracted-document.md) defined what every extractor must produce before Stage 10.2–10.4
 picked specific parsing libraries.
 
 This specification defines that contract: the boundary a `ChunkingStrategy`
@@ -71,7 +71,7 @@ self-describing, let it describe itself, and pass it as-is.
 ### A pluggable strategy boundary
 
 The pipeline depends on the `ChunkingStrategy` abstraction, not on a concrete
-chunker. This is the same Open/Closed reasoning ADR 0010 already applied to
+chunker. This is the same Open/Closed reasoning [extraction contract](../data-api-contracts/canonical-extracted-document.md) already applied to
 the `Element` model: the set of chunking strategies is open for extension, but
 everything that calls `ChunkingStrategy` and everything that consumes
 `ChunkingResult` is closed for modification when a new strategy is added.
@@ -97,7 +97,7 @@ configuration that does participate is captured as part of the result (see
 precisely what produced it.
 
 This extends, rather than introduces, an architectural value ADR 0007 and
-ADR 0010 already established: replayability and deterministic processing are
+[extraction contract](../data-api-contracts/canonical-extracted-document.md) already established: replayability and deterministic processing are
 treated as first-class properties of this pipeline, not incidental
 conveniences. Determinism is also what makes Stage 11.3's evaluation work
 possible at all — comparing chunk-size distributions or checking for text
@@ -126,10 +126,10 @@ not met it.
 
 ### Immutability
 
-`NormalisedDocument` is already immutable (ADR 0010). `ChunkingResult` and
+`NormalisedDocument` is already immutable ([extraction contract](../data-api-contracts/canonical-extracted-document.md)). `ChunkingResult` and
 `Chunk` are immutable in the same sense: once produced, nothing overwrites
 them, and the chunker never mutates the `NormalisedDocument` it was given.
-This carries forward the same benefits ADR 0010 already argued for
+This carries forward the same benefits [extraction contract](../data-api-contracts/canonical-extracted-document.md) already argued for
 extraction's output — data integrity, auditability, replayability,
 deterministic processing, debugging, and a foundation for future
 event-driven processing — rather than re-deriving them independently for
@@ -157,7 +157,7 @@ actually looks like, how it is presented, or how it survives re-extraction —
 that is Phase 16's work, and the citation/re-extraction design constraint
 already recorded in `PROJECT_ROADMAP.md`. This specification's obligation is narrower:
 ensure chunking does not discard the information a future citation feature
-would need, consistent with ADR 0010's core principle that information
+would need, consistent with [extraction contract](../data-api-contracts/canonical-extracted-document.md)'s core principle that information
 discarded early can never be recreated later.
 
 ### Completeness: a successful result accounts for all content
@@ -221,7 +221,7 @@ impossible to compare or diff.
 This is a deliberate contrast with `ExtractedElement`, which is assigned a
 fresh identity on every extraction run rather than a deterministic one. That
 is not an inconsistency — each choice fits the stage it belongs to. An
-extraction run's whole purpose (established when reviewing ADR 0010) is to be
+extraction run's whole purpose (established when reviewing [extraction contract](../data-api-contracts/canonical-extracted-document.md)) is to be
 one immutable snapshot among potentially several independent snapshots of the
 same document, so a fresh identity per run is exactly what "a new snapshot"
 should mean. Chunking's input, by contrast, is not itself in question the way
@@ -344,7 +344,7 @@ durable intent separate from its publication-attempt telemetry.
   chunkable content, with repetition only through deliberate, recorded
   overlap or enrichment; content chunking cannot safely represent causes a
   typed failure, not an incomplete success — consistent with ADR 0007's
-  treatment of extraction warnings and ADR 0010's loss-minimisation
+  treatment of extraction warnings and [extraction contract](../data-api-contracts/canonical-extracted-document.md)'s loss-minimisation
   principle, but stricter where completeness itself is at stake.
 - Source provenance is preserved: every chunk traces back to the
   `NormalisedElement`(s) it was built from.
@@ -396,7 +396,7 @@ preserve.
 ### A concrete chunker used directly, with no `ChunkingStrategy` abstraction
 
 Rejected. This would couple every downstream consumer to one specific
-chunking algorithm's implementation — the same coupling problem ADR 0010
+chunking algorithm's implementation — the same coupling problem [extraction contract](../data-api-contracts/canonical-extracted-document.md)
 already solved for extractors. A future semantic or model-assisted strategy
 would then require changing consumer code instead of being an additive
 implementation of an existing abstraction.
@@ -449,7 +449,7 @@ vector-storage and operations phases, not for this boundary.
   a model-assisted strategy's actual model identity and parameters from the
   semantic outcome they belong to.
 - Future strategies (semantic, model-assisted, hybrid) are additive changes,
-  matching the Open/Closed precedent ADR 0010 already established.
+  matching the Open/Closed precedent [extraction contract](../data-api-contracts/canonical-extracted-document.md) already established.
 - Provenance chains cleanly from a chunk back through `NormalisedElement` to
   its original source location, without this specification having to design the
   citation system that will eventually consume it.

@@ -50,34 +50,74 @@ This map records the reader-facing classification of material originally stored 
 
 ## Reference audit
 
-Counts below are case-insensitive occurrences of the legacy identifier, former path or former linked filename in the repository before reclassification. Current navigation is updated to canonical descriptive titles and paths. Historical delivery statements, journals, source comments, tests, contracts, evaluation evidence, frozen/checksummed material and the forwarding records retain legacy identifiers where changing them would alter provenance or evidence.
+Counts are case-insensitive matches of the exact legacy token forms `ADR-NNNN`
+and `ADR NNNN` in tracked text, excluding this self-referential Reference audit
+section. **Before** is commit `c115890`, the selected
+pilot baseline. **Current references updated** counts removed legacy tokens in
+the baseline-to-polish diff. The two retained columns partition every remaining
+match: historical/provenance paths are the classification map, forwarders,
+accepted ADRs, journals, implementation history, roadmap/task delivery facts,
+and the explicitly historical lines retained in specifications; protected
+paths are application/test/contract/script/infrastructure text, drafts and
+evaluation evidence. **Remaining** is their sum.
 
-| Legacy ID | Occurrences before | Current references updated | Historical references retained | Frozen references untouched | Remaining occurrences and reason |
-|---|---:|---:|---|---|---|
-| ADR-0010 | 111 | 13 | Yes | Yes | 102 — provenance records and historical implementation, journal, source, test, contract and evaluation references. |
-| ADR-0011 | 88 | 13 | Yes | Yes | 79 — provenance records and historical implementation, journal, source, test, contract and evaluation references. |
-| ADR-0015 | 102 | 4 | Yes | Yes | 102 — provenance records and historical ingestion delivery/evidence references. |
-| ADR-0016 | 82 | 3 | Yes | Yes | 83 — provenance records and historical ingestion delivery/evidence references. |
-| ADR-0017 | 231 | 3 | Yes | Yes | 232 — provenance records and historical temporal-authority implementation/evidence references. |
-| ADR-0018 | 234 | 5 | Yes | Yes | 233 — provenance records and historical retrieval implementation/evidence references. |
-| ADR-0019 | 169 | 4 | Yes | Yes | 169 — provenance records and historical evaluation policy, implementation and evidence references. |
-| ADR-0020 | 69 | 1 | Yes | Yes | 72 — provenance records and historical evaluation clarification/evidence references. |
-| ADR-0022 | 1,793 | 1 | Yes | Yes | 1,796 — predominantly immutable evaluation run identifiers and evidence, plus provenance records. |
-| ADR-0023 | 144 | 4 | Yes | Yes | 144 — provenance records and historical generation implementation/evidence references. |
-| ADR-0024 | 97 | 2 | Yes | Yes | 99 — provenance records and historical conversation/streaming delivery references. |
-| ADR-0025 | 134 | 4 | Yes | Yes | 134 — provenance records and historical administration delivery references. |
-| ADR-0027 | 86 | 15 | Yes | Yes | 75 — provenance records and historical product-design acceptance references. |
-| ADR-0030 | 133 | 3 | Yes | Yes | 134 — provenance records and historical metadata delivery references. |
-| ADR-0031 | 135 | 1 | Yes | Yes | 138 — provenance records and historical governance delivery references. |
-| ADR-0033 | 47 | 2 | Yes | Yes | 49 — provenance records and historical knowledge-library delivery references. |
-| ADR-0034 | 118 | 3 | Yes | Yes | 119 — provenance records and historical import delivery/acceptance references. |
-| ADR-0035 | 88 | 2 | Yes | Yes | 90 — provenance records and historical bulk-operation audit/acceptance references. |
-| ADR-0036 | 39 | 3 | Yes | Yes | 40 — provenance records and historical notification audit/acceptance references. |
-| ADR-0040 | 7 | 1 | Yes | Yes | 10 — provenance records and historical implementation references. |
+| Legacy ID | Before | Current references updated | Historical/provenance retained | Frozen/protected retained | Remaining |
+|---|---:|---:|---:|---:|---:|
+| ADR-0010 | 109 | 51 | 52 | 9 | 61 |
+| ADR-0011 | 83 | 28 | 48 | 10 | 58 |
+| ADR-0015 | 97 | 51 | 46 | 5 | 51 |
+| ADR-0016 | 77 | 29 | 41 | 10 | 51 |
+| ADR-0017 | 226 | 122 | 64 | 45 | 109 |
+| ADR-0018 | 230 | 81 | 102 | 50 | 152 |
+| ADR-0019 | 163 | 64 | 73 | 35 | 108 |
+| ADR-0020 | 67 | 4 | 22 | 44 | 66 |
+| ADR-0022 | 1,793 | 2 | 8 | 1,786 | 1,794 |
+| ADR-0023 | 137 | 76 | 55 | 9 | 64 |
+| ADR-0024 | 96 | 51 | 47 | 1 | 48 |
+| ADR-0025 | 132 | 72 | 62 | 1 | 63 |
+| ADR-0027 | 83 | 33 | 52 | 1 | 53 |
+| ADR-0030 | 132 | 103 | 34 | 0 | 34 |
+| ADR-0031 | 134 | 87 | 50 | 0 | 50 |
+| ADR-0033 | 46 | 19 | 30 | 0 | 30 |
+| ADR-0034 | 117 | 73 | 45 | 2 | 47 |
+| ADR-0035 | 86 | 63 | 24 | 2 | 26 |
+| ADR-0036 | 37 | 23 | 16 | 1 | 17 |
+| ADR-0040 | 6 | 1 | 5 | 3 | 8 |
+
+The reclassification deliberately adds provenance tokens. The added counts are
+three each for ADR-0010, ADR-0011, ADR-0016, ADR-0018, ADR-0020, ADR-0022,
+ADR-0023, ADR-0024, ADR-0025, ADR-0027, ADR-0031, ADR-0033, ADR-0034,
+ADR-0035, ADR-0036 and ADR-0040; five each for ADR-0015, ADR-0017 and ADR-0030;
+and nine for ADR-0019. Thus `Before - updated + added = Remaining` for every
+row.
+
+### File-level reasons for retained matches
+
+- `docs/adr/` retains accepted decision text and one forwarding record per
+  reclassified identifier. `docs/DOCUMENTATION_CLASSIFICATION.md` retains the
+  mapping and this audit. These are provenance, not current specification
+  navigation.
+- `PROJECT_ROADMAP.md`, `tasks.json`, `IMPLEMENTATION_GUIDE.md`,
+  `docs/journal/` and `docs/design-corrections-register.md` retain dated
+  creation, acceptance, implementation, review and completion facts. Current
+  roadmap objectives and artifact paths use specification titles and canonical
+  paths.
+- `docs/specs/` has only explicit historical acceptance/audit statements left:
+  ADR-0015 (2), ADR-0017 (2), ADR-0019 (6) and ADR-0030 (2). All current
+  relationship prose uses descriptive linked titles.
+- `apps/`, `tests/`, `contracts/`, `scripts/`, `infrastructure/`, `.env.example`
+  and `makefile` are read-only for this editorial task. Their source comments,
+  test names and command descriptions retain the identifiers that existed when
+  they were written.
+- `docs/evaluation/` and `docs/adr/gpt_drafts/` are protected evidence and
+  drafting history. ADR-0022 accounts for 1,786 protected matches, primarily
+  immutable evaluation identifiers and records; the other protected counts are
+  distributed across the same protected path classes shown above. No protected
+  content was opened for editorial rewriting or modified.
 
 ## Protected material and reconciliation
 
 - No files under evaluation evidence, tests, contracts, application source, infrastructure or `docs/adr/gpt_drafts/` were moved or edited for reclassification.
 - The baseline pilot worktree had uncommitted changes to `PROJECT_ROADMAP.md`, `tasks.json`, `docs/journal/2026-11-19-dolved-dify-delivery.md` and `docs/operations/dolved-dify/DOLVED-DIFY-DELIVERY.md`. Current-reference edits to the first two are independent but require reconciliation with that worktree before merge; the journal and delivery-plan working copies were not copied into this branch.
-- The original `codex/block1-extractive-hold-20261112` worktree has an uncommitted edit to ADR-0039. It was not copied or overwritten. The classification row above reflects the selected pilot baseline and must be revalidated against that edit before integration.
+- The original `codex/block1-extractive-hold-20261112` worktree has an uncommitted six-line evaluation follow-up in ADR-0039. Read-only review found that it records additional model-judgment variance and does not change ADR-0039's architectural classification. It was not copied, discarded or overwritten.
 - The accepted Dify pilot decision and legacy custom RAG recovery documentation remain distinct. Reclassification does not declare the legacy system superseded beyond what recorded decisions state.

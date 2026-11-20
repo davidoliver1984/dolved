@@ -8,7 +8,7 @@ Accepted
 
 2026-08-19
 
-## Relationship to prior ADRs
+## Relationship to prior documents
 
 ### Consumes ADR-0006's tenancy model; resolves its deferred invitation domain; does not reopen its role set or enforcement layers
 
@@ -47,7 +47,7 @@ defines only `requestIngestion` and `completeUpload`, both open to any
 active member regardless of role. This document is not correcting a
 deployed permissiveness; it is making an explicit, first-instance product
 decision, on a feature that has never shipped, to restrict the
-*administrative* delete and retry commands to `OWNER`/`ADMIN`. **ADR-0025
+*administrative* delete and retry commands to `OWNER`/`ADMIN`. **[administration and tenant-control specification](../product-features/administration-and-tenant-control.md)
 supersedes ADR-0007 in part**: ADR-0007's technical lifecycle model — the
 `UPLOADING → UPLOADED → QUEUED → PROCESSING → INDEXED` chain, the
 `FAILED` branch, the `<any non-DELETED state> → DELETING → DELETED`
@@ -60,7 +60,7 @@ workspace and inspect documents they're already authorised to see; they
 simply cannot invoke the new administrative retry/delete commands this
 document defines.
 
-### Consumes ADR-0008/ADR-0015/ADR-0016's outbox, worker-lease, and HMAC completion-report pattern; reuses it for retry and deletion, does not redesign it
+### Consumes ADR-0008/[ingestion orchestration contract](../data-api-contracts/ingestion-orchestration-and-worker-results.md)/[ingestion publication and recovery specification](../data-api-contracts/ingestion-publication-and-recovery.md)'s outbox, worker-lease, and HMAC completion-report pattern; reuses it for retry and deletion, does not redesign it
 
 Document retry (`FAILED → QUEUED`) does not exist in any form today —
 verified by exhaustive grep of `apps/api/app` and `routes/api.php`. The
@@ -82,7 +82,7 @@ only existing precedent in this codebase for that direction of call. See
 analogous purpose family is defined for deletion without redesigning the
 underlying claim/lease/HMAC mechanics.
 
-### Consumes ADR-0017's version-lineage immutability; deletion respects it, does not reopen it
+### Consumes [versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md)'s version-lineage immutability; deletion respects it, does not reopen it
 
 `Document.predecessor_document_id` is immutable and a version's successor
 is derived by the later version pointing backward, never stored forward.
@@ -94,16 +94,16 @@ commitment, and treats it as the reason a hard `DELETE` of a `Document`
 row must never be performed, only the soft `DELETING → DELETED` status
 transition ADR-0007 already defines.
 
-### Consumes ADR-0023's `EvidenceSnapshot` durability; extends its durability principle to document deletion, a scenario ADR-0023 itself did not name
+### Consumes [grounded generation contract](../data-api-contracts/grounded-generation.md)'s `EvidenceSnapshot` durability; extends its durability principle to document deletion, a scenario [grounded generation contract](../data-api-contracts/grounded-generation.md) itself did not name
 
-ADR-0023 stores `cited_text_verbatim` in `EvidenceSnapshot` specifically
+[grounded generation contract](../data-api-contracts/grounded-generation.md) stores `cited_text_verbatim` in `EvidenceSnapshot` specifically
 so a persisted answer's citations never depend on a live dependency
-surviving — but the scenario ADR-0023 itself discusses is re-extraction
+surviving — but the scenario [grounded generation contract](../data-api-contracts/grounded-generation.md) itself discusses is re-extraction
 and garbage collection of superseded extraction rows, not source-document
 deletion. **This document does not attribute document-deletion wording or
-scope to ADR-0023 that it does not contain** — it extends the same
-durability *principle* ADR-0023 established, consistently, to a scenario
-ADR-0023 never named: an owner/admin deleting the source Document
+scope to [grounded generation contract](../data-api-contracts/grounded-generation.md) that it does not contain** — it extends the same
+durability *principle* [grounded generation contract](../data-api-contracts/grounded-generation.md) established, consistently, to a scenario
+[grounded generation contract](../data-api-contracts/grounded-generation.md) never named: an owner/admin deleting the source Document
 entirely.
 
 ADR-0007's *"derived artefacts"* deletion language and that extended
@@ -135,9 +135,9 @@ question, and it is resolved by a concrete persistence design in
 "Document deletion and `EvidenceSnapshot` retention" below — not by this
 relationship note alone.
 
-### Consumes ADR-0024's conversation deletion and streaming/reconnect model; extends its permission-revocation question, does not redesign its persistence split
+### Consumes [conversation and streaming specification](../product-features/conversations-and-streaming.md)'s conversation deletion and streaming/reconnect model; extends its permission-revocation question, does not redesign its persistence split
 
-ADR-0024 already defines `Conversation`'s own `DELETING → DELETED`
+[conversation and streaming specification](../product-features/conversations-and-streaming.md) already defines `Conversation`'s own `DELETING → DELETED`
 lifecycle, tenant-scoped SSE, and connection-independent `GenerationRun`
 execution via a Laravel `ShouldQueue` job (`ExecuteGenerationRun`, on a
 dedicated `conversation` queue connection). Verified: this queue
@@ -146,7 +146,7 @@ separate from the outbox/SQS/Python-worker-lease pattern ingestion uses —
 a style precedent for "how this codebase runs Laravel-only background
 work," not a mechanism document retry can call into, since actual
 ingestion processing happens in Python via the outbox path. This document
-extends ADR-0024's connection/session model to answer a question ADR-0024
+extends [conversation and streaming specification](../product-features/conversations-and-streaming.md)'s connection/session model to answer a question [conversation and streaming specification](../product-features/conversations-and-streaming.md)
 didn't need to ask: what happens to an open SSE connection when the
 connected user's *membership* (not their generation run) is revoked mid-
 stream. See "Permission revocation and in-flight work" below.
@@ -252,7 +252,7 @@ generation/LLM pricing table's exact rate values; custom roles or a
 granular permission engine (explicitly deferred, per ADR-0006); billing,
 invoicing, or payment collection; and Phase 20's operational-telemetry
 architecture. It does not redecide anything ADR-0006, ADR-0007, ADR-0008,
-ADR-0012, ADR-0015, ADR-0016, ADR-0017, ADR-0023, or ADR-0024 already
+ADR-0012, [ingestion orchestration contract](../data-api-contracts/ingestion-orchestration-and-worker-results.md), [ingestion publication and recovery specification](../data-api-contracts/ingestion-publication-and-recovery.md), [versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md), [grounded generation contract](../data-api-contracts/grounded-generation.md), or [conversation and streaming specification](../product-features/conversations-and-streaming.md) already
 settled.
 
 ## Decision
@@ -394,13 +394,13 @@ recommended, honestly-scoped distinction:
   already an open connection: the removed user cannot open a new request,
   cannot reconnect, and cannot resume via `Last-Event-ID` replay.
 - **An already-open SSE connection is a genuine gap this document names
-  rather than hides.** ADR-0024's streaming architecture does not give
+  rather than hides.** [conversation and streaming specification](../product-features/conversations-and-streaming.md)'s streaming architecture does not give
   Laravel an instant, push-based way to sever one specific open connection
   the moment a membership row changes elsewhere. This document requires a
   **bounded reauthorization interval**: the SSE delivery loop re-checks
   the connected user's current membership at least once per bounded
   interval (an upper bound stated architecturally here; the exact value is
-  R19-S02 implementation detail, calibrated against ADR-0024's existing
+  R19-S02 implementation detail, calibrated against [conversation and streaming specification](../product-features/conversations-and-streaming.md)'s existing
   delivery-loop cadence rather than invented fresh) and terminates the
   connection with an explicit, safe terminal event the moment membership
   no longer holds — never an indefinite continuation. This is a strictly
@@ -473,7 +473,7 @@ MustVerifyEmail`, and Fortify's verification flow is live and wired
 does not depend on a capability this platform lacks.
 
 **Expiry:** configurable, seven-day default — a product default, not an
-architecture invariant, the same framing ADR-0024 already applies to its
+architecture invariant, the same framing [conversation and streaming specification](../product-features/conversations-and-streaming.md) already applies to its
 own configurable history-window and retention parameters; R19-S02 may
 tune the number without this document being reopened.
 
@@ -616,7 +616,7 @@ candidate bounds and delivery-event retention windows elsewhere.
 
 Source metadata is inspectable but not editable in this phase — document
 administration is a read/retry/delete surface in V1, not a source-
-metadata editor, and does not bypass ADR-0017's governance commands
+metadata editor, and does not bypass [versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md)'s governance commands
 (approve/withdraw/reschedule), which remain their own, separate authority
 path, unchanged.
 
@@ -752,7 +752,7 @@ chunk immutability completely untouched.**
   `evidence_snapshots.ingestion_event_claim_id` stays a live, unchanged
   `restrictOnDelete()` foreign key.
 - `EvidenceSnapshot`'s own `cited_text_verbatim`, `content_digest`, and
-  `source_provenance` remain exactly as ADR-0023 defined them — this was
+  `source_provenance` remain exactly as [grounded generation contract](../data-api-contracts/grounded-generation.md) defined them — this was
   already the citation's authoritative content, independent of any live
   chunk, and nothing here changes that.
 - **New, immutable, snapshot-owned lineage fields are added to
@@ -875,7 +875,7 @@ established.
 **Idempotency and concurrency for deletion, stated in full here (the
 single consistent rule; see also the correction in "Retry semantics"
 above):** only one `DocumentDeletionOperation` may be open per document
-at a time, enforced by a partial unique index — the same pattern ADR-0024
+at a time, enforced by a partial unique index — the same pattern [conversation and streaming specification](../product-features/conversations-and-streaming.md)
 already uses for single-active-run-per-conversation. A repeated delete
 request against a document that already has an open operation observes
 that operation and returns its current status rather than creating a
@@ -1130,7 +1130,7 @@ themselves — belong to the Document lifecycle and are physically removed
 by document deletion. An accepted `EvidenceSnapshot` belongs to the
 historical `GeneratedAnswer`/conversation record, not to the Document
 lifecycle, and is governed entirely by that conversation's own deletion
-lifecycle (ADR-0024) — never cascade-removed merely because its source
+lifecycle ([conversation and streaming specification](../product-features/conversations-and-streaming.md)) — never cascade-removed merely because its source
 Document is later deleted, and never blocked from resolving because its
 source chunk is gone, since its own lineage fields (verbatim text,
 digest, provenance, and the new scalar chunk/attempt identifiers) are
@@ -1140,7 +1140,7 @@ rendering-layer concern, not fixed here); citation inspection must never
 attempt to read a live `DocumentChunk` after deletion — there may not be
 one. Deleting the *conversation* that contains those citations — a
 separate, explicit act — removes its `Message`s, `GeneratedAnswer`s,
-`AnswerPart`s, citations, and `EvidenceSnapshot`s according to ADR-0024,
+`AnswerPart`s, citations, and `EvidenceSnapshot`s according to [conversation and streaming specification](../product-features/conversations-and-streaming.md),
 unchanged. A future compliance-grade "purge this content everywhere,
 including historical citations" capability is a separate, explicitly
 deferred concern (see "Explicitly deferred work" below) — this document
@@ -1457,7 +1457,7 @@ ownership above — it did not intend to, and is corrected here):
 Laravel also owns the browser-facing usage calculation/projection and
 tenant authorization generally (beyond cost specifically), and Python
 reports provider-native usage through its existing typed contracts — the
-same ownership boundary ADR-0023/ADR-0024 already establish for
+same ownership boundary [grounded generation contract](../data-api-contracts/grounded-generation.md)/[conversation and streaming specification](../product-features/conversations-and-streaming.md) already establish for
 generation, extended here to usage reporting.
 
 ### Embedding and generation usage reporting boundary
@@ -1606,7 +1606,7 @@ row is fabricated to fill the gap.
 This document already commits, in "Historical interval metrics," to
 historical activity remaining stable when the resource that produced it
 is later deleted. Applied to conversations specifically, this creates a
-genuine design gap the prior revisions left unaddressed: ADR-0024's
+genuine design gap the prior revisions left unaddressed: [conversation and streaming specification](../product-features/conversations-and-streaming.md)'s
 conversation deletion removes `Message`, `GenerationRun`, and
 `GeneratedAnswer` rows entirely (content-bearing children, correctly
 removed). Defining "user submissions" as a count of live `Message` rows
@@ -1616,7 +1616,7 @@ conversation is deleted, one of three broken outcomes: historical counts
 silently decrease (deleted messages stop being counted); a
 `generation_run_id`-keyed usage-event table gets cascade-deleted along
 with the run (historical cost silently decreases); or a restrictive
-foreign key blocks ADR-0024's own deletion outright. **All three
+foreign key blocks [conversation and streaming specification](../product-features/conversations-and-streaming.md)'s own deletion outright. **All three
 contradict this document's own historical-usage rule, and this document
 resolves the contradiction by making the historical record content-free
 and structurally independent of conversation content, not by weakening
@@ -1709,7 +1709,7 @@ referenced `Conversation` subtree is *routinely* deleted by ordinary
 product use, so coupling historical accounting to its FK lifecycle at all
 — even via `NULL ON DELETE` — would still mean conversation deletion has
 to touch, lock, or update Phase 19's tables. Omitting the live FK
-entirely means ADR-0024's conversation deletion **never needs to know
+entirely means [conversation and streaming specification](../product-features/conversations-and-streaming.md)'s conversation deletion **never needs to know
 Phase 19's tables exist**: it is not blocked by them, does not cascade
 into them, and does not have to be sequenced relative to them in any way.
 `workspace_id` remains a live, ordinary foreign key throughout — `Workspace`
@@ -1866,7 +1866,7 @@ multiple owners; branching administrative approval workflows; billing,
 invoicing, and payment collection; billing-grade cost guarantees;
 organisation-wide analytics across unrelated workspaces; Phase 20's
 operational dashboards; arbitrary editing of source metadata; document
-version editing through the admin list (ADR-0017's governance commands
+version editing through the admin list ([versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md)'s governance commands
 remain the only path); synchronous multi-system deletion; automatic
 unbounded ingestion retry; full cross-conversation document-content purge
 (a genuine future compliance capability, distinct from and heavier than
@@ -1924,7 +1924,7 @@ accepting the `Message`/terminal-transitioning the `GenerationRun` (never
 a best-effort follow-up write), backed by no live foreign key to either
 and keyed by the workspace-plus-public-identifier-plus-event-kind
 idempotency identity defined above — the genuine prerequisite that makes
-every query/run/outcome historical metric independent of ADR-0024
+every query/run/outcome historical metric independent of [conversation and streaming specification](../product-features/conversations-and-streaming.md)
 conversation deletion, durably crash-safe, and redelivery-safe; historical
 usage intervals sourced from those records, not live rows; the new normalised, stage-aware usage-event table(s) and write
 paths for both embedding usage (extending the existing `ingestion.complete`
@@ -2006,7 +2006,7 @@ and none was needed here.
   in the first place is treated as unavailable, never as zero.
 - Phase 19's historical activity/usage records hold no live, constrained
   foreign key to `Message`, `GenerationRun`, or `Conversation`, and carry
-  no conversation content — ADR-0024 conversation deletion is never
+  no conversation content — [conversation and streaming specification](../product-features/conversations-and-streaming.md) conversation deletion is never
   blocked by, and never cascades into, these records; historical counts
   and cost never decrease because a conversation was later deleted.
 - Every content-free historical activity/usage event is written
@@ -2155,7 +2155,7 @@ than reopening that already-settled question.
   pricing-snapshot pattern, the partial-unique-index idiom, the ingestion-
   worker HMAC completion-report shape — rather than inventing parallel
   mechanisms.
-- The ADR-0007/ADR-0023 tension around document deletion and historical
+- The ADR-0007/[grounded generation contract](../data-api-contracts/grounded-generation.md) tension around document deletion and historical
   citations is resolved with a concrete, schema-verified persistence
   design — `EvidenceSnapshot` made genuinely independent of its source
   chunk via new immutable snapshot-owned lineage fields, allowing
@@ -2214,7 +2214,7 @@ than reopening that already-settled question.
 - Historical Phase 19 metrics now require a second, parallel set of
   content-free activity records (user-submission events, run-outcome
   events) written alongside `Message`/`GenerationRun` at production time,
-  specifically so ADR-0024 conversation deletion never has to interact
+  specifically so [conversation and streaming specification](../product-features/conversations-and-streaming.md) conversation deletion never has to interact
   with Phase 19's tables at all. This is genuinely new write-path work on
   every message/run production path, not a reporting-side addition —
   R19-S03 cannot be built as a read-only layer over existing tables the
@@ -2239,8 +2239,8 @@ snapshot's actual rate values; a general permission/role engine beyond the
 fixed three roles; billing, invoicing, or payment collection; Phase 20's
 operational-telemetry architecture; or a full cross-conversation
 compliance-purge capability. It does not redecide anything ADR-0006,
-ADR-0007, ADR-0008, ADR-0012, ADR-0015, ADR-0016, ADR-0017, ADR-0023, or
-ADR-0024 already settled. `tasks.json`, `PROJECT_ROADMAP.md`,
+ADR-0007, ADR-0008, ADR-0012, [ingestion orchestration contract](../data-api-contracts/ingestion-orchestration-and-worker-results.md), [ingestion publication and recovery specification](../data-api-contracts/ingestion-publication-and-recovery.md), [versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md), [grounded generation contract](../data-api-contracts/grounded-generation.md), or
+[conversation and streaming specification](../product-features/conversations-and-streaming.md) already settled. `tasks.json`, `PROJECT_ROADMAP.md`,
 `IMPLEMENTATION_GUIDE.md`, and the ADR index are not architectural content
 of this document; they are reconciled separately as part of its acceptance
 review.

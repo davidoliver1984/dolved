@@ -8,11 +8,11 @@ Accepted
 
 2026-08-28
 
-## Relationship to prior ADRs
+## Relationship to prior documents
 
-### Extends ADR-0017, does not reopen it
+### Extends [versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md), does not reopen it
 
-ADR-0017 established `DocumentFamily`, linear version lineage, temporal
+[versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md) established `DocumentFamily`, linear version lineage, temporal
 authority, and per-version applicability snapshots. That domain shape is
 unchanged here. Nothing in this document touches `authority_start`, the
 governance state machine, or applicability resolution.
@@ -21,19 +21,19 @@ governance state machine, or applicability resolution.
 
 ADR-0007's three-layer separation and technical processing lifecycle are
 unchanged. This specification introduces `source_checksum_sha256` — verified absent
-from `documents` today — because ADR-0031's clone compatibility proof and
+from `documents` today — because [version-governance specification](../product-features/version-governance-content-reuse-and-family-deletion.md)'s clone compatibility proof and
 ADR-0037's export manifest both require a real, verified content identity.
 Because this repository already contains documents whose retained source
 bytes may be unavailable, this specification defines a **phased, honestly-stateful**
 introduction rather than assuming every row can trivially receive one.
 
-### Consumed by ADR-0031, ADR-0033, ADR-0034, ADR-0037
+### Consumed by [version-governance specification](../product-features/version-governance-content-reuse-and-family-deletion.md), [knowledge-library specification](../product-features/knowledge-library-navigation.md), [import staging and promotion specification](../product-features/import-staging-and-promotion.md), ADR-0037
 
-ADR-0031's clone compatibility proof and ADR-0037's source-inclusive export
+[version-governance specification](../product-features/version-governance-content-reuse-and-family-deletion.md)'s clone compatibility proof and ADR-0037's source-inclusive export
 both **require** a document's checksum state to be `verified` before
 proceeding — a `pending` or `unavailable` document is not eligible for
-either, exactly as reflected below. ADR-0033 consumes the category domain.
-ADR-0034 requires this specification's metadata as "required metadata" before
+either, exactly as reflected below. [knowledge-library specification](../product-features/knowledge-library-navigation.md) consumes the category domain.
+[import staging and promotion specification](../product-features/import-staging-and-promotion.md) requires this specification's metadata as "required metadata" before
 promotion.
 
 ### Does not touch ADR-0032
@@ -78,7 +78,7 @@ live, never cached); mandatory owner assignment at creation via a
 lineage-root version's `created_by_user_id` regardless of current
 eligibility, falling back to the workspace creator only when no
 lineage-root identity resolves, itself an audited system-migration event;
-review-due date as advisory-only, driving ADR-0036 reminders, never
+review-due date as advisory-only, driving [governance notifications specification](../product-features/document-governance-notifications-and-reminders.md) reminders, never
 authority.
 
 ### Source checksum — a phased, honestly-stateful introduction
@@ -140,9 +140,9 @@ checksum.
    to the same immutable-source-field guard as filename/size/media type.
 9. **Existing conversations, citations, and tombstones remain fully valid
    regardless of a document's checksum state** — `EvidenceSnapshot`'s own
-   durability (ADR-0023/0025) never depended on, and does not begin
+   durability ([grounded generation contract](../data-api-contracts/grounded-generation.md) and [administration and tenant-control specification](../product-features/administration-and-tenant-control.md)) never depended on, and does not begin
    depending on, the source document's checksum.
-10. **ADR-0031's clone and ADR-0037's source-inclusive export both require
+10. **[version-governance specification](../product-features/version-governance-content-reuse-and-family-deletion.md)'s clone and ADR-0037's source-inclusive export both require
     `status = 'verified'`** — a `pending` or `unavailable` document is
     simply ineligible for either, never treated as trivially compatible or
     incompatible by the absence of a value.
@@ -192,7 +192,7 @@ provenance rules.
 - **A version-scoped row's `(document_id, workspace_id,
   document_family_id)` triple is bound by a composite foreign key against
   the corresponding unique `Document` identity** — verified directly, this
-  reuses the composite uniqueness ADR-0017 already establishes
+  reuses the composite uniqueness [versioning and temporal-authority specification](../data-api-contracts/document-versioning-and-temporal-authority.md) already establishes
   (`documents_id_workspace_family_unique`, on
   `(id, workspace_id, document_family_id)`) rather than inventing a new
   one. This is what actually prevents a version-scoped audit row from
@@ -265,7 +265,7 @@ otherwise both succeed and leave a family with 21.
 
 Locking the family row for every tag change serializes concurrent tag
 mutations against the same family — exactly the same family-level locking
-discipline ADR-0031 independently establishes for governance mutations,
+discipline [version-governance specification](../product-features/version-governance-content-reuse-and-family-deletion.md) independently establishes for governance mutations,
 applied here to a metadata concern rather than a governance one.
 
 ## Alternatives considered
