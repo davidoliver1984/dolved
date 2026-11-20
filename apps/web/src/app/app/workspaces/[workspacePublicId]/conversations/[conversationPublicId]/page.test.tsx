@@ -1,14 +1,12 @@
 import { render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const { initialConversationMock, metadataMock, notFoundMock, readinessMock, starterQuestionsMock, userWorkspaceMock } = vi.hoisted(() => ({
+const { initialConversationMock, metadataMock, notFoundMock, userWorkspaceMock } = vi.hoisted(() => ({
   initialConversationMock: vi.fn(),
   notFoundMock: vi.fn(() => {
     throw new Error("NEXT_NOT_FOUND");
   }),
   userWorkspaceMock: vi.fn(),
-  readinessMock: vi.fn(),
-  starterQuestionsMock: vi.fn(),
   metadataMock: vi.fn(),
 }));
 
@@ -16,8 +14,6 @@ vi.mock("next/navigation", () => ({ notFound: notFoundMock }));
 vi.mock("@/lib/server-api", () => ({
   initialConversation: initialConversationMock,
   userWorkspace: userWorkspaceMock,
-  workspaceKnowledgeReadiness: readinessMock,
-  workspaceStarterQuestions: starterQuestionsMock,
   initialDocumentMetadata: metadataMock,
 }));
 vi.mock("@/components/RoutedChatWorkspace", () => ({
@@ -49,8 +45,6 @@ describe("conversation route ownership", () => {
     vi.clearAllMocks();
     userWorkspaceMock.mockResolvedValue(workspace);
     initialConversationMock.mockResolvedValue(conversation);
-    readinessMock.mockResolvedValue({ searchable_document_count: 1 });
-    starterQuestionsMock.mockResolvedValue([]);
     metadataMock.mockResolvedValue({ categories: [], tags: [], owners: [], locations: [] });
   });
 

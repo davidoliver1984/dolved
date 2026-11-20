@@ -1,6 +1,6 @@
 "use client";
 
-import { Inbox, RefreshCw, Send, X } from "lucide-react";
+import { Inbox, Plus, RefreshCw, Send, X } from "lucide-react";
 import {
   type FormEvent,
   type KeyboardEvent,
@@ -17,7 +17,6 @@ import { CitationButton, CitationChip } from "@/components/ui/citation-chip";
 import { EmptyState } from "@/components/ui/empty-state";
 import { EvidenceItem } from "@/components/ui/evidence-item";
 import { Notice } from "@/components/ui/notice";
-import { KnowledgeReadinessPanel, type StarterQuestion } from "@/components/KnowledgeReadinessPanel";
 import { Skeleton } from "@/components/ui/skeleton";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { StreamingStatus } from "@/components/ui/streaming-status";
@@ -82,8 +81,6 @@ type ChatWorkspaceProps = {
   workspaceName: string;
   locations?: Array<{ public_id: string; name: string }>;
   services?: ChatServices;
-  searchableDocumentCount?: number;
-  starterQuestions?: StarterQuestion[];
 };
 
 const progressLabels: Record<string, string> = {
@@ -216,8 +213,6 @@ export function ChatWorkspace({
   workspaceName,
   locations = [],
   services = defaultServices,
-  searchableDocumentCount,
-  starterQuestions = [],
 }: ChatWorkspaceProps) {
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [active, setActive] = useState<Conversation | null>(null);
@@ -233,7 +228,6 @@ export function ChatWorkspace({
   const [selectedLocationId, setSelectedLocationId] = useState("");
   const unsubscribe = useRef<null | (() => void)>(null);
   const transcript = useRef<HTMLDivElement>(null);
-  const questionInput = useRef<HTMLTextAreaElement>(null);
   const provisionalPartsRef = useRef<AnswerPart[]>([]);
   const mounted = useRef(true);
   useEffect(() => {
@@ -497,12 +491,6 @@ export function ChatWorkspace({
     }
   };
 
-  const focusQuestion = () => questionInput.current?.focus();
-  const chooseQuestion = (question: string) => {
-    setDraft(question);
-    requestAnimationFrame(focusQuestion);
-  };
-
   const runsByMessage = new Map(
     (active?.runs ?? [])
       .filter((run) => run.assistant_message_id)
@@ -546,7 +534,6 @@ export function ChatWorkspace({
 
       <div className="grid min-h-0 grid-rows-[auto_1fr_auto_auto] gap-4">
         {!showConversationNavigation ? <header className="mb-5"><p className="text-sm font-bold uppercase tracking-[0.14em] text-brand">Grounded chat</p><h1 className="mt-2 text-3xl font-semibold" id="chat-heading">Ask {workspaceName}</h1><p className="mt-2 text-sm text-foreground-muted">Answers use only evidence eligible for this workspace and the selected site.</p></header> : null}
-        {searchableDocumentCount !== undefined ? <KnowledgeReadinessPanel onAsk={focusQuestion} onChooseQuestion={chooseQuestion} searchableDocumentCount={searchableDocumentCount} starterQuestions={starterQuestions} workspaceId={workspaceId} /> : null}
         <p data-chat-announcement aria-atomic="true" aria-live="polite" className="sr-only" role="status">{announcement}</p>
         <div aria-busy={loading} className="grid min-h-96 content-start gap-4 overflow-y-auto rounded-xl border border-border bg-surface p-4 sm:p-6" ref={transcript}>
           {loading ? <div aria-label="Loading conversation" className="grid gap-4"><Skeleton className="h-20 w-3/4" /><Skeleton className="ml-auto h-16 w-2/3" /><Skeleton className="h-28 w-4/5" /></div> : null}
@@ -564,13 +551,16 @@ export function ChatWorkspace({
                 <div className="mb-2 flex items-center gap-2"><p className="text-xs font-bold uppercase tracking-[0.12em] text-foreground-muted">{message.role === "user" ? "You" : "Dolved"}</p>{!savedPresentation && run?.answer?.outcome ? <StatusBadge status={run.answer.outcome === "answered" ? "success" : "warning"}>{run.answer.outcome.replaceAll("_", " ")}</StatusBadge> : null}</div>
                 {savedPresentation ? <>
                   <p className="whitespace-pre-wrap leading-7" data-canonical-answer>{message.text}</p>
-                  {run?.answer?.sources_retrieved?.length ? <section aria-label="Sources retrieved" className="mt-4 rounded-lg border border-border bg-surface-raised p-3">
-                    <h3 className="text-sm font-semibold">Sources retrieved</h3>
-                    <p className="mt-1 text-xs text-foreground-muted">These passages were supplied as context. They are not claim-level citations.</p>
-                    <ol className="mt-3 grid gap-2">
+                  {run?.answer?.sources_retrieved?.length ? <details className="group mt-4 border-t border-border pt-3">
+                    <summary className="flex cursor-pointer list-none flex-wrap items-center gap-x-2 gap-y-1 text-sm [&::-webkit-details-marker]:hidden">
+                      <span className="font-semibold">Sources retrieved</span>
+                      <Plus aria-hidden="true" className="size-4 shrink-0 transition-transform group-open:rotate-45" />
+                      <span className="text-xs text-foreground-muted">These passages were supplied as context. They are not claim-level citations.</span>
+                    </summary>
+                    <ol aria-label="Sources retrieved" className="mt-3 grid gap-2">
                       {run.answer.sources_retrieved.map((source) => <RetrievedSourceEvidence key={source.id} source={source} />)}
                     </ol>
-                  </section> : null}
+                  </details> : null}
                   {run?.answer?.citations?.length ? <ol aria-label="Answer sources" className="mt-3 flex flex-wrap gap-2">
                     {run.answer.citations.map((citation, index) => <CitationEvidence citation={citation} index={index} key={citation.id} />)}
                   </ol> : null}
@@ -649,7 +639,6 @@ export function ChatWorkspace({
             onChange={(event) => setDraft(event.target.value)}
             onKeyDown={keyboardSubmit}
             placeholder="Ask about an eligible policy or procedure…"
-            ref={questionInput}
             rows={3}
             value={draft}
           />

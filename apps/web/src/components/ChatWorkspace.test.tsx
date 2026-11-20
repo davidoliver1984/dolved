@@ -166,8 +166,12 @@ describe("ChatWorkspace", () => {
     const user = userEvent.setup();
     render(<ChatWorkspace initialConversationId="conversation-1" services={fixture.api} workspaceId="workspace-1" workspaceName="Care" />);
 
-    expect(await screen.findByRole("region", { name: "Sources retrieved" })).not.toBeNull();
+    const sourceSummary = await screen.findByText("Sources retrieved");
     expect(screen.getByText(/not claim-level citations/i)).not.toBeNull();
+    expect(sourceSummary.closest("details")?.open).toBe(false);
+    await user.click(sourceSummary);
+    expect(sourceSummary.closest("details")?.open).toBe(true);
+    expect(screen.getByRole("list", { name: "Sources retrieved" })).not.toBeNull();
     await user.click(screen.getByRole("button", { name: /Data Protection Policy.pdf/ }));
     expect(screen.getByText("Personal devices must not be used.")).not.toBeNull();
     expect(screen.getByText("Site context:").parentElement?.textContent).toContain("Organisation-wide only");
