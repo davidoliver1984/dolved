@@ -12,6 +12,7 @@ return [
         (int) env('IMPORT_PRESIGNED_URL_LIFETIME_SECONDS', 600),
     ),
     'preflight' => [
+        'driver' => env('IMPORT_PREFLIGHT_DRIVER', 'async'),
         'contract_path' => base_path('../../contracts/events/import-preflight-requested/v1.schema.json'),
         'complete_contract_path' => base_path('../../contracts/http/import-preflight-worker/v1/import-preflight-complete-request-v1.schema.json'),
         'fail_contract_path' => base_path('../../contracts/http/import-preflight-worker/v1/import-preflight-fail-request-v1.schema.json'),

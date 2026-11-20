@@ -13,6 +13,7 @@ use App\Models\ImportPreflightAttempt;
 use App\Models\OutboxEvent;
 use App\Services\Documents\ImportStagingStorage;
 use App\Services\Imports\ImportPreflightContractValidator;
+use App\Services\Imports\LocalImportPreflightInspector;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -22,6 +23,8 @@ final class StartImportPreflight
     public function __construct(
         private readonly ImportStagingStorage $storage,
         private readonly ImportPreflightContractValidator $contracts,
+        private readonly LocalImportPreflightInspector $localInspector,
+        private readonly RecordImportPreflightCallback $callbacks,
     ) {}
 
     public function handle(ImportItem $item, ?string $correlationId = null): ImportPreflightAttempt
@@ -47,12 +50,13 @@ final class StartImportPreflight
             });
             throw ImportPreflightException::invalid($reason);
         }
-        $source = $this->storage->createPreflightReadRequest($item->workspace, $item);
+        $local = config('imports.preflight.driver') === 'local';
+        $source = $local ? null : $this->storage->createPreflightReadRequest($item->workspace, $item);
         $token = (string) Str::uuid();
         $eventId = (string) Str::uuid();
         $correlationId ??= (string) Str::uuid();
 
-        return DB::transaction(function () use ($item, $source, $token, $eventId, $correlationId): ImportPreflightAttempt {
+        $attempt = DB::transaction(function () use ($item, $source, $token, $eventId, $correlationId, $local): ImportPreflightAttempt {
             $locked = ImportItem::query()->with(['batch', 'workspace'])->lockForUpdate()->findOrFail($item->id);
             if ($locked->preflight_status !== ImportPreflightStatus::Pending || $locked->batch->status === ImportBatchStatus::Expired) {
                 throw ImportPreflightException::conflict('preflight_not_eligible');
@@ -73,35 +77,56 @@ final class StartImportPreflight
                 'declared_media_type' => $locked->declared_media_type,
                 'status' => ImportPreflightAttemptStatus::Open,
             ]);
-            $payload = [
-                'event_id' => $eventId,
-                'event_type' => 'import.preflight.requested',
-                'event_version' => 1,
-                'contract_version' => 'import-preflight-v1',
-                'occurred_at' => $now->toIso8601String(),
-                'workspace_id' => $locked->workspace->public_id,
-                'import_batch_id' => $locked->batch->public_id,
-                'import_item_id' => $locked->public_id,
-                'staged_object' => $source,
-                'declared_media_type' => $locked->declared_media_type,
-                'lease_token' => $token,
-                'lease_generation' => $generation,
-                'correlation_id' => $correlationId,
-            ];
-            $this->contracts->validateDispatch($payload);
-            OutboxEvent::query()->create([
-                'event_id' => $eventId,
-                'event_type' => 'import.preflight.requested',
-                'event_version' => 1,
-                'workspace_public_id' => $locked->workspace->public_id,
-                'document_public_id' => null,
-                'import_item_public_id' => $locked->public_id,
-                'correlation_id' => $correlationId,
-                'payload' => $payload,
-                'occurred_at' => $now,
-            ]);
+            if (! $local) {
+                $payload = [
+                    'event_id' => $eventId,
+                    'event_type' => 'import.preflight.requested',
+                    'event_version' => 1,
+                    'contract_version' => 'import-preflight-v1',
+                    'occurred_at' => $now->toIso8601String(),
+                    'workspace_id' => $locked->workspace->public_id,
+                    'import_batch_id' => $locked->batch->public_id,
+                    'import_item_id' => $locked->public_id,
+                    'staged_object' => $source,
+                    'declared_media_type' => $locked->declared_media_type,
+                    'lease_token' => $token,
+                    'lease_generation' => $generation,
+                    'correlation_id' => $correlationId,
+                ];
+                $this->contracts->validateDispatch($payload);
+                OutboxEvent::query()->create([
+                    'event_id' => $eventId,
+                    'event_type' => 'import.preflight.requested',
+                    'event_version' => 1,
+                    'workspace_public_id' => $locked->workspace->public_id,
+                    'document_public_id' => null,
+                    'import_item_public_id' => $locked->public_id,
+                    'correlation_id' => $correlationId,
+                    'payload' => $payload,
+                    'occurred_at' => $now,
+                ]);
+            }
 
             return $attempt;
         });
+
+        if ($local) {
+            $result = $this->localInspector->inspect(
+                $this->storage->readExact($item->workspace, $item),
+                (string) $item->declared_media_type,
+            );
+            $this->callbacks->complete($attempt->event_id, [
+                'contract_version' => 'import-preflight-v1',
+                'event_id' => $attempt->event_id,
+                'workspace_id' => $item->workspace->public_id,
+                'import_item_id' => $item->public_id,
+                'staged_object_key' => $attempt->staged_object_key,
+                'lease_token' => $token,
+                'lease_generation' => $attempt->lease_generation,
+                ...$result,
+            ]);
+        }
+
+        return $attempt->refresh();
     }
 }

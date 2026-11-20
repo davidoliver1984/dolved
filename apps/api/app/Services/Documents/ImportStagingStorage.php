@@ -101,4 +101,18 @@ class ImportStagingStorage
             throw DocumentUploadException::storageUnavailable();
         }
     }
+
+    public function readExact(Workspace $workspace, ImportItem $item): string
+    {
+        $key = $this->keys->assertExact($workspace, $item);
+
+        try {
+            return $this->filesystems
+                ->disk((string) config('imports.storage_disk'))
+                ->get($key);
+        } catch (Throwable $exception) {
+            report($exception);
+            throw DocumentUploadException::storageUnavailable();
+        }
+    }
 }

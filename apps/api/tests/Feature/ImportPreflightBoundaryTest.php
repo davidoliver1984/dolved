@@ -22,6 +22,7 @@ use App\Models\User;
 use App\Models\Workspace;
 use App\Services\Documents\ImportStagingStorage;
 use App\Services\Imports\ImportPreflightContractValidator;
+use App\Services\Imports\LocalImportPreflightInspector;
 use App\Services\Ingestion\IngestionWorkerRequestAuthenticator;
 use App\Support\Documents\ImportStagingObjectKey;
 use Illuminate\Contracts\Filesystem\Factory as FilesystemFactory;
@@ -53,6 +54,31 @@ final class ImportPreflightBoundaryTest extends TestCase
         $this->assertTrue(Str::isUuid($event->payload['lease_token']));
         $this->assertSame(hash('sha256', $event->payload['lease_token']), $attempt->lease_token_hash);
         $this->assertStringNotContainsString('policy.pdf', json_encode($event->payload, JSON_THROW_ON_ERROR));
+    }
+
+    public function test_local_driver_verifies_the_exact_staged_object_without_external_dispatch(): void
+    {
+        config()->set('imports.preflight.driver', 'local');
+        [, , $item] = $this->domain();
+        $source = "%PDF-1.7\n1 0 obj\n<<>>\nendobj\n%%EOF\n";
+        $disk = Mockery::mock(FilesystemAdapter::class);
+        $disk->shouldReceive('size')->once()->andReturn(strlen($source));
+        $disk->shouldReceive('get')->once()->with($item->staged_object_key)->andReturn($source);
+        $filesystems = Mockery::mock(FilesystemFactory::class);
+        $filesystems->shouldReceive('disk')->with((string) config('imports.storage_disk'))->andReturn($disk);
+        $starter = new StartImportPreflight(
+            new ImportStagingStorage($filesystems, new ImportStagingObjectKey),
+            app(ImportPreflightContractValidator::class),
+            app(LocalImportPreflightInspector::class),
+            app(RecordImportPreflightCallback::class),
+        );
+
+        $attempt = $starter->handle($item);
+
+        $this->assertSame(ImportPreflightAttemptStatus::Completed, $attempt->status);
+        $this->assertSame(ImportPreflightStatus::Verified, $item->fresh()->preflight_status);
+        $this->assertSame(hash('sha256', $source), $item->fresh()->source_checksum_sha256);
+        $this->assertDatabaseCount('outbox_events', 0);
     }
 
     public function test_readable_callback_is_incorporated_once_and_conflicting_replay_fails_closed(): void
@@ -122,6 +148,8 @@ final class ImportPreflightBoundaryTest extends TestCase
         $starter = new StartImportPreflight(
             new ImportStagingStorage($filesystems, new ImportStagingObjectKey),
             app(ImportPreflightContractValidator::class),
+            app(LocalImportPreflightInspector::class),
+            app(RecordImportPreflightCallback::class),
         );
 
         $this->assertSame(0, (new ReconcileExpiredImportPreflights($starter))->handle());
@@ -297,6 +325,8 @@ final class ImportPreflightBoundaryTest extends TestCase
         return new StartImportPreflight(
             new ImportStagingStorage($filesystems, new ImportStagingObjectKey),
             app(ImportPreflightContractValidator::class),
+            app(LocalImportPreflightInspector::class),
+            app(RecordImportPreflightCallback::class),
         );
     }
 

@@ -110,6 +110,7 @@ RUN composer install \
     --no-autoloader
 
 COPY --chown=www-data:www-data . .
+COPY --from=contracts --chown=www-data:www-data . /var/contracts
 COPY --chmod=755 docker-entrypoint.sh /usr/local/bin/docker-entrypoint
 
 RUN composer dump-autoload --classmap-authoritative --no-dev \

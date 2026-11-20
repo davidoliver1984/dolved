@@ -34,6 +34,7 @@ x-api-environment: &api-environment
   DOCUMENT_STORAGE_DISK: s3
   DOCUMENT_UPLOAD_DISK: s3_uploads
   DOCUMENT_PROCESSING_DRIVER: dify
+  IMPORT_PREFLIGHT_DRIVER: local
   AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:?AWS_ACCESS_KEY_ID is required}
   AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:?AWS_SECRET_ACCESS_KEY is required}
   AWS_DEFAULT_REGION: ${AWS_DEFAULT_REGION:-us-east-1}
@@ -65,6 +66,8 @@ x-api-service: &api-service
   build:
     context: ../../apps/api
     target: production
+    additional_contexts:
+      contracts: ../../contracts
   image: dolved-api:${DOLVED_IMAGE_TAG:-local}
   environment: *api-environment
   logging: *bounded-logging
