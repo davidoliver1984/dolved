@@ -300,6 +300,7 @@ services:
       - 443:443/udp
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - /etc/dolved/caddy-sites:/etc/caddy/external-sites:ro
       - caddy_data:/data
       - caddy_config:/config
     depends_on:
