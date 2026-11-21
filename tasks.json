@@ -5663,9 +5663,9 @@
             "actual_path": "docs/journal/2026-11-21-r30-s02-establish-private-pilot-observability.md"
           },
           "completion_evidence": [
-            "Pinned Collector 0.153.0, Grafana OTEL LGTM 0.29.2 and Alertmanager 0.33.1 deployed with localhost-only specialist ports and existing allowlist-first application instrumentation.",
+            "Pinned Collector 0.153.0, Grafana OTEL LGTM 0.29.2 and Alertmanager 0.33.1 deployed with localhost-only raw specialist ports, authenticated same-origin platform-admin gateway routes and existing allowlist-first application instrumentation.",
             "Provider-free hosted verification returned nine current operational signals and available alert state; no customer question, answer, prompt, passage, document content or secret is exported as telemetry.",
-            "Focused verification passed: 25 Laravel tests / 213 assertions and 3 frontend files / 16 tests."
+            "Focused verification passed: 25 Laravel tests / 213 assertions and 3 frontend files / 16 tests; the follow-up Usage regression and gateway release passed 11 tests / 105 assertions, Pint, Caddy/Compose validation and provider-free production verification."
           ]
         },
         {
@@ -5689,7 +5689,7 @@
           "completion_evidence": [
             "Hosted invitation-only pilot is live with public HTTPS for Dolved, private Dify/backplane services, pinned production images and persistent storage.",
             "Release archive 79ccaef19fd541dbc013960c7d42dfd0a06c7547c9fecfdce094ec82f9a15f66 passed strengthened preflight and provider-free running verification.",
-            "Final hands-on acceptance and consolidated operational handoff remain open; R30-GATE is not complete."
+            "Workspace Usage loading was corrected in deployed commit 76bfeb4d and the server-hosted specialist consoles now use authenticated HTTPS gateway paths without laptop tunnels. Final hands-on acceptance and consolidated operational handoff remain open; R30-GATE is not complete."
           ]
         },
         {

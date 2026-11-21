@@ -21,7 +21,9 @@ question content is not telemetry.
   traces and metrics only; it does not export customer questions, answers, prompts,
   passages, cookies, credentials or headers.
 - Existing Prometheus rules and Alertmanager routing are mounted unchanged. Specialist
-  consoles remain private; ordinary operators use the authorised Dolved screens.
+  consoles remain private. Raw ports are localhost-only; platform administrators may use
+  the authenticated same-origin gateway paths `/__ops/grafana/` and `/__ops/alerts/`
+  without a laptop tunnel.
 - Restricted Question review is opt-in, initially derives review permission from current
   tenant ownership, defaults retrospective access off, supports a separately confirmed
   maximum 30-day retrospective window, audits wording reads and maintains manual subjects,
@@ -38,6 +40,11 @@ question content is not telemetry.
 - Provider-free live verification passed. All three observability services and the
   application containers were healthy. The operational reader returned nine current
   signals and available alert state.
+- The authenticated gateway release passed Caddy validation and full production
+  verification. External unauthenticated requests to both specialist paths returned HTTP
+  401, while raw Grafana and Alertmanager host ports remained bound to `127.0.0.1`.
+- A workspace Usage timing type error discovered in hands-on acceptance was corrected and
+  regression-tested; the deployed 30-day query completed successfully.
 - No retrieval, generation, credential-validation or paid provider call was made.
 
 The remaining R30-S04 work is a hands-on permission, retention, failure-state and responsive

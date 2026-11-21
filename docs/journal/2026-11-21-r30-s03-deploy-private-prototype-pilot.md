@@ -7,13 +7,22 @@ The Dolved frontend and Laravel runtime, pinned stock Dify, persistent applicati
 background services and the private observability stack are deployed on the approved OVH
 pilot host. Public access is limited to the intended HTTPS application/API endpoints;
 Dify, OTLP, Grafana and Alertmanager specialist interfaces remain on the private backplane
-or localhost-only bindings.
+or localhost-only bindings. Grafana and Alertmanager are now additionally available to an
+authenticated platform administrator through Dolved's same-origin HTTPS gateway; their raw
+host ports are not public.
 
 The 21 November production release archive has SHA-256
 `79ccaef19fd541dbc013960c7d42dfd0a06c7547c9fecfdce094ec82f9a15f66`. Strengthened
 preflight validation and the complete provider-free running check passed after deployment.
 The public pilot and API returned HTTP 200 and the application, worker, scheduler, Dify and
 observability containers reported healthy state.
+
+Follow-up archive
+`41274cebe19901eb4e87999f56019ff4b6230861475480435000f0d350164f6e`
+deployed commit `76bfeb4d`. It corrected the workspace Usage timing failure shown during
+acceptance and added protected `/__ops/grafana/` and `/__ops/alerts/` routes. Full
+provider-free running verification passed after the update; both routes reject an
+unauthenticated external request with HTTP 401, and a read-only live Usage query completed.
 
 Deployed image identities recorded at verification:
 

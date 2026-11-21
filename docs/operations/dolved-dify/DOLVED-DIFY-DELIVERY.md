@@ -435,6 +435,28 @@ All were healthy; Grafana, Alertmanager and OTLP/Collector health ports were bou
 `127.0.0.1`. The application operational reader returned `available`, `current`, nine
 signals and available alert state. No paid model, retrieval or generation call was used.
 
+Follow-up release `76bfeb4d` fixed the workspace Usage failure visible during hands-on
+acceptance. Carbon returned fractional millisecond durations while the usage query required
+integers; the query now performs an explicit bounded cast and its regression test covers
+recorded response/completion timing. The deployed query returned the live 30-day usage
+summary successfully (20 accepted submissions, recorded average timing fields) and the
+complete provider-free production verification passed.
+
+The same release moved specialist-console access off laptop-dependent tunnels. Grafana and
+Alertmanager still run on the pilot host and their raw ports remain bound to `127.0.0.1`, but
+authenticated platform administrators can now reach them through Dolved's HTTPS gateway at
+`/__ops/grafana/` and `/__ops/alerts/`. An unauthenticated external check returned HTTP 401
+for both routes. The hotfix archive SHA-256 is
+`41274cebe19901eb4e87999f56019ff4b6230861475480435000f0d350164f6e`;
+local focused verification passed 11 tests / 105 assertions, Pint, Compose rendering and
+Caddy validation before deployment. No provider call was used.
+
+Observed pilot-host capacity at this verification point: Debian GNU/Linux 13 (trixie),
+kernel `6.12.100+deb13-cloud-amd64`, six vCPUs, 11 GiB visible RAM plus 2 GiB swap and a
+99 GiB root filesystem (33 GiB used, 63 GiB available). Twenty-five containers were running.
+These are observed runtime values; the purchased plan remains the recorded VPS-3 2027 with
+6 vCore, 12 GB RAM and 100 GB NVMe.
+
 Dolved was already persisting Dify's native conversation identifier. Read-only inspection
 showed the active Dify LLM node had no memory configuration, explaining why a follow-up could
 lose its antecedent. Using Dify's own workflow save/publish services, and changing only
