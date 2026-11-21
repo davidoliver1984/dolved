@@ -198,4 +198,14 @@ jq -e '
   exit 1
 }
 
+jq -e '
+  (.services.api.environment.OTEL_SDK_DISABLED == "false") and
+  (.services.api.environment.OPERATIONAL_METRICS_ENABLED == "true") and
+  ([.services.alertmanager.ports[], .services["otel-lgtm"].ports[], .services["otel-collector"].ports[]] |
+    all(.host_ip == "127.0.0.1"))
+' "$tmp_dir/dolved.json" >/dev/null || {
+  echo "Dolved operational telemetry is disabled or a specialist port is not loopback-only." >&2
+  exit 1
+}
+
 echo "Production preflight passed without starting services or contacting a model provider."
