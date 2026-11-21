@@ -467,6 +467,16 @@ kernel `6.12.100+deb13-cloud-amd64`, six vCPUs, 11 GiB visible RAM plus 2 GiB sw
 These are observed runtime values; the purchased plan remains the recorded VPS-3 2027 with
 6 vCore, 12 GB RAM and 100 GB NVMe.
 
+Mobile correspondence review then showed that the email renderer rejected Cherish's light
+purple accent because it assumed white button text, substituting Dolved green despite the
+branding revision's approved black foreground. Commit `9c694e8b` validates the accent and
+foreground as a pair, removes the hard-coded green preferences link and adds mail-client
+light-colour-scheme hints. Archive SHA-256
+`780a313cd7e6b72eb1c75a964ed3934c798b2ebe5f396961d087f2cbac33ba19`
+was deployed. The live resolver returned `#DA95DF` with black button text and a `#8D2F93`
+link; 24 tests / 156 assertions, Pint and full provider-free production verification passed.
+A post-fix branding check email was sent to David.
+
 Dolved was already persisting Dify's native conversation identifier. Read-only inspection
 showed the active Dify LLM node had no memory configuration, explaining why a follow-up could
 lose its antecedent. Using Dify's own workflow save/publish services, and changing only

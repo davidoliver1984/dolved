@@ -22,5 +22,14 @@ Remaining consolidated acceptance:
 - confirm invitation/password-reset boundaries and source/document screens retain the
   correct identity.
 
+Mobile email review exposed one further colour defect: a light tenant accent with an
+approved black foreground was rejected by an email-only white-text check and silently
+replaced with Dolved green; the preferences link was also hard-coded green. Commit
+`9c694e8b` now validates the configured accent together with its computed foreground, uses
+the tenant primary colour for the link and adds light-colour-scheme hints for mail clients.
+The deployed Cherish values resolve to button `#DA95DF`, black button text and link
+`#8D2F93`. Twenty-four focused tests / 156 assertions, Pint and full provider-free
+production verification passed. A post-fix branding check was sent to David.
+
 R29-GATE remains open until that matrix is explicitly accepted. No evaluation question or
 provider call was used.
