@@ -1,5 +1,7 @@
 {{ $brandName }}.
+@if ($workspaceName !== $brandName)
 {{ $workspaceName }}
+@endif
 
 {{ $heading }}
 
@@ -21,4 +23,4 @@ Support: {{ $supportContact }}
 
 @if ($footerText){{ $footerText }}
 @endif
-Sent by Dolved.
+Sent by {{ $brandName }}.

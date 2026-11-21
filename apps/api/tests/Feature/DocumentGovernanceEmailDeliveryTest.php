@@ -161,7 +161,9 @@ final class DocumentGovernanceEmailDeliveryTest extends TestCase
         $text = view('mail.governance.text', get_object_vars($mail))->render();
 
         $this->assertStringContainsString('Dolved', $html);
-        $this->assertStringContainsString($workspace->name, $html);
+        $this->assertStringNotContainsString($workspace->name, $html);
+        $this->assertSame('Dolved', $mail->workspaceName);
+        $this->assertSame('Import complete · Dolved', $mail->mailSubject);
         $this->assertStringContainsString("/app/workspaces/{$workspace->public_id}/documents/{$document->public_id}", $html);
         $this->assertStringContainsString('Manage notification preferences', $html);
         $this->assertStringContainsString('Import complete', $text);
@@ -289,9 +291,12 @@ final class DocumentGovernanceEmailDeliveryTest extends TestCase
         $this->assertStringContainsString('Alderbridge Care', $html);
         $this->assertStringContainsString('https://assets.example.test/alderbridge.png', $html);
         $this->assertStringContainsString('align="center"', $html);
-        $this->assertStringContainsString('margin:0 auto 10px', $html);
+        $this->assertStringContainsString('max-height:80px;max-width:220px;margin:0 auto 12px', $html);
         $this->assertStringContainsString('background:#6B2D84', $html);
-        $this->assertStringContainsString('Sent by Dolved', $html);
+        $this->assertStringContainsString('Sent by Alderbridge Care', $html);
+        $this->assertStringNotContainsString($workspace->name, $html);
+        $this->assertSame('Alderbridge Care', $mail->workspaceName);
+        $this->assertSame('Import complete · Alderbridge Care', $mail->mailSubject);
     }
 
     public function test_invalid_logo_and_low_contrast_accent_fall_back_without_delaying_rendering(): void

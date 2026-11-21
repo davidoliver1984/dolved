@@ -53,10 +53,10 @@ final readonly class BuildDocumentGovernanceEmail
         ));
 
         return new DocumentGovernanceMail(
-            mailSubject: "{$heading} · {$envelope->workspace_display_name_snapshot}",
+            mailSubject: "{$heading} · {$branding->brandName}",
             heading: $heading,
             summary: $summary,
-            workspaceName: (string) $envelope->workspace_display_name_snapshot,
+            workspaceName: $branding->brandName,
             actionLabel: $digest ? 'Review governance work' : 'Open in '.$branding->brandName,
             actionUrl: $frontend.$route,
             preferenceUrl: $frontend."/app/workspaces/{$workspace->public_id}/settings/notifications",

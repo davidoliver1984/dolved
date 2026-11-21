@@ -11,10 +11,12 @@
     <tr><td align="center">
         <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:640px;background:#ffffff;border:1px solid #d8ddd9;border-radius:16px;overflow:hidden;">
             <tr><td align="center" style="padding:28px 32px 18px;font-size:30px;font-weight:800;letter-spacing:-1px;text-align:center;">
-                @if ($logoUrl)<img alt="{{ $brandName }}" src="{{ $logoUrl }}" width="132" style="display:block;max-height:48px;max-width:132px;margin:0 auto 10px;">@endif
+                @if ($logoUrl)<img alt="{{ $brandName }}" src="{{ $logoUrl }}" style="display:block;width:auto;height:auto;max-height:80px;max-width:220px;margin:0 auto 12px;">@endif
                 <span>{{ $brandName }}</span>
             </td></tr>
-            <tr><td style="padding:0 32px 8px;color:#5f6f68;font-size:14px;">{{ $workspaceName }}</td></tr>
+            @if ($workspaceName !== $brandName)
+                <tr><td style="padding:0 32px 8px;color:#5f6f68;font-size:14px;">{{ $workspaceName }}</td></tr>
+            @endif
             <tr><td style="padding:8px 32px 0;"><h1 style="margin:0;font-size:28px;line-height:1.2;">{{ $heading }}</h1></td></tr>
             <tr><td style="padding:14px 32px 6px;color:#43534c;font-size:17px;line-height:1.55;">{{ $summary }}</td></tr>
             @if ($items !== [])
@@ -36,7 +38,7 @@
                 @if ($supportContact)<br>Support: <a href="mailto:{{ $supportContact }}">{{ $supportContact }}</a>@endif
             </td></tr>
         </table>
-        <div style="padding:18px;color:#7a8580;font-size:12px;">@if ($footerText){{ $footerText }} · @endif Sent by Dolved · Grounded knowledge for your team</div>
+        <div style="padding:18px;color:#7a8580;font-size:12px;">@if ($footerText){{ $footerText }} · @endif Sent by {{ $brandName }} · Grounded knowledge for your team</div>
     </td></tr>
 </table>
 </body>
