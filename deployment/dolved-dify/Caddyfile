@@ -40,3 +40,37 @@
 	}
 	reverse_proxy objectstore:8333
 }
+
+# This host also fronts the separately deployed FAMVAM pilot. Keep this site
+# isolated from Dolved while preserving it across Dolved gateway deployments.
+pilot.famvam.com {
+	encode zstd gzip
+
+	@holding path /
+	handle @holding {
+		header Content-Type "text/html; charset=utf-8"
+		respond `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Famvam</title><link rel="icon" href="/favicon.svg"><style>html,body{height:100%;margin:0}body{display:grid;place-items:center;background:#fff}img{width:96px;height:auto}</style></head><body><img src="/favicon.svg" alt="Famvam"></body></html>` 200
+	}
+
+	@api path /api/* /up /sanctum/* /user/* /email/*
+	handle @api {
+		reverse_proxy famvam-pilot-api:8080
+	}
+
+	@auth_api {
+		method POST
+		path /login /logout /two-factor-challenge /forgot-password /reset-password
+	}
+	handle @auth_api {
+		reverse_proxy famvam-pilot-api:8080
+	}
+
+	@s3 path /fambam-pilot-media/*
+	handle @s3 {
+		reverse_proxy famvam-pilot-minio:9000
+	}
+
+	handle {
+		reverse_proxy famvam-pilot-web:8080
+	}
+}
