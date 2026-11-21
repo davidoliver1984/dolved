@@ -10,6 +10,7 @@
 	handle @grafana {
 		forward_auth api:80 {
 			uri /api/platform/operations/access
+			header_up Origin https://{$DOLVED_DOMAIN}
 		}
 		reverse_proxy otel-lgtm:3000
 	}
@@ -18,6 +19,7 @@
 	handle @alertmanager {
 		forward_auth api:80 {
 			uri /api/platform/operations/access
+			header_up Origin https://{$DOLVED_DOMAIN}
 		}
 		reverse_proxy alertmanager:9093
 	}
