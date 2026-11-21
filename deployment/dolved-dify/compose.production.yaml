@@ -64,9 +64,9 @@ x-api-environment: &api-environment
   OPERATIONAL_METRICS_URL: http://otel-lgtm:9090
   OPERATIONAL_METRICS_TIMEOUT_SECONDS: ${OPERATIONAL_METRICS_TIMEOUT_SECONDS:-1}
   OPERATIONAL_METRICS_CACHE_SECONDS: ${OPERATIONAL_METRICS_CACHE_SECONDS:-10}
-  OPERATIONAL_GRAFANA_URL: http://127.0.0.1:3001
+  OPERATIONAL_GRAFANA_URL: https://${DOLVED_DOMAIN}/__ops/grafana/
   OPERATIONAL_ALERTMANAGER_URL: http://alertmanager:9093
-  OPERATIONAL_ALERTMANAGER_PUBLIC_URL: http://127.0.0.1:9093
+  OPERATIONAL_ALERTMANAGER_PUBLIC_URL: https://${DOLVED_DOMAIN}/__ops/alerts/
   MAIL_MAILER: ${MAIL_MAILER:-smtp}
   MAIL_HOST: ${MAIL_HOST:?MAIL_HOST is required}
   MAIL_PORT: ${MAIL_PORT:-587}
@@ -212,13 +212,15 @@ services:
     command:
       - --config.file=/etc/alertmanager/alertmanager.yaml
       - --storage.path=/alertmanager
+      - --web.external-url=https://${DOLVED_DOMAIN}/__ops/alerts/
+      - --web.route-prefix=/__ops/alerts/
     volumes:
       - ../../infrastructure/observability/alertmanager.yaml:/etc/alertmanager/alertmanager.yaml:ro
       - alertmanager_data:/alertmanager
     ports:
       - "127.0.0.1:${ALERTMANAGER_PORT:-9093}:9093"
     healthcheck:
-      test: [CMD, /bin/amtool, --alertmanager.url=http://127.0.0.1:9093, config, show]
+      test: [CMD, /bin/amtool, --alertmanager.url=http://127.0.0.1:9093/__ops/alerts/, config, show]
       interval: 10s
       timeout: 5s
       retries: 20
@@ -234,6 +236,8 @@ services:
       GF_AUTH_ANONYMOUS_ENABLED: "true"
       GF_AUTH_ANONYMOUS_ORG_ROLE: Admin
       GF_AUTH_DISABLE_LOGIN_FORM: "true"
+      GF_SERVER_ROOT_URL: https://${DOLVED_DOMAIN}/__ops/grafana/
+      GF_SERVER_SERVE_FROM_SUB_PATH: "true"
     volumes:
       - telemetry_data:/data
       - ../../infrastructure/observability/prometheus.yaml:/otel-lgtm/prometheus.yaml:ro
@@ -302,6 +306,10 @@ services:
       web:
         condition: service_healthy
       objectstore:
+        condition: service_healthy
+      alertmanager:
+        condition: service_healthy
+      otel-lgtm:
         condition: service_healthy
     logging: *bounded-logging
     mem_limit: 128m

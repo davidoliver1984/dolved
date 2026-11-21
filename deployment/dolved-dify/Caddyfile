@@ -5,7 +5,26 @@
 
 {$DOLVED_DOMAIN} {
 	encode zstd gzip
-	reverse_proxy web:3000
+
+	@grafana path /__ops/grafana /__ops/grafana/*
+	handle @grafana {
+		forward_auth api:80 {
+			uri /api/platform/operations/access
+		}
+		reverse_proxy otel-lgtm:3000
+	}
+
+	@alertmanager path /__ops/alerts /__ops/alerts/*
+	handle @alertmanager {
+		forward_auth api:80 {
+			uri /api/platform/operations/access
+		}
+		reverse_proxy alertmanager:9093
+	}
+
+	handle {
+		reverse_proxy web:3000
+	}
 }
 
 {$API_DOMAIN} {

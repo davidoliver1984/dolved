@@ -57,7 +57,8 @@ final class GetWorkspaceUsage
                 return null;
             }
 
-            return max(0, CarbonImmutable::parse((string) $from)->diffInMilliseconds(CarbonImmutable::parse((string) $to)));
+            return (int) CarbonImmutable::parse((string) $from)
+                ->diffInMilliseconds(CarbonImmutable::parse((string) $to), absolute: true);
         };
         $firstResponse = $runs->map(fn ($run): ?int => $duration($run->started_at, $run->first_progress_at))->filter(fn ($value): bool => $value !== null)->values();
         $completion = $runs->map(fn ($run): ?int => $duration($run->started_at, $run->completed_at))->filter(fn ($value): bool => $value !== null)->values();
