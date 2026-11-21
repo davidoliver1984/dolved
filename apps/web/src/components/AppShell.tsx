@@ -16,6 +16,7 @@ import {
   BellRing,
   LineChart,
   ListChecks,
+  BookOpenCheck,
   MailPlus,
   Menu,
   MessageSquarePlus,
@@ -215,6 +216,8 @@ export function AppShell({ canOperatePlatform, children, user, workspaces }: App
             <Link aria-current={pathname.endsWith("/people") ? "page" : undefined} className={activeClass(pathname.endsWith("/people"))} href={`/app/workspaces/${workspaceId}/administration/people`} onClick={closeMobileNavigation}><Users aria-hidden="true" className="size-4" /><span>People &amp; roles</span></Link>
             <Link aria-current={pathname.endsWith("/invitations") ? "page" : undefined} className={activeClass(pathname.endsWith("/invitations"))} href={`/app/workspaces/${workspaceId}/administration/invitations`} onClick={closeMobileNavigation}><MailPlus aria-hidden="true" className="size-4" /><span>Invitations</span></Link>
             <Link aria-current={pathname.endsWith("/usage") ? "page" : undefined} className={activeClass(pathname.endsWith("/usage"))} href={`/app/workspaces/${workspaceId}/administration/usage`} onClick={closeMobileNavigation}><Activity aria-hidden="true" className="size-4" /><span>Usage</span></Link>
+            <Link aria-current={pathname.endsWith("/question-review") ? "page" : undefined} className={activeClass(pathname.endsWith("/question-review"))} href={`/app/workspaces/${workspaceId}/administration/question-review`} onClick={closeMobileNavigation}><BookOpenCheck aria-hidden="true" className="size-4" /><span>Question review</span></Link>
+            <Link aria-current={pathname.endsWith("/locations") ? "page" : undefined} className={activeClass(pathname.endsWith("/locations"))} href={`/app/workspaces/${workspaceId}/administration/locations`} onClick={closeMobileNavigation}><Building2 aria-hidden="true" className="size-4" /><span>Locations</span></Link>
             <Link className="mt-2 px-3 py-2 text-sm text-foreground-muted underline-offset-4 hover:text-foreground hover:underline" href={`/app/workspaces/${workspaceId}`} onClick={closeMobileNavigation}>Back to chat</Link>
           </>
         ) : conversations.length ? conversations.slice(0, 12).map((conversation) => {

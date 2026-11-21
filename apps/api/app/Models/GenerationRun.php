@@ -103,4 +103,9 @@ class GenerationRun extends Model
     {
         return $this->hasMany(ChatDeliveryEvent::class)->orderBy('sequence');
     }
+
+    public function questionReview(): HasOne
+    {
+        return $this->hasOne(QuestionReview::class);
+    }
 }

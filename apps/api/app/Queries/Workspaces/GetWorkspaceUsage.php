@@ -49,6 +49,27 @@ final class GetWorkspaceUsage
             ->orderBy('attempt_origin')
             ->orderBy('status')
             ->get();
+        $runs = DB::table('generation_runs')
+            ->where('workspace_id', $workspace->id)->where('created_at', '>=', $start)->where('created_at', '<', $end)
+            ->get(['id', 'status', 'retrieval_outcome', 'started_at', 'first_progress_at', 'completed_at']);
+        $duration = static function (mixed $from, mixed $to): ?int {
+            if ($from === null || $to === null) {
+                return null;
+            }
+
+            return max(0, CarbonImmutable::parse((string) $from)->diffInMilliseconds(CarbonImmutable::parse((string) $to)));
+        };
+        $firstResponse = $runs->map(fn ($run): ?int => $duration($run->started_at, $run->first_progress_at))->filter(fn ($value): bool => $value !== null)->values();
+        $completion = $runs->map(fn ($run): ?int => $duration($run->started_at, $run->completed_at))->filter(fn ($value): bool => $value !== null)->values();
+        $runStatuses = $runs->countBy('status')->map(fn (int $count, string $status): array => ['status' => $status, 'aggregate_count' => $count])->values();
+        $retrievedCounts = DB::table('generated_answers')
+            ->join('generation_runs', 'generation_runs.id', '=', 'generated_answers.generation_run_id')
+            ->leftJoin('retrieved_source_references', 'retrieved_source_references.generated_answer_id', '=', 'generated_answers.id')
+            ->where('generation_runs.workspace_id', $workspace->id)
+            ->where('generation_runs.created_at', '>=', $start)->where('generation_runs.created_at', '<', $end)
+            ->groupBy('generated_answers.id')->selectRaw('COUNT(retrieved_source_references.id) AS passage_count')->pluck('passage_count');
+        $syncStatuses = DB::table('dify_document_bindings')->where('workspace_id', $workspace->id)
+            ->selectRaw('sync_status, COUNT(*) AS aggregate_count')->groupBy('sync_status')->orderBy('sync_status')->get();
 
         return [
             'range' => ['key' => $range, 'start' => $start->toIso8601String(), 'end' => $end->toIso8601String(), 'semantics' => '[start,end) UTC'],
@@ -66,6 +87,29 @@ final class GetWorkspaceUsage
                 'materialisation_attempts' => $materialisationAttempts,
                 'activity' => $activities,
                 'usage' => $usage,
+                'chat' => [
+                    'accepted_submissions' => $runs->count(),
+                    'statuses' => $runStatuses,
+                    'first_visible_response_ms_average' => $firstResponse->isEmpty() ? null : (int) round($firstResponse->average()),
+                    'completion_ms_average' => $completion->isEmpty() ? null : (int) round($completion->average()),
+                ],
+                'retrieval' => [
+                    'runs_with_recorded_sources' => $retrievedCounts->count(),
+                    'average_returned_passages' => $retrievedCounts->isEmpty() ? null : round((float) $retrievedCounts->average(), 2),
+                    'empty_retrievals' => $runs->whereIn('retrieval_outcome', ['no_eligible_evidence', 'no_retrieval_candidates'])->count(),
+                ],
+                'document_sync' => $syncStatuses,
+                'unknown_cost_observations' => $usage->where('cost_basis', 'unavailable')->sum('observation_count'),
+            ],
+            'coverage' => [
+                'status' => $runs->isEmpty() && $usage->isEmpty() && $activities->isEmpty() ? 'no_data' : 'partial',
+                'collected_at' => $end->toIso8601String(),
+                'usage_observation_count' => $usage->sum('observation_count'),
+                'limitations' => [
+                    'Latency averages include only runs with recorded timestamps; percentiles are unavailable in this pilot view.',
+                    'Cost entries marked unavailable are excluded from priced subtotals and are never treated as zero.',
+                    'Retrieved passage counts describe recorded source references, not claim-level support.',
+                ],
             ],
             'labels' => [
                 'logical_source_bytes' => 'Logical uploaded source bytes; not physical storage or billing usage.',

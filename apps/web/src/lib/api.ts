@@ -285,7 +285,17 @@ export type WorkspaceUsageSnapshot = {
       cost_usd: number | string | null;
       observation_count: number | string;
     }>;
+    chat: {
+      accepted_submissions: number;
+      statuses: Array<{ status: string; aggregate_count: number | string }>;
+      first_visible_response_ms_average: number | null;
+      completion_ms_average: number | null;
+    };
+    retrieval: { runs_with_recorded_sources: number; average_returned_passages: number | null; empty_retrievals: number };
+    document_sync: Array<{ sync_status: string; aggregate_count: number | string }>;
+    unknown_cost_observations: number | string;
   };
+  coverage: { status: "no_data" | "partial" | "complete"; collected_at: string; usage_observation_count: number | string; limitations: string[] };
   labels: { logical_source_bytes: string; cost: string };
 };
 
@@ -886,6 +896,86 @@ export async function uploadTenantBrandingAsset(workspacePublicId: string, kind:
   body.set("asset", file);
   const response = await apiFetch<{ data: BrandingAsset }>(`/api/platform/tenants/${encodeURIComponent(workspacePublicId)}/branding/assets`, { method: "POST", body });
   return response.data;
+}
+
+export type QuestionReviewPolicy = {
+  enabled: boolean;
+  policy_version: string;
+  effective_from: string | null;
+  review_from: string | null;
+  retrospective_days: number;
+  can_manage: boolean;
+  can_review: boolean;
+  retrospective_default: "off";
+};
+
+export type QuestionReviewSubject = { public_id: string; name: string; status: string; priority: string };
+export type QuestionReviewState = {
+  public_id?: string;
+  review_status: string;
+  issue_type: string | null;
+  workflow_state: string;
+  priority: string;
+  review_notes: string | null;
+  linked_document_public_id?: string | null;
+  owner_user_id?: string | null;
+  reviewed_at?: string | null;
+  subjects: QuestionReviewSubject[];
+};
+export type QuestionReviewItem = {
+  run_id: string;
+  occurred_at: string;
+  run_status: string;
+  retrieval_outcome: string | null;
+  site_context: string;
+  review: QuestionReviewState;
+};
+export type QuestionReviewDetail = QuestionReviewItem & {
+  question: string;
+  answer: string | null;
+  sources: Array<{ public_id: string; rank: number; display_name: string; document_id: string | null }>;
+  notice: string;
+};
+export type KnowledgeGap = QuestionReviewSubject & {
+  question_count: number;
+  reviewed_count: number;
+  unresolved_count: number;
+  confirmed_gap_count: number;
+};
+
+const questionReviewRoot = (workspaceId: string) => `/api/workspaces/${encodeURIComponent(workspaceId)}/question-review`;
+export async function questionReviewPolicy(workspaceId: string): Promise<QuestionReviewPolicy> {
+  return (await apiFetch<{ data: QuestionReviewPolicy }>(`${questionReviewRoot(workspaceId)}/policy`)).data;
+}
+export async function updateQuestionReviewPolicy(workspaceId: string, enabled: boolean, includeRetrospective: boolean, retrospectiveDays: number): Promise<QuestionReviewPolicy> {
+  return (await apiFetch<{ data: QuestionReviewPolicy }>(`${questionReviewRoot(workspaceId)}/policy`, { method: "PUT", body: JSON.stringify({ enabled, include_retrospective: includeRetrospective, retrospective_days: retrospectiveDays, privacy_confirmation: true }) })).data;
+}
+export async function questionReviewItems(workspaceId: string): Promise<QuestionReviewItem[]> {
+  return (await apiFetch<{ data: QuestionReviewItem[] }>(`${questionReviewRoot(workspaceId)}/questions`)).data;
+}
+export async function questionReviewDetail(workspaceId: string, runId: string, purpose: string): Promise<QuestionReviewDetail> {
+  return (await apiFetch<{ data: QuestionReviewDetail }>(`${questionReviewRoot(workspaceId)}/questions/${encodeURIComponent(runId)}?purpose=${encodeURIComponent(purpose)}`)).data;
+}
+export async function updateQuestionReview(workspaceId: string, runId: string, review: Omit<QuestionReviewState, "public_id" | "reviewed_at" | "subjects"> & { subject_ids: string[] }): Promise<QuestionReviewState> {
+  return (await apiFetch<{ data: QuestionReviewState }>(`${questionReviewRoot(workspaceId)}/questions/${encodeURIComponent(runId)}`, { method: "PATCH", body: JSON.stringify(review) })).data;
+}
+export async function questionReviewSubjects(workspaceId: string): Promise<QuestionReviewSubject[]> {
+  return (await apiFetch<{ data: QuestionReviewSubject[] }>(`${questionReviewRoot(workspaceId)}/subjects`)).data;
+}
+export async function createQuestionReviewSubject(workspaceId: string, name: string, priority: string): Promise<QuestionReviewSubject> {
+  return (await apiFetch<{ data: QuestionReviewSubject }>(`${questionReviewRoot(workspaceId)}/subjects`, { method: "POST", body: JSON.stringify({ name, priority }) })).data;
+}
+export async function questionReviewKnowledgeGaps(workspaceId: string): Promise<{ data: KnowledgeGap[]; description: string }> {
+  const response = await apiFetch<{ data: KnowledgeGap[]; meta: { description: string } }>(`${questionReviewRoot(workspaceId)}/knowledge-gaps`);
+  return { data: response.data, description: response.meta.description };
+}
+
+export type WorkspaceLocation = { public_id: string; name: string; kind: "site" | "service" | "region"; parent: { public_id: string; name: string } | null };
+export async function workspaceLocations(workspaceId: string): Promise<WorkspaceLocation[]> {
+  return (await apiFetch<{ data: WorkspaceLocation[] }>(`/api/workspaces/${encodeURIComponent(workspaceId)}/locations`)).data;
+}
+export async function createWorkspaceLocation(workspaceId: string, name: string, kind: WorkspaceLocation["kind"], parentPublicId: string | null): Promise<WorkspaceLocation> {
+  return (await apiFetch<{ data: WorkspaceLocation }>(`/api/workspaces/${encodeURIComponent(workspaceId)}/locations`, { method: "POST", body: JSON.stringify({ name, kind, parent_public_id: parentPublicId }) })).data;
 }
 
 export function firstError(error: unknown): string {

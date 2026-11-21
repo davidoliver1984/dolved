@@ -17,6 +17,7 @@ use App\Models\BulkOperation;
 use App\Models\ChatDeliveryEvent;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schedule;
 
 Artisan::command('inspire', function () {
@@ -35,6 +36,21 @@ Artisan::command('conversation:purge-expired-delivery-events', function (): void
 })->purpose('Remove bounded-retention provisional and replay delivery data');
 
 Schedule::command('conversation:purge-expired-delivery-events')->hourly()->withoutOverlapping();
+
+Artisan::command('question-review:purge-expired-data', function (): void {
+    $reviewCutoff = now()->subDays(30);
+    $auditCutoff = now()->subDays(400);
+    $reviews = DB::table('question_reviews')->whereIn('generation_run_id', function ($query) use ($reviewCutoff): void {
+        $query->select('id')->from('generation_runs')->where('created_at', '<', $reviewCutoff);
+    })->delete();
+    $audits = DB::table('question_review_audit_events')->where('occurred_at', '<', $auditCutoff)->delete();
+    $grants = DB::table('workspace_question_review_grants')->where(function ($query) use ($reviewCutoff): void {
+        $query->where('revoked_at', '<', $reviewCutoff)->orWhere('expires_at', '<', $reviewCutoff);
+    })->delete();
+    $this->info("Purged {$reviews} expired review records, {$audits} audit events, and {$grants} expired grants.");
+})->purpose('Apply bounded retention to restricted question-review derivatives without deleting conversations');
+
+Schedule::command('question-review:purge-expired-data')->dailyAt('01:30')->withoutOverlapping();
 
 Artisan::command('dify:reconcile-documents', function (ReconcileDifyDocuments $reconcile): void {
     $this->info("Dispatched {$reconcile->handle()} Dify document reconciliation jobs.");

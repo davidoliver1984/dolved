@@ -99,6 +99,16 @@ class Workspace extends Model
         return $this->hasMany(WorkspaceBrandingAsset::class);
     }
 
+    public function questionReviewPolicy(): HasOne
+    {
+        return $this->hasOne(WorkspaceQuestionReviewPolicy::class);
+    }
+
+    public function questionReviewSubjects(): HasMany
+    {
+        return $this->hasMany(QuestionReviewSubject::class);
+    }
+
     /** @return HasMany<Conversation, $this> */
     public function conversations(): HasMany
     {
