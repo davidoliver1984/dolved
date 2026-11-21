@@ -33,11 +33,15 @@ active alerts; the public console routes still rejected unauthenticated access.
 The host also fronts the separately deployed FAMVAM pilot. A Dolved gateway-file
 deployment temporarily omitted that pre-existing virtual host, causing
 `pilot.famvam.com` to fail its TLS handshake. The preserved live backups were inspected and
-the isolated FAMVAM routes were merged into the managed gateway in commit `3b2706df`
-without reverting Dolved's authentication fixes. Both `pilot.famvam.com` and
-`pilot.dolved.com` then returned HTTPS 200 with valid certificate verification, and the
-full provider-free Dolved production check passed. Future gateway deployments must retain
-both virtual hosts.
+the isolated FAMVAM routes were restored without reverting Dolved's authentication fixes
+in commit `3b2706df`. Commit `e9b2f409` then separated configuration ownership: Dolved's
+release imports independently managed, read-only site fragments, while FAMVAM's route now
+lives outside the Dolved release at `/etc/dolved/caddy-sites/famvam.caddy`. A subsequent
+Dolved gateway recreation returned HTTPS 200 with valid certificate verification for both
+`pilot.famvam.com` and `pilot.dolved.com`, and the full provider-free Dolved production
+check passed. This prevents a routine Dolved release from overwriting FAMVAM's route. Both
+pilots still share the host and Caddy process, so complete infrastructure fault isolation
+is not claimed.
 
 Deployed image identities recorded at verification:
 

@@ -480,11 +480,15 @@ A post-fix branding check email was sent to David.
 The pilot host was found to front an existing, separately deployed FAMVAM pilot through the
 same Caddy container. A Dolved gateway deployment temporarily omitted that unrelated
 virtual host, producing an SSL protocol error at `pilot.famvam.com`. Preserved pre-change
-Caddy backups allowed the FAMVAM holding/API/auth/media/web routes to be restored alongside
-the current Dolved routes in commit `3b2706df`; no FAMVAM data or container was changed.
-External verification then returned HTTPS 200 with valid TLS for both pilot hostnames, and
-the full provider-free Dolved verification passed. This shared-edge dependency must be
-preserved in every subsequent gateway deployment.
+Caddy backups allowed the FAMVAM holding/API/auth/media/web routes to be restored in commit
+`3b2706df`; no FAMVAM data or container was changed. Commit `e9b2f409` then separated route
+ownership: Dolved's versioned Caddyfile imports read-only external site fragments, and the
+FAMVAM fragment is independently stored at `/etc/dolved/caddy-sites/famvam.caddy`, outside
+the Dolved release tree. Recreating the gateway with this boundary preserved returned HTTPS
+200 with valid TLS for both pilot hostnames, and the full provider-free Dolved verification
+passed. Routine Dolved releases can no longer overwrite the FAMVAM fragment. The two pilots
+still share the VPS and Caddy process; full host-level or edge-process fault isolation would
+require separate infrastructure and is not claimed.
 
 Dolved was already persisting Dify's native conversation identifier. Read-only inspection
 showed the active Dify LLM node had no memory configuration, explaining why a follow-up could
