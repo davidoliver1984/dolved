@@ -477,6 +477,15 @@ was deployed. The live resolver returned `#DA95DF` with black button text and a 
 link; 24 tests / 156 assertions, Pint and full provider-free production verification passed.
 A post-fix branding check email was sent to David.
 
+The pilot host was found to front an existing, separately deployed FAMVAM pilot through the
+same Caddy container. A Dolved gateway deployment temporarily omitted that unrelated
+virtual host, producing an SSL protocol error at `pilot.famvam.com`. Preserved pre-change
+Caddy backups allowed the FAMVAM holding/API/auth/media/web routes to be restored alongside
+the current Dolved routes in commit `3b2706df`; no FAMVAM data or container was changed.
+External verification then returned HTTPS 200 with valid TLS for both pilot hostnames, and
+the full provider-free Dolved verification passed. This shared-edge dependency must be
+preserved in every subsequent gateway deployment.
+
 Dolved was already persisting Dify's native conversation identifier. Read-only inspection
 showed the active Dify LLM node had no memory configuration, explaining why a follow-up could
 lose its antecedent. Using Dify's own workflow save/publish services, and changing only

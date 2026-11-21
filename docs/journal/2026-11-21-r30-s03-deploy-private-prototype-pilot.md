@@ -30,6 +30,15 @@ Alertmanager route-prefix mismatch. Follow-up commit `a321b256`, archive SHA-256
 The production verification passed and Dolved then reported alert state available with zero
 active alerts; the public console routes still rejected unauthenticated access.
 
+The host also fronts the separately deployed FAMVAM pilot. A Dolved gateway-file
+deployment temporarily omitted that pre-existing virtual host, causing
+`pilot.famvam.com` to fail its TLS handshake. The preserved live backups were inspected and
+the isolated FAMVAM routes were merged into the managed gateway in commit `3b2706df`
+without reverting Dolved's authentication fixes. Both `pilot.famvam.com` and
+`pilot.dolved.com` then returned HTTPS 200 with valid certificate verification, and the
+full provider-free Dolved production check passed. Future gateway deployments must retain
+both virtual hosts.
+
 Deployed image identities recorded at verification:
 
 - API: `sha256:489fc28f3b7f565e733e13ab54e314baf676c96bc4808950b5912d5c50c1998b`
