@@ -68,6 +68,8 @@ final readonly class BuildDocumentGovernanceEmail
             senderDisplayName: $branding->senderDisplayName,
             footerText: $branding->footerText,
             supportContact: $branding->supportContact,
+            accentForeground: $branding->accentForeground,
+            linkColour: $branding->linkColour,
         );
     }
 
@@ -107,8 +109,16 @@ final readonly class BuildDocumentGovernanceEmail
         }
 
         $accent = strtoupper($branding->accentColour);
-        if (! preg_match('/^#[0-9A-F]{6}$/', $accent) || $this->contrastAgainstWhite($accent) < 4.5) {
+        $foreground = strtoupper($branding->accentForeground);
+        if (! preg_match('/^#[0-9A-F]{6}$/', $accent)
+            || ! in_array($foreground, ['#000000', '#FFFFFF'], true)
+            || $this->contrast($accent, $foreground) < 4.5) {
             $accent = '#008466';
+            $foreground = '#FFFFFF';
+        }
+        $link = strtoupper($branding->linkColour);
+        if (! preg_match('/^#[0-9A-F]{6}$/', $link) || $this->contrast($link, '#FFFFFF') < 4.5) {
+            $link = '#006C4D';
         }
 
         return new ResolvedGovernanceEmailBranding(
@@ -118,6 +128,8 @@ final readonly class BuildDocumentGovernanceEmail
             senderDisplayName: $branding->senderDisplayName,
             footerText: $branding->footerText,
             supportContact: $branding->supportContact,
+            accentForeground: $foreground,
+            linkColour: $link,
         );
     }
 
@@ -126,7 +138,16 @@ final readonly class BuildDocumentGovernanceEmail
         return new ResolvedGovernanceEmailBranding('Dolved', '#008466');
     }
 
-    private function contrastAgainstWhite(string $hex): float
+    private function contrast(string $first, string $second): float
+    {
+        $firstLuminance = $this->luminance($first);
+        $secondLuminance = $this->luminance($second);
+
+        return (max($firstLuminance, $secondLuminance) + 0.05)
+            / (min($firstLuminance, $secondLuminance) + 0.05);
+    }
+
+    private function luminance(string $hex): float
     {
         $components = [substr($hex, 1, 2), substr($hex, 3, 2), substr($hex, 5, 2)];
         $linear = array_map(function (string $component): float {
@@ -134,9 +155,8 @@ final readonly class BuildDocumentGovernanceEmail
 
             return $value <= 0.03928 ? $value / 12.92 : (($value + 0.055) / 1.055) ** 2.4;
         }, $components);
-        $luminance = 0.2126 * $linear[0] + 0.7152 * $linear[1] + 0.0722 * $linear[2];
 
-        return 1.05 / ($luminance + 0.05);
+        return 0.2126 * $linear[0] + 0.7152 * $linear[1] + 0.0722 * $linear[2];
     }
 
     /** @return array{title: string, message: string} */

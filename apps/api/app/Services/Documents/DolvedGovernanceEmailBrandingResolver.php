@@ -25,6 +25,8 @@ final class DolvedGovernanceEmailBrandingResolver implements ResolveDocumentGove
                     senderDisplayName: $configuration['sender_display_name'] ?? null,
                     footerText: $configuration['footer_text'] ?? null,
                     supportContact: $configuration['support_contact'] ?? null,
+                    accentForeground: (string) ($configuration['accent_foreground'] ?? '#FFFFFF'),
+                    linkColour: (string) ($configuration['primary_colour'] ?? '#006C4D'),
                 );
             }
         }

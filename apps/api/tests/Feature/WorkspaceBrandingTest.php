@@ -92,6 +92,8 @@ final class WorkspaceBrandingTest extends TestCase
         $this->assertSame('Alderbridge Care', $emailBrand->brandName);
         $this->assertSame('Alderbridge Care', $emailBrand->senderDisplayName);
         $this->assertSame('support@alderbridge.example', $emailBrand->supportContact);
+        $this->assertSame('#FFFFFF', $emailBrand->accentForeground);
+        $this->assertSame('#6B2D84', $emailBrand->linkColour);
 
         $this->actingAs($member)->getJson("/api/workspaces/{$workspace->public_id}/branding")
             ->assertOk()

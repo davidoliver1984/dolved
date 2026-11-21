@@ -282,7 +282,13 @@ final class DocumentGovernanceEmailDeliveryTest extends TestCase
         {
             public function resolve(string $configurationIdentity, string $accentIdentity): ResolvedGovernanceEmailBranding
             {
-                return new ResolvedGovernanceEmailBranding('Alderbridge Care', '#6B2D84', 'https://assets.example.test/alderbridge.png');
+                return new ResolvedGovernanceEmailBranding(
+                    brandName: 'Alderbridge Care',
+                    accentColour: '#DA95DF',
+                    logoUrl: 'https://assets.example.test/alderbridge.png',
+                    accentForeground: '#000000',
+                    linkColour: '#8D2F93',
+                );
             }
         });
 
@@ -292,7 +298,11 @@ final class DocumentGovernanceEmailDeliveryTest extends TestCase
         $this->assertStringContainsString('https://assets.example.test/alderbridge.png', $html);
         $this->assertStringContainsString('align="center"', $html);
         $this->assertStringContainsString('max-height:80px;max-width:220px;margin:0 auto 12px', $html);
-        $this->assertStringContainsString('background:#6B2D84', $html);
+        $this->assertStringContainsString('background-color:#DA95DF', $html);
+        $this->assertStringContainsString('linear-gradient(#DA95DF,#DA95DF)', $html);
+        $this->assertStringContainsString('color:#000000', $html);
+        $this->assertStringContainsString('color:#8D2F93', $html);
+        $this->assertStringNotContainsString('background-color:#008466', $html);
         $this->assertStringContainsString('Sent by Alderbridge Care', $html);
         $this->assertStringNotContainsString($workspace->name, $html);
         $this->assertSame('Alderbridge Care', $mail->workspaceName);

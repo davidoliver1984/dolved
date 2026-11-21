@@ -3,7 +3,10 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light only">
+    <meta name="supported-color-schemes" content="light only">
     <title>{{ $mailSubject }}</title>
+    <style>:root { color-scheme: light only; supported-color-schemes: light only; }</style>
 </head>
 <body style="margin:0;background:#f4f2ea;color:#17221e;font-family:Arial,Helvetica,sans-serif;">
 <div style="display:none;max-height:0;overflow:hidden;opacity:0;">{{ $summary }}</div>
@@ -30,10 +33,10 @@
                 </td></tr>
             @endif
             <tr><td style="padding:20px 32px 28px;">
-                <a href="{{ $actionUrl }}" style="display:inline-block;background:{{ $accentColour }};color:#ffffff;text-decoration:none;font-weight:700;padding:13px 20px;border-radius:8px;">{{ $actionLabel }}</a>
+                <a href="{{ $actionUrl }}" style="display:inline-block;background-color:{{ $accentColour }};background-image:linear-gradient({{ $accentColour }},{{ $accentColour }});color:{{ $accentForeground }};text-decoration:none;font-weight:700;padding:13px 20px;border-radius:8px;">{{ $actionLabel }}</a>
             </td></tr>
             <tr><td style="border-top:1px solid #e6e9e7;padding:20px 32px 28px;color:#68766f;font-size:13px;line-height:1.5;">
-                <a href="{{ $preferenceUrl }}" style="color:#006d55;">Manage notification preferences</a><br>
+                <a href="{{ $preferenceUrl }}" style="color:{{ $linkColour }};">Manage notification preferences</a><br>
                 This message contains no document content. Sign in to {{ $brandName }} to view authorised workspace information.
                 @if ($supportContact)<br>Support: <a href="mailto:{{ $supportContact }}">{{ $supportContact }}</a>@endif
             </td></tr>

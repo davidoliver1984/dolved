@@ -35,6 +35,8 @@ final class DocumentGovernanceMail extends Mailable
         public readonly ?string $senderDisplayName = null,
         public readonly ?string $footerText = null,
         public readonly ?string $supportContact = null,
+        public readonly string $accentForeground = '#FFFFFF',
+        public readonly string $linkColour = '#006C4D',
     ) {}
 
     public function envelope(): Envelope
