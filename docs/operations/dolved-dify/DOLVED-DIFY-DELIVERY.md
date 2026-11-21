@@ -4,7 +4,7 @@ Date: 19 November 2026
 Owner: David
 Implementation: Codex
 Independent assessment: Claude
-Status: live hosted pilot undergoing engineering acceptance as of 20 November 2026; isolated worktree `RAG-dolved-dify-delivery`, branch `codex/dolved-dify-delivery-20261119`. Canonical roadmap remains R28-S04.
+Status: live hosted pilot undergoing consolidated engineering acceptance as of 21 November 2026; canonical repository `/Users/davidoliver/Developer/RAG`, implementation branch `codex/admin-observability-20261121`. Canonical roadmap remains R28-S04 until its independent gate is reconciled.
 
 ## Purpose and authority
 
@@ -78,15 +78,15 @@ The existing 106–166-hour estimate is provisional. Track actual focused effort
 | Dolved production runtime | Working production frontend/API, required workers, no development server dependency | Deployed — production frontend/Laravel runtime at pilot.dolved.com per David's 20 November report; hosted engineering acceptance remains open |
 | Stock Dify deployment | Pinned release/plugins, persistent stores, supported API compatibility | Verified on host — stock Dify 1.19.0/`8e689e8`, private data services, loopback-only nginx, plugin debug port removed, HTTP 200; OpenAI plugin 1.1.0 |
 | Authentication and ownership | Workspace, conversation and document access checks verified | Implemented — local boundary checks and hosted sign-in correction recorded; complete hosted roles/ownership acceptance remains |
-| Document upload | Authorised user uploads via Dolved; original stored durably; status visible | Implemented and deployed — eleven originals stored/read-back verified; import corrections deployed; fresh hosted upload and complete lifecycle acceptance pending |
+| Document upload | Authorised user uploads via Dolved; original stored durably; status visible | Implemented and deployed — eleven originals stored/read-back verified; explicit organisation-wide or multi-location applicability and location administration are deployed; fresh hosted upload and complete lifecycle acceptance pending |
 | Governance synchronisation | Approval, eligibility, replacement, withdrawal and failure transitions verified | Verified locally — fail-closed contracts pass; hosted replacement, withdrawal, deletion and recovery acceptance pending |
-| Chat | Streaming where supported, saved history, fresh conversations, refresh consistency | Deployed — answers, persistence and reload reported working; c115890 first-message fix deployed with reported regression/lint/type/build checks; David's no-refresh confirmation pending |
-| Site context | Backend-validated selections and correct global/site retrieval behaviour | Implemented — backend-validated registered selection or global-only; complete hosted acceptance and final site mapping verification pending |
+| Chat | Streaming where supported, saved history, fresh conversations, refresh consistency | Deployed — answers, persistence and reload reported working; first-message live update correction remains deployed. Dolved persists the native Dify conversation identity and the active stock Dify workflow now has bounded memory enabled for the last 10 messages. A hosted conversational follow-up check remains part of consolidated acceptance |
+| Site context | Backend-validated selections and correct global/site retrieval behaviour | Implemented — backend-validated registered selection or global-only; document import now requires organisation-wide or one-or-more registered locations and never infers applicability from wording. Complete hosted acceptance and final site mapping verification remain |
 | Sources | Honest source display and authorised links to mapped originals | Deployed — compact expandable Sources retrieved and authorised links reported working; hosted permission/link acceptance pending |
 | Hosting and recovery | HTTPS, restricted services, backups and isolated restore check | In progress — host and Dify are deployed and hardened. The restricted Dify snapshot at `/var/backups/dolved-pilot/20261119T214500Z` has checksum-manifest SHA-256 `ad3ddd8a01eb12389de6ccf89ceaf643bf605fffed2759f85ccb36e590473d4c`; its isolated database/original restore passed. The post-import Dolved backup at `/var/backups/dolved-pilot/20261119T220500Z` has checksum-manifest SHA-256 `97ad53a8b995b5dc4c5638313f4867c4321050149b042beca6208a869feb0f59`; its temporary database restored with eleven documents and all restored originals matched their source checksums. DNS/HTTPS, dedicated Dify credentials and SMTP configuration are now complete per David's 20 November report; actual mail delivery and remaining hosted operational acceptance are pending |
 | Fixed product branding | Established Dolved identity across current product surfaces | Deployed — distinct from configurable branding |
-| Platform-admin branding controls | Bounded logo/colour and related settings through the reserved branding seam | In progress — specification-backed editor and versioned backend are implemented and locally verified; hosted deployment and David's light/dark/mobile visual acceptance remain open |
-| Privacy-safe observability | Planned OpenTelemetry propagation/Collector routing without content or secrets in general telemetry | In progress — completion and hosted verification pending; not claimed verified |
+| Platform-admin branding controls | Bounded logo/colour and related settings through the reserved branding seam | Deployed — versioned editor, custom/default lifecycle, safe assets, branded correspondence and hosted refinements are live. David reported the resulting branded email and interface looked correct. Consolidated favicon persistence, fallback identity, mobile and light/dark acceptance remain open |
+| Privacy-safe observability | Allowlisted OpenTelemetry propagation/Collector routing without content or secrets in general telemetry; tenant usage and restricted question review remain separate | Deployed and provider-free verified — pinned Collector 0.153.0, Grafana OTEL LGTM 0.29.2 and Alertmanager 0.33.1 are healthy and localhost-only. The operational reader returned nine current signals with alert state available. Tenant usage, opt-in owner-derived question review, manual subjects and knowledge-gap summaries are deployed; hands-on permission/retention acceptance remains |
 | Restricted evaluation evidence capture | Exact assembled model input and user-visible answer/source/link records | Verified — existing hosted run directly records Dify 1.19.0's assembled `PromptMessage` sequence and natively correlates it to the global structured context, Dolved answer and ten ordered permission-enforced source routes; this is the Dify model-runtime boundary, not provider-wire bytes. Restricted package manifest SHA-256 `75ec5655326aba7d2b946a2db081d431fc2bcefc0d0b4b7198ee1859dc12656e`; no new provider call or setting change |
 | Final freeze | Application, Dify, plugins, prompt, corpus and settings recorded | Not started |
 | Independent evaluation | One hosted 40-question run and Claude's frozen-rubric assessment | Not started |
@@ -390,3 +390,66 @@ its checksum-manifest SHA-256 is
 Raw files are mode 0600 in a mode 0700 directory and remain separate from ordinary
 OpenTelemetry. No sealed question was accessed and broader observability/acceptance tasks
 remain open.
+
+## Current status reconciliation — 21 November 2026
+
+The active repository was cleanly moved out of the iCloud-backed Desktop location. The
+canonical clone is `/Users/davidoliver/Developer/RAG`; implementation uses a linked worktree
+at `/private/tmp/RAG-admin-observability-20261121`. The former Desktop checkouts and legacy
+recovery assets were preserved unchanged. No recovery-critical container, volume, database
+or source file was deleted.
+
+Application commits `ae077f2c`, `877a0942` and `18e0492d` deliver the final branded-email
+refinement, explicit location/applicability administration, restricted question review,
+expanded tenant usage and the private production observability stack. Question review is
+off by default, derives its initial reviewer from current tenant ownership, and makes the
+optional retrospective window a separate audited choice capped at 30 days. Ordinary
+telemetry remains content-free; question wording is available only through the separately
+authorised and audited review view.
+
+Local verification after the observability change:
+
+- 25 focused Laravel tests / 213 assertions passed across telemetry, platform operations,
+  question review, locations and workspace usage. An initial run without the test storage
+  bucket exposed only missing local test configuration and passed when the established
+  fixture bucket was supplied.
+- 3 focused web files / 16 tests passed for platform operations, workspace usage and import
+  applicability. Earlier implementation verification also passed TypeScript, production
+  build, Pint and the new focused feature suites. The full web suite's sole unrelated
+  historical guardrail failure remains the approved interface specification's literal
+  `Make Time` examples; that specification was not silently rewritten.
+- Production Compose rendered successfully and the strengthened provider-free preflight and
+  running verification passed.
+
+Release `18e0492d` was deployed from archive SHA-256
+`79ccaef19fd541dbc013960c7d42dfd0a06c7547c9fecfdce094ec82f9a15f66`.
+The live application image identities are API
+`sha256:489fc28f3b7f565e733e13ab54e314baf676c96bc4808950b5912d5c50c1998b`
+and web
+`sha256:3085765d48d0c9be31437447bcecb849fe529e5798e18b604f2b152e95afad79`.
+The pinned Collector, LGTM and Alertmanager images are respectively
+`sha256:6ed874ea083d67a3085acfc75343f2ad11d9abe6006d7ea4a16e2dba9af14e49`,
+`sha256:af7242c1a9608faf6d26e6f235392fd0c32b67258228f9a3cfc96e724974930c`
+and `sha256:9e082985f56f4c8c9f724e18f2288c6708f472e56a5286b8863d080434ea065d`.
+All were healthy; Grafana, Alertmanager and OTLP/Collector health ports were bound only to
+`127.0.0.1`. The application operational reader returned `available`, `current`, nine
+signals and available alert state. No paid model, retrieval or generation call was used.
+
+Dolved was already persisting Dify's native conversation identifier. Read-only inspection
+showed the active Dify LLM node had no memory configuration, explaining why a follow-up could
+lose its antecedent. Using Dify's own workflow save/publish services, and changing only
+`llm.data.memory`, the stock workflow was published as version 3 with a 10-message bounded
+window. The active workflow is `7bd318c0-bf18-4c2f-8fa2-f8ead969db45`; persisted read-back
+shows `{"window":{"size":10,"enabled":true}}`. Private before/after exports were retained
+outside Git with SHA-256
+`8326d9144b1ec63fb86e292f379ce355041048b29de9cd0f29f095e52a786324` and
+`ce9c3cab1194f2dd250ced1bcdc797e63112f23a5adc395fb1c94d30b7c2be6e`.
+No prompt, retrieval, model, filter, document or dataset setting changed.
+
+Current milestone: consolidated hosted acceptance. Remaining hands-on checks are the
+custom/default branding matrix (including favicon, mobile and light/dark), role and direct
+API concealment, document upload/replacement/withdrawal/deletion, explicit multi-location
+applicability, conversational follow-up/reload, source-link permissions, Question review
+opt-in/revocation/retention, and the operator screens. After those checks, re-verify the
+11-document inventory and effective Top K 10 settings, freeze one readiness package and
+hand it to Claude. The 40 questions remain sealed and have not been requested or run.

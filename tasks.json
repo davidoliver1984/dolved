@@ -40,29 +40,32 @@
   "progress": {
     "current_phase": "R28",
     "current_session": "R28-S04",
-    "next_action": "R28-S04 remains the canonical roadmap session; no later gate is pre-completed. The separately authorised ADR-0041 track is a live hosted single-client pilot undergoing engineering acceptance. DNS/HTTPS, dedicated Dify credentials, SMTP configuration, pilot activation and restricted exact-model-input capture are complete. Next: confirm the deployed first-message fix in hosted use, finish hands-on/lifecycle/mobile/permission/email acceptance, implement bounded platform-admin branding and complete privacy-safe observability, then verify corpus/settings and freeze one neutral Claude readiness handoff using the verified capture package. Keep the 40 questions sealed. R29/R30 evidence may be reused without closing their gates; R31 acceptance and R32 AWS/R33 production/R34 documentation remain preserved.",
+    "next_action": "R28-S04 remains the canonical roadmap session; no later gate is pre-completed. The separately authorised ADR-0041 track is a live hosted single-client pilot undergoing consolidated engineering acceptance. The repository has been moved cleanly out of iCloud to /Users/davidoliver/Developer/RAG, with the active delivery worktree at /private/tmp/RAG-admin-observability-20261121. DNS/HTTPS, dedicated Dify credentials, SMTP, pilot activation, configurable branding, explicit multi-location applicability, bounded Dify conversation memory, restricted exact-model-input capture, Question review and privacy-safe observability are deployed. Next: complete the custom/fallback light/dark/mobile branding matrix and hands-on lifecycle/permission/source-link/telemetry acceptance, re-freeze the exact corpus and effective settings, then prepare one neutral checksummed Claude readiness handoff. Keep the 40 questions sealed. R29/R30 evidence may be reused without closing their gates; R31 acceptance and R32 AWS/R33 production/R34 documentation remain preserved.",
     "authorised_delivery_track": {
       "decision_reference": "ADR-0041 and docs/operations/dolved-dify/DOLVED-DIFY-DELIVERY.md",
       "status": "in_progress",
       "scope": "One private, invitation-only, single-client Dolved pilot using pinned stock self-hosted Dify on the approved non-AWS host.",
       "completed": [
-        "Established Dolved branding is applied; this is fixed product identity, not the unbuilt platform-admin branding editor.",
-        "Production Dolved frontend and Laravel backend are deployed on the approved OVH VPS. The first-message live-update correction at c115890 is reported deployed; hosted confirmation remains pending.",
+        "The platform-admin branding editor and safe draft/apply/default lifecycle are deployed. David approved the hosted Cherish identity and received the corrected branded email in the inbox; the complete custom/fallback light/dark/mobile matrix remains open.",
+        "Production Dolved frontend and Laravel backend are deployed on the approved OVH VPS. The first-message live-update correction at c115890 is deployed and the hosted chat path is operational.",
         "Stock Dify 1.19.0 at 8e689e868b63b6dd2b449d0eb568ca5cc7127759 is deployed privately.",
         "The eleven assessment originals are recorded as hash-verified, governed, applicability-bound and mapped in Dolved/Dify without duplicate searchable copies; recheck against the final freeze before evaluation.",
         "Dataset and node Top K 10, threshold off, weighted hybrid 0.7/0.3 and global-or-selected-site filtering were verified in the retained deployment record; final freeze verification remains.",
-        "DNS/HTTPS, dedicated Dify credentials, SMTP configuration and pilot activation are complete per David's 20 November report; mail-delivery acceptance is still pending.",
+        "DNS/HTTPS, dedicated Dify credentials, SMTP configuration and pilot activation are complete. David confirmed successful inbox delivery of the corrected tenant-branded email.",
         "Authentication, roles, workspace/conversation boundaries, structured site context, saved chat/reload and authorised source links are implemented; hosted acceptance coverage remains to be completed.",
         "Compact expandable Sources retrieved display and import-verification corrections are deployed per David's report and delivery-branch commits.",
         "Restricted exact model-input capture is verified from an existing hosted acceptance run without a new provider call: the direct Dify 1.19.0 PromptMessage sequence is natively correlated to the global site input, Dolved answer and ten ordered source links. Provider-wire bytes remain outside the stated capture boundary.",
+        "Explicit document applicability is deployed: organisation-wide or one or more registered locations, with the saved choice visible before promotion and on the governed document record.",
+        "Stock Dify workflow memory is enabled with a bounded ten-message window while Dolved continues to preserve the native Dify conversation identifier; no prompt, retrieval, model, filter, dataset or document setting changed.",
+        "Private OpenTelemetry Collector, Grafana OTEL LGTM and Alertmanager services are deployed on localhost-only ports. Provider-free verification reported nine current operational signals and available alert state.",
+        "Restricted opt-in Question review is deployed with reviewer authority derived from tenant ownership, retrospective access off by default and an optional confirmed maximum 30-day window.",
         "Restricted backup and isolated database/original restore evidence are recorded; legacy RAG recovery assets remain preserved."
       ],
       "remaining": [
-        "Complete David's hands-on hosted acceptance; confirm first-message answer arrival without refresh at c115890 (reported 18 regression tests, lint, TypeScript and production build passed).",
-        "Build the bounded platform-admin branding editor through the reserved seam; fixed Dolved identity does not complete R29 configurable branding.",
+        "Complete David's consolidated hands-on hosted acceptance across chat live updates, lifecycle transitions, permissions, source links and operational screens.",
+        "Complete explicit visual acceptance of the custom and Dolved-fallback identities in light/dark themes, narrow mobile layout, favicon reload and keyboard/focus states.",
         "Verify the full hosted upload, processing, replacement, withdrawal and deletion lifecycle, including ordinary failure/recovery cases.",
-        "Verify actual SMTP delivery, mobile presentation, roles/permissions, conversation ownership and source-link access.",
-        "Complete the planned privacy-safe OpenTelemetry work; keep restricted model-input evaluation captures separate from general operational telemetry.",
+        "Verify roles/permissions, conversation ownership, optional Question review boundaries, telemetry retention/failure states and source-link access during the consolidated run.",
         "Recheck the exact eleven-document corpus, site mapping and effective dataset/node Top K 10; freeze final deployed application, Dify/plugins, prompt, model and configuration identities.",
         "Prepare one checksummed neutral readiness handoff for Claude; stop before sealed-question release or evaluation execution."
       ],
@@ -5552,7 +5555,7 @@
           "id": "R29-S02",
           "guide_stage": "Stage 29.2 — Implement configurable identity and administration",
           "title": "Implement Configurable Identity and Administration",
-          "status": "in_progress",
+          "status": "verified",
           "objective": "Implement validated display name, logo/wordmark, favicon and light/dark accent configuration with authorised administration, preview, lifecycle and safe Dolved fallback.",
           "session_mode": "implementation",
           "requires_architecture_review": false,
@@ -5563,19 +5566,20 @@
           "journal": {
             "required": true,
             "path_template": "docs/journal/YYYY-MM-DD-r29-s02-implement-configurable-branding.md",
-            "status": "in_progress",
+            "status": "verified",
             "actual_path": "docs/journal/2026-11-20-r29-s02-implement-configurable-branding.md"
           },
           "completion_evidence": [
             "Platform-admin tenant list/editor, versioned draft/apply/default/custom lifecycle, safe re-encoded tenant assets, live resolver, tenant UI propagation and correspondence integration implemented on the delivery branch.",
-            "Focused verification: 32 Laravel tests / 196 assertions and 4 web test files / 50 tests; production web build passed. Hosted deployment and David's visual acceptance remain open."
+            "Focused verification: 32 Laravel tests / 196 assertions and 4 web test files / 50 tests; production web build passed.",
+            "Hosted custom Cherish identity and corrected governance email were reviewed by David; the email arrived in the inbox and the configured branding result was explicitly approved."
           ]
         },
         {
           "id": "R29-S03",
           "guide_stage": "Stage 29.3 — Apply and visually verify branding across Dolved",
           "title": "Apply and Visually Verify Branding Across Dolved",
-          "status": "not_started",
+          "status": "in_progress",
           "objective": "Apply configured and fallback branding consistently across the Dolved web, authentication, invitation and governance-email surfaces and verify responsive, theme and accessibility behaviour.",
           "session_mode": "implementation",
           "requires_architecture_review": false,
@@ -5588,9 +5592,13 @@
           "journal": {
             "required": true,
             "path_template": "docs/journal/YYYY-MM-DD-r29-s03-verify-configurable-branding.md",
-            "status": "not_started"
+            "status": "in_progress",
+            "actual_path": "docs/journal/2026-11-21-r29-s03-verify-configurable-branding.md"
           },
-          "completion_evidence": []
+          "completion_evidence": [
+            "Hosted custom identity and email presentation approved by David on 20 November 2026.",
+            "Full custom/fallback, light/dark, narrow-mobile, favicon-reload and keyboard/focus visual matrix remains open; R29-GATE is therefore not complete."
+          ]
         }
       ],
       "gate": {
@@ -5610,14 +5618,14 @@
       "title": "Private Prototype/Pilot Launch",
       "guide_start_line": 15838,
       "guide_end_line": 15918,
-      "status": "not_started",
+      "status": "in_progress",
       "objective": "Launch and hand over one private, invitation-only single-client Dolved–Dify prototype on the approved non-AWS host, with bounded recovery, observability, security, quality and cost evidence but no production-readiness claim.",
       "sessions": [
         {
           "id": "R30-S01",
           "guide_stage": "Stage 30.1 — Freeze the private-pilot operating boundary",
           "title": "Freeze the Private-Pilot Operating Boundary",
-          "status": "not_started",
+          "status": "verified",
           "objective": "Freeze host/software identities, invitation and spending authority, data/corpus scope, deployment ownership, backup/rollback target, legacy recovery, evidence and stop conditions.",
           "session_mode": "architecture",
           "requires_architecture_review": true,
@@ -5628,15 +5636,19 @@
           "journal": {
             "required": true,
             "path_template": "docs/journal/YYYY-MM-DD-r30-s01-freeze-private-pilot-boundary.md",
-            "status": "not_started"
+            "status": "verified",
+            "actual_path": "docs/journal/2026-11-21-r30-s01-freeze-private-pilot-boundary.md"
           },
-          "completion_evidence": []
+          "completion_evidence": [
+            "ADR-0041 and the single delivery record freeze the invitation-only single-client host, stock Dify boundary, budgets, sealed evaluation boundary, backup/rollback and legacy-recovery obligations.",
+            "Canonical repository moved cleanly to /Users/davidoliver/Developer/RAG; the old Desktop/iCloud copies and legacy recovery assets remain preserved."
+          ]
         },
         {
           "id": "R30-S02",
           "guide_stage": "Stage 30.2 — Establish privacy-safe Dolved–Dify pilot observability",
           "title": "Establish Privacy-Safe Dolved–Dify Pilot Observability",
-          "status": "not_started",
+          "status": "verified",
           "objective": "Propagate W3C trace context across Dolved and Dify and route safe traces/metrics through the Collector without exporting customer questions, answers, prompts, passages, document content or secrets.",
           "session_mode": "implementation",
           "requires_architecture_review": false,
@@ -5647,15 +5659,20 @@
           "journal": {
             "required": true,
             "path_template": "docs/journal/YYYY-MM-DD-r30-s02-establish-private-pilot-observability.md",
-            "status": "not_started"
+            "status": "verified",
+            "actual_path": "docs/journal/2026-11-21-r30-s02-establish-private-pilot-observability.md"
           },
-          "completion_evidence": []
+          "completion_evidence": [
+            "Pinned Collector 0.153.0, Grafana OTEL LGTM 0.29.2 and Alertmanager 0.33.1 deployed with localhost-only specialist ports and existing allowlist-first application instrumentation.",
+            "Provider-free hosted verification returned nine current operational signals and available alert state; no customer question, answer, prompt, passage, document content or secret is exported as telemetry.",
+            "Focused verification passed: 25 Laravel tests / 213 assertions and 3 frontend files / 16 tests."
+          ]
         },
         {
           "id": "R30-S03",
           "guide_stage": "Stage 30.3 — Deploy the invitation-only prototype/pilot",
           "title": "Deploy the Invitation-Only Prototype/Pilot",
-          "status": "not_started",
+          "status": "in_progress",
           "objective": "Deploy verified Dolved images and pinned stock Dify to the approved host and prove TLS, private backplane, secret handling, bounded resources, legacy preservation, backup and rollback appropriate to the pilot.",
           "session_mode": "implementation",
           "requires_architecture_review": false,
@@ -5666,9 +5683,14 @@
           "journal": {
             "required": true,
             "path_template": "docs/journal/YYYY-MM-DD-r30-s03-deploy-private-prototype-pilot.md",
-            "status": "not_started"
+            "status": "in_progress",
+            "actual_path": "docs/journal/2026-11-21-r30-s03-deploy-private-prototype-pilot.md"
           },
-          "completion_evidence": []
+          "completion_evidence": [
+            "Hosted invitation-only pilot is live with public HTTPS for Dolved, private Dify/backplane services, pinned production images and persistent storage.",
+            "Release archive 79ccaef19fd541dbc013960c7d42dfd0a06c7547c9fecfdce094ec82f9a15f66 passed strengthened preflight and provider-free running verification.",
+            "Final hands-on acceptance and consolidated operational handoff remain open; R30-GATE is not complete."
+          ]
         },
         {
           "id": "R30-S04",

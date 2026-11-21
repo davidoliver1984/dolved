@@ -1,0 +1,45 @@
+# R30-S02 — Establish Privacy-Safe Dolved–Dify Pilot Observability
+
+Date: 21 November 2026
+Status: Verified implementation and deployment; hands-on acceptance remains in R30-S04.
+
+## Reconciliation
+
+The existing Platform Operations overview, telemetry, alerts and policy routes remain the
+global operator surfaces. Existing workspace usage remains the tenant surface and was
+extended with chat, retrieval/source and Dify document-processing summaries. The approved
+Question review specification is implemented as a separate restricted application feature;
+question content is not telemetry.
+
+## Delivered
+
+- Pinned OpenTelemetry Collector 0.153.0, Grafana OTEL LGTM 0.29.2 and Alertmanager 0.33.1
+  added to the production pilot definition.
+- OTLP, Grafana and Alertmanager host ports restricted to `127.0.0.1`; bounded resources and
+  logs retained.
+- The existing allowlist-first Laravel instrumentation is enabled. The Collector accepts
+  traces and metrics only; it does not export customer questions, answers, prompts,
+  passages, cookies, credentials or headers.
+- Existing Prometheus rules and Alertmanager routing are mounted unchanged. Specialist
+  consoles remain private; ordinary operators use the authorised Dolved screens.
+- Restricted Question review is opt-in, initially derives review permission from current
+  tenant ownership, defaults retrospective access off, supports a separately confirmed
+  maximum 30-day retrospective window, audits wording reads and maintains manual subjects,
+  review labels and knowledge-gap summaries.
+
+## Verification
+
+- 25 focused Laravel tests / 213 assertions passed across telemetry, Platform Operations,
+  Question review, workspace locations and usage.
+- 3 focused frontend files / 16 tests passed.
+- Production Compose and strengthened preflight validation passed.
+- Release archive SHA-256:
+  `79ccaef19fd541dbc013960c7d42dfd0a06c7547c9fecfdce094ec82f9a15f66`.
+- Provider-free live verification passed. All three observability services and the
+  application containers were healthy. The operational reader returned nine current
+  signals and available alert state.
+- No retrieval, generation, credential-validation or paid provider call was made.
+
+The remaining R30-S04 work is a hands-on permission, retention, failure-state and responsive
+acceptance run. This journal does not claim an availability SLA, answer quality or a closed
+pilot gate.

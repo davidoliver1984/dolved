@@ -1,7 +1,7 @@
 # R29-S02 — Implement Configurable Branding
 
 Date: 20 November 2026
-Status: In progress — implemented and deployed; hosted visual acceptance remains.
+Status: Verified implementation — deployed; consolidated visual acceptance remains in R29-S03.
 
 Implemented on the Dolved–Dify delivery branch:
 
@@ -37,5 +37,6 @@ The follow-up correction was deployed to the pilot as application commit `ca72a0
 containers returned healthy and the live effective-branding response resolved custom revision 5,
 including `Ask Cherish` and the configured Cherish introduction.
 
-Remaining before verification: confirm favicon upload/persistence on the hosted editor and obtain
-David's visual approval of custom and fallback branding on desktop/mobile and light/dark surfaces.
+On 20 November David confirmed receipt of the corrected branded email in the inbox and reported
+that the result looked correct. This verifies implementation and the reported custom-brand path;
+the complete custom/default visual matrix remains owned by R29-S03.
