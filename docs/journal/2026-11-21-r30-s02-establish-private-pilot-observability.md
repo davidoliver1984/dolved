@@ -45,6 +45,11 @@ question content is not telemetry.
   401, while raw Grafana and Alertmanager host ports remained bound to `127.0.0.1`.
 - A workspace Usage timing type error discovered in hands-on acceptance was corrected and
   regression-tested; the deployed 30-day query completed successfully.
+- The first browser check then showed that console authorisation lacked Sanctum's trusted
+  SPA origin and that the alert reader omitted Alertmanager's configured route prefix.
+  Commit `a321b256` corrected only those routes. Provider-free production verification
+  passed; alert state was available with zero active alerts, and unauthenticated console
+  requests remained HTTP 401.
 - No retrieval, generation, credential-validation or paid provider call was made.
 
 The remaining R30-S04 work is a hands-on permission, retention, failure-state and responsive

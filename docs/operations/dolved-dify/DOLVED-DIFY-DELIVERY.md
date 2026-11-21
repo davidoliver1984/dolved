@@ -451,6 +451,16 @@ for both routes. The hotfix archive SHA-256 is
 local focused verification passed 11 tests / 105 assertions, Pint, Compose rendering and
 Caddy validation before deployment. No provider call was used.
 
+The first authenticated-browser check exposed two deployment defects without weakening the
+boundary: direct console navigation did not carry the trusted SPA origin required by
+Sanctum, and the operational reader called Alertmanager without its configured route
+prefix. Commit `a321b256` adds the trusted production origin only to the internal
+authorisation subrequest and corrects the internal Alertmanager base URL. Its archive
+SHA-256 is `c3a0b67fa7d51b1b20a987d03c0dbbfd3780e9a403e42c72ea365a3f25c899b1`.
+After deployment, the production verification passed; the reader reported metrics and
+alert state available with zero active alerts. Both public console routes continued to
+return HTTP 401 without an authenticated Dolved session.
+
 Observed pilot-host capacity at this verification point: Debian GNU/Linux 13 (trixie),
 kernel `6.12.100+deb13-cloud-amd64`, six vCPUs, 11 GiB visible RAM plus 2 GiB swap and a
 99 GiB root filesystem (33 GiB used, 63 GiB available). Twenty-five containers were running.

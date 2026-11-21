@@ -24,6 +24,12 @@ acceptance and added protected `/__ops/grafana/` and `/__ops/alerts/` routes. Fu
 provider-free running verification passed after the update; both routes reject an
 unauthenticated external request with HTTP 401, and a read-only live Usage query completed.
 
+A browser acceptance check exposed an authentication-origin handoff issue and an internal
+Alertmanager route-prefix mismatch. Follow-up commit `a321b256`, archive SHA-256
+`c3a0b67fa7d51b1b20a987d03c0dbbfd3780e9a403e42c72ea365a3f25c899b1`, corrected both.
+The production verification passed and Dolved then reported alert state available with zero
+active alerts; the public console routes still rejected unauthenticated access.
+
 Deployed image identities recorded at verification:
 
 - API: `sha256:489fc28f3b7f565e733e13ab54e314baf676c96bc4808950b5912d5c50c1998b`
