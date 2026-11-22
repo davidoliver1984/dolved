@@ -55,6 +55,15 @@ DNS/HTTPS, dedicated Dify credentials, SMTP, configurable tenant branding, docum
 applicability, bounded Dify conversation memory and private telemetry are active. No paid
 retrieval, generation or evaluation call was used for this deployment.
 
+On 22 November, acceptance review of the scheduled governance digest found generic review
+cards even though each event retained the document title and due date. Commit `ee67198c`
+now renders “{Document title} still needs to be reviewed” with “Due by {date}” beneath it.
+The focused mail suite passed 20 tests / 112 assertions and Pint. Archive SHA-256
+`8874fc3922682d49484aaaf91481cb4b160f12bea74125e2002383d3d7a3fa52` was deployed as API
+image `sha256:ab4e7bf8f4751669c247fdc6837ec3b14105908713e3f3906e995525ec50db4f`,
+and the full provider-free production verification passed. All eleven live reminders had
+retained titles and a 4 December 2026 due date; a corrected digest was sent to David.
+
 R30-S03 remains in progress until the consolidated hosted acceptance confirms the complete
 document lifecycle, permissions, responsive presentation, source-link access, operational
 failure states and the final rollback/handoff record. This is not a production-readiness or

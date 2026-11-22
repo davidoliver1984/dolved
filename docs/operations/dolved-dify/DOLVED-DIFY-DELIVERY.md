@@ -501,6 +501,18 @@ outside Git with SHA-256
 `ce9c3cab1194f2dd250ced1bcdc797e63112f23a5adc395fb1c94d30b7c2be6e`.
 No prompt, retrieval, model, filter, document or dataset setting changed.
 
+Acceptance review of the scheduled governance digest found that each reminder card used
+generic copy despite the notification already retaining its document-family label and
+review date. Commit `ee67198c` now renders each review reminder as “{Document title} still
+needs to be reviewed” followed by “Due by {date}”, while retaining bounded generic fallback
+copy for incomplete historical events. The focused mail suite passed 20 tests / 112
+assertions and Pint. Release archive SHA-256
+`8874fc3922682d49484aaaf91481cb4b160f12bea74125e2002383d3d7a3fa52` was deployed as API
+image `sha256:ab4e7bf8f4751669c247fdc6837ec3b14105908713e3f3906e995525ec50db4f`;
+the full provider-free production verification passed. Read-only inspection confirmed all
+eleven live reminder members retain their titles and the 4 December 2026 due date. A
+corrected digest was sent to David for acceptance review.
+
 Current milestone: consolidated hosted acceptance. Remaining hands-on checks are the
 custom/default branding matrix (including favicon, mobile and light/dark), role and direct
 API concealment, document upload/replacement/withdrawal/deletion, explicit multi-location
