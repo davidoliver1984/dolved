@@ -13,6 +13,7 @@ use App\Models\DocumentGovernanceNotification;
 use App\Models\Workspace;
 use App\Support\Documents\GovernanceEmailCategories;
 use App\Support\Documents\ResolveDocumentGovernanceNotificationRoute;
+use Carbon\CarbonImmutable;
 use LogicException;
 
 final readonly class BuildDocumentGovernanceEmail
@@ -171,8 +172,8 @@ final readonly class BuildDocumentGovernanceEmail
             DocumentGovernanceEventKey::GovernanceVersionApproved => $this->copy('Document version approved', 'A document version was approved.'),
             DocumentGovernanceEventKey::PromotionCompleted => $this->copy('Document added to the library', 'A staged document was promoted successfully.'),
             DocumentGovernanceEventKey::PromotionFailed => $this->copy('Document promotion failed', 'A staged document could not be promoted.'),
-            DocumentGovernanceEventKey::GovernanceReviewDueSoon => $this->copy('Review due soon', 'A document family is approaching its review date.'),
-            DocumentGovernanceEventKey::GovernanceReviewOverdue => $this->copy('Review overdue', 'A document family has passed its review date.'),
+            DocumentGovernanceEventKey::GovernanceReviewDueSoon => $this->reviewCopy($notification, 'Review due soon', 'A document family is approaching its review date.'),
+            DocumentGovernanceEventKey::GovernanceReviewOverdue => $this->reviewCopy($notification, 'Review overdue', 'A document family has passed its review date.'),
             DocumentGovernanceEventKey::GovernanceOwnershipReassignmentRequired => $this->copy('Document owner required', 'Assign an eligible owner to a document family.'),
             DocumentGovernanceEventKey::GovernanceAuthorityBlocked => $this->copy('Scheduled authority blocked', 'A scheduled document version cannot attain authority.'),
             DocumentGovernanceEventKey::GovernanceAuthorityApproaching => $this->copy('Scheduled change approaching', 'A document version is approaching its authority date.'),
@@ -190,5 +191,21 @@ final readonly class BuildDocumentGovernanceEmail
     private function copy(string $title, string $message): array
     {
         return ['title' => $title, 'message' => $message];
+    }
+
+    /** @return array{title: string, message: string} */
+    private function reviewCopy(DocumentGovernanceNotification $notification, string $fallbackTitle, string $fallbackMessage): array
+    {
+        $label = trim((string) ($notification->parameters['target_display_label'] ?? ''));
+        $date = $notification->parameters['review_due_date'] ?? null;
+        if ($label === '' || mb_strlen($label) > 200 || ! is_string($date)
+            || ! preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) {
+            return $this->copy($fallbackTitle, $fallbackMessage);
+        }
+
+        return $this->copy(
+            "{$label} still needs to be reviewed",
+            'Due by '.CarbonImmutable::createFromFormat('!Y-m-d', $date, 'UTC')->format('j F Y'),
+        );
     }
 }
