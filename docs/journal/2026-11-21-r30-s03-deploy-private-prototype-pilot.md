@@ -68,3 +68,74 @@ R30-S03 remains in progress until the consolidated hosted acceptance confirms th
 document lifecycle, permissions, responsive presentation, source-link access, operational
 failure states and the final rollback/handoff record. This is not a production-readiness or
 pilot go/no-go claim.
+
+## Active-pipeline interface cleanup — 23 November 2026
+
+The bounded cleanup approved from
+`docs/operations/dolved-dify/ACTIVE-PIPELINE-INTERFACE-AUDIT-20261123.md` was implemented
+from clean baseline `01ff80c25b4634d2e143f0a4521dd4ab36f6544a` in an isolated worktree.
+The canonical working copy and its unrelated changes were not modified. Implementation
+commit `ab42cada` adds a server-owned capability profile, capability-gated extracted-text
+and comparison presentation, truthful cached Dify segment observations, separate current
+and historical failure semantics, neutral Dify progress/stop wording, corrected source
+retention wording and tenant-brand propagation. Commit `cc72a8da` adds immutable OCI source
+revision labels to the production application images. Both commits were pushed to
+`origin/codex/active-pipeline-cleanup-20261123`.
+
+The custom pipeline remains preserved. Extracted text still requires an indexed exact
+version with an active published extraction projection. Structured comparison still
+requires two authorised published projections with matching extractor and normaliser
+identities. Custom progress, cancellation, citation, extraction-warning and corpus gauge
+contracts remain present and permission checked. Restoring a legacy backend alone does not
+establish that a future UI is compatible; the focused gates in the audit's reinstatement
+map still apply.
+
+Focused verification passed 24 Laravel tests / 195 assertions and 5 web test files / 36
+tests. Pint, the production Next build and `git diff --check` passed. ESLint completed with
+zero errors and six existing controlled runtime-image warnings. Dify/provider boundaries
+used fakes; no retrieval, generation or model call was made.
+
+Before deployment, the exact environment and a PostgreSQL custom-format dump were retained
+under `/srv/dolved-pilot/backups/20261123-active-pipeline-predeploy` with restricted
+permissions and checksums. Previous rollback identities remain:
+
+- API/worker/scheduler: `dolved-api:febedb4`, image
+  `sha256:ab4e7bf8f4751669c247fdc6837ec3b14105908713e3f3906e995525ec50db4f`.
+- Web: `dolved-web:febedb4`, image
+  `sha256:3085765d48d0c9be31437447bcecb849fe529e5798e18b604f2b152e95afad79`.
+
+One deployment installed migration
+`2026_11_23_000001_add_dify_usage_observations` and started immutable tag `cc72a8da`.
+The actual running API, worker and scheduler use image
+`sha256:cf7e2d818fedc026de1d7c6c31a580d1eee5e352330a1c83e09c2b8e1e0a6644`; the web uses
+`sha256:94bd2e9bdb81b91751afe59aa364adafca319621b07d8df48d6047cde30dea4b`.
+Every running application image reports OCI revision
+`cc72a8da699cb3bbe11b847785379dd7a59c0f99` and source
+`https://github.com/davidoliver1984/dolved`. The production preflight and complete
+provider-free running verification passed after deployment.
+
+The one hosted acceptance pass used no upload, re-index, question, retrieval, generation,
+recovery email or sealed material. A bounded supported-API observation refresh recorded 11
+available Dify bindings and no unavailable observations. The live Usage projection reports
+248 indexed segments, an available oldest observation at `2026-11-23 19:15:24+00`, zero
+documents currently failing processing, and historical Dify processing-attempt failures as
+`Unavailable`, not zero. The document inventory contains 11 available bindings plus the
+withdrawn/deleted acceptance document. All 12 retained document records lack a compatible
+custom extraction projection, so extracted text is honestly unavailable. All 20 retained
+runs identify `dify.chat-messages` and resolve to `Stop waiting`. The deployed web bundle
+contains the neutral progress, post-dispatch cost warning and corrected historical-evidence
+wording; the former `already cited` phrase is absent.
+
+Public recovery branding and the browser title rendered as Cherish, and a 390 by 844
+viewport had no horizontal overflow. The trusted deployment-brand endpoint currently has
+no tenant favicon configured, so the supported Dolved fallback `/favicon.ico` was used and
+returned HTTP 200; a custom Cherish favicon appearance was therefore not claimed. No
+existing workspace-admin or
+ordinary-member membership exists in this single-user pilot, and the available background
+browser had no authorised protected session. Protected role presentation was therefore not
+invented as a hosted pass; it remains covered by the focused role/policy tests and is a
+specific acceptance gap. The corpus also has no family with two retained versions, so live
+comparison concealment could not be exercised; exact-version and two-version prerequisites
+passed focused tests. Stop/reload mechanics were verified with fakes because a live check
+would have required a provider call. These gaps do not close the broader consolidated
+R30-S03 acceptance, readiness or pilot go/no-go gates.

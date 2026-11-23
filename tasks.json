@@ -59,7 +59,8 @@
         "Stock Dify workflow memory is enabled with a bounded ten-message window while Dolved continues to preserve the native Dify conversation identifier; no prompt, retrieval, model, filter, dataset or document setting changed.",
         "Private OpenTelemetry Collector, Grafana OTEL LGTM and Alertmanager services are deployed on localhost-only ports. Provider-free verification reported nine current operational signals and available alert state.",
         "Restricted opt-in Question review is deployed with reviewer authority derived from tenant ownership, retrospective access off by default and an optional confirmed maximum 30-day window.",
-        "Restricted backup and isolated database/original restore evidence are recorded; legacy RAG recovery assets remain preserved."
+        "Restricted backup and isolated database/original restore evidence are recorded; legacy RAG recovery assets remain preserved.",
+        "The bounded active-pipeline interface cleanup is deployed at OCI revision cc72a8da699cb3bbe11b847785379dd7a59c0f99: Dify-only custom projections are capability-gated, Usage uses cached supported-API segment observations with honest unavailable states, Dify progress/stop and source-retention wording are accurate, tenant branding propagates, and custom-pipeline recovery contracts remain preserved."
       ],
       "remaining": [
         "Complete David's consolidated hands-on hosted acceptance across chat live updates, lifecycle transitions, permissions, source links and operational screens.",
@@ -5689,7 +5690,9 @@
           "completion_evidence": [
             "Hosted invitation-only pilot is live with public HTTPS for Dolved, private Dify/backplane services, pinned production images and persistent storage.",
             "Release archive 79ccaef19fd541dbc013960c7d42dfd0a06c7547c9fecfdce094ec82f9a15f66 passed strengthened preflight and provider-free running verification.",
-            "Workspace Usage loading was corrected in deployed commit 76bfeb4d and the server-hosted specialist consoles now use authenticated HTTPS gateway paths without laptop tunnels. Final hands-on acceptance and consolidated operational handoff remain open; R30-GATE is not complete."
+            "Workspace Usage loading was corrected in deployed commit 76bfeb4d and the server-hosted specialist consoles now use authenticated HTTPS gateway paths without laptop tunnels.",
+            "Active-pipeline cleanup revision cc72a8da699cb3bbe11b847785379dd7a59c0f99 is deployed with verified OCI labels. Focused tests passed 24 Laravel tests / 195 assertions and 5 web files / 36 tests; hosted provider-free acceptance confirmed 248 freshly observed Dify segments across 11 available bindings, accurate unavailable history, tenant recovery branding, narrow layout, retained-run stop semantics and corrected deployed wording.",
+            "No existing workspace-admin/member account or two-version document family was available for the bounded hosted pass, so those exact presentations remain explicit gaps. Final hands-on lifecycle/permission acceptance and consolidated operational handoff remain open; R30-GATE is not complete."
           ]
         },
         {

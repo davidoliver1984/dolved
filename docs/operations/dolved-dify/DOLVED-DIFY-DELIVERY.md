@@ -520,3 +520,45 @@ applicability, conversational follow-up/reload, source-link permissions, Questio
 opt-in/revocation/retention, and the operator screens. After those checks, re-verify the
 11-document inventory and effective Top K 10 settings, freeze one readiness package and
 hand it to Claude. The 40 questions remain sealed and have not been requested or run.
+
+### Active-pipeline interface cleanup — 23 November 2026
+
+The approved reversible cleanup from
+`ACTIVE-PIPELINE-INTERFACE-AUDIT-20261123.md` is deployed from source revision
+`cc72a8da699cb3bbe11b847785379dd7a59c0f99`. The running API/worker/scheduler image is
+`sha256:cf7e2d818fedc026de1d7c6c31a580d1eee5e352330a1c83e09c2b8e1e0a6644`; the running web
+image is `sha256:94bd2e9bdb81b91751afe59aa364adafca319621b07d8df48d6047cde30dea4b`.
+Each carries the matching OCI revision and repository-source label. Preflight and the full
+provider-free running check passed.
+
+For Dify workspaces, extracted text is now presented only for an exact indexed version with
+a compatible published projection, and content comparison only when both versions have
+matching published projection identities. Version history and governance remain available.
+Dify chat uses neutral progress and an honest `Stop waiting` action; custom pipeline events
+and cancellation remain retained. The delete confirmation now describes retrieved passages
+retained with historical conversation evidence rather than claim citations. Tenant-facing
+assistant/readiness/authentication/browser/error labels use the trusted brand resolver;
+Platform administration remains Dolved.
+
+`Indexed chunks` is sourced from cached, bounded observations of Dify's supported segments
+API. The live observation covers 11 available bindings and totals 248 segments, with the
+oldest observation recorded at `2026-11-23 19:15:24+00`. Missing or stale observations are
+not rendered as zero. The Usage view separately reports documents currently failing from
+Dify binding state; historical Dify attempt failures remain unavailable because there is no
+attempt ledger. Existing custom corpus and attempt metrics remain preserved.
+
+Verification passed 24 Laravel tests / 195 assertions, 5 web files / 36 tests, Pint, the
+production build and diff checks; ESLint reported no errors. The hosted pass confirmed
+public Cherish recovery branding/title and a 390-pixel layout without overflow, live
+capability and Usage aggregates, retained-run interaction profiles, deployed wording and
+running-image labels without a provider call. No custom tenant favicon is configured, so
+the available Dolved fallback favicon remains in use. No admin/member accounts or
+two-version family currently
+exist, so those exact hosted presentations remain explicit gaps covered only by focused
+role/policy and comparison tests. Broader lifecycle, source-link and role acceptance remains
+open; this cleanup does not close R30-S03 or readiness.
+
+Rollback is the pre-deployment environment/database package at
+`/srv/dolved-pilot/backups/20261123-active-pipeline-predeploy` plus the prior immutable image
+identities recorded in the R30-S03 journal. No custom pipeline source, contract, data,
+recovery material or historical evidence was removed.
