@@ -57,6 +57,7 @@ Artisan::command('dify:reconcile-documents', function (ReconcileDifyDocuments $r
 })->purpose('Reconcile authoritative Dolved document eligibility into the bound Dify dataset');
 
 Schedule::command('dify:reconcile-documents')->everyMinute()->withoutOverlapping();
+Schedule::command('dify:refresh-usage-observations --limit=100')->hourly()->withoutOverlapping();
 
 Artisan::command('documents:ensure-storage', function (EnsureDocumentStorage $ensure): void {
     $ensure->handle();

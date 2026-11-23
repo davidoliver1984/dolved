@@ -20,6 +20,7 @@ export function RoutedChatWorkspace({ conversationId, locations, workspaceId, wo
   }, [workspaceId]);
 
   return <ChatWorkspace
+    assistantName={branding?.configuration.display_name ?? workspaceName}
     initialConversationId={conversationId}
     locations={locations}
     onConversationCreated={(createdId) => router.replace(`/app/workspaces/${workspaceId}/conversations/${createdId}`)}

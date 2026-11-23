@@ -102,7 +102,7 @@ export function DocumentLibraryTable({ canManage = false, metadata, page, query,
       });
       setPreflight(response.data);
       requestAnimationFrame(() => document.querySelector<HTMLElement>("#bulk-preflight-heading")?.focus());
-    } catch { setError("Dolved could not prepare this bulk operation. No changes were made."); }
+    } catch { setError("We could not prepare this bulk operation. No changes were made."); }
     finally { setBusy(false); }
   };
   const confirm = async () => {
@@ -111,7 +111,7 @@ export function DocumentLibraryTable({ canManage = false, metadata, page, query,
     try {
       await confirmBulkOperation(workspacePublicId, preflight.public_id);
       router.push(`${base}/bulk/${preflight.public_id}`);
-    } catch { setError("Dolved could not confirm this operation. Its frozen preflight remains unchanged."); setBusy(false); }
+    } catch { setError("We could not confirm this operation. Its frozen preflight remains unchanged."); setBusy(false); }
   };
   return <section aria-labelledby="library-heading" className="grid gap-5">
     <Card><CardHeader><CardTitle id="library-heading">Knowledge library</CardTitle><CardDescription>One row per document family. Current status is derived from authority at read time, never from the newest upload.</CardDescription></CardHeader><CardContent><form className="grid gap-4 lg:grid-cols-[minmax(14rem,1fr)_12rem_14rem_10rem_auto] lg:items-end" method="get"><label className="grid gap-2 text-sm font-semibold" htmlFor="library-search">Search<Input defaultValue={one(query.search)} id="library-search" name="search" placeholder="Title or filename" /></label><label className="grid gap-2 text-sm font-semibold">Status<select className="flex min-h-11 rounded-lg border border-input bg-background px-3" defaultValue={one(query.status)} name="status"><option value="">All statuses</option>{["uploading", "uploaded", "queued", "processing", "indexed", "failed"].map((value) => <option key={value} value={value}>{title(value)}</option>)}</select></label><label className="grid gap-2 text-sm font-semibold">Sort<select className="flex min-h-11 rounded-lg border border-input bg-background px-3" defaultValue={one(query.sort) || "last_meaningful_update"} name="sort"><option value="last_meaningful_update">Last meaningful update</option><option value="title">Title</option><option value="review_due_date">Review due</option></select></label><label className="grid gap-2 text-sm font-semibold">Page size<select className="flex min-h-11 rounded-lg border border-input bg-background px-3" defaultValue={one(query.per_page) || "25"} name="per_page"><option>25</option><option>50</option><option>100</option></select></label><Button type="submit" variant="secondary">Apply filters</Button><label className="flex min-h-11 items-center gap-2 text-sm lg:col-span-5"><input defaultChecked={one(query.historical) === "true"} name="historical" type="checkbox" value="true" />Include families with historical versions only</label></form></CardContent></Card>

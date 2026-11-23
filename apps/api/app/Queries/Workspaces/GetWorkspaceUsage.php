@@ -6,6 +6,7 @@ namespace App\Queries\Workspaces;
 
 use App\Enums\IngestionAttemptOrigin;
 use App\Models\Workspace;
+use App\Support\Pipeline\ActivePipelineCapabilities;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\DB;
 
@@ -22,16 +23,48 @@ final class GetWorkspaceUsage
         };
         $activeStatuses = ['uploading', 'uploaded', 'queued', 'processing', 'indexed', 'failed'];
         $documents = DB::table('documents')->where('workspace_id', $workspace->id)->whereIn('status', $activeStatuses);
+        $pipeline = app(ActivePipelineCapabilities::class)->workspace($workspace);
+        $difyBindings = DB::table('dify_document_bindings')
+            ->where('workspace_id', $workspace->id)
+            ->where('sync_status', 'available');
+        $difyBindingCount = (clone $difyBindings)->count();
+        $difyOldestObservation = (clone $difyBindings)->min('segment_count_observed_at');
+        $difyObservedCount = (clone $difyBindings)->where('segment_count_status', 'available')
+            ->whereNotNull('indexed_segment_count')->count();
+        $difyObservationIsFresh = $difyOldestObservation !== null
+            && CarbonImmutable::parse((string) $difyOldestObservation)->greaterThanOrEqualTo(
+                $end->subSeconds((int) config('dify.usage_observation_max_age_seconds')),
+            );
+        $difyObservationStatus = $difyBindingCount === 0 && (clone $documents)->where('status', 'indexed')->count() === 0
+            ? 'available'
+            : ($difyBindingCount > 0 && $difyBindingCount === $difyObservedCount
+                ? ($difyObservationIsFresh ? 'available' : 'stale')
+                : 'unavailable');
+        $difyChunkCount = $difyObservationStatus === 'available' && $difyBindingCount > 0
+            ? (int) (clone $difyBindings)->sum('indexed_segment_count')
+            : ($difyObservationStatus === 'available' ? 0 : null);
+        $customChunkCount = $workspace->active_workspace_corpus_generation_id === null ? 0 : DB::table('workspace_corpus_generation_chunks as assignments')
+            ->join('document_chunks as chunks', 'chunks.id', '=', 'assignments.document_chunk_id')
+            ->join('documents', 'documents.id', '=', 'chunks.document_id')
+            ->where('assignments.workspace_id', $workspace->id)
+            ->where('assignments.workspace_corpus_generation_id', $workspace->active_workspace_corpus_generation_id)
+            ->whereIn('documents.status', $activeStatuses)
+            ->count();
+        $indexedChunks = match ($pipeline['document_processing']) {
+            'dify' => $difyChunkCount,
+            'custom' => $customChunkCount,
+            default => null,
+        };
         $gauges = [
             'active_documents' => (clone $documents)->count(),
             'logical_source_bytes' => (int) ((clone $documents)->sum('size_bytes') ?? 0),
-            'indexed_chunks' => $workspace->active_workspace_corpus_generation_id === null ? 0 : DB::table('workspace_corpus_generation_chunks as assignments')
-                ->join('document_chunks as chunks', 'chunks.id', '=', 'assignments.document_chunk_id')
-                ->join('documents', 'documents.id', '=', 'chunks.document_id')
-                ->where('assignments.workspace_id', $workspace->id)
-                ->where('assignments.workspace_corpus_generation_id', $workspace->active_workspace_corpus_generation_id)
-                ->whereIn('documents.status', $activeStatuses)
-                ->count(),
+            'indexed_chunks' => $indexedChunks,
+            'current_processing_failures' => $pipeline['document_processing'] === 'dify'
+                ? DB::table('dify_document_bindings')->where('workspace_id', $workspace->id)
+                    ->whereIn('sync_status', ['failed', 'uncertain'])->distinct('document_id')->count('document_id')
+                : ($pipeline['document_processing'] === 'custom'
+                    ? (clone $documents)->where('status', 'failed')->count()
+                    : null),
         ];
         $activities = DB::table('workspace_activity_events')
             ->where('workspace_id', $workspace->id)->where('occurred_at', '>=', $start)->where('occurred_at', '<', $end)
@@ -77,10 +110,10 @@ final class GetWorkspaceUsage
             'as_of' => $end->toIso8601String(),
             'gauges' => $gauges,
             'historical' => [
-                'ingestion_failures' => DB::table('ingestion_event_claims')
+                'ingestion_failures' => $pipeline['document_processing'] === 'custom' ? DB::table('ingestion_event_claims')
                     ->where('workspace_id', $workspace->id)
                     ->where('attempt_origin', IngestionAttemptOrigin::Ingestion->value)
-                    ->where('status', 'failed')->where('failed_at', '>=', $start)->where('failed_at', '<', $end)->count(),
+                    ->where('status', 'failed')->where('failed_at', '>=', $start)->where('failed_at', '<', $end)->count() : null,
                 'content_clone_failures' => DB::table('ingestion_event_claims')
                     ->where('workspace_id', $workspace->id)
                     ->where('attempt_origin', IngestionAttemptOrigin::ContentClone->value)
@@ -110,6 +143,20 @@ final class GetWorkspaceUsage
                     'Latency averages include only runs with recorded timestamps; percentiles are unavailable in this pilot view.',
                     'Cost entries marked unavailable are excluded from priced subtotals and are never treated as zero.',
                     'Retrieved passage counts describe recorded source references, not claim-level support.',
+                    'Dify indexed-chunk totals are cached supported-API observations; unavailable observations are not treated as zero.',
+                    'Historical Dify indexing-attempt failures are unavailable because Dify bindings retain current state rather than an attempt ledger.',
+                ],
+            ],
+            'pipeline' => $pipeline,
+            'observations' => [
+                'indexed_chunks' => [
+                    'status' => $pipeline['document_processing'] === 'dify'
+                        ? $difyObservationStatus
+                        : ($indexedChunks === null ? 'unavailable' : 'available'),
+                    'source' => $pipeline['document_processing'] === 'dify' ? 'dify_segments_api_cached' : 'custom_corpus_generation',
+                    'observed_at' => $pipeline['document_processing'] === 'dify'
+                        ? $difyOldestObservation
+                        : $end->toIso8601String(),
                 ],
             ],
             'labels' => [

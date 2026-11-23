@@ -43,11 +43,11 @@ export function KnowledgeReadinessPanel({ onAsk, onChooseQuestion, searchableDoc
             <StatusBadge status={ready ? "success" : "pending"}>{ready ? "Ready to ask" : "Preparing knowledge"}</StatusBadge>
             <p className="text-sm font-semibold text-foreground" role="status">{countLabel}</p>
           </div>
-          <h2 className="mt-3 text-xl font-semibold" id="knowledge-readiness-heading">{ready ? "Your searchable knowledge base is ready" : "Prepare a document before asking Dolved"}</h2>
+          <h2 className="mt-3 text-xl font-semibold" id="knowledge-readiness-heading">{ready ? "Your searchable knowledge base is ready" : "Prepare a document before asking questions"}</h2>
           <p className="mt-2 max-w-3xl text-sm leading-6 text-foreground-muted">
             {ready
               ? "This count includes document families whose current version is approved and fully indexed. A question can still narrow the eligible evidence by authority or location."
-              : "Uploaded files are not searchable automatically. A version must finish processing, be approved, and be current before Dolved can answer from it."}
+              : "Uploaded files are not searchable automatically. A version must finish processing, be approved, and be current before answers can use it."}
           </p>
 
           {ready && starterQuestions.length > 0 ? <div className="mt-4">
@@ -66,7 +66,7 @@ export function KnowledgeReadinessPanel({ onAsk, onChooseQuestion, searchableDoc
         </div>
 
         <div className="flex flex-wrap gap-2 lg:max-w-56 lg:flex-col">
-          {ready ? <Button onClick={onAsk} type="button"><CheckCircle2 />Ask Dolved</Button> : <Button asChild><Link href={`/app/workspaces/${workspaceId}/documents`}><Upload />Upload documents</Link></Button>}
+          {ready ? <Button onClick={onAsk} type="button"><CheckCircle2 />Ask a question</Button> : <Button asChild><Link href={`/app/workspaces/${workspaceId}/documents`}><Upload />Upload documents</Link></Button>}
           <Button asChild variant="secondary"><Link href={`/app/workspaces/${workspaceId}/documents?searchable=true`}><BookOpenCheck />View searchable documents<ArrowRight /></Link></Button>
         </div>
       </CardContent>

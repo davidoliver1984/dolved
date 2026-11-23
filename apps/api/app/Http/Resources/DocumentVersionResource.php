@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Resources;
 
+use App\Support\Pipeline\ActivePipelineCapabilities;
 use Illuminate\Http\Request;
 
 final class DocumentVersionResource extends DocumentResource
@@ -21,6 +22,10 @@ final class DocumentVersionResource extends DocumentResource
             'withdrawn_at' => $this->withdrawn_at,
             'is_current_authority' => (bool) $this->getAttribute('is_current_authority'),
             'extraction_warning_count' => $this->activeExtractionProjectionGeneration?->expected_warning_count ?? 0,
+            'presentation' => [
+                ...app(ActivePipelineCapabilities::class)->documentPresentation($this->resource),
+                'comparison_compatible_with' => $this->getAttribute('comparison_compatible_with') ?? [],
+            ],
             'capabilities' => $this->getAttribute('capabilities') ?? [
                 'approve' => false,
                 'withdraw' => false,

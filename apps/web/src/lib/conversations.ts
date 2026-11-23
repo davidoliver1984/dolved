@@ -18,6 +18,7 @@ export type ConversationRun = {
   status: string;
   failure_code: string | null;
   delivery_mode: string;
+  interaction?: { progress: "dify_blocking" | "custom_pipeline"; stop_action: "stop_waiting" | "cancel" };
   presentation?: "saved-message-v1" | null;
   retryable: boolean;
   provisional_content_retracted: boolean;

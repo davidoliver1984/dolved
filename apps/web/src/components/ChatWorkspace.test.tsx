@@ -211,6 +211,32 @@ describe("ChatWorkspace", () => {
     expect(fixture.api.send).not.toHaveBeenCalled();
   });
 
+  it("uses neutral Dify progress and releases the interface when the user stops waiting", async () => {
+    const fixture = services();
+    const pending = structuredClone(fixture.completed);
+    pending.messages = pending.messages!.slice(0, 1);
+    Object.assign(pending.runs![0], {
+      presentation: "saved-message-v1",
+      status: "retrieving",
+      completed_at: null,
+      assistant_message_id: null,
+      answer: null,
+      interaction: { progress: "dify_blocking", stop_action: "stop_waiting" },
+    });
+    fixture.api.get.mockResolvedValue(pending);
+    const user = userEvent.setup();
+    const view = render(<ChatWorkspace assistantName="Cherish" initialConversationId="conversation-1" services={fixture.api} workspaceId="workspace-1" workspaceName="Care" />);
+
+    await waitFor(() => expect(view.container.querySelector('[data-chat-progress="Searching and preparing…"]')).toBeTruthy());
+    fixture.emit({ sequence: 2, type: "run_progress", provisional: false, payload: { stage: "generating" } });
+    expect(view.container.querySelector('[data-chat-progress="Searching and preparing…"]')).toBeTruthy();
+    await user.click(screen.getByRole("button", { name: "Stop waiting" }));
+
+    await waitFor(() => expect(fixture.api.cancel).toHaveBeenCalledWith("workspace-1", "conversation-1", "run-1"));
+    expect(view.container.querySelector('[data-chat-pending="false"]')).toBeTruthy();
+    expect(screen.getByText(/Provider processing may continue/)).toBeTruthy();
+  });
+
   it("keeps a newly created conversation mounted until its live run settles", async () => {
     const fixture = services();
     let resolveSend!: (receipt: {run_id: string; status: string}) => void;

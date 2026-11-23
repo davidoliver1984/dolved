@@ -72,8 +72,8 @@ function VersionCard({
         {version.extraction_warning_count > 0 ? <p className="flex items-center gap-2 text-sm text-warning"><CircleAlert aria-hidden="true" className="size-4" />{version.extraction_warning_count} extraction warning(s)</p> : null}
         <div className="flex flex-wrap gap-2">
           {version.status === "indexed" ? <Button asChild size="sm" variant="secondary"><Link href={applicationPath} target="_blank">View source <ExternalLink aria-hidden="true" /></Link></Button> : null}
-          {version.status === "indexed" ? <Button asChild size="sm" variant="outline"><Link href={`${applicationPath}/extracted-text`}><FileSearch aria-hidden="true" />Extracted text</Link></Button> : null}
-          <Button asChild size="sm" variant="outline"><Link href={`/app/workspaces/${workspacePublicId}/documents/families/${version.family_public_id ?? ""}/compare?from=${version.public_id}`}>Compare</Link></Button>
+          {version.presentation?.extracted_text ? <Button asChild size="sm" variant="outline"><Link href={`${applicationPath}/extracted-text`}><FileSearch aria-hidden="true" />Extracted text</Link></Button> : null}
+          {version.presentation?.comparison_compatible_with.length ? <Button asChild size="sm" variant="outline"><Link href={`/app/workspaces/${workspacePublicId}/documents/families/${version.family_public_id ?? ""}/compare?from=${version.public_id}`}>Compare</Link></Button> : null}
         </div>
         <DocumentGovernanceActions locations={locations} version={version} workspacePublicId={workspacePublicId} />
       </CardContent>
@@ -108,7 +108,7 @@ export function DocumentFamilyDetail({ detail, workspacePublicId }: Readonly<{ d
       <section aria-labelledby="version-history-heading" className="grid gap-4">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div><p className="text-sm font-bold uppercase tracking-[0.14em] text-brand">Authority timeline</p><h2 className="mt-1 text-2xl font-semibold" id="version-history-heading">Version history</h2><p className="mt-1 text-foreground-muted">Every version is shown with its recorded governance, technical and applicability state.</p></div>
-          <div className="flex gap-2"><Button asChild variant="outline"><Link href={`/app/workspaces/${workspacePublicId}/documents/families/${family.public_id}/versions`}><FileClock aria-hidden="true" />Version history</Link></Button>{history.data.length > 1 ? <Button asChild variant="secondary"><Link href={`/app/workspaces/${workspacePublicId}/documents/families/${family.public_id}/compare`}><GitCompareArrows aria-hidden="true" />Compare versions</Link></Button> : null}</div>
+          <div className="flex gap-2"><Button asChild variant="outline"><Link href={`/app/workspaces/${workspacePublicId}/documents/families/${family.public_id}/versions`}><FileClock aria-hidden="true" />Version history</Link></Button>{history.data.some((version) => (version.presentation?.comparison_compatible_with.length ?? 0) > 0) ? <Button asChild variant="secondary"><Link href={`/app/workspaces/${workspacePublicId}/documents/families/${family.public_id}/compare`}><GitCompareArrows aria-hidden="true" />Compare versions</Link></Button> : null}</div>
         </div>
         {history.data.map((version, index) => <VersionCard index={index} key={version.public_id} locations={history.meta.locations} version={version} workspacePublicId={workspacePublicId} />)}
       </section>

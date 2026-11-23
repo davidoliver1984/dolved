@@ -46,7 +46,7 @@ export function BulkOperationDetail({ initial, poll = true, workspacePublicId }:
     setBusy(true); setError(null);
     const action = kind === "cancel" ? cancelBulkOperation : kind === "confirm" ? confirmBulkOperation : retryBulkOperation;
     try { setOperation((await action(workspacePublicId, operation.public_id)).data); }
-    catch { setError(`Dolved could not ${kind} this operation. No operation evidence was rewritten.`); }
+    catch { setError(`We could not ${kind} this operation. No operation evidence was rewritten.`); }
     finally { setBusy(false); }
   };
   const canCancel = !terminal.has(operation.status) && operation.status !== "awaiting_confirmation";

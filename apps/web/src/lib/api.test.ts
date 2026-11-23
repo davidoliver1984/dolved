@@ -51,7 +51,7 @@ describe("apiFetch", () => {
         body: JSON.stringify({ email: "david@example.test" }),
       }),
     ).rejects.toMatchObject({
-      message: "Dolved could not reach the API. Please try again.",
+      message: "We could not reach the service. Please try again.",
       status: 0,
     });
   });
@@ -85,7 +85,7 @@ describe("apiFetch", () => {
     );
 
     await expect(apiFetch("/api/auth/user")).rejects.toMatchObject({
-      message: "Dolved received an unexpected response. Please try again.",
+      message: "The service returned an unexpected response. Please try again.",
       status: 502,
     });
   });

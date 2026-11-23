@@ -13,7 +13,11 @@ final class DifyDocumentBinding extends Model
 
     protected function casts(): array
     {
-        return ['synced_at' => 'immutable_datetime'];
+        return [
+            'synced_at' => 'immutable_datetime',
+            'indexed_segment_count' => 'integer',
+            'segment_count_observed_at' => 'immutable_datetime',
+        ];
     }
 
     public function document(): BelongsTo

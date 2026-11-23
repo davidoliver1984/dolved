@@ -67,6 +67,15 @@ export function AuthForm({ context = "workspace", mode, registrationEnabled = tr
   }, [context]);
   const brand = branding?.configuration;
   const style = brand ? { "--brand": brand.primary_colour, "--brand-foreground": brand.primary_foreground, "--ring": brand.accent_colour } as React.CSSProperties : undefined;
+  useEffect(() => {
+    if (context === "platform" || !brand) return;
+    document.title = `${mode === "login" ? "Sign in" : copy.title} · ${brand.display_name}`;
+    let icon = document.querySelector<HTMLLinkElement>('link[rel="icon"][data-tenant-branding]');
+    if (!icon) {
+      icon = document.createElement("link"); icon.rel = "icon"; icon.dataset.tenantBranding = "true"; document.head.appendChild(icon);
+    }
+    icon.href = brand.favicon?.url ?? "/favicon.ico";
+  }, [brand, context, copy.title, mode]);
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -127,7 +136,7 @@ export function AuthForm({ context = "workspace", mode, registrationEnabled = tr
 
         <div className="mt-20 max-w-xl sm:mt-28">
           <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand">{context === "platform" ? "Platform administration" : mode === "login" && brand?.sign_in_heading ? brand.sign_in_heading : copy.eyebrow}</p>
-          <h1 className="mt-4 text-5xl font-semibold leading-[0.95] tracking-tight sm:text-6xl">{context === "platform" ? "Platform Operations" : mode === "login" && brand?.display_name ? `Sign in to ${brand.display_name}` : copy.title}</h1>
+          <h1 className="mt-4 text-5xl font-semibold leading-[0.95] tracking-tight sm:text-6xl">{context === "platform" ? "Platform Operations" : brand?.display_name ? (mode === "login" ? `Sign in to ${brand.display_name}` : `${copy.title} · ${brand.display_name}`) : copy.title}</h1>
           <p className="mt-5 text-lg text-foreground-muted">
             {context === "platform"
               ? "Platform metrics, OpenTelemetry health, alerting and Grafana access."

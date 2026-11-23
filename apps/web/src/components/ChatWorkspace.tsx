@@ -74,6 +74,7 @@ const defaultServices: ChatServices = {
 };
 
 type ChatWorkspaceProps = {
+  assistantName?: string;
   initialConversationId?: string | null;
   onConversationCreated?: (conversationId: string) => void;
   showConversationNavigation?: boolean;
@@ -208,6 +209,7 @@ function eventParts(event: ChatStreamEvent): AnswerPart[] {
 }
 
 export function ChatWorkspace({
+  assistantName = "Dolved",
   initialConversationId,
   onConversationCreated,
   showConversationNavigation = true,
@@ -224,6 +226,7 @@ export function ChatWorkspace({
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [stoppedNotice, setStoppedNotice] = useState<string | null>(null);
   const [progress, setProgress] = useState<string | null>(null);
   const [announcement, setAnnouncement] = useState("");
   const [provisionalParts, setProvisionalParts] = useState<AnswerPart[]>([]);
@@ -315,7 +318,7 @@ export function ChatWorkspace({
   );
 
   const watchRun = useCallback(
-    (conversationId: string, runId: string) => {
+    (conversationId: string, runId: string, interaction: NonNullable<ConversationRun["interaction"]>) => {
       unsubscribe.current?.();
       unsubscribe.current = services.subscribe(
         workspaceId,
@@ -325,12 +328,14 @@ export function ChatWorkspace({
           if (settledRun.current === runId) return;
           if (event.type === "run_progress") {
             const stage = String(event.payload.stage ?? "");
-            const label = progressLabels[stage] ?? "Working on your answer…";
+            const label = interaction.progress === "dify_blocking"
+              ? "Searching and preparing…"
+              : progressLabels[stage] ?? "Working on your answer…";
             setProgress(label);
             setAnnouncement(label);
           } else if (event.type === "answer_part_accepted_for_display") {
             setProgress("Writing from the retrieved evidence…");
-            setAnnouncement("Dolved is writing from the retrieved evidence.");
+            setAnnouncement(`${assistantName} is writing from the retrieved evidence.`);
             setProvisionalParts((parts) => {
               const updated = [...parts, ...eventParts(event)];
               provisionalPartsRef.current = updated;
@@ -387,7 +392,7 @@ export function ChatWorkspace({
         },
       );
     },
-    [finishRun, routeCreatedConversation, services, settleSavedRun, workspaceId],
+    [assistantName, finishRun, routeCreatedConversation, services, settleSavedRun, workspaceId],
   );
 
   useEffect(() => {
@@ -405,10 +410,12 @@ export function ChatWorkspace({
         && latest.presentation === "saved-message-v1"
         && ["queued", "contextualising", "retrieving", "generating"].includes(latest.status)) {
         setBusy(true);
-        const label = progressLabels[latest.status] ?? "Working on your answer…";
+        const label = latest.interaction?.progress === "dify_blocking"
+          ? "Searching and preparing…"
+          : progressLabels[latest.status] ?? "Working on your answer…";
         setProgress(label);
         setAnnouncement(label);
-        watchRun(selectedId, latest.id);
+        watchRun(selectedId, latest.id, latest.interaction ?? { progress: "custom_pipeline", stop_action: "cancel" });
       }
     }).catch((caught) => current && setError(firstError(caught)))
       .finally(() => current && setLoading(false));
@@ -421,6 +428,7 @@ export function ChatWorkspace({
     setSelectedLocationId("");
     setDraft("");
     setCompletion(null);
+    setStoppedNotice(null);
     pendingCreatedConversationId.current = null;
     setProvisionalParts([]);
     provisionalPartsRef.current = [];
@@ -462,7 +470,8 @@ export function ChatWorkspace({
       if (settleSavedRun(saved, receipt.run_id, "persisted_state")) {
         if (created) routeCreatedConversation(conversation.id);
       } else {
-        watchRun(conversation.id, receipt.run_id);
+        const submittedRun = saved.runs?.find((run) => run.id === receipt.run_id);
+        watchRun(conversation.id, receipt.run_id, submittedRun?.interaction ?? { progress: "custom_pipeline", stop_action: "cancel" });
       }
     } catch (caught) {
       setBusy(false);
@@ -484,7 +493,10 @@ export function ChatWorkspace({
         runId,
         idempotencyKey(),
       );
-      watchRun(active.id, receipt.run_id);
+      const saved = await services.get(workspaceId, active.id);
+      const retryRun = saved.runs?.find((run) => run.id === receipt.run_id);
+      setActive(saved);
+      watchRun(active.id, receipt.run_id, retryRun?.interaction ?? { progress: "custom_pipeline", stop_action: "cancel" });
     } catch (caught) {
       setBusy(false);
       setProgress(null);
@@ -497,8 +509,16 @@ export function ChatWorkspace({
     if (!active || !run) return;
     try {
       await services.cancel(workspaceId, active.id, run.id);
-      setProgress("Cancelling…");
-      setAnnouncement("Cancelling answer generation.");
+      if (run.interaction?.stop_action === "stop_waiting") {
+        unsubscribe.current?.();
+        setBusy(false);
+        setProgress(null);
+        setStoppedNotice("You stopped waiting. Provider processing may continue and may still incur cost; any late result will be discarded.");
+        setAnnouncement("Stopped waiting for the answer.");
+      } else {
+        setProgress("Cancelling…");
+        setAnnouncement("Cancelling answer generation.");
+      }
     } catch (caught) {
       setError(firstError(caught));
     }
@@ -574,7 +594,7 @@ export function ChatWorkspace({
               : undefined;
             return (
               <Card className={message.role === "user" ? "ml-auto w-fit max-w-[85%] border-brand/30 bg-brand/10 p-4" : "max-w-[92%] p-4"} key={message.id}>
-                <div className="mb-2 flex items-center gap-2"><p className="text-xs font-bold uppercase tracking-[0.12em] text-foreground-muted">{message.role === "user" ? "You" : "Dolved"}</p>{!savedPresentation && run?.answer?.outcome ? <StatusBadge status={run.answer.outcome === "answered" ? "success" : "warning"}>{run.answer.outcome.replaceAll("_", " ")}</StatusBadge> : null}</div>
+                <div className="mb-2 flex items-center gap-2"><p className="text-xs font-bold uppercase tracking-[0.12em] text-foreground-muted">{message.role === "user" ? "You" : assistantName}</p>{!savedPresentation && run?.answer?.outcome ? <StatusBadge status={run.answer.outcome === "answered" ? "success" : "warning"}>{run.answer.outcome.replaceAll("_", " ")}</StatusBadge> : null}</div>
                 {savedPresentation ? <>
                   <p className="whitespace-pre-wrap leading-7" data-canonical-answer>{message.text}</p>
                   {run?.answer?.sources_retrieved?.length ? <details className="group mt-4 border-t border-border pt-3">
@@ -620,7 +640,7 @@ export function ChatWorkspace({
           })}
           {provisionalParts.length ? (
             <Card className="max-w-[92%] border-dashed p-4">
-              <p className="mb-2 text-xs font-bold uppercase tracking-[0.12em] text-foreground-muted">Dolved · streaming</p>
+              <p className="mb-2 text-xs font-bold uppercase tracking-[0.12em] text-foreground-muted">{assistantName} · streaming</p>
               {provisionalParts.map((part, index) => <p key={index}>{part.text}</p>)}
             </Card>
           ) : null}
@@ -638,6 +658,7 @@ export function ChatWorkspace({
         </div>
 
         {error ? <Notice tone={accessRevoked ? "warning" : "destructive"}>{accessRevoked ? <div><strong>Workspace access ended</strong><p className="mt-1">{error}</p></div> : error}</Notice> : null}
+        {stoppedNotice ? <Notice tone="info">{stoppedNotice}</Notice> : null}
         <form className="grid gap-3 rounded-xl border border-border bg-card p-4" onSubmit={submit}>
           {active?.site_context ? <div className="rounded-lg bg-surface-raised px-3 py-2 text-sm">
             <strong>Site context:</strong> {active.site_context.name}
@@ -671,7 +692,7 @@ export function ChatWorkspace({
           <div className="flex flex-wrap items-center justify-between gap-3">
             <small className="text-foreground-muted">{accessRevoked ? "You no longer have access to send messages." : "Enter to send · Shift+Enter for a new line"}</small>
             {busy && active?.runs?.some((run) => !run.completed_at) ? (
-              <Button onClick={() => void cancel()} type="button" variant="ghost"><X />Cancel</Button>
+              <Button onClick={() => void cancel()} type="button" variant="ghost"><X />{active.runs?.find((run) => !run.completed_at)?.interaction?.stop_action === "stop_waiting" ? "Stop waiting" : "Cancel"}</Button>
             ) : null}
             <Button disabled={busy || accessRevoked || !draft.trim()} type="submit"><Send />Send</Button>
           </div>

@@ -81,6 +81,10 @@ CMD ["php", "-S", "0.0.0.0:8000", "-t", "public", "public/index.php"]
 
 FROM php:8.4-apache-bookworm AS production
 
+ARG VCS_REF="unknown"
+LABEL org.opencontainers.image.revision="${VCS_REF}" \
+      org.opencontainers.image.source="https://github.com/davidoliver1984/dolved"
+
 RUN apt-get update \
     && apt-get install --yes --no-install-recommends \
         libicu-dev \

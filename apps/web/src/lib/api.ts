@@ -100,6 +100,7 @@ export type Workspace = {
   slug: string;
   role: WorkspaceRole;
   branding?: EffectiveBranding;
+  pipeline_capabilities?: { document_processing: "dify" | "custom" | "unavailable"; chat_generation: "dify" | "custom"; status: "available" | "unavailable" };
 };
 
 export type BrandingAsset = {
@@ -266,9 +267,9 @@ export type WorkspaceAdministrationSnapshot = {
 export type WorkspaceUsageSnapshot = {
   range: { key: "7d" | "30d" | "month"; start: string; end: string; semantics: string };
   as_of: string;
-  gauges: { active_documents: number; logical_source_bytes: number; indexed_chunks: number };
+  gauges: { active_documents: number; logical_source_bytes: number; indexed_chunks: number | null; current_processing_failures: number | null };
   historical: {
-    ingestion_failures: number;
+    ingestion_failures: number | null;
     activity: Array<{ event_kind: string; outcome: string | null; aggregate_count: number | string }>;
     usage: Array<{
       operation_kind: string;
@@ -296,6 +297,8 @@ export type WorkspaceUsageSnapshot = {
     unknown_cost_observations: number | string;
   };
   coverage: { status: "no_data" | "partial" | "complete"; collected_at: string; usage_observation_count: number | string; limitations: string[] };
+  pipeline: { document_processing: "dify" | "custom" | "unavailable"; chat_generation: "dify" | "custom"; status: "available" | "unavailable" };
+  observations: { indexed_chunks: { status: "available" | "stale" | "unavailable"; source: string; observed_at: string | null } };
   labels: { logical_source_bytes: string; cost: string };
 };
 
@@ -322,7 +325,8 @@ export type AdminDocument = {
     failure_code: string | null;
     stuck: boolean;
   } | null;
-  capabilities: { retry: boolean; delete: boolean };
+  capabilities: { retry: boolean; delete: boolean; extracted_text?: boolean };
+  presentation?: { extracted_text: boolean; projection: string };
   created_at: string;
   updated_at: string;
 };
@@ -460,6 +464,7 @@ export type DocumentVersion = {
   withdrawn_at: string | null;
   is_current_authority: boolean;
   extraction_warning_count: number;
+  presentation?: { extracted_text: boolean; projection: string; comparison_compatible_with: string[] };
   applicability: {
     scope: string;
     locations: Array<{ public_id: string; name: string }>;
@@ -786,7 +791,7 @@ export async function apiFetch<T>(
       );
     } catch {
       throw new ApiError(
-        "Dolved could not reach the API. Please try again.",
+        "We could not reach the service. Please try again.",
         0,
       );
     }
@@ -810,7 +815,7 @@ export async function apiFetch<T>(
       },
     );
   } catch {
-    throw new ApiError("Dolved could not reach the API. Please try again.", 0);
+    throw new ApiError("We could not reach the service. Please try again.", 0);
   }
 
   if (response.redirected) {
@@ -827,7 +832,7 @@ export async function apiFetch<T>(
       payload = await response.json();
     } catch {
       throw new ApiError(
-        "Dolved received an unexpected response. Please try again.",
+        "The service returned an unexpected response. Please try again.",
         response.status,
       );
     }

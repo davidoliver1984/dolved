@@ -18,6 +18,7 @@ use App\Services\Documents\DocumentObjectStorage;
 use App\Services\Documents\SingleByteRange;
 use App\Services\Documents\UnsatisfiableByteRange;
 use App\Support\Documents\DocumentAuthorityTimeline;
+use App\Support\Pipeline\ActivePipelineCapabilities;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -29,7 +30,7 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
 final class DocumentContentController extends Controller
 {
-    public function comparison(Request $request, string $workspacePublicId, string $familyPublicId, FindWorkspaceForUser $workspaces, FindDocumentFamilyForWorkspace $families, DocumentAuthorityTimeline $timeline, AlignDocumentComparison $alignment): JsonResponse
+    public function comparison(Request $request, string $workspacePublicId, string $familyPublicId, FindWorkspaceForUser $workspaces, FindDocumentFamilyForWorkspace $families, DocumentAuthorityTimeline $timeline, AlignDocumentComparison $alignment, ActivePipelineCapabilities $pipeline): JsonResponse
     {
         $values = $request->validate(['from' => ['sometimes', 'uuid'], 'to' => ['sometimes', 'uuid']]);
         /** @var User $user */
@@ -61,6 +62,12 @@ final class DocumentContentController extends Controller
         abort_if($from?->is($to), 422, 'Choose two distinct versions.');
         if ($from === null || $to === null) {
             return response()->json(['data' => ['available' => false, 'reason' => 'This family has only one comparable version.']]);
+        }
+        if (! $pipeline->comparable($from, $to)) {
+            return response()->json(['data' => [
+                'available' => false,
+                'reason' => 'A compatible published text projection is not available for both versions.',
+            ]]);
         }
 
         $sides = collect(['from' => $from, 'to' => $to])->map(fn (Document $document): array => $this->comparisonSide($document))->all();
@@ -139,6 +146,7 @@ final class DocumentContentController extends Controller
         string $documentPublicId,
         FindWorkspaceForUser $workspaces,
         FindDocumentForWorkspace $documents,
+        ActivePipelineCapabilities $pipeline,
     ): JsonResponse {
         $values = $request->validate([
             'per_page' => ['sometimes', 'integer', 'min:1', 'max:100'],
@@ -146,6 +154,7 @@ final class DocumentContentController extends Controller
             'q' => ['sometimes', 'string', 'max:200'],
         ]);
         $document = $this->authorisedDocument($request, $workspacePublicId, $documentPublicId, $workspaces, $documents);
+        abort_unless($pipeline->documentPresentation($document)['extracted_text'], 404);
         $generation = $document->activeExtractionProjectionGeneration()
             ->where('status', ExtractionProjectionStatus::Published)
             ->firstOrFail();

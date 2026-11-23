@@ -124,6 +124,21 @@ final class DifyKnowledgeClient
         $this->assertSuccessful($response);
     }
 
+    public function segmentCount(string $datasetId, string $documentId): int
+    {
+        $response = $this->request()->get(
+            $this->url("/v1/datasets/{$datasetId}/documents/{$documentId}/segments"),
+            ['page' => 1, 'limit' => 1],
+        );
+        $this->assertSuccessful($response);
+        $total = $response->json('total');
+        if (! is_int($total) && ! (is_string($total) && ctype_digit($total))) {
+            throw new DifyKnowledgeException('invalid_segment_list_response');
+        }
+
+        return (int) $total;
+    }
+
     /** @return array<string, mixed> */
     private function documentConfiguration(): array
     {

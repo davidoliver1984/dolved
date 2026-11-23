@@ -10,6 +10,7 @@ use App\Enums\GenerationRunStatus;
 use App\Models\Document;
 use App\Models\EvidenceSnapshot;
 use App\Models\RetrievedSourceReference;
+use App\Support\Pipeline\ActivePipelineCapabilities;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -50,6 +51,7 @@ class ConversationResource extends JsonResource
                 'status' => $run->status->value,
                 'failure_code' => $run->failure_code?->value,
                 'delivery_mode' => $run->delivery_mode,
+                'interaction' => app(ActivePipelineCapabilities::class)->runInteraction($run),
                 'presentation' => ($run->needs_profile['product_profile'] ?? null) === 'current-policy-pool-v1' ? 'saved-message-v1' : null,
                 'retryable' => $run->status->isRetryEligible(),
                 'provisional_content_retracted' => $run->status === GenerationRunStatus::Failed
