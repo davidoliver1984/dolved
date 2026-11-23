@@ -80,6 +80,8 @@ x-api-service: &api-service
   build:
     context: ../../apps/api
     target: production
+    args:
+      VCS_REF: ${DOLVED_SOURCE_REVISION:-unknown}
     additional_contexts:
       contracts: ../../contracts
   image: dolved-api:${DOLVED_IMAGE_TAG:-local}
@@ -188,6 +190,7 @@ services:
       target: production
       args:
         NEXT_PUBLIC_API_URL: https://${API_DOMAIN:?API_DOMAIN is required}
+        VCS_REF: ${DOLVED_SOURCE_REVISION:-unknown}
     image: dolved-web:${DOLVED_IMAGE_TAG:-local}
     environment:
       API_INTERNAL_URL: http://api
