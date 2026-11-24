@@ -218,8 +218,7 @@ final class DocumentVersionGovernanceApiTest extends TestCase
 
         $this->actingAs($owner)
             ->postJson($url, [...$payload, 'location_public_ids' => []])
-            ->assertConflict()
-            ->assertJsonPath('error.code', 'governance_state_conflict');
+            ->assertNotFound();
 
         $this->actingAs($owner)
             ->postJson($url, $payload)
