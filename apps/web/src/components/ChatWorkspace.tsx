@@ -105,6 +105,14 @@ function bytes(value: number | null | undefined): string | null {
   return `${(value / (1024 * 1024)).toFixed(1)} MB`;
 }
 
+function formattedAnswerText(text: string) {
+  return text.split(/(\*\*[^\n]+?\*\*)/g).map((part, index) =>
+    part.startsWith("**") && part.endsWith("**")
+      ? <strong key={`${index}-${part.slice(2, 18)}`}>{part.slice(2, -2)}</strong>
+      : part,
+  );
+}
+
 function failurePresentation(run: ConversationRun): { title: string; description: string } {
   if (run.provisional_content_retracted) {
     return {
@@ -596,7 +604,7 @@ export function ChatWorkspace({
               <Card className={message.role === "user" ? "ml-auto w-fit max-w-[85%] border-brand/30 bg-brand/10 p-4" : "max-w-[92%] p-4"} key={message.id}>
                 <div className="mb-2 flex items-center gap-2"><p className="text-xs font-bold uppercase tracking-[0.12em] text-foreground-muted">{message.role === "user" ? "You" : assistantName}</p>{!savedPresentation && run?.answer?.outcome ? <StatusBadge status={run.answer.outcome === "answered" ? "success" : "warning"}>{run.answer.outcome.replaceAll("_", " ")}</StatusBadge> : null}</div>
                 {savedPresentation ? <>
-                  <p className="whitespace-pre-wrap leading-7" data-canonical-answer>{message.text}</p>
+                  <p className="whitespace-pre-wrap leading-7" data-canonical-answer>{formattedAnswerText(message.text)}</p>
                   {run?.answer?.sources_retrieved?.length ? <details className="group mt-4 border-t border-border pt-3">
                     <summary className="flex cursor-pointer list-none flex-wrap items-center gap-x-2 gap-y-1 text-sm [&::-webkit-details-marker]:hidden">
                       <span className="font-semibold">Sources retrieved</span>
@@ -618,7 +626,7 @@ export function ChatWorkspace({
                   </details>)}
                 </> : parts?.length ? parts.map((part, index) => (
                   <div className="grid gap-3" key={part.id ?? `${message.id}-${index}`}>
-                    <p>{part.text}</p>
+                    <p className="whitespace-pre-wrap">{formattedAnswerText(part.text)}</p>
                     {part.citations.length ? (
                       <div className="mt-3 rounded-lg border border-border bg-surface-raised p-3">
                         <p className="text-sm font-semibold">{part.citations.length} {part.citations.length === 1 ? "source" : "sources"}</p>
@@ -632,7 +640,7 @@ export function ChatWorkspace({
                       </div>
                     ) : null}
                   </div>
-                )) : <p className="leading-7">{message.text}</p>}
+                )) : <p className="whitespace-pre-wrap leading-7">{formattedAnswerText(message.text)}</p>}
                 {!savedPresentation && run?.answer?.insufficiency_reason ? <Notice className="mt-3" tone="warning">{run.answer.insufficiency_reason}</Notice> : null}
                 {!savedPresentation && run?.answer?.unsupported_aspects?.length ? <p className="mt-3 text-sm text-foreground-muted">Not established by the available evidence: {run.answer.unsupported_aspects.join(", ")}</p> : null}
               </Card>

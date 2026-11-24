@@ -39,6 +39,7 @@ describe("DocumentApplicabilityEditor", () => {
 
     fireEvent.click(screen.getByText("Edit applicability"));
     expect(screen.getByText(/there is no separate successor document to select/i)).toBeDefined();
+    expect(screen.getByRole("radio", { name: "Organisation-wide" }).closest("label")?.className).toContain("min-h-11");
     fireEvent.click(screen.getByRole("radio", { name: "Selected registered locations" }));
     fireEvent.click(screen.getByRole("checkbox", { name: "Oakfield Lodge" }));
     fireEvent.change(screen.getByLabelText("Effective date"), { target: { value: "2026-12-01" } });

@@ -167,11 +167,12 @@ describe("ChatWorkspace", () => {
   it("labels Dify context as retrieved sources rather than claim citations", async () => {
     const fixture = services();
     fixture.completed.site_context = { scope_key: "global", location_id: null, name: "Organisation-wide" };
+    fixture.completed.messages![1].text = "Use the **current procedure**.";
     fixture.completed.runs![0].answer = {
       id: "answer-1",
       outcome: "answered",
       presentation: "saved-message-v1",
-      text: "Use the current procedure.",
+      text: "Use the **current procedure**.",
       sources_retrieved: [{
         id: "source-1",
         rank: 1,
@@ -188,6 +189,8 @@ describe("ChatWorkspace", () => {
     render(<ChatWorkspace initialConversationId="conversation-1" services={fixture.api} workspaceId="workspace-1" workspaceName="Care" />);
 
     const sourceSummary = await screen.findByText("Sources retrieved");
+    expect(screen.getByText("current procedure").tagName).toBe("STRONG");
+    expect(screen.queryByText(/\*\*current procedure\*\*/)).toBeNull();
     expect(screen.getByText(/not claim-level citations/i)).not.toBeNull();
     expect(sourceSummary.closest("details")?.open).toBe(false);
     await user.click(sourceSummary);

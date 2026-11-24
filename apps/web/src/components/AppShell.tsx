@@ -264,7 +264,7 @@ export function AppShell({ canOperatePlatform, children, user, workspaces }: App
       <nav aria-label="Primary" className="grid gap-1">{navigation}{canOperatePlatform ? <Link aria-current={isPlatformAdministration ? "page" : undefined} className={cn(activeClass(isPlatformAdministration), "mt-2 border border-sidebar-border")} href="/app/platform/tenants" onClick={closeMobileNavigation}><Activity aria-hidden="true" className="size-5 shrink-0" />{sidebarLabel("Platform administration")}</Link> : null}</nav>
       {contextual}
       <div className="border-t border-sidebar-border pt-3">
-        <div className={cn("flex items-center gap-2", collapsed && "lg:justify-center")}>
+        <div className={cn("flex items-center gap-2", collapsed && "lg:flex-col lg:justify-center")} data-sidebar-utilities>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button aria-label={`Account menu for ${user.name}`} className={cn("flex min-w-0 flex-1 items-center gap-3 rounded-lg p-1 text-left outline-none hover:bg-sidebar-accent focus-visible:ring-2 focus-visible:ring-sidebar-ring", collapsed && "lg:flex-none")} type="button">
