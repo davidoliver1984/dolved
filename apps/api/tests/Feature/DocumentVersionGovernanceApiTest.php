@@ -210,7 +210,7 @@ final class DocumentVersionGovernanceApiTest extends TestCase
     {
         [$owner, $workspace] = $this->ownerWorkspace();
         $document = Document::factory()->for($workspace)->for($owner, 'createdBy')->uploading()->create();
-        $url = $this->commandUrl($workspace, $document, 'applicability-successor');
+        $url = $this->commandUrl($workspace, $document, 'applicability-successors');
         $payload = [
             'idempotency_key' => (string) Str::uuid(),
             'effective_from' => '2026-12-01',
@@ -218,7 +218,8 @@ final class DocumentVersionGovernanceApiTest extends TestCase
 
         $this->actingAs($owner)
             ->postJson($url, [...$payload, 'location_public_ids' => []])
-            ->assertNotFound();
+            ->assertConflict()
+            ->assertJsonPath('error.code', 'governance_state_conflict');
 
         $this->actingAs($owner)
             ->postJson($url, $payload)
