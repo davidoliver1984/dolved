@@ -292,7 +292,7 @@ final class QuestionReviewController extends Controller
             'occurred_at' => $run->created_at->toIso8601String(),
             'run_status' => $run->status->value,
             'retrieval_outcome' => $run->retrieval_outcome?->value,
-            'site_context' => $run->conversation->selectedLocation?->name ?? 'Organisation-wide only',
+            'site_context' => $run->conversation->selectedLocation?->name ?? 'Organisation-wide',
             'review' => $run->questionReview ? $this->reviewPayload($run->questionReview) : [
                 'review_status' => 'unreviewed', 'issue_type' => null, 'workflow_state' => 'needs_review',
                 'priority' => 'normal', 'review_notes' => null, 'subjects' => [],

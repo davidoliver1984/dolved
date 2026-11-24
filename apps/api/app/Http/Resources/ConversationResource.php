@@ -28,7 +28,7 @@ class ConversationResource extends JsonResource
             'site_context' => $this->selectedLocation === null ? [
                 'scope_key' => 'global',
                 'location_id' => null,
-                'name' => 'Organisation-wide only',
+                'name' => 'Organisation-wide',
             ] : [
                 'scope_key' => (string) $this->selectedLocation->public_id,
                 'location_id' => (string) $this->selectedLocation->public_id,

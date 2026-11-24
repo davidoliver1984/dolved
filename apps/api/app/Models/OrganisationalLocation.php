@@ -19,6 +19,11 @@ class OrganisationalLocation extends Model
     /** @use HasFactory<OrganisationalLocationFactory> */
     use HasFactory;
 
+    protected function casts(): array
+    {
+        return ['retired_at' => 'immutable_datetime'];
+    }
+
     protected static function booted(): void
     {
         static::saving(function (OrganisationalLocation $location): void {

@@ -79,6 +79,7 @@ final class DocumentVersionGovernanceController extends Controller
             'meta' => [
                 'current_version_public_id' => $current?->public_id,
                 'locations' => $workspace->organisationalLocations()
+                    ->whereNull('retired_at')
                     ->orderBy('name')
                     ->get(['public_id', 'name'])
                     ->map(fn ($location): array => [
@@ -110,6 +111,7 @@ final class DocumentVersionGovernanceController extends Controller
         $locationPublicIds = $request->array('location_public_ids');
         $locations = OrganisationalLocation::query()
             ->where('workspace_id', $workspace->id)
+            ->whereNull('retired_at')
             ->whereIn('public_id', $locationPublicIds)
             ->orderBy('id')->get();
         if ($locations->count() !== count($locationPublicIds)) {

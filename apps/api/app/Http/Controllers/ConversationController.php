@@ -49,6 +49,7 @@ class ConversationController extends Controller
         $selectedLocation = $request->filled('selected_location_id')
             ? OrganisationalLocation::query()
                 ->where('workspace_id', $workspace->id)
+                ->whereNull('retired_at')
                 ->where('public_id', $request->string('selected_location_id')->value())
                 ->firstOrFail()
             : null;

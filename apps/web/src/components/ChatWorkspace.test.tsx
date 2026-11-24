@@ -150,8 +150,12 @@ describe("ChatWorkspace", () => {
       workspaceName="Care"
     />);
 
-    await user.selectOptions(await screen.findByLabelText("Site context"), "09d65ad7-299f-46f7-b9f1-a0ae564cd31a");
-    await user.type(screen.getByLabelText("Ask a question"), "What is the local rule?");
+    const question = screen.getByLabelText("Ask a question");
+    const locationFilter = await screen.findByLabelText("Location filter");
+    expect(question.compareDocumentPosition(locationFilter) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(screen.getByRole("option", { name: "Organisation-wide" })).not.toBeNull();
+    await user.selectOptions(locationFilter, "09d65ad7-299f-46f7-b9f1-a0ae564cd31a");
+    await user.type(question, "What is the local rule?");
     await user.click(screen.getByRole("button", { name: "Send" }));
 
     await waitFor(() => expect(fixture.api.create).toHaveBeenCalledWith(
@@ -162,7 +166,7 @@ describe("ChatWorkspace", () => {
 
   it("labels Dify context as retrieved sources rather than claim citations", async () => {
     const fixture = services();
-    fixture.completed.site_context = { scope_key: "global", location_id: null, name: "Organisation-wide only" };
+    fixture.completed.site_context = { scope_key: "global", location_id: null, name: "Organisation-wide" };
     fixture.completed.runs![0].answer = {
       id: "answer-1",
       outcome: "answered",
@@ -191,7 +195,7 @@ describe("ChatWorkspace", () => {
     expect(screen.getByRole("list", { name: "Sources retrieved" })).not.toBeNull();
     await user.click(screen.getByRole("button", { name: /Data Protection Policy.pdf/ }));
     expect(screen.getByText("Personal devices must not be used.")).not.toBeNull();
-    expect(screen.getByText("Site context:").parentElement?.textContent).toContain("Organisation-wide only");
+    expect(screen.getByText("Location filter:").parentElement?.textContent).toContain("Organisation-wide");
     expect(screen.queryByRole("list", { name: "Answer sources" })).toBeNull();
   });
 

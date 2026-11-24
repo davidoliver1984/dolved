@@ -251,7 +251,7 @@ final readonly class FinalizeImportPromotion
     private function resolveLocations(ImportItem $item, array $definition): array
     {
         $ids = array_values(array_unique($definition['applicability']['location_public_ids']));
-        $locations = OrganisationalLocation::query()->where('workspace_id', $item->workspace_id)->whereIn('public_id', $ids)->get();
+        $locations = OrganisationalLocation::query()->where('workspace_id', $item->workspace_id)->whereNull('retired_at')->whereIn('public_id', $ids)->get();
         if ($locations->count() !== count($ids)) {
             throw ImportPromotionException::conflict('applicability_invalid');
         }

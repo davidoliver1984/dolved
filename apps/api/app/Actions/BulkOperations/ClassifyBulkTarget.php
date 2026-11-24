@@ -76,6 +76,7 @@ final class ClassifyBulkTarget
         $current = $this->currentDocument($family);
         $requested = collect($payload['location_public_ids'] ?? [])->filter('is_string')->unique()->sort()->values();
         $valid = OrganisationalLocation::query()->where('workspace_id', $workspace->id)
+            ->whereNull('retired_at')
             ->whereIn('public_id', $requested)->pluck('public_id')->sort()->values();
         $currentLocations = $current?->applicabilitySnapshot?->locations()->pluck('public_id')->sort()->values() ?? collect();
         $snapshot = ['current_document_public_id' => $current?->public_id, 'location_public_ids' => $currentLocations->all()];

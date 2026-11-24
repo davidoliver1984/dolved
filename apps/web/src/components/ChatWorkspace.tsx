@@ -660,24 +660,6 @@ export function ChatWorkspace({
         {error ? <Notice tone={accessRevoked ? "warning" : "destructive"}>{accessRevoked ? <div><strong>Workspace access ended</strong><p className="mt-1">{error}</p></div> : error}</Notice> : null}
         {stoppedNotice ? <Notice tone="info">{stoppedNotice}</Notice> : null}
         <form className="grid gap-3 rounded-xl border border-border bg-card p-4" onSubmit={submit}>
-          {active?.site_context ? <div className="rounded-lg bg-surface-raised px-3 py-2 text-sm">
-            <strong>Site context:</strong> {active.site_context.name}
-            <p className="mt-1 text-xs text-foreground-muted">This context is fixed for this conversation. Start a new chat to change it.</p>
-          </div> : <div className="grid gap-2">
-            <label className="text-sm font-semibold" htmlFor="chat-site-context">Site context</label>
-            <select
-              aria-describedby="chat-site-context-help"
-              className="min-h-11 rounded-lg border border-input bg-background px-3"
-              disabled={busy || accessRevoked}
-              id="chat-site-context"
-              onChange={(event) => setSelectedLocationId(event.target.value)}
-              value={selectedLocationId}
-            >
-              <option value="">Organisation-wide only</option>
-              {locations.map((location) => <option key={location.public_id} value={location.public_id}>{location.name}</option>)}
-            </select>
-            <span className="text-xs text-foreground-muted" id="chat-site-context-help">Choose a registered site explicitly. Site names in the question do not change this selection.</span>
-          </div>}
           <label className="text-sm font-semibold" htmlFor="chat-question">Ask a question</label>
           <Textarea
             disabled={busy || accessRevoked}
@@ -689,6 +671,24 @@ export function ChatWorkspace({
             rows={3}
             value={draft}
           />
+          {active?.site_context ? <div className="rounded-lg bg-surface-raised px-3 py-2 text-sm">
+            <strong>Location filter:</strong> {active.site_context.name}
+            <p className="mt-1 text-xs text-foreground-muted">This context is fixed for this conversation. Start a new chat to change it.</p>
+          </div> : <div className="grid gap-2">
+            <label className="text-sm font-semibold" htmlFor="chat-site-context">Location filter</label>
+            <select
+              aria-describedby="chat-site-context-help"
+              className="min-h-11 rounded-lg border border-input bg-background px-3"
+              disabled={busy || accessRevoked}
+              id="chat-site-context"
+              onChange={(event) => setSelectedLocationId(event.target.value)}
+              value={selectedLocationId}
+            >
+              <option value="">Organisation-wide</option>
+              {locations.map((location) => <option key={location.public_id} value={location.public_id}>{location.name}</option>)}
+            </select>
+            <span className="text-xs text-foreground-muted" id="chat-site-context-help">Choose a registered location explicitly. Location names in the question do not change this selection.</span>
+          </div>}
           <div className="flex flex-wrap items-center justify-between gap-3">
             <small className="text-foreground-muted">{accessRevoked ? "You no longer have access to send messages." : "Enter to send · Shift+Enter for a new line"}</small>
             {busy && active?.runs?.some((run) => !run.completed_at) ? (

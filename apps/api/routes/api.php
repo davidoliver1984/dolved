@@ -178,6 +178,7 @@ Route::middleware(['auth:sanctum', 'account.enabled', 'verified'])->group(functi
     Route::get('/workspaces/{workspacePublicId}/usage/export', [WorkspaceUsageController::class, 'export']);
     Route::get('/workspaces/{workspacePublicId}/locations', [WorkspaceLocationController::class, 'index']);
     Route::post('/workspaces/{workspacePublicId}/locations', [WorkspaceLocationController::class, 'store']);
+    Route::patch('/workspaces/{workspacePublicId}/locations/{locationPublicId}/retire', [WorkspaceLocationController::class, 'retire']);
     Route::get('/workspaces/{workspacePublicId}/question-review/policy', [QuestionReviewController::class, 'policy']);
     Route::put('/workspaces/{workspacePublicId}/question-review/policy', [QuestionReviewController::class, 'updatePolicy']);
     Route::get('/workspaces/{workspacePublicId}/question-review/questions', [QuestionReviewController::class, 'index']);

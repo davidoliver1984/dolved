@@ -825,6 +825,7 @@ function mutationFeedback(path: string, method: string): string | null {
   if (verb === "PATCH" && matches(/\/question-review\/questions\/[^/]+$/)) return "Question review saved.";
   if (verb === "POST" && matches(/\/question-review\/subjects$/)) return "Subject added.";
   if (verb === "POST" && matches(/\/locations$/)) return "Location created.";
+  if (verb === "PATCH" && matches(/\/locations\/[^/]+\/retire$/)) return "Location retired. Existing document history was preserved.";
   if (cleanPath === "/api/platform/operations/policy") return "Operational policy submitted.";
 
   if (verb === "POST" && matches(/\/imports$/)) return "Import batch created.";
@@ -1053,12 +1054,23 @@ export async function questionReviewKnowledgeGaps(workspaceId: string): Promise<
   return { data: response.data, description: response.meta.description };
 }
 
-export type WorkspaceLocation = { public_id: string; name: string; kind: "site" | "service" | "region"; parent: { public_id: string; name: string } | null };
+export type WorkspaceLocation = {
+  public_id: string;
+  name: string;
+  kind: "site" | "service" | "region";
+  parent: { public_id: string; name: string } | null;
+  status: "active" | "retired";
+  usage: { active_children: number; applicability_snapshots: number; family_defaults: number };
+  capabilities: { retire: boolean };
+};
 export async function workspaceLocations(workspaceId: string): Promise<WorkspaceLocation[]> {
   return (await apiFetch<{ data: WorkspaceLocation[] }>(`/api/workspaces/${encodeURIComponent(workspaceId)}/locations`)).data;
 }
 export async function createWorkspaceLocation(workspaceId: string, name: string, kind: WorkspaceLocation["kind"], parentPublicId: string | null): Promise<WorkspaceLocation> {
   return (await apiFetch<{ data: WorkspaceLocation }>(`/api/workspaces/${encodeURIComponent(workspaceId)}/locations`, { method: "POST", body: JSON.stringify({ name, kind, parent_public_id: parentPublicId }) })).data;
+}
+export async function retireWorkspaceLocation(workspaceId: string, locationId: string): Promise<WorkspaceLocation> {
+  return (await apiFetch<{ data: WorkspaceLocation }>(`/api/workspaces/${encodeURIComponent(workspaceId)}/locations/${encodeURIComponent(locationId)}/retire`, { method: "PATCH" })).data;
 }
 
 export function firstError(error: unknown): string {
