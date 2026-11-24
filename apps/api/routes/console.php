@@ -75,7 +75,7 @@ Artisan::command('observability:record-operational-snapshot', function (RecordOp
     $this->info('Recorded the bounded operational snapshot.');
 })->purpose('Record bounded operational queue, dependency and stuck-operation gauges');
 
-Schedule::command('observability:record-operational-snapshot')->everyMinute()->withoutOverlapping();
+Schedule::command('observability:record-operational-snapshot')->everyMinute()->withoutOverlapping(2);
 
 Schedule::command('ingestion:extraction-artifacts:sweep')->everyFiveMinutes()->withoutOverlapping();
 Schedule::command('ingestion:content-clone-manifests:sweep')->everyFiveMinutes()->withoutOverlapping();
