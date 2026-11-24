@@ -6,7 +6,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { Wordmark } from "@/components/Wordmark";
 import { Button } from "@/components/ui/button";
 import { Notice } from "@/components/ui/notice";
-import { acceptWorkspaceInvitation, firstError, invitationBranding, type EffectiveBranding } from "@/lib/api";
+import { acceptWorkspaceInvitation, ApiError, firstError, invitationBranding, type EffectiveBranding } from "@/lib/api";
 
 export function InvitationAcceptance({ token }: Readonly<{ token: string }>) {
   const router = useRouter();
@@ -32,6 +32,10 @@ export function InvitationAcceptance({ token }: Readonly<{ token: string }>) {
       const response = await acceptWorkspaceInvitation(token);
       router.push(`/app/workspaces/${encodeURIComponent(response.data.workspace_id)}`);
     } catch (caught) {
+      if (caught instanceof ApiError && caught.status === 401) {
+        router.push(`/login?next=${encodeURIComponent(`/invitations/${token}`)}`);
+        return;
+      }
       setError(firstError(caught));
       setBusy(false);
     }

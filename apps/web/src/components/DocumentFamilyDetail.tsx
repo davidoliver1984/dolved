@@ -1,5 +1,6 @@
 import { CalendarDays, CircleAlert, ExternalLink, FileClock, FileSearch, GitCompareArrows, Tags, UserRound } from "lucide-react";
 import Link from "next/link";
+import { DocumentApplicabilityEditor } from "@/components/DocumentApplicabilityEditor";
 import { DocumentGovernanceActions } from "@/components/DocumentGovernanceActions";
 import { DocumentFamilyMetadataEditor } from "@/components/DocumentFamilyMetadataEditor";
 import { Button } from "@/components/ui/button";
@@ -36,12 +37,10 @@ function governanceLabel(version: DocumentVersion): string {
 
 function VersionCard({
   index,
-  locations,
   version,
   workspacePublicId,
 }: Readonly<{
   index: number;
-  locations: Detail["history"]["meta"]["locations"];
   version: DocumentVersion;
   workspacePublicId: string;
 }>) {
@@ -75,7 +74,7 @@ function VersionCard({
           {version.presentation?.extracted_text ? <Button asChild size="sm" variant="outline"><Link href={`${applicationPath}/extracted-text`}><FileSearch aria-hidden="true" />Extracted text</Link></Button> : null}
           {version.presentation?.comparison_compatible_with.length ? <Button asChild size="sm" variant="outline"><Link href={`/app/workspaces/${workspacePublicId}/documents/families/${version.family_public_id ?? ""}/compare?from=${version.public_id}`}>Compare</Link></Button> : null}
         </div>
-        <DocumentGovernanceActions locations={locations} version={version} workspacePublicId={workspacePublicId} />
+        <DocumentGovernanceActions version={version} workspacePublicId={workspacePublicId} />
       </CardContent>
     </Card>
   );
@@ -83,6 +82,8 @@ function VersionCard({
 
 export function DocumentFamilyDetail({ detail, workspacePublicId }: Readonly<{ detail: Detail; workspacePublicId: string }>) {
   const { family, history } = detail;
+  const applicabilityVersion = history.data.find((version) => version.public_id === history.meta.current_version_public_id)
+    ?? [...history.data].reverse().find((version) => version.capabilities.create_applicability_successor);
   return (
     <div className="grid gap-6">
       <header>
@@ -94,6 +95,7 @@ export function DocumentFamilyDetail({ detail, workspacePublicId }: Readonly<{ d
       </header>
 
       <DocumentFamilyMetadataEditor family={family} workspacePublicId={workspacePublicId} />
+      {applicabilityVersion ? <DocumentApplicabilityEditor locations={history.meta.locations} version={applicabilityVersion} workspacePublicId={workspacePublicId} /> : null}
 
       <Card>
         <CardHeader><CardTitle>Family metadata</CardTitle><CardDescription>These facts belong to the family and do not change between versions.</CardDescription></CardHeader>
@@ -110,7 +112,7 @@ export function DocumentFamilyDetail({ detail, workspacePublicId }: Readonly<{ d
           <div><p className="text-sm font-bold uppercase tracking-[0.14em] text-brand">Authority timeline</p><h2 className="mt-1 text-2xl font-semibold" id="version-history-heading">Version history</h2><p className="mt-1 text-foreground-muted">Every version is shown with its recorded governance, technical and applicability state.</p></div>
           <div className="flex gap-2"><Button asChild variant="outline"><Link href={`/app/workspaces/${workspacePublicId}/documents/families/${family.public_id}/versions`}><FileClock aria-hidden="true" />Version history</Link></Button>{history.data.some((version) => (version.presentation?.comparison_compatible_with.length ?? 0) > 0) ? <Button asChild variant="secondary"><Link href={`/app/workspaces/${workspacePublicId}/documents/families/${family.public_id}/compare`}><GitCompareArrows aria-hidden="true" />Compare versions</Link></Button> : null}</div>
         </div>
-        {history.data.map((version, index) => <VersionCard index={index} key={version.public_id} locations={history.meta.locations} version={version} workspacePublicId={workspacePublicId} />)}
+        {history.data.map((version, index) => <VersionCard index={index} key={version.public_id} version={version} workspacePublicId={workspacePublicId} />)}
       </section>
     </div>
   );

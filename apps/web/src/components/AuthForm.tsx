@@ -9,7 +9,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Notice } from "@/components/ui/notice";
 import { apiFetch, ApiError, deploymentBranding, firstError, type EffectiveBranding, User } from "@/lib/api";
-import type { PlatformAdministrationPath } from "@/lib/platform-operations";
 
 type Mode = "login" | "register" | "forgot" | "reset";
 
@@ -49,7 +48,7 @@ type Props = {
   registrationEnabled?: boolean;
   token?: string;
   email?: string;
-  returnTo?: PlatformAdministrationPath;
+  returnTo?: string;
 };
 
 export function AuthForm({ context = "workspace", mode, registrationEnabled = true, token, email: initialEmail, returnTo }: Props) {
@@ -217,10 +216,10 @@ export function AuthForm({ context = "workspace", mode, registrationEnabled = tr
           {mode === "login" && (
             <>
               <Link href="/forgot-password">Forgot password?</Link>
-              {registrationEnabled ? <Link href="/register">Create an account</Link> : null}
+              {registrationEnabled ? <Link href={returnTo ? `/register?next=${encodeURIComponent(returnTo)}` : "/register"}>Create an account</Link> : null}
             </>
           )}
-          {mode !== "login" && <Link href="/login">Back to sign in</Link>}
+          {mode !== "login" && <Link href={returnTo ? `/login?next=${encodeURIComponent(returnTo)}` : "/login"}>Back to sign in</Link>}
         </nav>
       </section>
 

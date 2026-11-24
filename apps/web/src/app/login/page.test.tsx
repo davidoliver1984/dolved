@@ -52,6 +52,13 @@ describe("LoginPage", () => {
     expect(page.props).toEqual({ mode: "login", registrationEnabled: true });
   });
 
+  it("preserves a safe invitation return path", async () => {
+    currentUserMock.mockResolvedValue(null);
+    const next = "/invitations/invite-token";
+    const page = await LoginPage({ searchParams: Promise.resolve({ next }) });
+    expect(page.props).toEqual({ mode: "login", registrationEnabled: true, returnTo: next });
+  });
+
   it("returns an unverified signed-in account to verification", async () => {
     currentUserMock.mockResolvedValue({
       id: 18,

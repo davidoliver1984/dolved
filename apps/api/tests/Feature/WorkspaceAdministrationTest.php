@@ -127,6 +127,33 @@ class WorkspaceAdministrationTest extends TestCase
         ]);
     }
 
+    public function test_invitation_mail_uses_the_applied_workspace_branding_layout(): void
+    {
+        [$workspace, $owner] = $this->workspaceWithRoles();
+        $token = str_repeat('f', 64);
+        $invitation = $this->invitation($workspace, $owner, $token, 'invitee@example.test');
+        $branding = [
+            'display_name' => 'Cherish',
+            'sender_display_name' => 'Cherish',
+            'primary_colour' => '#8D2F93',
+            'accent_colour' => '#DA95DF',
+            'accent_foreground' => '#000000',
+            'primary_logo' => ['url' => 'https://assets.example.test/cherish.png'],
+            'footer_text' => 'Care and support service',
+            'support_contact' => 'support@example.test',
+        ];
+
+        $mail = (new WorkspaceInvitationNotification($invitation, $token, $branding))->toMail((object) []);
+        $html = view('mail.invitation.html', $mail->viewData)->render();
+
+        $this->assertSame('You have been invited to Cherish', $mail->subject);
+        $this->assertSame('Cherish', $mail->from[1]);
+        $this->assertStringContainsString('https://assets.example.test/cherish.png', $html);
+        $this->assertStringContainsString('background-color:#DA95DF', $html);
+        $this->assertStringContainsString('Sent by Cherish', $html);
+        $this->assertStringNotContainsString('Regards,<br>\nDolved', $html);
+    }
+
     public function test_invitation_acceptance_requires_the_matching_verified_email_and_materializes_expiry(): void
     {
         [$workspace, $owner] = $this->workspaceWithRoles();

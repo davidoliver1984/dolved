@@ -4,6 +4,7 @@ import { BookOpenCheck, CircleAlert, Eye, FolderSearch, LoaderCircle, Plus } fro
 import { type FormEvent, useCallback, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Notice } from "@/components/ui/notice";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -103,12 +104,17 @@ export function QuestionReviewAdministration({ workspaceId }: Readonly<{ workspa
     {policy.can_review ? <>
       <div className="grid gap-6 xl:grid-cols-[minmax(22rem,1fr)_minmax(26rem,1.2fr)]">
         <Card><CardHeader><CardTitle>Review queue</CardTitle><CardDescription>Question wording is hidden until an authorised, audited content view is opened.</CardDescription></CardHeader><CardContent className="grid gap-3">{items.length ? items.map((item) => <article className="grid gap-3 rounded-lg border border-border p-4" key={item.run_id}><div className="flex flex-wrap items-start justify-between gap-2"><div><strong>{formatDateTime(item.occurred_at)}</strong><p className="text-sm text-foreground-muted">{item.site_context} · {label(item.run_status)}</p></div><StatusBadge status={item.review.review_status === "unreviewed" ? "pending" : "info"}>{label(item.review.review_status)}</StatusBadge></div><Button disabled={busy} onClick={() => void inspect(item.run_id)} size="sm" variant="outline"><Eye />Open audited review</Button></article>) : <p className="text-sm text-foreground-muted">No retained questions are available within the enabled review period.</p>}</CardContent></Card>
-        <Card><CardHeader><CardTitle>Subjects</CardTitle><CardDescription>Human-managed topics only. No model classification or extra provider call is used.</CardDescription></CardHeader><CardContent className="grid gap-4"><form className="flex gap-2" onSubmit={addSubject}><Input aria-label="New subject name" onChange={(event) => setNewSubject(event.target.value)} placeholder="e.g. Annual leave" value={newSubject} /><Button disabled={busy || !newSubject.trim()} type="submit"><Plus />Add</Button></form><div className="flex flex-wrap gap-2">{subjects.length ? subjects.map((subject) => <StatusBadge key={subject.public_id} status="info">{subject.name}</StatusBadge>) : <span className="text-sm text-foreground-muted">Unclassified questions remain visible in the queue.</span>}</div></CardContent></Card>
+        <Card><CardHeader><CardTitle>Subjects</CardTitle><CardDescription>Create reusable topic labels, then assign them to questions inside an audited review. Assigned reviews are grouped by subject in Knowledge gaps. Nothing is classified automatically and no extra provider call is made.</CardDescription></CardHeader><CardContent className="grid gap-4"><form className="flex gap-2" onSubmit={addSubject}><Input aria-label="New subject name" onChange={(event) => setNewSubject(event.target.value)} placeholder="e.g. Annual leave" value={newSubject} /><Button disabled={busy || !newSubject.trim()} type="submit"><Plus />Add</Button></form><div className="flex flex-wrap gap-2">{subjects.length ? subjects.map((subject) => <StatusBadge key={subject.public_id} status="info">{subject.name}</StatusBadge>) : <span className="text-sm text-foreground-muted">No labels yet. Questions remain available in the review queue without a subject.</span>}</div></CardContent></Card>
       </div>
       <Card><CardHeader><CardTitle className="flex items-center gap-2"><FolderSearch className="size-5 text-brand" />Knowledge gaps</CardTitle><CardDescription>{gapDescription || "Human-reviewed records only."}</CardDescription></CardHeader><CardContent className="grid gap-3">{gaps.length ? gaps.map((gap) => <article className="rounded-lg border border-border p-4" key={gap.public_id}><div className="flex flex-wrap justify-between gap-2"><strong>{gap.name}</strong><StatusBadge status={gap.confirmed_gap_count ? "warning" : "unavailable"}>{gap.confirmed_gap_count} confirmed</StatusBadge></div><p className="mt-2 text-sm text-foreground-muted">{gap.question_count} assigned · {gap.reviewed_count} reviewed · {gap.unresolved_count} unresolved</p></article>) : <p className="text-sm text-foreground-muted">No subject-level findings have been recorded.</p>}</CardContent></Card>
     </> : null}
 
-    {selected ? <QuestionReviewEditor busy={busy} detail={selected} onClose={() => setSelected(null)} onSaved={async () => { setSelected(null); await refresh(); }} subjects={subjects} workspaceId={workspaceId} /> : null}
+    <Dialog onOpenChange={(open) => { if (!open) setSelected(null); }} open={selected !== null}>
+      <DialogContent className="max-h-[90vh] max-w-4xl overflow-y-auto">
+        <DialogHeader><DialogTitle>Audited question review</DialogTitle><DialogDescription>Viewing this restricted question and answer is recorded in the workspace audit trail.</DialogDescription></DialogHeader>
+        {selected ? <QuestionReviewEditor busy={busy} detail={selected} onClose={() => setSelected(null)} onSaved={async () => { setSelected(null); await refresh(); }} subjects={subjects} workspaceId={workspaceId} /> : null}
+      </DialogContent>
+    </Dialog>
   </div>;
 }
 

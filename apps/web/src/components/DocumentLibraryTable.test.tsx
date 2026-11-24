@@ -60,6 +60,16 @@ describe("DocumentLibraryTable", () => {
     expect(screen.getByText("No matching document families")).toBeDefined();
   });
 
+  it("keeps import, saved views and selection in the compact filter toolbar", () => {
+    render(<DocumentLibraryTable canManage currentSavedViewDefinition={{ search: "policy" }} initialSavedViews={[]} metadata={{ categories: [], tags: [], owners: [], locations: [] }} page={page} query={{ search: "policy" }} workspacePublicId="workspace-1" />);
+
+    expect(screen.getByRole("link", { name: "Import documents" }).getAttribute("href")).toBe("/app/workspaces/workspace-1/documents/imports");
+    fireEvent.click(screen.getByRole("button", { name: "Save view" }));
+    expect(screen.getByRole("dialog")).toBeDefined();
+    expect(screen.getByRole("button", { name: "Save current view" })).toBeDefined();
+    expect(screen.getByRole("button", { name: "Select all" })).toBeDefined();
+  });
+
   it("distinguishes current-page selection from a server-frozen all-filtered preflight", async () => {
     vi.mocked(createBulkOperation).mockResolvedValue({ data: {
       public_id: "operation-1", operation_type: "bulk_review_date_assignment", status: "awaiting_confirmation",
@@ -74,7 +84,7 @@ describe("DocumentLibraryTable", () => {
       ],
     } });
     render(<DocumentLibraryTable canManage metadata={{ categories: [], tags: [], owners: [], locations: [] }} page={{ ...page, meta: { ...page.meta, total: 3 } }} query={{ search: "medication" }} workspacePublicId="workspace-1" />);
-    fireEvent.click(screen.getByRole("button", { name: "Select current page" }));
+    fireEvent.click(screen.getByRole("button", { name: "Select all" }));
     fireEvent.click(screen.getByRole("button", { name: "Select all 3 filtered results" }));
     fireEvent.change(screen.getByLabelText("Review date"), { target: { value: "2027-06-01" } });
     fireEvent.click(screen.getByRole("button", { name: "Review eligibility" }));
@@ -86,5 +96,20 @@ describe("DocumentLibraryTable", () => {
     expect(screen.getByRole("heading", { name: "Confirm Set review date" })).toBeDefined();
     expect(screen.getByText("Medication archive")).toBeDefined();
     expect(screen.getByText("Already assigned")).toBeDefined();
+  });
+
+  it("uses an explicit modal to configure bulk applicability", () => {
+    render(<DocumentLibraryTable canManage metadata={{ categories: [], tags: [], owners: [], locations: [{ public_id: "location-1", name: "Oakfield Lodge" }] }} page={page} query={{}} workspacePublicId="workspace-1" />);
+    fireEvent.click(screen.getByRole("button", { name: "Select all" }));
+    fireEvent.change(screen.getByLabelText("Bulk action"), { target: { value: "bulk_applicability_change" } });
+
+    expect(screen.getByRole("dialog")).toBeDefined();
+    fireEvent.click(screen.getByRole("radio", { name: "Selected registered locations" }));
+    fireEvent.click(screen.getByRole("checkbox", { name: "Oakfield Lodge" }));
+    fireEvent.click(screen.getByRole("button", { name: "Apply selection" }));
+
+    expect(screen.queryByRole("dialog")).toBeNull();
+    expect(screen.getByText("1 selected location")).toBeDefined();
+    expect(screen.getByRole("button", { name: "Review eligibility" })).not.toBeDisabled();
   });
 });

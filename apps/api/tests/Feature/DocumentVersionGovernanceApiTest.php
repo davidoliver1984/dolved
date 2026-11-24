@@ -206,6 +206,27 @@ final class DocumentVersionGovernanceApiTest extends TestCase
         $this->assertDatabaseCount('document_governance_commands', 2);
     }
 
+    public function test_universal_applicability_is_an_explicit_empty_location_set_not_a_missing_field(): void
+    {
+        [$owner, $workspace] = $this->ownerWorkspace();
+        $document = Document::factory()->for($workspace)->for($owner, 'createdBy')->uploading()->create();
+        $url = $this->commandUrl($workspace, $document, 'applicability-successor');
+        $payload = [
+            'idempotency_key' => (string) Str::uuid(),
+            'effective_from' => '2026-12-01',
+        ];
+
+        $this->actingAs($owner)
+            ->postJson($url, [...$payload, 'location_public_ids' => []])
+            ->assertConflict()
+            ->assertJsonPath('error.code', 'governance_state_conflict');
+
+        $this->actingAs($owner)
+            ->postJson($url, $payload)
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors('location_public_ids');
+    }
+
     public function test_reschedule_and_owner_only_historical_correction_use_durable_commands(): void
     {
         [$owner, $workspace] = $this->ownerWorkspace();
