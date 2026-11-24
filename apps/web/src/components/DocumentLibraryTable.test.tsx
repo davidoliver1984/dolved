@@ -61,10 +61,11 @@ describe("DocumentLibraryTable", () => {
     expect(screen.getByText("No matching document families")).toBeDefined();
   });
 
-  it("keeps import, saved views and selection in the compact filter toolbar", () => {
+  it("places import above the library and keeps saved views and selection in the compact filter toolbar", () => {
     render(<DocumentLibraryTable canManage currentSavedViewDefinition={{ search: "policy" }} initialSavedViews={[]} metadata={{ categories: [], tags: [], owners: [], locations: [] }} page={page} query={{ search: "policy" }} workspacePublicId="workspace-1" />);
 
     expect(screen.getByRole("link", { name: "Import documents" }).getAttribute("href")).toBe("/app/workspaces/workspace-1/documents/imports");
+    expect(screen.getByRole("link", { name: "Import documents" }).closest("form")).toBeNull();
     expect(screen.getByRole("button", { name: "Select all" })).toBeDefined();
     fireEvent.click(screen.getByRole("button", { name: "Save view" }));
     expect(screen.getByRole("dialog")).toBeDefined();
@@ -86,9 +87,10 @@ describe("DocumentLibraryTable", () => {
     } });
     render(<DocumentLibraryTable canManage metadata={{ categories: [], tags: [], owners: [], locations: [] }} page={{ ...page, meta: { ...page.meta, total: 3 } }} query={{ search: "medication" }} workspacePublicId="workspace-1" />);
     fireEvent.click(screen.getByRole("button", { name: "Select all" }));
-    fireEvent.click(screen.getByRole("button", { name: "Select all 3 filtered results" }));
     fireEvent.change(screen.getByLabelText("Review date"), { target: { value: "2027-06-01" } });
-    fireEvent.click(screen.getByRole("button", { name: "Review eligibility" }));
+    expect(screen.queryByRole("button", { name: "Select all 3 filtered results" })).toBeNull();
+    expect(screen.queryByText(/matching results will be frozen by the server/i)).toBeNull();
+    fireEvent.click(screen.getByRole("button", { name: "Review: Set review date" }));
 
     await waitFor(() => expect(createBulkOperation).toHaveBeenCalledWith("workspace-1", expect.objectContaining({
       selection_mode: "all_filtered", target_public_ids: [], filters: { search: "medication" },
@@ -111,6 +113,14 @@ describe("DocumentLibraryTable", () => {
 
     expect(screen.queryByRole("dialog")).toBeNull();
     expect(screen.getByText("1 selected location")).toBeDefined();
-    expect((screen.getByRole("button", { name: "Review eligibility" }) as HTMLButtonElement).disabled).toBe(false);
+    expect((screen.getByRole("button", { name: "Review: Change applicability" }) as HTMLButtonElement).disabled).toBe(false);
+  });
+
+  it("labels the review control for the selected bulk action", () => {
+    render(<DocumentLibraryTable canManage metadata={{ categories: [], tags: [], owners: [], locations: [] }} page={page} query={{}} workspacePublicId="workspace-1" />);
+    fireEvent.click(screen.getByRole("button", { name: "Select all" }));
+    fireEvent.change(screen.getByLabelText("Bulk action"), { target: { value: "bulk_category_assignment" } });
+
+    expect(screen.getByRole("button", { name: "Review: Set category" })).toBeDefined();
   });
 });
