@@ -33,7 +33,9 @@ final class OperationalTelemetry
     {
         // Keep the meter alive alongside its instruments. The OTLP reader
         // unregisters instrument sources when their owning meter is released.
-        $this->meter = $meters->getMeter('dolved.laravel.operations');
+        // Give this scope a stable version. The pilot OTLP pipeline suppresses
+        // the unversioned scope after its first short-lived CLI process exits.
+        $this->meter = $meters->getMeter('dolved.laravel.operations', '1.0.0');
         $this->operationCount = $this->meter->createCounter('rag.operation.count', '{operation}', 'Count of bounded platform operations.');
         $this->operationDuration = $this->meter->createHistogram('rag.operation.duration', 's', 'Duration of bounded platform operations.');
         // The OTLP/Prometheus backend used by the pilot currently drops
