@@ -107,6 +107,24 @@ class WorkspaceAdministrationTest extends TestCase
         ])->assertConflict()->assertJsonPath('error.code', 'member_removal_forbidden');
     }
 
+    public function test_owner_and_admin_can_revoke_pending_member_invitations(): void
+    {
+        [$workspace, $owner, $admin] = $this->workspaceWithRoles();
+        $base = "/api/workspaces/{$workspace->public_id}/invitations";
+        $ownerInvitation = $this->invitation($workspace, $owner, str_repeat('1', 64), 'owner-revoke@example.test');
+        $adminInvitation = $this->invitation($workspace, $owner, str_repeat('2', 64), 'admin-revoke@example.test');
+
+        $this->actingAs($owner)->deleteJson("{$base}/{$ownerInvitation->public_id}", [
+            'idempotency_key' => (string) Str::uuid(),
+        ])->assertOk()->assertJsonPath('data.invitation.status', WorkspaceInvitationStatus::Revoked->value);
+        $this->actingAs($admin)->deleteJson("{$base}/{$adminInvitation->public_id}", [
+            'idempotency_key' => (string) Str::uuid(),
+        ])->assertOk()->assertJsonPath('data.invitation.status', WorkspaceInvitationStatus::Revoked->value);
+
+        $this->assertSame(WorkspaceInvitationStatus::Revoked, $ownerInvitation->fresh()->status);
+        $this->assertSame(WorkspaceInvitationStatus::Revoked, $adminInvitation->fresh()->status);
+    }
+
     public function test_delivery_failure_does_not_invalidate_an_already_issued_invitation(): void
     {
         [$workspace, $owner] = $this->workspaceWithRoles();
