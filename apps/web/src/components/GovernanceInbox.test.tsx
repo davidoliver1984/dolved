@@ -65,6 +65,13 @@ describe("GovernanceInbox", () => {
     expect(links).toHaveLength(6);
   });
 
+  it("visually quietens clear governance states while preserving their drill-down", () => {
+    render(<GovernanceActionableWork data={{ awaiting_approval: 0, imports_processing: 0, imports_warning: 0, scheduled_changes: 0, review_due_soon: 0, review_overdue: 0 }} workspacePublicId="workspace-1" />);
+    const awaitingApproval = screen.getByText("Awaiting approval").closest("[data-slot='card']");
+    expect(awaitingApproval?.className).toContain("bg-surface-muted/70");
+    expect(screen.getAllByRole("link", { name: "View details" })).toHaveLength(6);
+  });
+
   it("keeps already-loaded notifications visible during a partial refresh failure", () => {
     render(<GovernanceInbox preview={{ items: [{
       public_id: "retained",

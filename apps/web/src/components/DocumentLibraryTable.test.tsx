@@ -67,6 +67,9 @@ describe("DocumentLibraryTable", () => {
     expect(screen.getByRole("link", { name: "Import documents" }).getAttribute("href")).toBe("/app/workspaces/workspace-1/documents/imports");
     expect(screen.getByRole("link", { name: "Import documents" }).closest("form")).toBeNull();
     expect(screen.getByRole("button", { name: "Select all" })).toBeDefined();
+    expect(screen.queryByText("0 selected")).toBeNull();
+    fireEvent.click(screen.getByRole("button", { name: "Select all" }));
+    expect(screen.getByText("1 selected")).toBeDefined();
     fireEvent.click(screen.getByRole("button", { name: "Save view" }));
     expect(screen.getByRole("dialog")).toBeDefined();
     expect(screen.getByRole("button", { name: "Save current view" })).toBeDefined();

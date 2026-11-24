@@ -292,7 +292,7 @@ export function AppShell({ canOperatePlatform, children, user, workspaces }: App
         <header className="sticky top-0 z-20 flex h-16 items-center justify-between border-b border-border bg-background/90 px-4 backdrop-blur lg:hidden">{brandMark(true)}<DialogPrimitive.Trigger asChild><Button aria-label="Open navigation" size="icon" variant="outline"><Menu aria-hidden="true" /></Button></DialogPrimitive.Trigger></header>
         <DialogPrimitive.Portal><DialogPrimitive.Overlay className="fixed inset-0 z-40 bg-overlay lg:hidden" /><DialogPrimitive.Content className="fixed inset-y-0 left-0 z-50 w-[min(88vw,20rem)] border-r border-sidebar-border bg-sidebar p-4 outline-none lg:hidden"><DialogPrimitive.Title className="sr-only">Application navigation</DialogPrimitive.Title>{sidebar}<DialogPrimitive.Close aria-label="Close navigation" className="absolute right-3 top-3 grid size-11 place-items-center rounded-md hover:bg-sidebar-accent focus-visible:ring-2 focus-visible:ring-sidebar-ring"><X aria-hidden="true" /></DialogPrimitive.Close></DialogPrimitive.Content></DialogPrimitive.Portal>
       </DialogPrimitive.Root>
-      <main className={cn("min-h-[calc(100dvh-4rem)] transition-[padding] lg:min-h-dvh", collapsed ? "lg:pl-20" : "lg:pl-72")}><div className="mx-auto w-full max-w-[96rem] p-4 sm:p-6 lg:p-8">{children}</div></main>
+      <main className={cn("min-h-[calc(100dvh-4rem)] transition-[padding] lg:min-h-dvh", collapsed ? "lg:pl-20" : "lg:pl-72")}><div className="mx-auto w-full max-w-[90rem] p-4 sm:p-6 lg:p-8">{children}</div></main>
     </div>
   );
 }
