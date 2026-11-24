@@ -6,12 +6,15 @@ namespace App\Telemetry;
 
 use OpenTelemetry\API\Metrics\CounterInterface;
 use OpenTelemetry\API\Metrics\HistogramInterface;
+use OpenTelemetry\API\Metrics\MeterInterface;
 use OpenTelemetry\API\Metrics\MeterProviderInterface;
 use OpenTelemetry\API\Metrics\UpDownCounterInterface;
 use Throwable;
 
 final class OperationalTelemetry
 {
+    private readonly MeterInterface $meter;
+
     private readonly CounterInterface $operationCount;
 
     private readonly HistogramInterface $operationDuration;
@@ -28,17 +31,19 @@ final class OperationalTelemetry
 
     public function __construct(MeterProviderInterface $meters, private readonly TelemetryAttributeAllowlist $allowlist)
     {
-        $meter = $meters->getMeter('dolved.laravel.operations');
-        $this->operationCount = $meter->createCounter('rag.operation.count', '{operation}', 'Count of bounded platform operations.');
-        $this->operationDuration = $meter->createHistogram('rag.operation.duration', 's', 'Duration of bounded platform operations.');
+        // Keep the meter alive alongside its instruments. The OTLP reader
+        // unregisters instrument sources when their owning meter is released.
+        $this->meter = $meters->getMeter('dolved.laravel.operations');
+        $this->operationCount = $this->meter->createCounter('rag.operation.count', '{operation}', 'Count of bounded platform operations.');
+        $this->operationDuration = $this->meter->createHistogram('rag.operation.duration', 's', 'Duration of bounded platform operations.');
         // The OTLP/Prometheus backend used by the pilot currently drops
         // synchronous Gauge data points. Snapshot commands run in a fresh
         // process, so a non-monotonic sum safely exports each absolute value.
-        $this->dependencyAvailable = $meter->createUpDownCounter('rag.dependency.available', '1', 'Whether a dependency probe succeeded.');
-        $this->dependencyDuration = $meter->createHistogram('rag.dependency.duration', 's', 'Dependency probe duration.');
-        $this->queueDepth = $meter->createUpDownCounter('rag.queue.depth', '{message}', 'Current queue or durable outbox depth.');
-        $this->queueOldestAge = $meter->createUpDownCounter('rag.queue.oldest_message_age', 's', 'Age of the oldest pending queue or outbox item.');
-        $this->stuckOperations = $meter->createUpDownCounter('rag.stuck_operation.count', '{operation}', 'Current count of bounded stale operations.');
+        $this->dependencyAvailable = $this->meter->createUpDownCounter('rag.dependency.available', '1', 'Whether a dependency probe succeeded.');
+        $this->dependencyDuration = $this->meter->createHistogram('rag.dependency.duration', 's', 'Dependency probe duration.');
+        $this->queueDepth = $this->meter->createUpDownCounter('rag.queue.depth', '{message}', 'Current queue or durable outbox depth.');
+        $this->queueOldestAge = $this->meter->createUpDownCounter('rag.queue.oldest_message_age', 's', 'Age of the oldest pending queue or outbox item.');
+        $this->stuckOperations = $this->meter->createUpDownCounter('rag.stuck_operation.count', '{operation}', 'Current count of bounded stale operations.');
     }
 
     public function operation(string $stage, string $outcome, float $durationSeconds, ?string $failureCategory = null): void

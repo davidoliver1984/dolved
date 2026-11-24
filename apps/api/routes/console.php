@@ -11,6 +11,7 @@ use App\Actions\Documents\ScanDocumentGovernanceRemindersAndAuthorityTransitions
 use App\Actions\Documents\SealDueDocumentGovernanceEmailDigests;
 use App\Actions\Imports\ReconcileExpiredImportPreflights;
 use App\Actions\Telemetry\RecordOperationalSnapshot;
+use App\Telemetry\TelemetryLifecycle;
 use App\Actions\Workspaces\ExpireWorkspaceInvitations;
 use App\Jobs\ExecuteBulkOperation;
 use App\Models\BulkOperation;
@@ -70,8 +71,9 @@ Artisan::command('workspace-invitations:expire', function (ExpireWorkspaceInvita
 
 Schedule::command('workspace-invitations:expire')->everyMinute()->withoutOverlapping();
 
-Artisan::command('observability:record-operational-snapshot', function (RecordOperationalSnapshot $record): void {
+Artisan::command('observability:record-operational-snapshot', function (RecordOperationalSnapshot $record, TelemetryLifecycle $telemetry): void {
     $record->handle();
+    $telemetry->flush();
     $this->info('Recorded the bounded operational snapshot.');
 })->purpose('Record bounded operational queue, dependency and stuck-operation gauges');
 
