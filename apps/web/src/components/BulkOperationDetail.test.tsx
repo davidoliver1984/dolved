@@ -29,7 +29,7 @@ describe("BulkOperationDetail", () => {
     expect(screen.getByText("Medication procedure")).toBeDefined();
     expect(screen.getByText("Safeguarding policy")).toBeDefined();
     expect(screen.getByText("No other activity or issues")).toBeDefined();
-    expect(screen.getByText("Succeeded")).toBeDefined();
+    expect(screen.getAllByText("Succeeded")).toHaveLength(2);
     expect(screen.getByRole("link", { name: "Back to library" }).getAttribute("href")).toBe("/app/workspaces/workspace-1/documents");
     expect(screen.queryByRole("button", { name: "Cancel remaining work" })).toBeNull();
   });
