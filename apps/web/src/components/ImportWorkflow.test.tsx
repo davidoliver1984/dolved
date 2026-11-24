@@ -59,7 +59,7 @@ describe("ImportWorkflow", () => {
       expect(screen.getByText(stage)).toBeTruthy();
     }
     expect(screen.queryByText("Promote")).toBeNull();
-    expect(screen.getByText(/Nothing reaches the Library until/)).toBeTruthy();
+    expect(screen.getByText(/before indexing begins/)).toBeTruthy();
   });
 
   it("validates a source locally and makes the staging action explicit", async () => {

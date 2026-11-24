@@ -12,18 +12,22 @@
   --palette-slate-50: #f3f6f8;
 
   /* Layer 2: semantic light-theme tokens. */
-  --background: var(--palette-slate-50);
-  --sidebar: #ffffff;
+  --background: #edf2f5;
+  --sidebar: #f8fafb;
   --surface: #ffffff;
-  --surface-raised: #e7edf1;
-  --surface-hover: #dce5eb;
+  --surface-muted: #f6f8fa;
+  --surface-raised: #e8eef2;
+  --surface-hover: #dfe7ec;
+  --panel-shadow: 0 1px 2px rgb(31 42 53 / 0.05), 0 12px 30px rgb(31 42 53 / 0.06);
   --overlay: rgb(0 0 0 / 0.7);
-  --border: #b8c5ce;
+  --border: #c3cfd7;
   --foreground: var(--palette-slate-900);
   --foreground-muted: var(--palette-slate-700);
   --foreground-subtle: #5f7280;
   --foreground-faint: #6c7f8d;
   --brand: #006c4d;
+  --brand-soft: #e2f3ed;
+  --brand-strong: #005c42;
   --brand-foreground: #ffffff;
   --ring: #006c4d;
   --status-success: #0b6b4f;
@@ -43,18 +47,22 @@
 
 .dark {
   color-scheme: dark;
-  --background: #000000;
-  --sidebar: #050607;
-  --surface: #101316;
-  --surface-raised: #15191d;
-  --surface-hover: #1c2227;
+  --background: #07090b;
+  --sidebar: #090c0e;
+  --surface: #111519;
+  --surface-muted: #151a1f;
+  --surface-raised: #1b2127;
+  --surface-hover: #222a31;
+  --panel-shadow: 0 1px 0 rgb(255 255 255 / 0.025), 0 16px 36px rgb(0 0 0 / 0.22);
   --overlay: rgb(0 0 0 / 0.7);
-  --border: #242b31;
+  --border: #2a333a;
   --foreground: var(--palette-slate-50);
   --foreground-muted: var(--palette-slate-300);
   --foreground-subtle: #9eacb7;
   --foreground-faint: var(--palette-slate-500);
   --brand: #007a57;
+  --brand-soft: #102a23;
+  --brand-strong: #62dab5;
   --brand-foreground: #ffffff;
   --ring: #2bbf92;
   --status-success: #167a5c;
@@ -100,6 +108,7 @@
   --color-sidebar-border: var(--border);
   --color-sidebar-ring: var(--ring);
   --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
   --color-surface-raised: var(--surface-raised);
   --color-surface-hover: var(--surface-hover);
   --color-overlay: var(--overlay);
@@ -107,7 +116,11 @@
   --color-foreground-subtle: var(--foreground-subtle);
   --color-foreground-faint: var(--foreground-faint);
   --color-brand: var(--brand);
+  --color-brand-soft: var(--brand-soft);
+  --color-brand-strong: var(--brand-strong);
   --color-brand-foreground: var(--brand-foreground);
+  --color-success: var(--status-success);
+  --color-warning: var(--status-warning);
   --color-status-success: var(--status-success);
   --color-status-success-foreground: var(--status-success-foreground);
   --color-status-warning: var(--status-warning);
@@ -122,6 +135,7 @@
   --color-status-unavailable-foreground: var(--status-unavailable-foreground);
   --font-sans: var(--font-source-sans-3), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --font-display: var(--font-wordmark), ui-sans-serif, sans-serif;
+  --shadow-panel: var(--panel-shadow);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
