@@ -65,10 +65,10 @@ describe("DocumentLibraryTable", () => {
     render(<DocumentLibraryTable canManage currentSavedViewDefinition={{ search: "policy" }} initialSavedViews={[]} metadata={{ categories: [], tags: [], owners: [], locations: [] }} page={page} query={{ search: "policy" }} workspacePublicId="workspace-1" />);
 
     expect(screen.getByRole("link", { name: "Import documents" }).getAttribute("href")).toBe("/app/workspaces/workspace-1/documents/imports");
+    expect(screen.getByRole("button", { name: "Select all" })).toBeDefined();
     fireEvent.click(screen.getByRole("button", { name: "Save view" }));
     expect(screen.getByRole("dialog")).toBeDefined();
     expect(screen.getByRole("button", { name: "Save current view" })).toBeDefined();
-    expect(screen.getByRole("button", { name: "Select all" })).toBeDefined();
   });
 
   it("distinguishes current-page selection from a server-frozen all-filtered preflight", async () => {
