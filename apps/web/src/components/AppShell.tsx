@@ -199,8 +199,8 @@ export function AppShell({ canOperatePlatform, children, user, workspaces }: App
     <div className={cn("min-h-0 flex-1 overflow-x-hidden overflow-y-auto border-t border-sidebar-border pt-4", collapsed && "lg:hidden")}>
       <p className="px-3 text-xs font-bold uppercase tracking-[0.14em] text-foreground-faint">Platform administration</p>
       <nav aria-label="Platform administration" className="mt-2 grid gap-1">
-        <Link aria-current={pathname === "/app/platform/tenants" || pathname.startsWith("/app/platform/tenants/") ? "page" : undefined} className={activeClass(pathname === "/app/platform/tenants" || pathname.startsWith("/app/platform/tenants/"))} href="/app/platform/tenants" onClick={closeMobileNavigation}><Building2 aria-hidden="true" className="size-4" /><span>Tenants</span></Link>
         <Link aria-current={pathname === "/app/platform/operations" ? "page" : undefined} className={activeClass(pathname === "/app/platform/operations")} href="/app/platform/operations" onClick={closeMobileNavigation}><Gauge aria-hidden="true" className="size-4" /><span>Overview</span></Link>
+        <Link aria-current={pathname === "/app/platform/tenants" || pathname.startsWith("/app/platform/tenants/") ? "page" : undefined} className={activeClass(pathname === "/app/platform/tenants" || pathname.startsWith("/app/platform/tenants/"))} href="/app/platform/tenants" onClick={closeMobileNavigation}><Building2 aria-hidden="true" className="size-4" /><span>Tenants</span></Link>
         <Link aria-current={pathname.endsWith("/alerts") ? "page" : undefined} className={activeClass(pathname.endsWith("/alerts"))} href="/app/platform/operations/alerts" onClick={closeMobileNavigation}><BellRing aria-hidden="true" className="size-4" /><span>Active alerts</span></Link>
         <Link aria-current={pathname.endsWith("/telemetry") ? "page" : undefined} className={activeClass(pathname.endsWith("/telemetry"))} href="/app/platform/operations/telemetry" onClick={closeMobileNavigation}><LineChart aria-hidden="true" className="size-4" /><span>Global telemetry</span></Link>
         <Link aria-current={pathname.endsWith("/policy") ? "page" : undefined} className={activeClass(pathname.endsWith("/policy"))} href="/app/platform/operations/policy" onClick={closeMobileNavigation}><SlidersHorizontal aria-hidden="true" className="size-4" /><span>Operational policy</span></Link>
@@ -261,7 +261,7 @@ export function AppShell({ canOperatePlatform, children, user, workspaces }: App
           </select>
         </label>
       ) : null}
-      <nav aria-label="Primary" className="grid gap-1">{navigation}{canOperatePlatform ? <Link aria-current={isPlatformAdministration ? "page" : undefined} className={cn(activeClass(isPlatformAdministration), "mt-2 border border-sidebar-border")} href="/app/platform/tenants" onClick={closeMobileNavigation}><Activity aria-hidden="true" className="size-5 shrink-0" />{sidebarLabel("Platform administration")}</Link> : null}</nav>
+      <nav aria-label="Primary" className="grid gap-1">{navigation}{canOperatePlatform ? <Link aria-current={isPlatformAdministration ? "page" : undefined} className={cn(activeClass(isPlatformAdministration), "mt-2 border border-sidebar-border")} href="/app/platform/operations" onClick={closeMobileNavigation}><Activity aria-hidden="true" className="size-5 shrink-0" />{sidebarLabel("Platform administration")}</Link> : null}</nav>
       {contextual}
       <div className="border-t border-sidebar-border pt-3">
         <div className={cn("flex items-center gap-2", collapsed && "lg:flex-col lg:justify-center")} data-sidebar-utilities>
