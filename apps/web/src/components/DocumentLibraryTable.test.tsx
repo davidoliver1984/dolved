@@ -110,6 +110,6 @@ describe("DocumentLibraryTable", () => {
 
     expect(screen.queryByRole("dialog")).toBeNull();
     expect(screen.getByText("1 selected location")).toBeDefined();
-    expect(screen.getByRole("button", { name: "Review eligibility" })).not.toBeDisabled();
+    expect((screen.getByRole("button", { name: "Review eligibility" }) as HTMLButtonElement).disabled).toBe(false);
   });
 });
