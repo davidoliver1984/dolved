@@ -127,6 +127,7 @@ describe("ImportWorkflow", () => {
     fireEvent.click(screen.getByRole("button", { name: /1 document/ }));
     fireEvent.click(screen.getByRole("button", { name: "Review and adopt" }));
     await waitFor(() => expect(screen.getByRole("heading", { name: "Review and adopt Controlled drugs.pdf" })).toBeTruthy());
+    expect(screen.getByRole("dialog")).toBeTruthy();
     fireEvent.click(screen.getByRole("button", { name: "Save and adopt" }));
 
     await waitFor(() => expect(adoptImport).toHaveBeenCalledWith(
@@ -135,6 +136,7 @@ describe("ImportWorkflow", () => {
       "item-conflict",
       expect.objectContaining({ family: { mode: "new", title: "Controlled drugs" } }),
     ));
+    await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
   });
 
   it("requires an explicit applicability choice and supports multiple registered locations", async () => {
@@ -157,6 +159,7 @@ describe("ImportWorkflow", () => {
     fireEvent.click(screen.getByRole("button", { name: /1 document/ }));
     fireEvent.click(screen.getByRole("button", { name: "Review match and metadata" }));
     await waitFor(() => expect(screen.getByRole("group", { name: "Where does this document apply?" })).toBeTruthy());
+    expect(screen.getByRole("dialog")).toBeTruthy();
 
     fireEvent.click(screen.getByLabelText(/Selected registered locations/));
     const save = screen.getByRole("button", { name: "Save review" });
@@ -164,6 +167,31 @@ describe("ImportWorkflow", () => {
     fireEvent.click(screen.getByLabelText("Cedar House"));
     fireEvent.click(screen.getByLabelText("Oakfield"));
     expect(save.hasAttribute("disabled")).toBe(false);
+  });
+
+  it("closes the review modal from its top-right close control", async () => {
+    const reviewable: ImportBatch = {
+      public_id: "batch-close-review",
+      status: "open",
+      retention_expires_at: "2026-11-28T12:00:00Z",
+      created_at: "2026-11-21T12:00:00Z",
+      items: [{
+        public_id: "item-close-review", filename: "Fire procedure.pdf", declared_media_type: "application/pdf", size_bytes: 100,
+        preflight_status: "verified", preflight_rejection_reason: null, match_status: "pending", decision_ready: false,
+        promotion: null, document: null,
+      }],
+    };
+    listImportBatches.mockResolvedValueOnce([reviewable]);
+    getImportBatch.mockResolvedValue(reviewable);
+    render(<ImportWorkflow workspacePublicId="workspace-1" />);
+
+    await waitFor(() => expect(screen.getByRole("button", { name: /1 document/ })).toBeTruthy());
+    fireEvent.click(screen.getByRole("button", { name: /1 document/ }));
+    fireEvent.click(screen.getByRole("button", { name: "Review match and metadata" }));
+    await waitFor(() => expect(screen.getByRole("dialog")).toBeTruthy());
+    fireEvent.click(screen.getByRole("button", { name: "Close dialog" }));
+
+    expect(screen.queryByRole("dialog")).toBeNull();
   });
 
   it("stages a corrected replacement instead of promoting a duplicate", async () => {
