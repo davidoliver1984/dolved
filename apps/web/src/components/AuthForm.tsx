@@ -8,6 +8,7 @@ import { Wordmark } from "@/components/Wordmark";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Notice } from "@/components/ui/notice";
+import { PasswordInput, PasswordStrength } from "@/components/ui/password-input";
 import { apiFetch, ApiError, deploymentBranding, firstError, type EffectiveBranding, User } from "@/lib/api";
 
 type Mode = "login" | "register" | "forgot" | "reset";
@@ -56,6 +57,7 @@ export function AuthForm({ context = "workspace", mode, registrationEnabled = tr
   const [pending, setPending] = useState(false);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
+  const [password, setPassword] = useState("");
   const copy = content[mode];
   const [branding, setBranding] = useState<EffectiveBranding | null>(null);
   useEffect(() => {
@@ -98,9 +100,8 @@ export function AuthForm({ context = "workspace", mode, registrationEnabled = tr
       );
 
       if (mode === "forgot") {
-        setMessage(
-          "If an account exists for that email, a reset link has been sent.",
-        );
+        const confirmation = "If an account exists for that email, a reset link has been sent.";
+        setMessage(confirmation);
       } else if (mode === "register") {
         router.push("/verify-email");
       } else if (mode === "reset") {
@@ -118,7 +119,8 @@ export function AuthForm({ context = "workspace", mode, registrationEnabled = tr
       ) {
         router.push(returnTo ?? "/app");
       } else {
-        setError(firstError(caught));
+        const failure = firstError(caught);
+        setError(failure);
       }
     } finally {
       setPending(false);
@@ -169,31 +171,30 @@ export function AuthForm({ context = "workspace", mode, registrationEnabled = tr
           {(mode === "login" || mode === "register" || mode === "reset") && (
             <label className="grid gap-2 text-sm font-semibold" htmlFor="auth-password">
               Password
-              <Input
+              <PasswordInput
                 id="auth-password"
                 name="password"
-                type="password"
                 autoComplete={
                   mode === "login" ? "current-password" : "new-password"
                 }
                 minLength={mode === "login" ? undefined : 12}
+                onChange={(event) => setPassword(event.target.value)}
                 required
               />
             </label>
           )}
 
+          {(mode === "register" || mode === "reset") && <PasswordStrength password={password} />}
+
+          {mode === "login" && <label className="flex items-center gap-3 text-sm font-semibold" htmlFor="auth-remember"><input className="size-4 accent-[var(--brand)]" id="auth-remember" name="remember" type="checkbox" value="1" />Remember me on this device</label>}
+
           {(mode === "register" || mode === "reset") && (
             <>
-              <p className="text-sm text-foreground-muted">
-                Use 12+ characters with upper and lowercase letters, a number,
-                and a symbol.
-              </p>
               <label className="grid gap-2 text-sm font-semibold" htmlFor="auth-password-confirmation">
                 Confirm password
-                <Input
+                <PasswordInput
                   id="auth-password-confirmation"
                   name="password_confirmation"
-                  type="password"
                   autoComplete="new-password"
                   minLength={12}
                   required

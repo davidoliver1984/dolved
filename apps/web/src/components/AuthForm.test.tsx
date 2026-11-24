@@ -80,4 +80,22 @@ describe("AuthForm", () => {
     expect(screen.queryByRole("link", { name: "Create an account" })).toBeNull();
     expect(screen.getByRole("link", { name: "Forgot password?" })).toBeTruthy();
   });
+
+  it("offers password reveal and persistent-session controls on sign in", () => {
+    render(<AuthForm mode="login" />);
+
+    const password = screen.getByLabelText("Password") as HTMLInputElement;
+    expect(password.type).toBe("password");
+    fireEvent.click(screen.getByRole("button", { name: "Show password" }));
+    expect(password.type).toBe("text");
+    expect(screen.getByRole("checkbox", { name: "Remember me on this device" })).toBeTruthy();
+  });
+
+  it("shows live password strength when choosing a new password", () => {
+    render(<AuthForm mode="reset" />);
+
+    fireEvent.change(screen.getByLabelText("Password"), { target: { value: "Correct-Horse-7!Long" } });
+    expect(screen.getByText(/Strong/)).toBeTruthy();
+    expect(screen.getAllByRole("button", { name: "Show password" })).toHaveLength(2);
+  });
 });

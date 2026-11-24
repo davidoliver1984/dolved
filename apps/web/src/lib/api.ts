@@ -767,6 +767,20 @@ function isUnsafe(method: string): boolean {
   return !["GET", "HEAD", "OPTIONS"].includes(method.toUpperCase());
 }
 
+function feedback(message: string, tone: "success" | "destructive"): void {
+  if (typeof window !== "undefined") window.dispatchEvent(new CustomEvent("dolved:feedback", { detail: { message, tone } }));
+}
+
+function mutationFeedback(path: string): string | null {
+  if (/\/governance-notifications\/[^/]+\/(read|dismiss)$/.test(path)) return null;
+  if (path === "/api/auth/login") return "Signed in successfully.";
+  if (path === "/api/auth/register") return "Account created. Check your email to verify it.";
+  if (path === "/api/auth/forgot-password") return "If an account exists for that email, a reset link has been sent.";
+  if (path === "/api/auth/reset-password") return "Password changed successfully.";
+  if (path === "/api/workspace-invitations/accept") return "Invitation accepted successfully.";
+  return "Changes saved successfully.";
+}
+
 export async function apiFetch<T>(
   path: string,
   init: RequestInit = {},
@@ -790,10 +804,9 @@ export async function apiFetch<T>(
         },
       );
     } catch {
-      throw new ApiError(
-        "We could not reach the service. Please try again.",
-        0,
-      );
+      const message = "We could not reach the service. Please try again.";
+      feedback(message, "destructive");
+      throw new ApiError(message, 0);
     }
 
     const token = cookieValue("XSRF-TOKEN");
@@ -815,7 +828,9 @@ export async function apiFetch<T>(
       },
     );
   } catch {
-    throw new ApiError("We could not reach the service. Please try again.", 0);
+    const message = "We could not reach the service. Please try again.";
+    feedback(message, "destructive");
+    throw new ApiError(message, 0);
   }
 
   if (response.redirected) {
@@ -839,12 +854,18 @@ export async function apiFetch<T>(
   }
 
   if (!response.ok) {
+    const message = payload?.message ?? "The request could not be completed.";
+    const validationMessage = Object.values((payload?.errors ?? {}) as ValidationErrors).flat()[0];
+    if (isUnsafe(method) && response.status !== 401) feedback(validationMessage ?? message, "destructive");
     throw new ApiError(
-      payload?.message ?? "The request could not be completed.",
+      message,
       response.status,
       payload?.errors,
     );
   }
+
+  const success = isUnsafe(method) ? mutationFeedback(path) : null;
+  if (success) feedback(success, "success");
 
   return payload as T;
 }
