@@ -1,5 +1,5 @@
-import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { DocumentLibraryTable } from "@/components/DocumentLibraryTable";
 import { createBulkOperation, type DocumentFamilyPage } from "@/lib/api";
 
@@ -44,6 +44,7 @@ const page: DocumentFamilyPage = {
 
 describe("DocumentLibraryTable", () => {
   beforeEach(() => vi.clearAllMocks());
+  afterEach(cleanup);
   it("renders authoritative family rows for desktop and mobile with accessible filters", () => {
     render(<DocumentLibraryTable page={page} query={{}} workspacePublicId="workspace-1" />);
     expect(screen.getByRole("heading", { name: "Knowledge library" })).toBeDefined();
