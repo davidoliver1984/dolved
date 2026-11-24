@@ -155,6 +155,23 @@ export function AppShell({ canOperatePlatform, children, user, workspaces }: App
     icon.href = brand.favicon?.url ?? "/favicon.ico";
   }, [brand.display_name, brand.favicon?.url, isPlatformAdministration]);
 
+  useEffect(() => {
+    const root = document.documentElement;
+    const values = {
+      "--brand": brand.primary_colour,
+      "--brand-foreground": brand.primary_foreground,
+      "--ring": brand.accent_colour,
+    };
+    const previous = Object.fromEntries(Object.keys(values).map((property) => [property, root.style.getPropertyValue(property)]));
+    for (const [property, value] of Object.entries(values)) root.style.setProperty(property, value);
+    return () => {
+      for (const [property, value] of Object.entries(previous)) {
+        if (value) root.style.setProperty(property, value);
+        else root.style.removeProperty(property);
+      }
+    };
+  }, [brand.accent_colour, brand.primary_colour, brand.primary_foreground]);
+
   const brandMark = (mobile = false) => brand.primary_logo
     ? <Link aria-label={brand.logo_label} href="/app"><img alt={brand.logo_label} className={cn("max-w-full object-contain object-left", mobile ? "h-8 max-w-36" : "h-10 max-w-44")} src={brand.primary_logo.url} /></Link>
     : <Wordmark className={mobile ? undefined : "text-[1.7rem]"} href="/app" />;

@@ -91,6 +91,20 @@ final class SavedViewApiTest extends TestCase
             ->assertJsonValidationErrors('name');
     }
 
+    public function test_default_unfiltered_library_view_can_be_saved(): void
+    {
+        [$user, $workspace] = $this->ownerWorkspace();
+
+        $this->actingAs($user)
+            ->postJson($this->collectionUrl($workspace), [
+                'name' => 'Default library',
+                'definition' => [],
+            ])
+            ->assertCreated()
+            ->assertJsonPath('data.name', 'Default library')
+            ->assertJsonPath('data.definition', []);
+    }
+
     public function test_cross_user_and_cross_workspace_saved_views_are_concealed(): void
     {
         [$owner, $workspace] = $this->ownerWorkspace();

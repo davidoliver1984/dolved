@@ -60,6 +60,48 @@ describe("AppShell", () => {
     await waitFor(() => expect(screen.getByRole("link", { name: "Medication safety" }).getAttribute("href")).toBe("/app/workspaces/workspace-1/conversations/conversation-1"));
   });
 
+  it("applies tenant colour variables to the document root for portalled interfaces", () => {
+    render(
+      <AppShell
+        canOperatePlatform={false}
+        user={user}
+        workspaces={[{
+          public_id: "workspace-1",
+          name: "Cherish",
+          slug: "cherish",
+          role: "owner",
+          branding: {
+            mode: "custom",
+            revision: 1,
+            configuration: {
+              display_name: "Cherish",
+              logo_label: "Cherish",
+              primary_logo: null,
+              dark_logo: null,
+              favicon: null,
+              primary_colour: "#932b99",
+              accent_colour: "#d67adb",
+              primary_foreground: "#ffffff",
+              accent_foreground: "#ffffff",
+              sign_in_heading: null,
+              sign_in_introduction: null,
+              chat_welcome_heading: null,
+              chat_welcome_introduction: null,
+              sender_display_name: null,
+              footer_text: null,
+              support_contact: null,
+            },
+          },
+        }]}
+      >
+        <p>Workspace content</p>
+      </AppShell>,
+    );
+
+    expect(document.documentElement.style.getPropertyValue("--brand")).toBe("#932b99");
+    expect(document.documentElement.style.getPropertyValue("--ring")).toBe("#d67adb");
+  });
+
   it("does not render authority-gated destinations for an ordinary member", () => {
     render(
       <AppShell
