@@ -831,8 +831,8 @@ function mutationFeedback(path: string, method: string): string | null {
   if (matches(/\/imports\/[^/]+\/items\/[^/]+\/uploaded$/)) return "Document uploaded for import review.";
   if (matches(/\/imports\/[^/]+\/items\/[^/]+\/replacements$/)) return "Replacement document prepared.";
   if (matches(/\/imports\/[^/]+\/items\/[^/]+\/decision$/)) return "Import review decision saved.";
-  if (matches(/\/imports\/[^/]+\/items\/[^/]+\/promotions$/)) return "Document promotion started.";
-  if (matches(/\/imports\/[^/]+\/items\/[^/]+\/adoptions$/)) return "Revised import decision adopted.";
+  if (matches(/\/imports\/[^/]+\/items\/[^/]+\/promotions$/)) return "Document indexing started.";
+  if (matches(/\/imports\/[^/]+\/items\/[^/]+\/adoptions$/)) return "Import conflict resolved and indexing restarted.";
 
   // Background and conversational writes do not need a generic success toast.
   return null;

@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, ChevronRight, CircleAlert, FileCheck2, FileSearch, FileUp, FolderInput, LoaderCircle, Rocket, ShieldCheck, UploadCloud, X } from "lucide-react";
+import { Check, ChevronRight, CircleAlert, FileCheck2, FileSearch, FileUp, FolderInput, LoaderCircle, ShieldCheck, UploadCloud, X } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { ApiError } from "@/lib/api";
 import {
@@ -33,16 +33,15 @@ import { cn } from "@/lib/utils";
 
 const stages = [
   ["Select", FileUp], ["Stage", UploadCloud], ["Verify", ShieldCheck], ["Match", FileSearch],
-  ["Review", FileCheck2], ["Promote", Rocket], ["Index", FolderInput],
+  ["Review", FileCheck2], ["Index", FolderInput],
 ] as const;
 
 type SelectedFile = { file: File; progress: number; error: string | null };
 type ReviewState = { item: ImportItem; matches: ImportMatches; purpose: "decision" | "adoption" };
 
 function itemStage(item: ImportItem): number {
-  if (item.document?.status === "indexed") return 7;
-  if (item.document) return item.document.status === "processing" ? 6 : 6;
-  if (item.promotion) return 6;
+  if (item.document?.status === "indexed") return 6;
+  if (item.document || item.promotion) return 6;
   if (item.decision_ready) return 5;
   if (item.preflight_status === "verified") return 4;
   return 3;
@@ -51,12 +50,10 @@ function itemStage(item: ImportItem): number {
 function itemStatus(item: ImportItem): { label: string; tone: "success" | "pending" | "destructive" | "unavailable" | "info" } {
   if (item.replaced_by_import_item_public_id) return { label: "Replaced", tone: "unavailable" };
   if (item.preflight_status === "rejected") return { label: "Needs attention", tone: "destructive" };
-  if (item.promotion?.status === "conflict" || item.promotion?.status === "failed") return { label: "Promotion stopped", tone: "destructive" };
-  if (item.document?.status === "indexed") return { label: "Indexed", tone: "success" };
-  if (item.document?.status === "processing") return { label: "Processing", tone: "pending" };
-  if (item.document) return { label: "Promoted · queued", tone: "info" };
-  if (item.promotion) return { label: "Promoting", tone: "pending" };
-  if (item.decision_ready) return { label: "Ready to promote", tone: "info" };
+  if (item.promotion?.status === "conflict" || item.promotion?.status === "failed") return { label: "Indexing stopped", tone: "destructive" };
+  if (item.document?.status === "indexed") return { label: "Current", tone: "success" };
+  if (item.document || item.promotion) return { label: "Indexing", tone: "pending" };
+  if (item.decision_ready) return { label: "Ready to index", tone: "info" };
   if (item.preflight_status === "verified") return { label: "Ready for review", tone: "info" };
   return { label: "Verifying", tone: "pending" };
 }
@@ -143,7 +140,10 @@ export function ImportWorkflow({ workspacePublicId, initialBatchPublicId }: Read
     setBusy(true); setError(null);
     try {
       if (review.purpose === "adoption") await adoptImport(workspacePublicId, batch.public_id, review.item.public_id, definition);
-      else await decideImport(workspacePublicId, batch.public_id, review.item.public_id, definition);
+      else {
+        await decideImport(workspacePublicId, batch.public_id, review.item.public_id, definition);
+        await promoteImport(workspacePublicId, batch.public_id, review.item.public_id);
+      }
       setReview(null);
       setBatch(await getImportBatch(workspacePublicId, batch.public_id));
     } catch (cause) { setError(cause instanceof Error ? cause.message : "The review could not be saved."); }
@@ -160,16 +160,6 @@ export function ImportWorkflow({ workspacePublicId, initialBatchPublicId }: Read
       setReview(null);
       setBatch(await getImportBatch(workspacePublicId, batch.public_id));
     } catch (cause) { setError(cause instanceof Error ? cause.message : "The corrected source could not be staged."); }
-    finally { setBusy(false); }
-  };
-
-  const promote = async (item: ImportItem) => {
-    if (!batch) return;
-    setBusy(true); setError(null);
-    try {
-      await promoteImport(workspacePublicId, batch.public_id, item.public_id);
-      setBatch(await getImportBatch(workspacePublicId, batch.public_id));
-    } catch (cause) { setError(cause instanceof Error ? cause.message : "Promotion could not start."); }
     finally { setBusy(false); }
   };
 
@@ -190,12 +180,12 @@ export function ImportWorkflow({ workspacePublicId, initialBatchPublicId }: Read
         </div>
         {files.length ? <div className="grid gap-3"><div className="flex items-center justify-between"><strong>{files.length} file{files.length === 1 ? "" : "s"} selected</strong><Button onClick={() => setFiles([])} size="sm" variant="ghost"><X />Clear</Button></div>{files.map(({ file, progress, error: itemError }) => <div className="rounded-lg border border-border bg-surface p-4" key={`${file.name}-${file.size}`}><div className="flex justify-between gap-3"><span className="min-w-0 truncate font-medium">{file.name}</span><span className="text-sm text-foreground-muted">{(file.size / 1024).toFixed(1)} KB</span></div>{progress ? <progress className="mt-3 h-2 w-full accent-brand" max="100" value={progress}>{progress}%</progress> : null}{itemError ? <p className="mt-2 text-sm text-destructive">{itemError}</p> : null}</div>)}<Button disabled={busy} onClick={begin}>{busy ? <LoaderCircle className="animate-spin" /> : <ChevronRight />}Stage and verify {files.length === 1 ? "document" : `${files.length} documents`}</Button></div> : null}
       </CardContent>
-    </Card> : <ActiveBatch batch={batch} busy={busy} onAdopt={(item) => openReview(item, "adoption")} onNew={() => { setBatch(null); setFiles([]); setReview(null); }} onPromote={promote} onReview={openReview} />}
+    </Card> : <ActiveBatch batch={batch} busy={busy} onAdopt={(item) => openReview(item, "adoption")} onNew={() => { setBatch(null); setFiles([]); setReview(null); }} onReview={openReview} />}
 
     {review ? <Dialog onOpenChange={(open) => { if (!open) setReview(null); }} open>
       <DialogContent className="max-h-[90vh] max-w-5xl overflow-y-auto p-0">
         <DialogHeader className="sr-only">
-          <DialogTitle>{review.purpose === "adoption" ? "Review and adopt" : "Review match and metadata"}</DialogTitle>
+          <DialogTitle>{review.purpose === "adoption" ? "Review and resolve" : "Review match and metadata"}</DialogTitle>
           <DialogDescription>Review the document family match, metadata and applicability before saving.</DialogDescription>
         </DialogHeader>
         <ReviewPanel accepted={accepted} configuration={configuration} matches={review.matches} item={review.item} onCancel={() => setReview(null)} onReplace={replaceDuplicate} onSubmit={submitReview} purpose={review.purpose} />
@@ -206,8 +196,8 @@ export function ImportWorkflow({ workspacePublicId, initialBatchPublicId }: Read
   </div>;
 }
 
-function ActiveBatch({ batch, busy, onAdopt, onNew, onPromote, onReview }: Readonly<{ batch: ImportBatch; busy: boolean; onAdopt: (item: ImportItem) => void; onNew: () => void; onPromote: (item: ImportItem) => void; onReview: (item: ImportItem) => void }>) {
-  return <Card><CardHeader className="gap-3 sm:flex-row sm:items-start sm:justify-between"><div><CardTitle>Import in progress</CardTitle><CardDescription>Each document advances independently. You can leave this page and resume the batch later.</CardDescription></div><Button onClick={onNew} size="sm" variant="outline"><FileUp />New import</Button></CardHeader><CardContent><ul className="grid gap-3">{batch.items.map((item) => { const status = itemStatus(item); const active = !item.replaced_by_import_item_public_id; return <li className="rounded-xl border border-border bg-surface p-4" key={item.public_id}><div className="flex flex-wrap items-start justify-between gap-3"><div className="min-w-0"><strong className="block truncate">{item.filename}</strong><p className="mt-1 text-sm text-foreground-muted">Stage {itemStage(item)} of 7 · {status.label}</p></div><StatusBadge status={status.tone}>{status.label}</StatusBadge></div><div className="mt-4 h-2 overflow-hidden rounded-full bg-surface-raised"><span className="block h-full bg-brand transition-[width]" style={{ width: `${Math.round(itemStage(item) / 7 * 100)}%` }} /></div>{active && item.preflight_status === "rejected" ? <Notice className="mt-4" tone="destructive">This source could not be verified: {item.preflight_rejection_reason?.replaceAll("_", " ")}.</Notice> : null}{active && item.preflight_status === "verified" && !item.decision_ready ? <Button className="mt-4" disabled={busy} onClick={() => onReview(item)} size="sm"><FileSearch />Review match and metadata</Button> : null}{active && item.decision_ready && !item.promotion ? <Button className="mt-4" disabled={busy} onClick={() => onPromote(item)} size="sm"><Rocket />Promote to Library</Button> : null}{active && item.promotion?.reason ? <><Notice className="mt-4" tone="destructive">Promotion stopped: {item.promotion.reason.replaceAll("_", " ")}.</Notice>{item.promotion.status === "conflict" ? <Button className="mt-3" disabled={busy} onClick={() => onAdopt(item)} size="sm" variant="outline"><FileSearch />Review and adopt</Button> : null}</> : null}{item.document ? <p className="mt-4 text-sm text-foreground-muted">Promoted to the ordinary ingestion pipeline. Status: <strong className="text-foreground">{item.document.status}</strong>. Finer ingestion sub-stages are not claimed here.</p> : null}</li>; })}</ul></CardContent></Card>;
+function ActiveBatch({ batch, busy, onAdopt, onNew, onReview }: Readonly<{ batch: ImportBatch; busy: boolean; onAdopt: (item: ImportItem) => void; onNew: () => void; onReview: (item: ImportItem) => void }>) {
+  return <Card><CardHeader className="gap-3 sm:flex-row sm:items-start sm:justify-between"><div><CardTitle>Import in progress</CardTitle><CardDescription>Review each document once. After saving, indexing continues automatically and exceptions return here for attention.</CardDescription></div><Button onClick={onNew} size="sm" variant="outline"><FileUp />New import</Button></CardHeader><CardContent><ul className="grid gap-3">{batch.items.map((item) => { const status = itemStatus(item); const active = !item.replaced_by_import_item_public_id; return <li className="rounded-xl border border-border bg-surface p-4" key={item.public_id}><div className="flex flex-wrap items-start justify-between gap-3"><div className="min-w-0"><strong className="block truncate">{item.filename}</strong><p className="mt-1 text-sm text-foreground-muted">Stage {itemStage(item)} of 6 · {status.label}</p></div><StatusBadge status={status.tone}>{status.label}</StatusBadge></div><div className="mt-4 h-2 overflow-hidden rounded-full bg-surface-raised"><span className="block h-full bg-brand transition-[width]" style={{ width: `${Math.round(itemStage(item) / 6 * 100)}%` }} /></div>{active && item.preflight_status === "rejected" ? <Notice className="mt-4" tone="destructive">This source could not be verified: {item.preflight_rejection_reason?.replaceAll("_", " ")}.</Notice> : null}{active && item.preflight_status === "verified" && !item.decision_ready ? <Button className="mt-4" disabled={busy} onClick={() => onReview(item)} size="sm"><FileSearch />Review match and metadata</Button> : null}{active && item.promotion?.reason ? <><Notice className="mt-4" tone="destructive">Indexing stopped: {item.promotion.reason.replaceAll("_", " ")}.</Notice>{item.promotion.status === "conflict" ? <Button className="mt-3" disabled={busy} onClick={() => onAdopt(item)} size="sm" variant="outline"><FileSearch />Review and resolve</Button> : null}</> : null}{item.document ? <p className="mt-4 text-sm text-foreground-muted">{item.document.status === "indexed" ? "Indexed and current in the knowledge library." : "Indexing is continuing automatically. You can leave this page and return later."}</p> : null}</li>; })}</ul></CardContent></Card>;
 }
 
 function ReviewPanel({ accepted, configuration, item, matches, onCancel, onReplace, onSubmit, purpose }: Readonly<{ accepted: string; configuration: ImportConfiguration; item: ImportItem; matches: ImportMatches; onCancel: () => void; onReplace: (item: ImportItem, file: File) => void; onSubmit: (definition: ImportDefinition) => void; purpose: ReviewState["purpose"] }>) {
@@ -229,7 +219,7 @@ function ReviewPanel({ accepted, configuration, item, matches, onCancel, onRepla
     metadata: { category_public_id: categoryId || null, description: description || null, owner_user_public_id: ownerId, publisher_label: null, review_due_date: null, source_url: null, tag_public_ids: [] },
     applicability: { location_public_ids: applicabilityMode === "selected" ? locationIds : [] }, effective_from: effectiveFrom,
   };
-  return <Card className="border-0"><CardHeader className="pr-16"><CardTitle>{purpose === "adoption" ? "Review and adopt" : "Review"} {item.filename}</CardTitle><CardDescription>{purpose === "adoption" ? "Create a revised immutable decision under your own authority before starting a new promotion attempt." : "Matching is advisory. Confirm the family and essential metadata before creating an immutable decision snapshot."}</CardDescription></CardHeader><CardContent className="grid gap-5"><div className="grid gap-3 rounded-xl border border-border bg-surface p-4"><strong>Document family</strong>{matches.family_candidates.length ? <div className="grid gap-2">{matches.family_candidates.map((candidate) => <div className="flex items-start gap-3 rounded-lg border border-border p-3" key={candidate.family_id}><input aria-label={`Use existing family ${candidate.title}`} checked={mode === "successor" && familyId === candidate.family_id} name="family" onChange={() => { setMode("successor"); setFamilyId(candidate.family_id); }} type="radio" /><span><strong>{candidate.title}</strong><span className="block text-sm text-foreground-muted">Possible existing family · {Math.round(candidate.score_basis_points / 100)}% filename/title match</span></span></div>)}</div> : null}<div className="flex items-start gap-3 rounded-lg border border-border p-3"><input aria-label="Create a new document family" checked={mode === "new"} name="family" onChange={() => setMode("new")} type="radio" /><span><strong>Create a new family</strong><span className="block text-sm text-foreground-muted">Use when this is genuinely a new source, not a revision.</span></span></div></div>
+  return <Card className="border-0"><CardHeader className="pr-16"><CardTitle>{purpose === "adoption" ? "Review and resolve" : "Review"} {item.filename}</CardTitle><CardDescription>{purpose === "adoption" ? "Create a revised decision under your authority and restart indexing." : "Matching is advisory. Confirm the family and essential metadata before creating an immutable decision snapshot."}</CardDescription></CardHeader><CardContent className="grid gap-5"><div className="grid gap-3 rounded-xl border border-border bg-surface p-4"><strong>Document family</strong>{matches.family_candidates.length ? <div className="grid gap-2">{matches.family_candidates.map((candidate) => <div className="flex items-start gap-3 rounded-lg border border-border p-3" key={candidate.family_id}><input aria-label={`Use existing family ${candidate.title}`} checked={mode === "successor" && familyId === candidate.family_id} name="family" onChange={() => { setMode("successor"); setFamilyId(candidate.family_id); }} type="radio" /><span><strong>{candidate.title}</strong><span className="block text-sm text-foreground-muted">Possible existing family · {Math.round(candidate.score_basis_points / 100)}% filename/title match</span></span></div>)}</div> : null}<div className="flex items-start gap-3 rounded-lg border border-border p-3"><input aria-label="Create a new document family" checked={mode === "new"} name="family" onChange={() => setMode("new")} type="radio" /><span><strong>Create a new family</strong><span className="block text-sm text-foreground-muted">Use when this is genuinely a new source, not a revision.</span></span></div></div>
     {mode === "new" ? <FormField id="import-family-title" label="Family title"><Input onChange={(event) => setTitle(event.target.value)} value={title} /></FormField> : null}
     <FormField help="Optional" id="import-description" label="Description"><Textarea onChange={(event) => setDescription(event.target.value)} value={description} /></FormField>
     <div className="grid gap-4 sm:grid-cols-3"><FormField id="import-owner" label="Owner"><select className="min-h-11 rounded-md border border-input bg-background px-3" onChange={(event) => setOwnerId(event.target.value)} value={ownerId}>{configuration.review_options.owners.map((option) => <option key={option.public_id} value={option.public_id}>{option.name}</option>)}</select></FormField><FormField help="Optional" id="import-category" label="Category"><select className="min-h-11 rounded-md border border-input bg-background px-3" onChange={(event) => setCategoryId(event.target.value)} value={categoryId}><option value="">Uncategorised</option>{configuration.review_options.categories.map((option) => <option key={option.public_id} value={option.public_id}>{option.name}</option>)}</select></FormField><FormField id="import-effective-from" label="Effective from"><Input onChange={(event) => setEffectiveFrom(event.target.value)} type="date" value={effectiveFrom} /></FormField></div>
@@ -249,6 +239,6 @@ function ReviewPanel({ accepted, configuration, item, matches, onCancel, onRepla
       </div> : <Notice tone="warning">No registered locations are available. Add locations in workspace administration or choose organisation-wide.</Notice> : null}
     </fieldset>
     <details className="rounded-lg border border-border p-4"><summary className="cursor-pointer font-semibold">Advanced metadata</summary><p className="mt-3 text-sm text-foreground-muted">Optional publisher, source URL, review date and tags remain empty unless deliberately supplied. They are never inferred from the filename.</p></details>
-    <div className="flex flex-wrap gap-3"><Button disabled={!ownerId || (mode === "new" ? !title.trim() : !familyId) || (applicabilityMode === "selected" && locationIds.length === 0)} onClick={() => onSubmit(definition)}><Check />{purpose === "adoption" ? "Save and adopt" : "Save review"}</Button><Button onClick={onCancel} variant="outline">Cancel</Button></div>
+    <div className="flex flex-wrap gap-3"><Button disabled={!ownerId || (mode === "new" ? !title.trim() : !familyId) || (applicabilityMode === "selected" && locationIds.length === 0)} onClick={() => onSubmit(definition)}><Check />{purpose === "adoption" ? "Save and resolve" : "Save review"}</Button><Button onClick={onCancel} variant="outline">Cancel</Button></div>
   </CardContent></Card>;
 }

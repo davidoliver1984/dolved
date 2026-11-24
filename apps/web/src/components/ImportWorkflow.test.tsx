@@ -18,8 +18,9 @@ const configuration = {
   },
 };
 
-const { adoptImport, getImportBatch, importMatches, listImportBatches, replaceImportFile } = vi.hoisted(() => ({
+const { adoptImport, decideImport, getImportBatch, importMatches, listImportBatches, promoteImport, replaceImportFile } = vi.hoisted(() => ({
   adoptImport: vi.fn(async () => undefined),
+  decideImport: vi.fn(async () => undefined),
   getImportBatch: vi.fn<() => Promise<ImportBatch>>(),
   importMatches: vi.fn<() => Promise<ImportMatches>>(async () => ({
     profile_version: "import-match-v1",
@@ -29,6 +30,7 @@ const { adoptImport, getImportBatch, importMatches, listImportBatches, replaceIm
     family_candidates: [],
   })),
   listImportBatches: vi.fn<() => Promise<ImportBatch[]>>(async () => []),
+  promoteImport: vi.fn(async () => undefined),
   replaceImportFile: vi.fn(async () => undefined),
 }));
 vi.mock("@/lib/import-workflow", async () => {
@@ -36,10 +38,12 @@ vi.mock("@/lib/import-workflow", async () => {
   return {
     ...actual,
     adoptImport,
+    decideImport,
     getImportBatch,
     importMatches,
     importConfiguration: vi.fn(async () => configuration),
     listImportBatches,
+    promoteImport,
     replaceImportFile,
   };
 });
@@ -47,13 +51,14 @@ vi.mock("@/lib/import-workflow", async () => {
 afterEach(() => { cleanup(); vi.clearAllMocks(); });
 
 describe("ImportWorkflow", () => {
-  it("presents the complete honest seven-stage flow before upload", async () => {
+  it("presents the streamlined six-stage flow before upload", async () => {
     render(<ImportWorkflow workspacePublicId="workspace-1" />);
 
     await waitFor(() => expect(screen.getByText("Add documents")).toBeTruthy());
-    for (const stage of ["Select", "Stage", "Verify", "Match", "Review", "Promote", "Index"]) {
+    for (const stage of ["Select", "Stage", "Verify", "Match", "Review", "Index"]) {
       expect(screen.getByText(stage)).toBeTruthy();
     }
+    expect(screen.queryByText("Promote")).toBeNull();
     expect(screen.getByText(/Nothing reaches the Library until/)).toBeTruthy();
   });
 
@@ -100,10 +105,10 @@ describe("ImportWorkflow", () => {
     await waitFor(() => expect(screen.getByRole("button", { name: /3 documents/ })).toBeTruthy());
     fireEvent.click(screen.getByRole("button", { name: /3 documents/ }));
 
-    expect(screen.getAllByText("Promoted · queued").length).toBeGreaterThan(0);
-    expect(screen.getAllByText("Processing").length).toBeGreaterThan(0);
-    expect(screen.getAllByText("Indexed").length).toBeGreaterThan(0);
-    expect(screen.getAllByText(/Finer ingestion sub-stages are not claimed here/)).toHaveLength(3);
+    expect(screen.getAllByText("Indexing").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("Current").length).toBeGreaterThan(0);
+    expect(screen.getByText("Indexed and current in the knowledge library.")).toBeTruthy();
+    expect(screen.getAllByText(/Indexing is continuing automatically/)).toHaveLength(2);
   });
 
   it("offers an explicit revised-decision adoption action for a terminal conflict", async () => {
@@ -125,10 +130,10 @@ describe("ImportWorkflow", () => {
 
     await waitFor(() => expect(screen.getByRole("button", { name: /1 document/ })).toBeTruthy());
     fireEvent.click(screen.getByRole("button", { name: /1 document/ }));
-    fireEvent.click(screen.getByRole("button", { name: "Review and adopt" }));
-    await waitFor(() => expect(screen.getByRole("heading", { name: "Review and adopt Controlled drugs.pdf" })).toBeTruthy());
+    fireEvent.click(screen.getByRole("button", { name: "Review and resolve" }));
+    await waitFor(() => expect(screen.getByRole("heading", { name: "Review and resolve Controlled drugs.pdf" })).toBeTruthy());
     expect(screen.getByRole("dialog")).toBeTruthy();
-    fireEvent.click(screen.getByRole("button", { name: "Save and adopt" }));
+    fireEvent.click(screen.getByRole("button", { name: "Save and resolve" }));
 
     await waitFor(() => expect(adoptImport).toHaveBeenCalledWith(
       "workspace-1",
@@ -167,6 +172,36 @@ describe("ImportWorkflow", () => {
     fireEvent.click(screen.getByLabelText("Cedar House"));
     fireEvent.click(screen.getByLabelText("Oakfield"));
     expect(save.hasAttribute("disabled")).toBe(false);
+  });
+
+  it("starts indexing automatically after a review is saved", async () => {
+    const reviewable: ImportBatch = {
+      public_id: "batch-auto-index",
+      status: "open",
+      retention_expires_at: "2026-11-28T12:00:00Z",
+      created_at: "2026-11-21T12:00:00Z",
+      items: [{
+        public_id: "item-auto-index", filename: "Medication policy.pdf", declared_media_type: "application/pdf", size_bytes: 100,
+        preflight_status: "verified", preflight_rejection_reason: null, match_status: "pending", decision_ready: false,
+        promotion: null, document: null,
+      }],
+    };
+    listImportBatches.mockResolvedValueOnce([reviewable]);
+    getImportBatch.mockResolvedValue(reviewable);
+    render(<ImportWorkflow workspacePublicId="workspace-1" />);
+
+    await waitFor(() => expect(screen.getByRole("button", { name: /1 document/ })).toBeTruthy());
+    fireEvent.click(screen.getByRole("button", { name: /1 document/ }));
+    fireEvent.click(screen.getByRole("button", { name: "Review match and metadata" }));
+    await waitFor(() => expect(screen.getByRole("dialog")).toBeTruthy());
+    fireEvent.click(screen.getByRole("button", { name: "Save review" }));
+
+    await waitFor(() => expect(decideImport).toHaveBeenCalledWith(
+      "workspace-1", "batch-auto-index", "item-auto-index", expect.objectContaining({ family: { mode: "new", title: "Medication policy" } }),
+    ));
+    expect(promoteImport).toHaveBeenCalledWith("workspace-1", "batch-auto-index", "item-auto-index");
+    await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
+    expect(screen.queryByRole("button", { name: "Promote to Library" })).toBeNull();
   });
 
   it("closes the review modal from its top-right close control", async () => {
