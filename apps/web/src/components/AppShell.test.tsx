@@ -60,6 +60,22 @@ describe("AppShell", () => {
     await waitFor(() => expect(screen.getByRole("link", { name: "Medication safety" }).getAttribute("href")).toBe("/app/workspaces/workspace-1/conversations/conversation-1"));
   });
 
+  it("stacks sidebar utilities when the navigation is collapsed", async () => {
+    const userInteraction = userEvent.setup();
+    const view = render(
+      <AppShell
+        canOperatePlatform={false}
+        user={user}
+        workspaces={[{ public_id: "workspace-1", name: "Alderbridge", slug: "alderbridge", role: "owner" }]}
+      >
+        <p>Workspace content</p>
+      </AppShell>,
+    );
+
+    await userInteraction.click(screen.getByRole("button", { name: "Collapse sidebar" }));
+    expect(view.container.querySelector("[data-sidebar-utilities]")?.className).toContain("lg:flex-col");
+  });
+
   it("applies tenant colour variables to the document root for portalled interfaces", () => {
     render(
       <AppShell

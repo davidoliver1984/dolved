@@ -49,10 +49,10 @@ export function BulkOperationHistory({ page, workspacePublicId }: Readonly<{ pag
         </CardHeader>
         <CardContent className="grid gap-4">
           <div className="grid grid-cols-2 gap-3 text-sm sm:grid-cols-4">
-            <div><span className="text-foreground-muted">Frozen</span><strong className="block text-lg">{operation.counts.total}</strong></div>
-            <div><span className="text-foreground-muted">Succeeded</span><strong className="block text-lg">{operation.counts.succeeded}</strong></div>
-            <div><span className="text-foreground-muted">Excluded</span><strong className="block text-lg">{operation.counts.excluded}</strong></div>
-            <div><span className="text-foreground-muted">Exceptions</span><strong className="block text-lg">{operation.counts.failed_retryable + operation.counts.failed_permanent + operation.counts.skipped}</strong></div>
+            <div className="text-center"><span className="text-foreground-muted">Frozen</span><strong className="mx-auto mt-2 grid size-14 place-items-center rounded-xl bg-surface-raised text-2xl tabular-nums">{operation.counts.total}</strong></div>
+            <div className="text-center"><span className="text-foreground-muted">Succeeded</span><strong className="mx-auto mt-2 grid size-14 place-items-center rounded-xl bg-surface-raised text-2xl tabular-nums">{operation.counts.succeeded}</strong></div>
+            <div className="text-center"><span className="text-foreground-muted">Excluded</span><strong className="mx-auto mt-2 grid size-14 place-items-center rounded-xl bg-surface-raised text-2xl tabular-nums">{operation.counts.excluded}</strong></div>
+            <div className="text-center"><span className="text-foreground-muted">Exceptions</span><strong className="mx-auto mt-2 grid size-14 place-items-center rounded-xl bg-surface-raised text-2xl tabular-nums">{operation.counts.failed_retryable + operation.counts.failed_permanent + operation.counts.skipped}</strong></div>
           </div>
           <Button asChild className="w-fit" size="sm" variant="outline"><Link href={`${base}/${operation.public_id}`}>{operation.status === "awaiting_confirmation" ? <Clock3 /> : <CheckCircle2 />}View operation</Link></Button>
         </CardContent>

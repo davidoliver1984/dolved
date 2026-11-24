@@ -50,11 +50,11 @@ export function DocumentApplicabilityEditor({
           });
         }}>
           <label className="grid max-w-xs gap-1 text-sm font-semibold">Effective date<input className="min-h-11 rounded-lg border border-input bg-background px-3 font-normal" name="effective_from" required type="date" /></label>
-          <fieldset className="grid gap-3">
-            <legend className="text-sm font-semibold">Where does this document apply?</legend>
-            <label className="flex items-center gap-2 text-sm"><input checked={mode === "universal"} name="applicability_mode" onChange={() => setMode("universal")} type="radio" value="universal" />Organisation-wide</label>
-            <label className="flex items-center gap-2 text-sm"><input checked={mode === "selected"} name="applicability_mode" onChange={() => setMode("selected")} type="radio" value="selected" />Selected registered locations</label>
-            {mode === "selected" ? <div className="ml-6 grid gap-2 rounded-lg border border-border p-3">
+          <fieldset className="grid gap-2 rounded-xl border border-border bg-surface-muted/60 p-3">
+            <legend className="px-2 text-sm font-semibold">Where does this document apply?</legend>
+            <label className="flex min-h-11 items-center gap-3 rounded-lg px-3 py-2 text-sm hover:bg-surface-hover"><input checked={mode === "universal"} className="size-4" name="applicability_mode" onChange={() => setMode("universal")} type="radio" value="universal" />Organisation-wide</label>
+            <label className="flex min-h-11 items-center gap-3 rounded-lg px-3 py-2 text-sm hover:bg-surface-hover"><input checked={mode === "selected"} className="size-4" name="applicability_mode" onChange={() => setMode("selected")} type="radio" value="selected" />Selected registered locations</label>
+            {mode === "selected" ? <div className="mt-1 grid gap-2 rounded-lg border border-border bg-surface p-3">
               {locations.length ? locations.map((location) => <label className="flex items-center gap-2 text-sm" key={location.public_id}><input checked={selectedLocationIds.includes(location.public_id)} onChange={() => toggleLocation(location.public_id)} type="checkbox" />{location.name}</label>) : <p className="text-sm text-foreground-muted">No registered locations are available.</p>}
             </div> : null}
           </fieldset>
