@@ -771,14 +771,71 @@ function feedback(message: string, tone: "success" | "destructive"): void {
   if (typeof window !== "undefined") window.dispatchEvent(new CustomEvent("dolved:feedback", { detail: { message, tone } }));
 }
 
-function mutationFeedback(path: string): string | null {
-  if (/\/governance-notifications\/[^/]+\/(read|dismiss)$/.test(path)) return null;
-  if (path === "/api/auth/login") return "Signed in successfully.";
-  if (path === "/api/auth/register") return "Account created. Check your email to verify it.";
-  if (path === "/api/auth/forgot-password") return "If an account exists for that email, a reset link has been sent.";
-  if (path === "/api/auth/reset-password") return "Password changed successfully.";
-  if (path === "/api/workspace-invitations/accept") return "Invitation accepted successfully.";
-  return "Changes saved successfully.";
+function mutationFeedback(path: string, method: string): string | null {
+  const cleanPath = path.split("?")[0];
+  const verb = method.toUpperCase();
+  const matches = (pattern: RegExp) => pattern.test(cleanPath);
+
+  if (matches(/\/governance-notifications\/[^/]+\/(read|dismiss)$/)) return null;
+  if (cleanPath === "/api/auth/login") return "Signed in successfully.";
+  if (cleanPath === "/api/auth/logout") return "Signed out successfully.";
+  if (cleanPath === "/api/auth/register") return "Account created. Check your email to verify it.";
+  if (cleanPath === "/api/auth/forgot-password") return "If an account exists for that email, a reset link has been sent.";
+  if (cleanPath === "/api/auth/reset-password") return "Password changed successfully.";
+  if (cleanPath === "/api/auth/email/verification-notification") return "Verification email sent.";
+  if (cleanPath === "/api/workspace-invitations/accept") return "Invitation accepted successfully.";
+
+  if (matches(/\/documents\/[^/]+\/governance\/approve$/)) return "Document approved.";
+  if (matches(/\/documents\/[^/]+\/governance\/withdraw$/)) return "Document withdrawn.";
+  if (matches(/\/documents\/[^/]+\/governance\/schedule$/)) return "Document effective date updated.";
+  if (matches(/\/documents\/[^/]+\/governance\/applicability-successors$/)) return "Document applicability updated and successor version created.";
+  if (matches(/\/documents\/[^/]+\/governance\/timestamps$/)) return "Historical document timestamps corrected.";
+  if (matches(/\/document-families\/[^/]+\/metadata$/)) return "Document family details updated.";
+  if (matches(/\/document-families\/[^/]+\/tags$/)) return "Document family tags updated.";
+  if (matches(/\/documents\/[^/]+\/retries$/)) return "Document retry queued.";
+  if (verb === "DELETE" && matches(/\/documents\/[^/]+$/)) return "Document deletion queued.";
+
+  if (verb === "POST" && matches(/\/saved-views$/)) return "View saved.";
+  if (verb === "PATCH" && matches(/\/saved-views\/[^/]+$/)) return "Saved view renamed.";
+  if (verb === "DELETE" && matches(/\/saved-views\/[^/]+$/)) return "Saved view deleted.";
+  if (verb === "POST" && matches(/\/document-categories$/)) return "Category created.";
+  if (matches(/\/document-categories\/[^/]+\/archive$/)) return "Category archived.";
+  if (verb === "PATCH" && matches(/\/document-categories\/[^/]+$/)) return "Category renamed.";
+
+  if (verb === "POST" && matches(/\/bulk-operations$/)) return "Bulk operation review prepared.";
+  if (matches(/\/bulk-operations\/[^/]+\/confirm$/)) return "Bulk operation started.";
+  if (matches(/\/bulk-operations\/[^/]+\/cancel$/)) return "Bulk operation cancellation requested.";
+  if (matches(/\/bulk-operations\/[^/]+\/retry$/)) return "Bulk operation retry queued.";
+
+  if (verb === "POST" && matches(/\/invitations$/)) return "Invitation sent.";
+  if (verb === "DELETE" && matches(/\/invitations\/[^/]+$/)) return "Invitation revoked.";
+  if (matches(/\/memberships\/[^/]+\/role$/)) return "Member role updated.";
+  if (verb === "DELETE" && matches(/\/memberships\/[^/]+$/)) return "Member removed from the workspace.";
+  if (matches(/\/memberships\/[^/]+\/ownership-transfers$/)) return "Workspace ownership transferred.";
+  if (verb === "DELETE" && matches(/\/membership$/)) return "You left the workspace.";
+
+  if (matches(/\/branding\/draft$/)) return "Branding draft saved.";
+  if (matches(/\/branding\/apply$/)) return "Custom branding applied.";
+  if (matches(/\/branding\/mode$/)) return "Branding mode updated.";
+  if (matches(/\/branding\/assets$/)) return "Branding asset uploaded.";
+
+  if (matches(/\/governance-notification-preferences\/personal$/)) return "Your notification preference was updated.";
+  if (matches(/\/governance-notification-preferences\/workspace$/)) return "Workspace notification preferences updated.";
+  if (matches(/\/question-review\/policy$/)) return "Question review policy updated.";
+  if (verb === "PATCH" && matches(/\/question-review\/questions\/[^/]+$/)) return "Question review saved.";
+  if (verb === "POST" && matches(/\/question-review\/subjects$/)) return "Subject added.";
+  if (verb === "POST" && matches(/\/locations$/)) return "Location created.";
+  if (cleanPath === "/api/platform/operations/policy") return "Operational policy submitted.";
+
+  if (verb === "POST" && matches(/\/imports$/)) return "Import batch created.";
+  if (matches(/\/imports\/[^/]+\/items\/[^/]+\/uploaded$/)) return "Document uploaded for import review.";
+  if (matches(/\/imports\/[^/]+\/items\/[^/]+\/replacements$/)) return "Replacement document prepared.";
+  if (matches(/\/imports\/[^/]+\/items\/[^/]+\/decision$/)) return "Import review decision saved.";
+  if (matches(/\/imports\/[^/]+\/items\/[^/]+\/promotions$/)) return "Document promotion started.";
+  if (matches(/\/imports\/[^/]+\/items\/[^/]+\/adoptions$/)) return "Revised import decision adopted.";
+
+  // Background and conversational writes do not need a generic success toast.
+  return null;
 }
 
 export async function apiFetch<T>(
@@ -864,7 +921,7 @@ export async function apiFetch<T>(
     );
   }
 
-  const success = isUnsafe(method) ? mutationFeedback(path) : null;
+  const success = isUnsafe(method) ? mutationFeedback(path, method) : null;
   if (success) feedback(success, "success");
 
   return payload as T;

@@ -37,7 +37,7 @@ export function FeedbackToastProvider({ children }: Readonly<{ children: ReactNo
   return <ToastContext.Provider value={value}>
     {children}
     {toast ? <div className="pointer-events-none fixed inset-x-4 top-5 z-[100] flex justify-center" role={toast.tone === "destructive" ? "alert" : "status"}>
-      <div className={cn("pointer-events-auto flex w-full max-w-xl items-center gap-3 rounded-xl px-4 py-3 font-semibold text-white shadow-2xl", toast.tone === "destructive" ? "bg-status-destructive" : "bg-[var(--ring)]")}>
+      <div className={cn("pointer-events-auto flex w-full max-w-xl items-center gap-3 rounded-xl px-4 py-3 font-semibold shadow-2xl", toast.tone === "destructive" ? "bg-status-destructive text-white" : "bg-status-success text-status-success-foreground")}>
         <Icon aria-hidden="true" className="size-5 shrink-0" />
         <span className="min-w-0 flex-1">{toast.message}</span>
         <button aria-label="Dismiss notification" className="grid size-9 place-items-center rounded-md hover:bg-white/15" onClick={() => setToast(null)} type="button"><X aria-hidden="true" className="size-4" /></button>
