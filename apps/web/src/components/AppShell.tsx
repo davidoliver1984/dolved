@@ -92,7 +92,7 @@ function documentsDestination(pathname: string, workspaceId: string | null): Doc
 
 function activeClass(active: boolean) {
   return cn(
-    "flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm font-semibold outline-none transition focus-visible:ring-2 focus-visible:ring-sidebar-ring",
+    "flex min-h-11 w-full min-w-0 items-center gap-3 rounded-lg px-3 text-sm font-semibold outline-none transition focus-visible:ring-2 focus-visible:ring-sidebar-ring",
     active
       ? "bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90 [&_span]:text-sidebar-primary-foreground [&_svg]:text-sidebar-primary-foreground"
       : "text-foreground-muted hover:bg-sidebar-accent hover:text-foreground",
@@ -196,7 +196,7 @@ export function AppShell({ canOperatePlatform, children, user, workspaces }: App
   ) : null;
 
   const contextual = isPlatformAdministration ? (
-    <div className={cn("min-h-0 flex-1 overflow-y-auto border-t border-sidebar-border pt-4", collapsed && "lg:hidden")}>
+    <div className={cn("min-h-0 flex-1 overflow-x-hidden overflow-y-auto border-t border-sidebar-border pt-4", collapsed && "lg:hidden")}>
       <p className="px-3 text-xs font-bold uppercase tracking-[0.14em] text-foreground-faint">Platform administration</p>
       <nav aria-label="Platform administration" className="mt-2 grid gap-1">
         <Link aria-current={pathname === "/app/platform/tenants" || pathname.startsWith("/app/platform/tenants/") ? "page" : undefined} className={activeClass(pathname === "/app/platform/tenants" || pathname.startsWith("/app/platform/tenants/"))} href="/app/platform/tenants" onClick={closeMobileNavigation}><Building2 aria-hidden="true" className="size-4" /><span>Tenants</span></Link>
@@ -208,7 +208,7 @@ export function AppShell({ canOperatePlatform, children, user, workspaces }: App
       </nav>
     </div>
   ) : isDocuments && workspaceId ? (
-    <div className={cn("min-h-0 flex-1 overflow-y-auto border-t border-sidebar-border pt-4", collapsed && "lg:hidden")}>
+    <div className={cn("min-h-0 flex-1 overflow-x-hidden overflow-y-auto border-t border-sidebar-border pt-4", collapsed && "lg:hidden")}>
       <p className="px-3 text-xs font-bold uppercase tracking-[0.14em] text-foreground-faint">Knowledge library</p>
       <nav aria-label="Knowledge library" className="mt-2 grid gap-1">
         <Link aria-current={activeDocumentsDestination === "library" ? "page" : undefined} className={activeClass(activeDocumentsDestination === "library")} href={`/app/workspaces/${workspaceId}/documents`} onClick={closeMobileNavigation}><FolderOpen aria-hidden="true" className="size-4" /><span>Library</span></Link>
@@ -222,7 +222,7 @@ export function AppShell({ canOperatePlatform, children, user, workspaces }: App
       </nav>
     </div>
   ) : workspaceId ? (
-    <div className={cn("min-h-0 flex-1 overflow-y-auto border-t border-sidebar-border pt-4", collapsed && "lg:hidden")}>
+    <div className={cn("min-h-0 flex-1 overflow-x-hidden overflow-y-auto border-t border-sidebar-border pt-4", collapsed && "lg:hidden")}>
       <p className="px-3 text-xs font-bold uppercase tracking-[0.14em] text-foreground-faint">
         {isAdministration ? "Administration" : "Recent"}
       </p>
@@ -249,7 +249,7 @@ export function AppShell({ canOperatePlatform, children, user, workspaces }: App
   const sidebar = (
     <div className="flex h-full min-h-0 flex-col gap-4">
       <div aria-hidden="true" className="h-11 shrink-0 lg:hidden" />
-      <div className="hidden items-center justify-between gap-2 px-1 lg:flex">
+      <div className="hidden h-11 shrink-0 items-center justify-between gap-2 px-1 lg:flex">
         {!collapsed ? brandMark() : null}
         {!collapsed ? <Button aria-label="Collapse sidebar" onClick={() => setCollapsed(true)} size="icon" variant="ghost"><ChevronLeft aria-hidden="true" /></Button> : null}
       </div>

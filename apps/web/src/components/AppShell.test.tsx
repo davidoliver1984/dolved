@@ -223,6 +223,29 @@ describe("AppShell", () => {
     expect(screen.getByRole("button", { name: "Sign out" })).toBeTruthy();
   });
 
+  it("keeps collapsed controls clear of navigation and constrains contextual rows", () => {
+    pathnameState.value = "/app/workspaces/workspace-1/documents";
+    render(
+      <AppShell
+        canOperatePlatform={false}
+        user={user}
+        workspaces={[{ public_id: "workspace-1", name: "Alderbridge", slug: "alderbridge", role: "owner" }]}
+      >
+        <p>Library content</p>
+      </AppShell>,
+    );
+
+    const library = screen.getByRole("link", { name: "Library" });
+    expect(library.className).toContain("w-full");
+    expect(library.className).toContain("min-w-0");
+    expect(screen.getByRole("navigation", { name: "Knowledge library" }).parentElement?.className).toContain("overflow-x-hidden");
+
+    const collapse = screen.getByRole("button", { name: "Collapse sidebar" });
+    expect(collapse.parentElement?.className).toContain("h-11");
+    fireEvent.click(collapse);
+    expect(screen.getByRole("button", { name: "Expand sidebar" })).toBeTruthy();
+  });
+
   it("closes mobile navigation after following a destination and omits the duplicated wordmark", async () => {
     render(
       <AppShell
