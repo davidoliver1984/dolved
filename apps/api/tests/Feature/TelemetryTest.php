@@ -345,24 +345,24 @@ class TelemetryTest extends TestCase
         $this->assertEqualsCanonicalizing([
             'rag.operation.count',
             'rag.operation.duration',
-            'rag.dependency.available',
+            'rag.snapshot.dependency.available',
             'rag.dependency.duration',
-            'rag.queue.depth',
-            'rag.queue.oldest_message_age',
-            'rag.stuck_operation.count',
+            'rag.snapshot.queue.depth',
+            'rag.snapshot.queue.oldest_message_age',
+            'rag.snapshot.stuck_operation.count',
         ], array_column($metrics, 'name'));
         $snapshotMetrics = collect($metrics)->keyBy('name');
         foreach ([
-            'rag.dependency.available',
-            'rag.queue.depth',
-            'rag.queue.oldest_message_age',
-            'rag.stuck_operation.count',
+            'rag.snapshot.dependency.available',
+            'rag.snapshot.queue.depth',
+            'rag.snapshot.queue.oldest_message_age',
+            'rag.snapshot.stuck_operation.count',
         ] as $name) {
             $this->assertInstanceOf(Sum::class, $snapshotMetrics[$name]->data);
             $this->assertFalse($snapshotMetrics[$name]->data->monotonic);
         }
-        $this->assertSame(3, collect($snapshotMetrics['rag.queue.depth']->data->dataPoints)->first()->value);
-        $this->assertSame(2, collect($snapshotMetrics['rag.stuck_operation.count']->data->dataPoints)->first()->value);
+        $this->assertSame(3, collect($snapshotMetrics['rag.snapshot.queue.depth']->data->dataPoints)->first()->value);
+        $this->assertSame(2, collect($snapshotMetrics['rag.snapshot.stuck_operation.count']->data->dataPoints)->first()->value);
         $serialized = serialize($metrics);
         $this->assertStringNotContainsString('workspace', $serialized);
         $this->assertStringNotContainsString('document-id', $serialized);

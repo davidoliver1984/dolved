@@ -11,7 +11,7 @@ use Throwable;
 
 final class PrometheusOperationalMetricsReader implements OperationalMetricsReader
 {
-    private const CACHE_KEY = 'platform:operational-metrics:v2';
+    private const CACHE_KEY = 'platform:operational-metrics:v3';
 
     private const ALLOWED_RESPONSE_LABELS = [
         'messaging_destination_name',
@@ -30,10 +30,10 @@ final class PrometheusOperationalMetricsReader implements OperationalMetricsRead
         'api_latency_p95_seconds' => 'histogram_quantile(0.95, sum by (le) (rate(http_server_request_duration_seconds_bucket[5m])))',
         'operation_rate' => 'sum by (rag_operation_stage,rag_operation_outcome) (rate(rag_operation_count_total[5m]))',
         'operation_latency_p95_seconds' => 'histogram_quantile(0.95, sum by (le,rag_operation_stage) (rate(rag_operation_duration_seconds_bucket[5m])))',
-        'dependency_availability' => 'min by (rag_dependency_kind) (rag_dependency_available)',
-        'queue_depth' => 'max by (messaging_destination_name) (rag_queue_depth)',
-        'queue_oldest_message_age_seconds' => 'max by (messaging_destination_name) (rag_queue_oldest_message_age_seconds)',
-        'stuck_operations' => 'sum by (rag_operation_stage) (rag_stuck_operation_count)',
+        'dependency_availability' => 'min by (rag_dependency_kind) (rag_snapshot_dependency_available)',
+        'queue_depth' => 'max by (messaging_destination_name) (rag_snapshot_queue_depth)',
+        'queue_oldest_message_age_seconds' => 'max by (messaging_destination_name) (rag_snapshot_queue_oldest_message_age_seconds)',
+        'stuck_operations' => 'sum by (rag_operation_stage) (rag_snapshot_stuck_operation_count)',
     ];
 
     private const SLOS = [

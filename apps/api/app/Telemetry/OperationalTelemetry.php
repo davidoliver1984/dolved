@@ -41,11 +41,11 @@ final class OperationalTelemetry
         // The OTLP/Prometheus backend used by the pilot currently drops
         // synchronous Gauge data points. Snapshot commands run in a fresh
         // process, so a non-monotonic sum safely exports each absolute value.
-        $this->dependencyAvailable = $this->meter->createUpDownCounter('rag.dependency.available', '1', 'Whether a dependency probe succeeded.');
+        $this->dependencyAvailable = $this->meter->createUpDownCounter('rag.snapshot.dependency.available', '1', 'Whether a dependency probe succeeded.');
         $this->dependencyDuration = $this->meter->createHistogram('rag.dependency.duration', 's', 'Dependency probe duration.');
-        $this->queueDepth = $this->meter->createUpDownCounter('rag.queue.depth', '{message}', 'Current queue or durable outbox depth.');
-        $this->queueOldestAge = $this->meter->createUpDownCounter('rag.queue.oldest_message_age', 's', 'Age of the oldest pending queue or outbox item.');
-        $this->stuckOperations = $this->meter->createUpDownCounter('rag.stuck_operation.count', '{operation}', 'Current count of bounded stale operations.');
+        $this->queueDepth = $this->meter->createUpDownCounter('rag.snapshot.queue.depth', '{message}', 'Current queue or durable outbox depth.');
+        $this->queueOldestAge = $this->meter->createUpDownCounter('rag.snapshot.queue.oldest_message_age', 's', 'Age of the oldest pending queue or outbox item.');
+        $this->stuckOperations = $this->meter->createUpDownCounter('rag.snapshot.stuck_operation.count', '{operation}', 'Current count of bounded stale operations.');
     }
 
     public function operation(string $stage, string $outcome, float $durationSeconds, ?string $failureCategory = null): void
