@@ -161,7 +161,7 @@ describe("AppShell", () => {
     expect(screen.getByRole("link", { name: "People & roles" }).getAttribute("href")).toBe("/app/workspaces/workspace-1/administration/people");
     expect(screen.getByRole("link", { name: "People & roles" }).getAttribute("aria-current")).toBe("page");
     expect(screen.getByRole("link", { name: "New conversation" }).getAttribute("aria-current")).toBeNull();
-    expect(screen.getByRole("link", { name: "Platform administration" }).getAttribute("href")).toBe("/app/platform/tenants");
+    expect(screen.getByRole("link", { name: "Platform administration" }).getAttribute("href")).toBe("/app/platform/operations");
   });
 
   it("renders route-backed platform context with exactly one contextual destination active", () => {
