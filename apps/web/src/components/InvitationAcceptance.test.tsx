@@ -17,13 +17,13 @@ describe("InvitationAcceptance", () => {
     vi.mocked(invitationBranding).mockRejectedValue(new Error("branding unavailable"));
   });
 
-  it("sends signed-out recipients to login and preserves the invitation return path", async () => {
+  it("sends signed-out recipients to account setup and preserves the invitation return path", async () => {
     vi.mocked(acceptWorkspaceInvitation).mockRejectedValue(new ApiError("Unauthenticated.", 401));
     render(<InvitationAcceptance token="invite-token" />);
 
     fireEvent.click(screen.getByRole("button", { name: "Accept invitation" }));
 
-    await waitFor(() => expect(push).toHaveBeenCalledWith("/login?next=%2Finvitations%2Finvite-token"));
+    await waitFor(() => expect(push).toHaveBeenCalledWith("/register?next=%2Finvitations%2Finvite-token"));
     expect(screen.queryByText(/expired, revoked/i)).toBeNull();
   });
 });

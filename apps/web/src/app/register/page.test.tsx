@@ -1,12 +1,14 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const { currentUserMock, redirectMock } = vi.hoisted(() => ({
+const { currentUserMock, redirectMock, validPendingInvitationMock } = vi.hoisted(() => ({
   currentUserMock: vi.fn(),
   redirectMock: vi.fn(),
+  validPendingInvitationMock: vi.fn(),
 }));
 
 vi.mock("@/lib/server-api", () => ({
   currentUser: currentUserMock,
+  validPendingInvitation: validPendingInvitationMock,
 }));
 
 vi.mock("next/navigation", () => ({
@@ -19,6 +21,8 @@ describe("RegisterPage", () => {
   beforeEach(() => {
     currentUserMock.mockReset();
     redirectMock.mockReset();
+    validPendingInvitationMock.mockReset();
+    validPendingInvitationMock.mockResolvedValue(true);
     vi.stubEnv("AUTH_REGISTRATION_ENABLED", "true");
   });
 
@@ -52,6 +56,19 @@ describe("RegisterPage", () => {
     expect(redirectMock).toHaveBeenCalledWith("/verify-email");
   });
 
+  it("keeps an invitation return path while a new account awaits verification", async () => {
+    currentUserMock.mockResolvedValue({
+      id: 18,
+      name: "David Oliver",
+      email: "david@example.test",
+      email_verified_at: null,
+    });
+
+    await RegisterPage({ searchParams: Promise.resolve({ next: "/invitations/invite-token" }) });
+
+    expect(redirectMock).toHaveBeenCalledWith("/verify-email?next=%2Finvitations%2Finvite-token");
+  });
+
   it("returns a verified signed-in account to the application", async () => {
     currentUserMock.mockResolvedValue({
       id: 18,
@@ -72,5 +89,28 @@ describe("RegisterPage", () => {
     await RegisterPage();
 
     expect(redirectMock).toHaveBeenCalledWith("/login");
+  });
+
+  it("allows invitation-authorised account setup when public registration is disabled", async () => {
+    vi.stubEnv("AUTH_REGISTRATION_ENABLED", "false");
+    currentUserMock.mockResolvedValue(null);
+    const next = `/invitations/${"a".repeat(64)}`;
+
+    const page = await RegisterPage({ searchParams: Promise.resolve({ next }) });
+
+    expect(page.props).toEqual({ mode: "register", returnTo: next });
+    expect(redirectMock).not.toHaveBeenCalled();
+    expect(validPendingInvitationMock).toHaveBeenCalledWith("a".repeat(64));
+  });
+
+  it("does not let an invalid invitation bypass closed public registration", async () => {
+    vi.stubEnv("AUTH_REGISTRATION_ENABLED", "false");
+    currentUserMock.mockResolvedValue(null);
+    validPendingInvitationMock.mockResolvedValue(false);
+    const next = `/invitations/${"a".repeat(64)}`;
+
+    await RegisterPage({ searchParams: Promise.resolve({ next }) });
+
+    expect(redirectMock).toHaveBeenCalledWith(`/login?next=${encodeURIComponent(next)}`);
   });
 });

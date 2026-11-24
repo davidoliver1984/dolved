@@ -1,11 +1,15 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const { currentUserMock, redirectMock } = vi.hoisted(() => ({
+const { currentUserMock, redirectMock, validPendingInvitationMock } = vi.hoisted(() => ({
   currentUserMock: vi.fn(),
   redirectMock: vi.fn(),
+  validPendingInvitationMock: vi.fn(),
 }));
 
-vi.mock("@/lib/server-api", () => ({ currentUser: currentUserMock }));
+vi.mock("@/lib/server-api", () => ({
+  currentUser: currentUserMock,
+  validPendingInvitation: validPendingInvitationMock,
+}));
 vi.mock("next/navigation", () => ({ redirect: redirectMock }));
 
 import LoginPage from "@/app/login/page";
@@ -14,6 +18,8 @@ describe("LoginPage", () => {
   beforeEach(() => {
     currentUserMock.mockReset();
     redirectMock.mockReset();
+    validPendingInvitationMock.mockReset();
+    validPendingInvitationMock.mockResolvedValue(true);
     vi.stubEnv("AUTH_REGISTRATION_ENABLED", "true");
   });
 
@@ -59,6 +65,17 @@ describe("LoginPage", () => {
     expect(page.props).toEqual({ mode: "login", registrationEnabled: true, returnTo: next });
   });
 
+  it("does not offer account creation for an invalid invitation when public registration is disabled", async () => {
+    vi.stubEnv("AUTH_REGISTRATION_ENABLED", "false");
+    currentUserMock.mockResolvedValue(null);
+    validPendingInvitationMock.mockResolvedValue(false);
+    const next = `/invitations/${"a".repeat(64)}`;
+
+    const page = await LoginPage({ searchParams: Promise.resolve({ next }) });
+
+    expect(page.props).toEqual({ mode: "login", registrationEnabled: false, returnTo: next });
+  });
+
   it("returns an unverified signed-in account to verification", async () => {
     currentUserMock.mockResolvedValue({
       id: 18,
@@ -70,6 +87,19 @@ describe("LoginPage", () => {
     await LoginPage({});
 
     expect(redirectMock).toHaveBeenCalledWith("/verify-email");
+  });
+
+  it("keeps an invitation return path while an account awaits verification", async () => {
+    currentUserMock.mockResolvedValue({
+      id: 18,
+      name: "David Oliver",
+      email: "david@example.test",
+      email_verified_at: null,
+    });
+
+    await LoginPage({ searchParams: Promise.resolve({ next: "/invitations/invite-token" }) });
+
+    expect(redirectMock).toHaveBeenCalledWith("/verify-email?next=%2Finvitations%2Finvite-token");
   });
 
   it("returns a verified signed-in account to the application", async () => {
@@ -99,5 +129,16 @@ describe("LoginPage", () => {
     const page = await LoginPage({});
 
     expect(page.props).toEqual({ mode: "login", registrationEnabled: false });
+  });
+
+  it("offers account setup to an invited recipient when public registration is disabled", async () => {
+    vi.stubEnv("AUTH_REGISTRATION_ENABLED", "false");
+    currentUserMock.mockResolvedValue(null);
+    const next = `/invitations/${"a".repeat(64)}`;
+
+    const page = await LoginPage({ searchParams: Promise.resolve({ next }) });
+
+    expect(page.props).toEqual({ mode: "login", registrationEnabled: true, returnTo: next });
+    expect(validPendingInvitationMock).toHaveBeenCalledWith("a".repeat(64));
   });
 });

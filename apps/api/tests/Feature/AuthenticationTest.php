@@ -2,7 +2,11 @@
 
 namespace Tests\Feature;
 
+use App\Enums\WorkspaceInvitationStatus;
+use App\Enums\WorkspaceRole;
 use App\Models\User;
+use App\Models\Workspace;
+use App\Models\WorkspaceInvitation;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Foundation\Http\Middleware\ValidateCsrfToken;
@@ -13,6 +17,7 @@ use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class AuthenticationTest extends TestCase
@@ -64,6 +69,63 @@ class AuthenticationTest extends TestCase
         ])->assertNotFound();
 
         $this->assertDatabaseMissing('users', ['email' => 'invite@example.com']);
+    }
+
+    public function test_pending_invitation_can_authorise_its_exact_recipient_when_public_registration_is_disabled(): void
+    {
+        Notification::fake();
+        config()->set('fortify.registration_enabled', false);
+        $token = str_repeat('a', 64);
+        $owner = User::factory()->create();
+        $workspace = Workspace::factory()->withOwner($owner)->create();
+        WorkspaceInvitation::query()->create([
+            'public_id' => (string) Str::uuid(),
+            'workspace_id' => $workspace->id,
+            'invited_email' => 'invite@example.com',
+            'intended_role' => WorkspaceRole::Member,
+            'invited_by_user_id' => $owner->id,
+            'token_digest' => hash('sha256', $token),
+            'status' => WorkspaceInvitationStatus::Pending,
+            'expires_at' => now()->addDay(),
+        ]);
+
+        $this->postJson('/api/auth/register', [
+            'name' => 'Invited Person',
+            'email' => ' INVITE@EXAMPLE.COM ',
+            'password' => self::VALID_PASSWORD,
+            'password_confirmation' => self::VALID_PASSWORD,
+            'invitation_token' => $token,
+        ])->assertCreated()->assertJsonPath('data.user.email', 'invite@example.com');
+
+        $this->assertDatabaseHas('users', ['email' => 'invite@example.com']);
+    }
+
+    public function test_invitation_cannot_authorise_registration_for_a_different_email(): void
+    {
+        config()->set('fortify.registration_enabled', false);
+        $token = str_repeat('b', 64);
+        $owner = User::factory()->create();
+        $workspace = Workspace::factory()->withOwner($owner)->create();
+        WorkspaceInvitation::query()->create([
+            'public_id' => (string) Str::uuid(),
+            'workspace_id' => $workspace->id,
+            'invited_email' => 'invite@example.com',
+            'intended_role' => WorkspaceRole::Member,
+            'invited_by_user_id' => $owner->id,
+            'token_digest' => hash('sha256', $token),
+            'status' => WorkspaceInvitationStatus::Pending,
+            'expires_at' => now()->addDay(),
+        ]);
+
+        $this->postJson('/api/auth/register', [
+            'name' => 'Wrong Recipient',
+            'email' => 'other@example.com',
+            'password' => self::VALID_PASSWORD,
+            'password_confirmation' => self::VALID_PASSWORD,
+            'invitation_token' => $token,
+        ])->assertNotFound();
+
+        $this->assertDatabaseMissing('users', ['email' => 'other@example.com']);
     }
 
     public function test_canonical_email_is_unique(): void

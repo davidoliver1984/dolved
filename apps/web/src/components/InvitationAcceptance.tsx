@@ -33,7 +33,7 @@ export function InvitationAcceptance({ token }: Readonly<{ token: string }>) {
       router.push(`/app/workspaces/${encodeURIComponent(response.data.workspace_id)}`);
     } catch (caught) {
       if (caught instanceof ApiError && caught.status === 401) {
-        router.push(`/login?next=${encodeURIComponent(`/invitations/${token}`)}`);
+        router.push(`/register?next=${encodeURIComponent(`/invitations/${token}`)}`);
         return;
       }
       setError(firstError(caught));

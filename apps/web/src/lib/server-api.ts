@@ -209,6 +209,13 @@ export async function currentUser(): Promise<User | null> {
   return payload.data.user;
 }
 
+export async function validPendingInvitation(token: string): Promise<boolean> {
+  if (!/^[A-Za-z0-9_-]{32,512}$/.test(token)) return false;
+
+  const response = await serverFetch(`/api/branding/invitations/${encodeURIComponent(token)}`);
+  return response.ok;
+}
+
 export async function userWorkspaces(): Promise<Workspace[]> {
   const response = await serverFetch("/api/workspaces");
 

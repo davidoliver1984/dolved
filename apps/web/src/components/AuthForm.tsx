@@ -67,6 +67,9 @@ export function AuthForm({ context = "workspace", mode, registrationEnabled = tr
     return () => { active = false; };
   }, [context]);
   const brand = branding?.configuration;
+  const invitationToken = mode === "register" && returnTo?.startsWith("/invitations/")
+    ? returnTo.slice("/invitations/".length)
+    : undefined;
   const style = brand ? { "--brand": brand.primary_colour, "--brand-foreground": brand.primary_foreground, "--ring": brand.accent_colour } as React.CSSProperties : undefined;
   useEffect(() => {
     if (context === "platform" || !brand) return;
@@ -103,7 +106,12 @@ export function AuthForm({ context = "workspace", mode, registrationEnabled = tr
         const confirmation = "If an account exists for that email, a reset link has been sent.";
         setMessage(confirmation);
       } else if (mode === "register") {
-        router.push("/verify-email");
+        if (returnTo) {
+          window.localStorage.setItem("dolved.postVerificationReturnTo", returnTo);
+        }
+        router.push(returnTo
+          ? `/verify-email?next=${encodeURIComponent(returnTo)}`
+          : "/verify-email");
       } else if (mode === "reset") {
         router.push("/login?reset=complete");
       } else if (mode === "login" && response.data?.redirect_to) {
@@ -204,6 +212,7 @@ export function AuthForm({ context = "workspace", mode, registrationEnabled = tr
           )}
 
           {mode === "reset" && <input name="token" type="hidden" value={token} />}
+          {invitationToken && <input name="invitation_token" type="hidden" value={invitationToken} />}
 
           {error ? <Notice tone="destructive">{error}</Notice> : null}
           {message ? <Notice tone="success">{message}</Notice> : null}
@@ -220,7 +229,8 @@ export function AuthForm({ context = "workspace", mode, registrationEnabled = tr
               {registrationEnabled ? <Link href={returnTo ? `/register?next=${encodeURIComponent(returnTo)}` : "/register"}>Create an account</Link> : null}
             </>
           )}
-          {mode !== "login" && <Link href={returnTo ? `/login?next=${encodeURIComponent(returnTo)}` : "/login"}>Back to sign in</Link>}
+          {mode === "register" && <Link href={returnTo ? `/login?next=${encodeURIComponent(returnTo)}` : "/login"}>Already have an account? Sign in</Link>}
+          {mode !== "login" && mode !== "register" && <Link href="/login">Back to sign in</Link>}
         </nav>
       </section>
 

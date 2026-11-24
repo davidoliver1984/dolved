@@ -22,6 +22,7 @@ describe("AuthForm", () => {
   beforeEach(() => {
     apiFetchMock.mockReset();
     routerPushMock.mockReset();
+    window.localStorage.clear();
   });
 
   afterEach(cleanup);
@@ -72,6 +73,28 @@ describe("AuthForm", () => {
     fireEvent.submit(screen.getByRole("button", { name: "Sign in" }).closest("form")!);
 
     await waitFor(() => expect(routerPushMock).toHaveBeenCalledWith("/app/platform/operations"));
+  });
+
+  it("keeps the invitation journey through registration and email verification", async () => {
+    apiFetchMock.mockResolvedValue({ data: { user: {} } });
+    const returnTo = "/invitations/invite-token";
+    render(<AuthForm mode="register" returnTo={returnTo} />);
+
+    fireEvent.change(screen.getByLabelText("Name"), { target: { value: "Invited Person" } });
+    fireEvent.change(screen.getByLabelText("Email address"), { target: { value: "invited@example.test" } });
+    fireEvent.change(screen.getByLabelText("Password"), { target: { value: "Correct-Horse-7!" } });
+    fireEvent.change(screen.getByLabelText("Confirm password"), { target: { value: "Correct-Horse-7!" } });
+    fireEvent.submit(screen.getByRole("button", { name: "Create account" }).closest("form")!);
+
+    await waitFor(() => expect(routerPushMock).toHaveBeenCalledWith(
+      "/verify-email?next=%2Finvitations%2Finvite-token",
+    ));
+    expect(apiFetchMock).toHaveBeenCalledWith("/api/auth/register", expect.objectContaining({
+      body: expect.stringContaining('"invitation_token":"invite-token"'),
+    }));
+    expect(window.localStorage.getItem("dolved.postVerificationReturnTo")).toBe(returnTo);
+    expect(screen.getByRole("link", { name: "Already have an account? Sign in" }).getAttribute("href"))
+      .toBe("/login?next=%2Finvitations%2Finvite-token");
   });
 
   it("does not advertise self-registration when it is disabled", () => {

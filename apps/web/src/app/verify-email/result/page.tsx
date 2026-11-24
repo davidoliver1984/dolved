@@ -1,6 +1,5 @@
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { VerificationResultAction } from "@/components/VerificationResultAction";
 
 type Props = {
   searchParams: Promise<{ status?: string }>;
@@ -27,11 +26,7 @@ export default async function VerificationResultPage({ searchParams }: Props) {
               ? "Your account is verified and the protected workspace is now available."
               : "Return to the verification page to request a fresh signed link."}
           </p>
-          <Button asChild className="w-fit">
-            <Link href={verified ? "/app" : "/verify-email"}>
-              {verified ? "Open workspace" : "Try again"}
-            </Link>
-          </Button>
+          <VerificationResultAction verified={verified} />
         </CardContent>
       </Card>
     </main>
