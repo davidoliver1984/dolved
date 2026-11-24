@@ -1,6 +1,6 @@
 "use client";
 
-import { Bookmark, BookmarkPlus, Pencil, Trash2 } from "lucide-react";
+import { Bookmark, BookmarkPlus, Pencil, Save, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { type FormEvent, useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
@@ -17,6 +17,7 @@ import {
 
 export function SavedViewsPanel({ currentDefinition, initialViews, workspacePublicId }: Readonly<{ currentDefinition: SavedViewDefinition; initialViews: SavedView[]; workspacePublicId: string }>) {
   const [views, setViews] = useState(initialViews);
+  const [editingViewId, setEditingViewId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
 
@@ -44,6 +45,7 @@ export function SavedViewsPanel({ currentDefinition, initialViews, workspacePubl
       try {
         const response = await renameSavedView(workspacePublicId, view.public_id, name);
         setViews((items) => items.map((item) => item.public_id === view.public_id ? response.data : item));
+        setEditingViewId(null);
       } catch (caught) {
         setError(firstError(caught));
       }
@@ -70,8 +72,7 @@ export function SavedViewsPanel({ currentDefinition, initialViews, workspacePubl
       <form className="flex flex-col gap-2 sm:flex-row" onSubmit={save}><label className="sr-only" htmlFor="saved-view-name">Saved view name</label><Input className="sm:max-w-sm" id="saved-view-name" maxLength={100} name="name" placeholder="Name this view" required /><Button disabled={pending} type="submit"><BookmarkPlus aria-hidden="true" />Save current view</Button></form>
       {error ? <p className="text-sm text-destructive" role="alert">{error}</p> : null}
       {views.length ? <ul className="grid gap-2 lg:grid-cols-2">{views.map((view) => <li className="rounded-lg border border-border bg-surface-muted p-3" key={view.public_id}>
-        <div className="flex items-center justify-between gap-3"><Link className="min-w-0 truncate font-semibold underline-offset-4 hover:text-brand hover:underline" href={`/app/workspaces/${workspacePublicId}/documents/saved/${view.public_id}`}>{view.name}</Link><Button aria-label={`Delete ${view.name}`} disabled={pending} onClick={() => remove(view)} size="icon" type="button" variant="ghost"><Trash2 aria-hidden="true" /></Button></div>
-        <details className="mt-2"><summary className="cursor-pointer text-xs font-semibold text-foreground-muted">Rename</summary><form className="mt-2 flex gap-2" onSubmit={(event) => rename(view, event)}><Input aria-label={`New name for ${view.name}`} defaultValue={view.name} maxLength={100} name="name" required /><Button aria-label={`Save name for ${view.name}`} disabled={pending} size="icon" type="submit" variant="secondary"><Pencil aria-hidden="true" /></Button></form></details>
+        {editingViewId === view.public_id ? <form className="flex items-center gap-2" onSubmit={(event) => rename(view, event)}><Input aria-label={`New name for ${view.name}`} autoFocus defaultValue={view.name} maxLength={100} name="name" required /><Button aria-label={`Save name for ${view.name}`} disabled={pending} size="icon" type="submit" variant="secondary"><Save aria-hidden="true" /></Button><Button aria-label={`Delete ${view.name}`} disabled={pending} onClick={() => remove(view)} size="icon" type="button" variant="ghost"><Trash2 aria-hidden="true" /></Button></form> : <div className="flex items-center justify-between gap-3"><Link className="min-w-0 truncate font-semibold underline-offset-4 hover:text-brand hover:underline" href={`/app/workspaces/${workspacePublicId}/documents/saved/${view.public_id}`}>{view.name}</Link><div className="flex shrink-0 items-center gap-1"><Button aria-label={`Rename ${view.name}`} disabled={pending} onClick={() => setEditingViewId(view.public_id)} size="icon" type="button" variant="ghost"><Pencil aria-hidden="true" /></Button><Button aria-label={`Delete ${view.name}`} disabled={pending} onClick={() => remove(view)} size="icon" type="button" variant="ghost"><Trash2 aria-hidden="true" /></Button></div></div>}
       </li>)}</ul> : <p className="text-sm text-foreground-muted">No saved views yet. Apply useful filters, then save the view for next time.</p>}
     </CardContent>
   </Card>;
