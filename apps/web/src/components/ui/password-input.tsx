@@ -1,19 +1,19 @@
 "use client";
 
 import { Eye, EyeOff } from "lucide-react";
-import { forwardRef, type InputHTMLAttributes, useState } from "react";
+import { type InputHTMLAttributes, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 
-export const PasswordInput = forwardRef<HTMLInputElement, InputHTMLAttributes<HTMLInputElement>>(function PasswordInput({ className, ...props }, ref) {
+export function PasswordInput({ className, ...props }: InputHTMLAttributes<HTMLInputElement>) {
   const [visible, setVisible] = useState(false);
   return <div className="relative">
-    <Input className={cn("pr-12", className)} ref={ref} type={visible ? "text" : "password"} {...props} />
+    <Input className={cn("pr-12", className)} type={visible ? "text" : "password"} {...props} />
     <button aria-label={visible ? "Hide password" : "Show password"} className="absolute inset-y-0 right-0 grid w-11 place-items-center rounded-r-md text-foreground-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" onClick={() => setVisible((current) => !current)} type="button">
       {visible ? <EyeOff aria-hidden="true" className="size-5" /> : <Eye aria-hidden="true" className="size-5" />}
     </button>
   </div>;
-});
+}
 
 export function PasswordStrength({ password }: Readonly<{ password: string }>) {
   const checks = [password.length >= 12, password.length >= 15, /[a-z]/.test(password) && /[A-Z]/.test(password), /\d/.test(password), /[^A-Za-z0-9]/.test(password)];
