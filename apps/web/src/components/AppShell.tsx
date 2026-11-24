@@ -187,7 +187,7 @@ export function AppShell({ canOperatePlatform, children, user, workspaces }: App
         {sidebarLabel("Documents")}
       </Link>
       {workspace?.role !== "member" ? (
-        <Link className={activeClass(false)} href={`/app/workspaces/${workspaceId}/administration`} onClick={closeMobileNavigation}>
+        <Link aria-current={isAdministration ? "page" : undefined} className={activeClass(isAdministration)} href={`/app/workspaces/${workspaceId}/administration`} onClick={closeMobileNavigation}>
           <Settings2 aria-hidden="true" className="size-5 shrink-0" />
           {sidebarLabel("Administration")}
         </Link>

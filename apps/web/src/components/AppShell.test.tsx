@@ -157,7 +157,7 @@ describe("AppShell", () => {
       </AppShell>,
     );
 
-    expect(screen.getByRole("link", { name: "Administration" }).getAttribute("aria-current")).toBeNull();
+    expect(screen.getByRole("link", { name: "Administration" }).getAttribute("aria-current")).toBe("page");
     expect(screen.getByRole("link", { name: "People & roles" }).getAttribute("href")).toBe("/app/workspaces/workspace-1/administration/people");
     expect(screen.getByRole("link", { name: "People & roles" }).getAttribute("aria-current")).toBe("page");
     expect(screen.getByRole("link", { name: "New conversation" }).getAttribute("aria-current")).toBeNull();
