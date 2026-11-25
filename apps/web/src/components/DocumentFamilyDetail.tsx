@@ -3,6 +3,7 @@ import Link from "next/link";
 import { DocumentApplicabilityEditor } from "@/components/DocumentApplicabilityEditor";
 import { DocumentGovernanceActions } from "@/components/DocumentGovernanceActions";
 import { DocumentFamilyMetadataEditor } from "@/components/DocumentFamilyMetadataEditor";
+import { DocumentVersionUpload } from "@/components/DocumentVersionUpload";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { StatusBadge, type StatusTone } from "@/components/ui/status-badge";
@@ -86,12 +87,13 @@ export function DocumentFamilyDetail({ detail, workspacePublicId }: Readonly<{ d
     ?? [...history.data].reverse().find((version) => version.capabilities.create_applicability_successor);
   return (
     <div className="grid gap-6">
-      <header>
+      <header className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <p className="text-sm font-bold uppercase tracking-[0.14em] text-brand">Document family</p>
           <h1 className="mt-2 text-3xl font-semibold sm:text-4xl">{family.name}</h1>
           <p className="mt-2 max-w-3xl text-foreground-muted">{family.description ?? "No family description has been recorded."}</p>
         </div>
+        <DocumentVersionUpload detail={detail} workspacePublicId={workspacePublicId} />
       </header>
 
       <DocumentFamilyMetadataEditor family={family} workspacePublicId={workspacePublicId} />
