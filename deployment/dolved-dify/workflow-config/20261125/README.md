@@ -1,10 +1,11 @@
 # Dify current-question insertion correction
 
-Status: prepared locally; not imported or published.
+Status: published and provider-free verified on 25 November 2026 as Dify workflow
+version number 4.
 
 `published-llm-node.before.json` is a safe snapshot of the active published LLM
-node read from the hosted Dify database on 25 November 2026. The hosted workflow
-was not changed and the retained original application package remains untouched.
+node read from the hosted Dify database on 25 November 2026. The retained original
+application package remains untouched.
 
 `published-llm-node.corrected.json` is the deployable node configuration. Its only
 change is removal of the explicit user-role `{{#sys.query#}}` prompt entry. With
@@ -29,5 +30,11 @@ Precise configuration diff:
 The model, model parameters, system instructions, retrieval context selector,
 memory window, vision setting and every retrieval setting remain unchanged.
 
-Deployment requires a supported Dify workflow edit/import followed by publication.
-That action is deliberately outside this correction batch's authority.
+The correction was saved and published through stock Dify 1.19.0's own workflow
+services. Hosted read-back proved the active graph differs from the previous graph
+only by this removal. The active graph SHA-256 is
+`77948ad3d5056f701c386b46ea088f008897e0fae49257baa84c913fa53de009`.
+
+No live model, retrieval, embedding, generation or evaluation call was made. A later
+separately authorised captured clean turn remains necessary to verify live prompt
+assembly before the evaluation freeze.

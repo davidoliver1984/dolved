@@ -1,10 +1,10 @@
 # Conversation-state corrections — provider-free handoff
 
 **Date:** 25 November 2026
-**Application baseline:** `c80c45256112b7e919298d8123ec954e952aeede` on
+**Application revision:** `8b43ded8964f5ff52ab49d9c3159382f2af36d5d` on
 `codex/pilot-unified-design-20261125`
-**Status:** implemented and focused-tested locally; not committed, pushed, deployed or
-published to Dify
+**Status:** committed, pushed, deployed and provider-free verified; Dify workflow version
+`4` is active
 
 This is the bounded correction handoff for the three issues confirmed in
 `CONVERSATION-MEMORY-MECHANISM-20261125.md`. It contains no live provider or retrieval
@@ -19,17 +19,20 @@ test, no conversation-data repair and no evaluation question. The original seale
 `{{#sys.query#}}` prompt entry, while stock Dify 1.19.0 appends the current query through
 its memory prompt-assembly path.
 
-**Prepared correction.** Remove only the explicit user-role prompt entry. The before and
+**Deployed correction.** Remove only the explicit user-role prompt entry. The before and
 corrected node snapshots are in
 `deployment/dolved-dify/workflow-config/20261125/`. This is a structural configuration
 change, not arbitrary text deduplication: identical wording in earlier turns is retained.
 The system prompt, retrieved context, location input, model, parameters and memory setting
-are unchanged. The hosted workflow has not been edited or published.
+are unchanged. The correction was saved and published through stock Dify 1.19.0's own
+workflow services. Active application `32199630-6a11-40a0-96ca-618560e6e394` now points
+to workflow `fc614ecd-9cdf-446e-96bf-d193f1a2afde`, version number `4`.
 
-The provider-free unit check proves the exact configuration diff. It does not exercise
-Dify's live prompt assembly. The source path recorded by the preceding audit establishes
-why this single removal causes stock Dify to insert the current query once; a later
-authorised captured live turn must verify the deployed runtime boundary before freeze.
+Provider-free unit and hosted read-back checks prove the exact configuration diff. They do
+not exercise Dify's live prompt assembly. The source path recorded by the preceding audit
+establishes why this single removal causes stock Dify to insert the current query once; a
+later authorised captured live turn must verify the deployed runtime boundary before
+freeze.
 
 ### 2. Invisible remote history could affect a later turn
 
@@ -108,7 +111,7 @@ The additive migration adds nullable `continuation_blocked_at` and
 marked durably. Older affected conversations can also be denied from existing durable
 run/session evidence without mutating them or scanning Dify.
 
-Required release sequence:
+Completed release sequence:
 
 1. Back up the application database and export the currently published Dify workflow.
 2. Apply the additive database migration.
@@ -116,8 +119,8 @@ Required release sequence:
 4. Through supported Dify controls, remove only the explicit user-role `sys.query` prompt
    entry and publish once.
 5. Read back/export the configuration and run provider-free application/API/UI checks.
-6. Only under separate authority, capture a live clean turn at the model-runtime boundary
-   before the evaluation freeze.
+6. The remaining live clean-turn capture at the model-runtime boundary still requires
+   separate authority before the evaluation freeze.
 
 Do not roll back the migration while code expecting these columns is running. An
 application rollback may retain the nullable columns. Reverting the Dify correction means
@@ -141,12 +144,24 @@ not cleared as part of code rollback.
   direct-API denial, new-conversation isolation and retired-location pre-dispatch denial.
 - Web coverage includes reload-safe read-only presentation, retired-location labelling and
   the start-new-conversation action.
+- The production Next build completed on the deployment host, including TypeScript and all
+  22 static pages.
+- Running production verification passed without retrieval or generation. API, web,
+  worker, scheduler, database, object storage and supporting Dolved services were healthy.
+- The additive migration
+  `2026_11_25_000001_add_continuation_safety_to_conversations` completed in batch `7` and
+  both continuation columns are present.
+- Hosted read-back proves that the active graph differs from version `3` only by the one
+  authorised prompt entry. Active graph SHA-256 is
+  `77948ad3d5056f701c386b46ea088f008897e0fae49257baa84c913fa53de009`.
+- Model `gpt-5.6-sol`, reasoning effort `medium`, maximum output `4096`, service tier
+  `default`, memory enabled/window `10`, context selector, retrieval node, features and
+  workflow variables all compare unchanged.
 
-The ordinary Next production build could not be completed in this local execution
-environment: Google Font fetching is unavailable without network, Turbopack cannot bind
-its internal port, and the webpack fallback did not complete in a reasonable bounded
-time. No source compile error was emitted. Focused tests and lint passed, but a normal
-release build remains a deployment preflight requirement.
+The ordinary Next production build could not be completed in the restricted local
+execution environment, but the same reviewed revision completed its production build on
+the deployment host before rollout. This closes the release-build preflight limitation;
+it does not replace the focused test evidence above.
 
 An older broader backend selection also encountered existing host-specific tests with
 hard-coded `/contracts/...` paths absent from this worktree. The changed Dify boundary and
@@ -179,18 +194,24 @@ generation run and correlation ID, provider message/task identifiers when return
 remote Dify conversation identity, generated-answer lineage, retrieved-source references,
 usage when reported, dispatch state and delivery events. The previously verified runtime
 capture mechanism can record Dify's assembled prompt sequence, but its retained capture
-predates this prepared correction and cannot prove the corrected live prompt.
+predates this deployed correction and cannot prove the corrected live prompt.
 
-## Local versus hosted and remaining work
+## Hosted release and remaining work
 
-All changes in this record are local and uncommitted. The hosted application remains on
-the baseline revision and the hosted Dify workflow remains the published version with the
-duplicate prompt entry. No migration, deployment, Dify publish, provider call, retrieval
-call, remote mutation or spend occurred in this batch.
+The application revision is committed and pushed. Production images are:
 
-Before the live evaluation freeze: review and commit the batch; complete the release
-sequence above; verify provider-free readback and UI/API behaviour; then obtain separate
-authority for one captured live memory smoke/evaluation path. Reconfirm the 11-document
-inventory and frozen retrieval/configuration settings after deployment. Claude may prepare
-the separate sealed memory section from these stated semantics, but should not execute or
-freeze it until the hosted correction and captured prompt boundary are verified.
+- API `sha256:06dfe41dce7cebc5377ba8e0e2ae55e69e69d54bda5d2e922931221f2c7022e0`
+- web `sha256:c175a3e91fd9fb4076228c602085b7a773cfb861a456769e5cb60876d83e25b5`
+
+Both carry the exact OCI revision label. A restricted pre-deployment backup containing
+both logical databases, the previous published workflow and deployment configuration is
+at `/srv/dolved-pilot/backups/20261125-conversation-state-predeploy`; its checksum-manifest
+SHA-256 is `634d289e6bbbc8ced53015b0e26b2af39b7b40323b1fd0702905d735b3341a4f`.
+
+No live chat, retrieval, embedding, generation, evaluation or test-email operation was
+performed. No sealed evaluation material was opened or changed. Before the evaluation
+freeze, obtain separate authority for one captured live clean memory turn and use it to
+verify the corrected runtime prompt boundary. Reconfirm the frozen 11-document / 248-segment
+inventory during that separately authorised readiness run. Claude may prepare the separate
+sealed memory section from these semantics, but should not execute or freeze it until that
+captured boundary is verified.
