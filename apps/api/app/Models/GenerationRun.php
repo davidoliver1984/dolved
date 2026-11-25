@@ -108,4 +108,9 @@ class GenerationRun extends Model
     {
         return $this->hasOne(QuestionReview::class);
     }
+
+    public function answerFeedback(): HasOne
+    {
+        return $this->hasOne(AnswerFeedback::class);
+    }
 }

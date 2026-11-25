@@ -1012,7 +1012,14 @@ export type QuestionReviewItem = {
   run_status: string;
   retrieval_outcome: string | null;
   site_context: string;
+  answer_feedback: AnswerFeedbackSignal | null;
   review: QuestionReviewState;
+};
+export type AnswerFeedbackSignal = {
+  rating: "helpful" | "not_helpful";
+  reason_code: string | null;
+  comment: string | null;
+  submitted_at: string;
 };
 export type QuestionReviewDetail = QuestionReviewItem & {
   question: string;
@@ -1025,6 +1032,15 @@ export type KnowledgeGap = QuestionReviewSubject & {
   reviewed_count: number;
   unresolved_count: number;
   confirmed_gap_count: number;
+};
+export type PotentialContentGap = {
+  suggested_subject: string;
+  candidate_count: number;
+  no_answer_count: number;
+  negative_feedback_count: number;
+  reviewed_missing_evidence_count: number;
+  latest_signal_at: string;
+  signal_strength: "early" | "repeated";
 };
 
 const questionReviewRoot = (workspaceId: string) => `/api/workspaces/${encodeURIComponent(workspaceId)}/question-review`;
@@ -1051,6 +1067,10 @@ export async function createQuestionReviewSubject(workspaceId: string, name: str
 }
 export async function questionReviewKnowledgeGaps(workspaceId: string): Promise<{ data: KnowledgeGap[]; description: string }> {
   const response = await apiFetch<{ data: KnowledgeGap[]; meta: { description: string } }>(`${questionReviewRoot(workspaceId)}/knowledge-gaps`);
+  return { data: response.data, description: response.meta.description };
+}
+export async function questionReviewPotentialGaps(workspaceId: string): Promise<{ data: PotentialContentGap[]; description: string }> {
+  const response = await apiFetch<{ data: PotentialContentGap[]; meta: { description: string } }>(`${questionReviewRoot(workspaceId)}/potential-gaps`);
   return { data: response.data, description: response.meta.description };
 }
 

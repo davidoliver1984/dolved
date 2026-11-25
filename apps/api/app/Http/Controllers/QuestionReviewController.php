@@ -15,6 +15,7 @@ use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
@@ -99,7 +100,7 @@ final class QuestionReviewController extends Controller
         $query = GenerationRun::query()
             ->where('workspace_id', $workspace->id)
             ->where('created_at', '>=', $policy->review_from)
-            ->with(['conversation.selectedLocation', 'questionReview.subjects'])
+            ->with(['conversation.selectedLocation', 'questionReview.subjects', 'answerFeedback'])
             ->latest('created_at');
         if (isset($validated['review_status'])) {
             $query->whereHas('questionReview', fn (Builder $review) => $review->where('review_status', $validated['review_status']));
@@ -127,7 +128,7 @@ final class QuestionReviewController extends Controller
         $actor = $request->user();
         $purpose = (string) $request->validate(['purpose' => ['required', 'string', 'min:5', 'max:255']])['purpose'];
         $run = $this->reviewableRun($workspace, $policy, $runPublicId)->load([
-            'conversation.selectedLocation', 'userMessage', 'assistantMessage', 'generatedAnswer.retrievedSources', 'questionReview.subjects',
+            'conversation.selectedLocation', 'userMessage', 'assistantMessage', 'generatedAnswer.retrievedSources', 'questionReview.subjects', 'answerFeedback',
         ]);
         $this->audit($workspace, $actor, 'content_viewed', $run, $run->questionReview, ['purpose' => $purpose], $purpose);
 
@@ -140,6 +141,7 @@ final class QuestionReviewController extends Controller
                 'display_name' => $source->display_name,
                 'document_id' => $source->document?->public_id,
             ])->values()->all() ?? [],
+            'answer_feedback' => $this->feedbackPayload($run),
             'notice' => 'Restricted application content. This access was recorded in the workspace audit trail.',
         ])]);
     }
@@ -250,6 +252,65 @@ final class QuestionReviewController extends Controller
         ]))->all(), 'meta' => ['description' => 'Human-reviewed records only; this is not a complete audit of the knowledge base.']]);
     }
 
+    public function potentialGaps(Request $request, string $workspacePublicId, FindWorkspaceForUser $workspaces): JsonResponse
+    {
+        $workspace = $this->workspace($request, $workspacePublicId, $workspaces);
+        $policy = $this->authoriseReview($workspace);
+        $subjects = QuestionReviewSubject::query()->where('workspace_id', $workspace->id)->where('status', 'active')
+            ->orderByRaw('LENGTH(name) DESC')->get();
+        $runs = GenerationRun::query()
+            ->where('workspace_id', $workspace->id)
+            ->where('created_at', '>=', $policy->review_from)
+            ->with(['userMessage', 'answerFeedback', 'questionReview', 'generatedAnswer.retrievedSources.document.family.category'])
+            ->latest('created_at')
+            ->limit(500)
+            ->get();
+
+        $groups = [];
+        foreach ($runs as $run) {
+            $noAnswer = $run->status->value === 'retrieval_no_answer'
+                && in_array($run->retrieval_outcome?->value, ['no_eligible_evidence', 'no_retrieval_candidates', 'insufficient_evidence'], true);
+            $negativeFeedback = $run->answerFeedback?->rating === 'not_helpful';
+            $reviewedMissingEvidence = in_array($run->questionReview?->issue_type, ['missing_content', 'incomplete_or_unclear_content'], true);
+            if (! $noAnswer && ! $negativeFeedback && ! $reviewedMissingEvidence) {
+                continue;
+            }
+
+            $subject = $this->suggestedSubject($run, $subjects);
+            $key = mb_strtolower($subject);
+            $groups[$key] ??= [
+                'suggested_subject' => $subject,
+                'candidate_count' => 0,
+                'no_answer_count' => 0,
+                'negative_feedback_count' => 0,
+                'reviewed_missing_evidence_count' => 0,
+                'latest_signal_at' => null,
+            ];
+            $groups[$key]['candidate_count']++;
+            $groups[$key]['no_answer_count'] += $noAnswer ? 1 : 0;
+            $groups[$key]['negative_feedback_count'] += $negativeFeedback ? 1 : 0;
+            $groups[$key]['reviewed_missing_evidence_count'] += $reviewedMissingEvidence ? 1 : 0;
+            $groups[$key]['latest_signal_at'] ??= $run->created_at->toIso8601String();
+        }
+
+        $data = collect($groups)->map(function (array $group): array {
+            $signalTypes = collect([
+                $group['no_answer_count'],
+                $group['negative_feedback_count'],
+                $group['reviewed_missing_evidence_count'],
+            ])->filter(fn (int $count): bool => $count > 0)->count();
+
+            return [...$group, 'signal_strength' => $group['candidate_count'] >= 2 || $signalTypes >= 2 ? 'repeated' : 'early'];
+        })->sortByDesc('candidate_count')->values()->all();
+
+        return response()->json(['data' => $data, 'meta' => [
+            'description' => 'Automatically derived candidate signals. These are suggestions, not confirmed content gaps.',
+            'classification' => 'Registered subject-name matching, then retrieved document category; otherwise Unclassified.',
+            'technical_failures_excluded' => true,
+            'run_limit' => 500,
+        ]]);
+    }
+
     private function workspace(Request $request, string $publicId, FindWorkspaceForUser $workspaces): Workspace
     {
         /** @var User $user */
@@ -293,6 +354,7 @@ final class QuestionReviewController extends Controller
             'run_status' => $run->status->value,
             'retrieval_outcome' => $run->retrieval_outcome?->value,
             'site_context' => $run->conversation->selectedLocation?->name ?? 'Organisation-wide',
+            'answer_feedback' => $this->feedbackPayload($run),
             'review' => $run->questionReview ? $this->reviewPayload($run->questionReview) : [
                 'review_status' => 'unreviewed', 'issue_type' => null, 'workflow_state' => 'needs_review',
                 'priority' => 'normal', 'review_notes' => null, 'subjects' => [],
@@ -318,6 +380,41 @@ final class QuestionReviewController extends Controller
     private function subjectPayload(QuestionReviewSubject $subject): array
     {
         return ['public_id' => $subject->public_id, 'name' => $subject->name, 'status' => $subject->status, 'priority' => $subject->priority];
+    }
+
+    private function feedbackPayload(GenerationRun $run): ?array
+    {
+        if (! $run->relationLoaded('answerFeedback') || $run->answerFeedback === null) {
+            return null;
+        }
+
+        return [
+            'rating' => $run->answerFeedback->rating,
+            'reason_code' => $run->answerFeedback->reason_code,
+            'comment' => $run->answerFeedback->comment,
+            'submitted_at' => $run->answerFeedback->submitted_at?->toIso8601String(),
+        ];
+    }
+
+    /** @param Collection<int, QuestionReviewSubject> $subjects */
+    private function suggestedSubject(GenerationRun $run, Collection $subjects): string
+    {
+        $question = mb_strtolower((string) $run->userMessage?->display_text);
+        foreach ($subjects as $subject) {
+            if (str_contains($question, mb_strtolower($subject->name))) {
+                return $subject->name;
+            }
+        }
+
+        $category = $run->generatedAnswer?->retrievedSources
+            ?->map(fn ($source) => $source->document?->family?->category?->name)
+            ->filter()
+            ->countBy()
+            ->sortDesc()
+            ->keys()
+            ->first();
+
+        return is_string($category) && $category !== '' ? $category : 'Unclassified';
     }
 
     private function audit(Workspace $workspace, User $actor, string $eventType, ?GenerationRun $run = null, ?QuestionReview $review = null, array $metadata = [], ?string $purpose = null): void

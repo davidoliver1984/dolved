@@ -16,10 +16,12 @@ import {
   questionReviewItems,
   questionReviewKnowledgeGaps,
   questionReviewPolicy,
+  questionReviewPotentialGaps,
   questionReviewSubjects,
   updateQuestionReview,
   updateQuestionReviewPolicy,
   type KnowledgeGap,
+  type PotentialContentGap,
   type QuestionReviewDetail,
   type QuestionReviewItem,
   type QuestionReviewPolicy,
@@ -37,7 +39,7 @@ export function QuestionReviewAdministration({ workspaceId }: Readonly<{ workspa
   const [items, setItems] = useState<QuestionReviewItem[]>([]);
   const [subjects, setSubjects] = useState<QuestionReviewSubject[]>([]);
   const [gaps, setGaps] = useState<KnowledgeGap[]>([]);
-  const [gapDescription, setGapDescription] = useState("");
+  const [potentialGaps, setPotentialGaps] = useState<PotentialContentGap[]>([]);
   const [selected, setSelected] = useState<QuestionReviewDetail | null>(null);
   const [retrospective, setRetrospective] = useState(false);
   const [retrospectiveDays, setRetrospectiveDays] = useState(30);
@@ -48,9 +50,9 @@ export function QuestionReviewAdministration({ workspaceId }: Readonly<{ workspa
   const refresh = useCallback(async () => {
     const nextPolicy = await questionReviewPolicy(workspaceId);
     setPolicy(nextPolicy);
-    if (!nextPolicy.can_review) { setItems([]); setSubjects([]); setGaps([]); return; }
-    const [nextItems, nextSubjects, nextGaps] = await Promise.all([questionReviewItems(workspaceId), questionReviewSubjects(workspaceId), questionReviewKnowledgeGaps(workspaceId)]);
-    setItems(nextItems); setSubjects(nextSubjects); setGaps(nextGaps.data); setGapDescription(nextGaps.description);
+    if (!nextPolicy.can_review) { setItems([]); setSubjects([]); setGaps([]); setPotentialGaps([]); return; }
+    const [nextItems, nextSubjects, nextGaps, nextPotential] = await Promise.all([questionReviewItems(workspaceId), questionReviewSubjects(workspaceId), questionReviewKnowledgeGaps(workspaceId), questionReviewPotentialGaps(workspaceId)]);
+    setItems(nextItems); setSubjects(nextSubjects); setGaps(nextGaps.data); setPotentialGaps(nextPotential.data);
   }, [workspaceId]);
 
   useEffect(() => {
@@ -58,10 +60,10 @@ export function QuestionReviewAdministration({ workspaceId }: Readonly<{ workspa
     void questionReviewPolicy(workspaceId).then(async (nextPolicy) => {
       if (!active) return;
       setPolicy(nextPolicy);
-      if (!nextPolicy.can_review) { setItems([]); setSubjects([]); setGaps([]); return; }
-      const [nextItems, nextSubjects, nextGaps] = await Promise.all([questionReviewItems(workspaceId), questionReviewSubjects(workspaceId), questionReviewKnowledgeGaps(workspaceId)]);
+      if (!nextPolicy.can_review) { setItems([]); setSubjects([]); setGaps([]); setPotentialGaps([]); return; }
+      const [nextItems, nextSubjects, nextGaps, nextPotential] = await Promise.all([questionReviewItems(workspaceId), questionReviewSubjects(workspaceId), questionReviewKnowledgeGaps(workspaceId), questionReviewPotentialGaps(workspaceId)]);
       if (!active) return;
-      setItems(nextItems); setSubjects(nextSubjects); setGaps(nextGaps.data); setGapDescription(nextGaps.description);
+      setItems(nextItems); setSubjects(nextSubjects); setGaps(nextGaps.data); setPotentialGaps(nextPotential.data);
     }).catch((caught) => { if (active) setError(firstError(caught)); }).finally(() => { if (active) setBusy(false); });
     return () => { active = false; };
   }, [workspaceId]);
@@ -103,16 +105,22 @@ export function QuestionReviewAdministration({ workspaceId }: Readonly<{ workspa
     {policy.enabled && !policy.can_review ? <Notice tone="warning">Question review is enabled, but your account does not have the restricted review capability.</Notice> : null}
     {policy.can_review ? <>
       <div className="grid gap-6 xl:grid-cols-[minmax(22rem,1fr)_minmax(26rem,1.2fr)]">
-        <Card><CardHeader><CardTitle>Review queue</CardTitle><CardDescription>Question wording is hidden until an authorised, audited content view is opened.</CardDescription></CardHeader><CardContent className="grid gap-3">{items.length ? items.map((item) => <article className="grid gap-3 rounded-lg border border-border p-4" key={item.run_id}><div className="flex flex-wrap items-start justify-between gap-2"><div><strong>{formatDateTime(item.occurred_at)}</strong><p className="text-sm text-foreground-muted">{item.site_context} · {label(item.run_status)}</p></div><StatusBadge status={item.review.review_status === "unreviewed" ? "pending" : "info"}>{label(item.review.review_status)}</StatusBadge></div><Button disabled={busy} onClick={() => void inspect(item.run_id)} size="sm" variant="outline"><Eye />Open audited review</Button></article>) : <p className="text-sm text-foreground-muted">No retained questions are available within the enabled review period.</p>}</CardContent></Card>
-        <Card><CardHeader><CardTitle>Subjects</CardTitle><CardDescription>Create reusable topic labels, then assign them to questions inside an audited review. Assigned reviews are grouped by subject in Knowledge gaps. Nothing is classified automatically and no extra provider call is made.</CardDescription></CardHeader><CardContent className="grid gap-4"><form className="flex gap-2" onSubmit={addSubject}><Input aria-label="New subject name" onChange={(event) => setNewSubject(event.target.value)} placeholder="e.g. Annual leave" value={newSubject} /><Button disabled={busy || !newSubject.trim()} type="submit"><Plus />Add</Button></form><div className="flex flex-wrap gap-2">{subjects.length ? subjects.map((subject) => <StatusBadge key={subject.public_id} status="info">{subject.name}</StatusBadge>) : <span className="text-sm text-foreground-muted">No labels yet. Questions remain available in the review queue without a subject.</span>}</div></CardContent></Card>
+        <Card><CardHeader><CardTitle>Review queue</CardTitle><CardDescription>Question wording is hidden until an authorised, audited content view is opened.</CardDescription></CardHeader><CardContent className="grid gap-3">{items.length ? items.map((item) => <article className="grid gap-3 rounded-lg border border-border p-4" key={item.run_id}><div className="flex flex-wrap items-start justify-between gap-2"><div><strong>{formatDateTime(item.occurred_at)}</strong><p className="text-sm text-foreground-muted">{item.site_context} · {label(item.run_status)}</p></div><div className="flex flex-wrap gap-2">{item.answer_feedback?.rating === "not_helpful" ? <StatusBadge status="warning">User: not helpful</StatusBadge> : null}<StatusBadge status={item.review.review_status === "unreviewed" ? "pending" : "info"}>{label(item.review.review_status)}</StatusBadge></div></div><Button disabled={busy} onClick={() => void inspect(item.run_id)} size="sm" variant="outline"><Eye />Open audited review</Button></article>) : <p className="text-sm text-foreground-muted">No retained questions are available within the enabled review period.</p>}</CardContent></Card>
+        <Card><CardHeader><CardTitle>Subjects</CardTitle><CardDescription>Create reusable topic labels for reviewed questions. Potential gaps may suggest one of these subjects from the question wording; a reviewer still decides the final classification.</CardDescription></CardHeader><CardContent className="grid gap-4"><form className="flex gap-2" onSubmit={addSubject}><Input aria-label="New subject name" onChange={(event) => setNewSubject(event.target.value)} placeholder="e.g. Annual leave" value={newSubject} /><Button disabled={busy || !newSubject.trim()} type="submit"><Plus />Add</Button></form><div className="flex flex-wrap gap-2">{subjects.length ? subjects.map((subject) => <StatusBadge key={subject.public_id} status="info">{subject.name}</StatusBadge>) : <span className="text-sm text-foreground-muted">No labels yet. Questions remain available in the review queue without a subject.</span>}</div></CardContent></Card>
       </div>
-      <Card><CardHeader><CardTitle className="flex items-center gap-2"><FolderSearch className="size-5 text-brand" />Knowledge gaps</CardTitle><CardDescription>{gapDescription || "Human-reviewed records only."}</CardDescription></CardHeader><CardContent className="grid gap-3">{gaps.length ? gaps.map((gap) => <article className="rounded-lg border border-border p-4" key={gap.public_id}><div className="flex flex-wrap justify-between gap-2"><strong>{gap.name}</strong><StatusBadge status={gap.confirmed_gap_count ? "warning" : "unavailable"}>{gap.confirmed_gap_count} confirmed</StatusBadge></div><p className="mt-2 text-sm text-foreground-muted">{gap.question_count} assigned · {gap.reviewed_count} reviewed · {gap.unresolved_count} unresolved</p></article>) : <p className="text-sm text-foreground-muted">No subject-level findings have been recorded.</p>}</CardContent></Card>
+      <div className="grid gap-6 xl:grid-cols-2">
+        <Card><CardHeader><CardTitle className="flex items-center gap-2"><FolderSearch className="size-5 text-brand" />Potential content gaps</CardTitle><CardDescription>Possible missing or weak coverage, spotted when the system could not answer, a user marked an answer as not helpful, or a review found missing evidence. These are suggestions until a reviewer checks them.</CardDescription></CardHeader><CardContent className="grid gap-3">{potentialGaps.length ? potentialGaps.map((gap) => <article className="rounded-lg border border-border p-4" key={gap.suggested_subject}><div className="flex flex-wrap justify-between gap-2"><div><span className="text-xs font-bold uppercase tracking-[0.12em] text-foreground-muted">Suggested subject</span><strong className="mt-1 block">{gap.suggested_subject}</strong></div><StatusBadge status={gap.signal_strength === "repeated" ? "warning" : "info"}>{gap.candidate_count} {gap.candidate_count === 1 ? "possible issue" : "possible issues"}</StatusBadge></div><p className="mt-3 text-sm text-foreground-muted">Why it appeared: {gap.no_answer_count} unanswered · {gap.negative_feedback_count} marked not helpful · {gap.reviewed_missing_evidence_count} review found missing evidence</p></article>) : <p className="text-sm text-foreground-muted">No possible content gaps have been detected in the review period.</p>}</CardContent></Card>
+        <Card><CardHeader><CardTitle>Reviewed findings</CardTitle><CardDescription>Subjects that an authorised reviewer has checked and classified. “Confirmed” means a person found that the available documents may need better coverage; unresolved findings still need action.</CardDescription></CardHeader><CardContent className="grid gap-3">{gaps.length ? gaps.map((gap) => <article className="rounded-lg border border-border p-4" key={gap.public_id}><div className="flex flex-wrap justify-between gap-2"><strong>{gap.name}</strong><StatusBadge status={gap.confirmed_gap_count ? "warning" : "unavailable"}>{gap.confirmed_gap_count} confirmed</StatusBadge></div><p className="mt-2 text-sm text-foreground-muted">{gap.question_count} questions assigned · {gap.reviewed_count} checked by a reviewer · {gap.unresolved_count} still to resolve</p></article>) : <p className="text-sm text-foreground-muted">No human-reviewed findings have been recorded yet.</p>}</CardContent></Card>
+      </div>
     </> : null}
 
     <Dialog onOpenChange={(open) => { if (!open) setSelected(null); }} open={selected !== null}>
       <DialogContent className="max-h-[90vh] max-w-4xl overflow-y-auto">
         <DialogHeader><DialogTitle>Audited question review</DialogTitle><DialogDescription>Viewing this restricted question and answer is recorded in the workspace audit trail.</DialogDescription></DialogHeader>
-        {selected ? <QuestionReviewEditor busy={busy} detail={selected} onClose={() => setSelected(null)} onSaved={async () => { setSelected(null); await refresh(); }} subjects={subjects} workspaceId={workspaceId} /> : null}
+        {selected ? <div className="grid gap-4">
+          {selected.answer_feedback ? <Notice tone={selected.answer_feedback.rating === "not_helpful" ? "warning" : "success"}><strong>User feedback: {label(selected.answer_feedback.rating)}</strong>{selected.answer_feedback.reason_code ? <p className="mt-1">Reason: {label(selected.answer_feedback.reason_code)}</p> : null}{selected.answer_feedback.comment ? <p className="mt-1 whitespace-pre-wrap">{selected.answer_feedback.comment}</p> : null}</Notice> : null}
+          <QuestionReviewEditor busy={busy} detail={selected} onClose={() => setSelected(null)} onSaved={async () => { setSelected(null); await refresh(); }} subjects={subjects} workspaceId={workspaceId} />
+        </div> : null}
       </DialogContent>
     </Dialog>
   </div>;

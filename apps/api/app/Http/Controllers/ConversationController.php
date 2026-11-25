@@ -129,6 +129,7 @@ class ConversationController extends Controller
             'generationRuns.assistantMessage',
             'generationRuns.retryOf',
             'generationRuns.deliveryEvents',
+            'generationRuns.answerFeedback',
             'generationRuns.generatedAnswer.answerParts.evidenceSnapshots.document',
             'generationRuns.generatedAnswer.retrievedSources.document',
             'selectedLocation',

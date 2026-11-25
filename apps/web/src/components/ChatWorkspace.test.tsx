@@ -97,6 +97,8 @@ function services() {
       send: vi.fn().mockResolvedValue({ run_id: "run-1", status: "queued" }),
       retry: vi.fn(),
       cancel: vi.fn(),
+      feedback: vi.fn().mockImplementation(async (_workspace, _conversation, _run, feedback) => ({ ...feedback, submitted_at: "2026-08-18T12:03:00Z" })),
+      removeFeedback: vi.fn().mockResolvedValue(undefined),
       subscribe: vi.fn(
         (
           _workspace: string,
@@ -215,6 +217,31 @@ describe("ChatWorkspace", () => {
     await user.click(copy);
     await waitFor(() => expect(writeText).toHaveBeenCalledWith("Use the current procedure."));
     expect(screen.getByRole("button", { name: "Answer copied" })).not.toBeNull();
+  });
+
+  it("records answer feedback and optional improvement detail", async () => {
+    const fixture = services();
+    fixture.api.get.mockResolvedValue(fixture.completed);
+    const user = userEvent.setup();
+    render(<ChatWorkspace initialConversationId="conversation-1" services={fixture.api} workspaceId="workspace-1" workspaceName="Care" />);
+
+    await user.click(await screen.findByRole("button", { name: "Mark answer not helpful" }));
+    await waitFor(() => expect(fixture.api.feedback).toHaveBeenCalledWith(
+      "workspace-1",
+      "conversation-1",
+      "run-1",
+      { rating: "not_helpful", reason_code: null, comment: null },
+    ));
+    expect(screen.getByText("What could be improved?")).not.toBeNull();
+    await user.selectOptions(screen.getByLabelText("Reason"), "incomplete");
+    await user.type(screen.getByLabelText("Comment (optional)"), "It omitted the escalation route.");
+    await user.click(screen.getByRole("button", { name: "Save feedback" }));
+    await waitFor(() => expect(fixture.api.feedback).toHaveBeenLastCalledWith(
+      "workspace-1",
+      "conversation-1",
+      "run-1",
+      { rating: "not_helpful", reason_code: "incomplete", comment: "It omitted the escalation route." },
+    ));
   });
 
   it("observes an existing pending pilot run after route remount without sending again", async () => {

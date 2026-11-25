@@ -60,6 +60,12 @@ class ConversationResource extends JsonResource
                         'event_type',
                         ChatStreamEventType::AnswerPartAcceptedForDisplay,
                     ),
+                'feedback' => $run->relationLoaded('answerFeedback') && $run->answerFeedback !== null ? [
+                    'rating' => $run->answerFeedback->rating,
+                    'reason_code' => $run->answerFeedback->reason_code,
+                    'comment' => $run->answerFeedback->comment,
+                    'submitted_at' => $run->answerFeedback->submitted_at?->toIso8601String(),
+                ] : null,
                 'answer' => $run->relationLoaded('generatedAnswer') && $run->generatedAnswer !== null ? ($run->generatedAnswer->contract_version === 'dify-chatflow-answer-v1' ? [
                     'id' => $run->generatedAnswer->public_id,
                     'outcome' => $run->generatedAnswer->outcome->value,

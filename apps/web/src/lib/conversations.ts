@@ -22,9 +22,17 @@ export type ConversationRun = {
   presentation?: "saved-message-v1" | null;
   retryable: boolean;
   provisional_content_retracted: boolean;
+  feedback?: AnswerFeedback | null;
   answer?: GroundedAnswer | null;
   created_at: string;
   completed_at: string | null;
+};
+
+export type AnswerFeedback = {
+  rating: "helpful" | "not_helpful";
+  reason_code: "inaccurate" | "incomplete" | "unclear" | "outdated" | "other" | null;
+  comment: string | null;
+  submitted_at: string;
 };
 
 export type GroundedCitation = {
@@ -171,4 +179,28 @@ export async function cancelConversationRun(
     { method: "POST" },
   );
   return response.data;
+}
+
+export async function updateAnswerFeedback(
+  workspaceId: string,
+  conversationId: string,
+  runId: string,
+  feedback: Pick<AnswerFeedback, "rating" | "reason_code" | "comment">,
+): Promise<AnswerFeedback> {
+  const response = await apiFetch<Resource<AnswerFeedback>>(
+    `${workspacePath(workspaceId)}/conversations/${encodeURIComponent(conversationId)}/runs/${encodeURIComponent(runId)}/feedback`,
+    { method: "PUT", body: JSON.stringify(feedback) },
+  );
+  return response.data;
+}
+
+export async function removeAnswerFeedback(
+  workspaceId: string,
+  conversationId: string,
+  runId: string,
+): Promise<void> {
+  await apiFetch(
+    `${workspacePath(workspaceId)}/conversations/${encodeURIComponent(conversationId)}/runs/${encodeURIComponent(runId)}/feedback`,
+    { method: "DELETE" },
+  );
 }

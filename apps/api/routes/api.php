@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AnswerFeedbackController;
 use App\Http\Controllers\BulkOperationController;
 use App\Http\Controllers\ChatStreamController;
 use App\Http\Controllers\ConversationController;
@@ -187,6 +188,9 @@ Route::middleware(['auth:sanctum', 'account.enabled', 'verified'])->group(functi
     Route::get('/workspaces/{workspacePublicId}/question-review/subjects', [QuestionReviewController::class, 'subjects']);
     Route::post('/workspaces/{workspacePublicId}/question-review/subjects', [QuestionReviewController::class, 'storeSubject']);
     Route::get('/workspaces/{workspacePublicId}/question-review/knowledge-gaps', [QuestionReviewController::class, 'gaps']);
+    Route::get('/workspaces/{workspacePublicId}/question-review/potential-gaps', [QuestionReviewController::class, 'potentialGaps']);
+    Route::put('/workspaces/{workspacePublicId}/conversations/{conversationPublicId}/runs/{runPublicId}/feedback', [AnswerFeedbackController::class, 'update']);
+    Route::delete('/workspaces/{workspacePublicId}/conversations/{conversationPublicId}/runs/{runPublicId}/feedback', [AnswerFeedbackController::class, 'destroy']);
     Route::post('/workspaces/{workspacePublicId}/invitations', [WorkspaceAdministrationController::class, 'issue']);
     Route::delete('/workspaces/{workspacePublicId}/invitations/{invitationPublicId}', [WorkspaceAdministrationController::class, 'revoke']);
     Route::patch('/workspaces/{workspacePublicId}/memberships/{membershipPublicId}/role', [WorkspaceAdministrationController::class, 'changeRole']);

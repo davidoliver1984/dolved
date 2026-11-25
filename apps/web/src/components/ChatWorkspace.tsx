@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, Copy, Inbox, Plus, RefreshCw, Send, X } from "lucide-react";
+import { Check, Copy, Inbox, Plus, RefreshCw, Send, ThumbsDown, ThumbsUp, X } from "lucide-react";
 import {
   type FormEvent,
   type KeyboardEvent,
@@ -34,7 +34,9 @@ import {
   getConversation,
   listConversations,
   retryConversationRun,
+  removeAnswerFeedback,
   sendConversationMessage,
+  updateAnswerFeedback,
 } from "@/lib/conversations";
 
 type Citation = {
@@ -60,6 +62,8 @@ type ChatServices = {
   send: typeof sendConversationMessage;
   retry: typeof retryConversationRun;
   cancel: typeof cancelConversationRun;
+  feedback: typeof updateAnswerFeedback;
+  removeFeedback: typeof removeAnswerFeedback;
   subscribe: typeof subscribeToGenerationRun;
 };
 
@@ -70,6 +74,8 @@ const defaultServices: ChatServices = {
   send: sendConversationMessage,
   retry: retryConversationRun,
   cancel: cancelConversationRun,
+  feedback: updateAnswerFeedback,
+  removeFeedback: removeAnswerFeedback,
   subscribe: subscribeToGenerationRun,
 };
 
@@ -246,6 +252,10 @@ export function ChatWorkspace({
   const [accessRevoked, setAccessRevoked] = useState(false);
   const [selectedLocationId, setSelectedLocationId] = useState("");
   const [copiedMessageId, setCopiedMessageId] = useState<string | null>(null);
+  const [feedbackRunId, setFeedbackRunId] = useState<string | null>(null);
+  const [feedbackReason, setFeedbackReason] = useState<string>("");
+  const [feedbackComment, setFeedbackComment] = useState("");
+  const [feedbackSaving, setFeedbackSaving] = useState(false);
   const unsubscribe = useRef<null | (() => void)>(null);
   const transcript = useRef<HTMLDivElement>(null);
   const provisionalPartsRef = useRef<AnswerPart[]>([]);
@@ -544,6 +554,66 @@ export function ChatWorkspace({
     }
   };
 
+  const setRunFeedback = (runId: string, feedback: ConversationRun["feedback"]) => {
+    setActive((current) => current ? {
+      ...current,
+      runs: current.runs?.map((run) => run.id === runId ? { ...run, feedback } : run),
+    } : current);
+  };
+
+  const rateAnswer = async (run: ConversationRun, rating: "helpful" | "not_helpful") => {
+    if (!active || feedbackSaving) return;
+    setFeedbackSaving(true);
+    setError(null);
+    try {
+      if (run.feedback?.rating === rating) {
+        await services.removeFeedback(workspaceId, active.id, run.id);
+        setRunFeedback(run.id, null);
+        setFeedbackRunId(null);
+        setAnnouncement("Answer feedback removed.");
+        return;
+      }
+      const feedback = await services.feedback(workspaceId, active.id, run.id, {
+        rating,
+        reason_code: null,
+        comment: null,
+      });
+      setRunFeedback(run.id, feedback);
+      if (rating === "not_helpful") {
+        setFeedbackRunId(run.id);
+        setFeedbackReason(feedback.reason_code ?? "");
+        setFeedbackComment(feedback.comment ?? "");
+      } else {
+        setFeedbackRunId(null);
+      }
+      setAnnouncement(rating === "helpful" ? "Answer marked helpful." : "Answer marked not helpful. You can optionally add more detail.");
+    } catch (caught) {
+      setError(firstError(caught));
+    } finally {
+      setFeedbackSaving(false);
+    }
+  };
+
+  const saveFeedbackDetail = async (run: ConversationRun) => {
+    if (!active || feedbackSaving) return;
+    setFeedbackSaving(true);
+    setError(null);
+    try {
+      const feedback = await services.feedback(workspaceId, active.id, run.id, {
+        rating: "not_helpful",
+        reason_code: feedbackReason ? feedbackReason as NonNullable<ConversationRun["feedback"]>["reason_code"] : null,
+        comment: feedbackComment.trim() || null,
+      });
+      setRunFeedback(run.id, feedback);
+      setFeedbackRunId(null);
+      setAnnouncement("Feedback details saved.");
+    } catch (caught) {
+      setError(firstError(caught));
+    } finally {
+      setFeedbackSaving(false);
+    }
+  };
+
   const runsByMessage = new Map(
     (active?.runs ?? [])
       .filter((run) => run.assistant_message_id)
@@ -650,7 +720,17 @@ export function ChatWorkspace({
                 {!savedPresentation && run?.answer?.unsupported_aspects?.length ? <p className="mt-3 text-sm text-foreground-muted">Not established by the available evidence: {run.answer.unsupported_aspects.join(", ")}</p> : null}
                 {message.role === "assistant" ? <div className="mt-4 flex items-center gap-3 border-t border-border pt-3 text-foreground-muted">
                   <Button aria-label={copiedMessageId === message.id ? "Answer copied" : "Copy answer"} className="size-8 min-h-8 px-0" onClick={() => void navigator.clipboard.writeText(message.text).then(() => { setCopiedMessageId(message.id); window.setTimeout(() => setCopiedMessageId((current) => current === message.id ? null : current), 2000); })} size="icon" title="Copy answer" type="button" variant="ghost">{copiedMessageId === message.id ? <Check aria-hidden="true" className="size-4" /> : <Copy aria-hidden="true" className="size-4" />}</Button>
+                  {run?.completed_at ? <>
+                    <Button aria-pressed={run.feedback?.rating === "helpful"} aria-label="Mark answer helpful" className={run.feedback?.rating === "helpful" ? "size-8 min-h-8 bg-brand/15 px-0 text-brand" : "size-8 min-h-8 px-0"} disabled={feedbackSaving} onClick={() => void rateAnswer(run, "helpful")} size="icon" title="Helpful" type="button" variant="ghost"><ThumbsUp aria-hidden="true" className="size-4" /></Button>
+                    <Button aria-pressed={run.feedback?.rating === "not_helpful"} aria-label="Mark answer not helpful" className={run.feedback?.rating === "not_helpful" ? "size-8 min-h-8 bg-brand/15 px-0 text-brand" : "size-8 min-h-8 px-0"} disabled={feedbackSaving} onClick={() => void rateAnswer(run, "not_helpful")} size="icon" title="Not helpful" type="button" variant="ghost"><ThumbsDown aria-hidden="true" className="size-4" /></Button>
+                  </> : null}
                   <time className="text-xs tabular-nums" dateTime={message.created_at}>{formatMessageTime(message.created_at)}</time>
+                </div> : null}
+                {run && feedbackRunId === run.id && run.feedback?.rating === "not_helpful" ? <div className="mt-3 grid gap-3 rounded-lg border border-border bg-surface-raised p-3">
+                  <div><strong className="text-sm">What could be improved?</strong><p className="text-xs text-foreground-muted">Optional. This is visible only in the restricted question-review workflow.</p></div>
+                  <label className="grid gap-1 text-sm" htmlFor={`feedback-reason-${run.id}`}>Reason<select className="min-h-10 rounded-md border border-input bg-background px-3" id={`feedback-reason-${run.id}`} onChange={(event) => setFeedbackReason(event.target.value)} value={feedbackReason}><option value="">Choose a reason</option><option value="inaccurate">Incorrect</option><option value="incomplete">Incomplete</option><option value="unclear">Unclear</option><option value="outdated">Out of date</option><option value="other">Something else</option></select></label>
+                  <label className="grid gap-1 text-sm" htmlFor={`feedback-comment-${run.id}`}>Comment (optional)<Textarea id={`feedback-comment-${run.id}`} maxLength={1000} onChange={(event) => setFeedbackComment(event.target.value)} rows={2} value={feedbackComment} /></label>
+                  <div className="flex gap-2"><Button disabled={feedbackSaving} onClick={() => void saveFeedbackDetail(run)} size="sm" type="button">Save feedback</Button><Button onClick={() => setFeedbackRunId(null)} size="sm" type="button" variant="ghost">Done</Button></div>
                 </div> : null}
               </Card>
             );
