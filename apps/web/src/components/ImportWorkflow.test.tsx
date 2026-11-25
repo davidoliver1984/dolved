@@ -204,6 +204,31 @@ describe("ImportWorkflow", () => {
     expect(screen.queryByRole("button", { name: "Promote to Library" })).toBeNull();
   });
 
+  it("does not silently select a weak family match as a new version", async () => {
+    const reviewable: ImportBatch = {
+      public_id: "batch-weak-match", status: "open", retention_expires_at: "2026-11-28T12:00:00Z", created_at: "2026-11-21T12:00:00Z",
+      items: [{
+        public_id: "item-weak-match", filename: "Infection prevention control.pdf", declared_media_type: "application/pdf", size_bytes: 100,
+        preflight_status: "verified", preflight_rejection_reason: null, match_status: "pending", decision_ready: false, promotion: null, document: null,
+      }],
+    };
+    listImportBatches.mockResolvedValueOnce([reviewable]);
+    getImportBatch.mockResolvedValue(reviewable);
+    importMatches.mockResolvedValueOnce({
+      profile_version: "import-match-v1", exact_live_duplicates: [], deleted_duplicates: [], applicability_only_redirect_document_id: null,
+      family_candidates: [{ family_id: "data-protection", title: "Data protection standard", score_basis_points: 6300, current_effective_from: "2026-11-25T00:00:00Z" }],
+    });
+    render(<ImportWorkflow workspacePublicId="workspace-1" />);
+
+    await waitFor(() => expect(screen.getByRole("button", { name: /1 document/ })).toBeTruthy());
+    fireEvent.click(screen.getByRole("button", { name: /1 document/ }));
+    fireEvent.click(screen.getByRole("button", { name: "Review match and metadata" }));
+    await waitFor(() => expect(screen.getByRole("dialog")).toBeTruthy());
+
+    expect((screen.getByLabelText("Create a new document") as HTMLInputElement).checked).toBe(true);
+    expect((screen.getByLabelText("Add as a new version of Data protection standard") as HTMLInputElement).checked).toBe(false);
+  });
+
   it("closes the review modal from its top-right close control", async () => {
     const reviewable: ImportBatch = {
       public_id: "batch-close-review",

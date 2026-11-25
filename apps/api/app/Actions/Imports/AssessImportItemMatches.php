@@ -28,7 +28,7 @@ final readonly class AssessImportItemMatches
      *   exact_live_duplicates: list<array{document_id: string, family_id: string, status: string}>,
      *   deleted_duplicates: list<array{document_id: string, family_id: string, status: string}>,
      *   applicability_only_redirect_document_id: ?string,
-     *   family_candidates: list<array{family_id: string, title: string, score_basis_points: int}>
+     *   family_candidates: list<array{family_id: string, title: string, score_basis_points: int, current_effective_from: ?string}>
      * }
      */
     public function handle(ImportItem $item): array
@@ -84,7 +84,7 @@ final readonly class AssessImportItemMatches
         ];
     }
 
-    /** @return list<array{family_id: string, title: string, score_basis_points: int}> */
+    /** @return list<array{family_id: string, title: string, score_basis_points: int, current_effective_from: ?string}> */
     private function familyCandidates(ImportItem $item, string $source): array
     {
         $threshold = (int) config('imports.matching.threshold_basis_points');
@@ -117,6 +117,16 @@ final readonly class AssessImportItemMatches
             $right['family_id'],
         ]);
 
-        return array_slice($candidates, 0, (int) config('imports.matching.maximum_candidates'));
+        return array_map(function (array $candidate): array {
+            $effectiveFrom = Document::query()
+                ->whereHas('family', fn ($query) => $query->where('public_id', $candidate['family_id']))
+                ->whereDoesntHave('successor')
+                ->value('effective_from');
+
+            return [
+                ...$candidate,
+                'current_effective_from' => $effectiveFrom?->toISOString(),
+            ];
+        }, array_slice($candidates, 0, (int) config('imports.matching.maximum_candidates')));
     }
 }

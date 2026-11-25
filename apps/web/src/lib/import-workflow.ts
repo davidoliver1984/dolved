@@ -37,7 +37,7 @@ export type ImportMatches = {
   exact_live_duplicates: Array<{ document_id: string; family_id: string; status: string }>;
   deleted_duplicates: Array<{ document_id: string; family_id: string; status: string }>;
   applicability_only_redirect_document_id: string | null;
-  family_candidates: Array<{ family_id: string; title: string; score_basis_points: number }>;
+  family_candidates: Array<{ family_id: string; title: string; score_basis_points: number; current_effective_from: string | null }>;
 };
 export type ImportDefinition = {
   family: { mode: "new"; title: string } | { mode: "successor"; family_public_id: string };

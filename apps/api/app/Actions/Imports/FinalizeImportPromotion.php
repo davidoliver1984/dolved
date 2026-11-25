@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Actions\Imports;
 
+use App\Actions\Documents\ApproveDocumentVersion;
 use App\Actions\Documents\ChangeDocumentFamilyOwner;
 use App\Actions\Documents\CreateDocumentVersion;
 use App\Actions\Documents\RequestDocumentIngestion;
@@ -36,6 +37,7 @@ final readonly class FinalizeImportPromotion
         private RequestDocumentIngestion $ingestion,
         private RecordDocumentGovernanceEvent $events,
         private ChangeDocumentFamilyOwner $ownerChange,
+        private ApproveDocumentVersion $approval,
     ) {}
 
     public function handle(PromotionAttempt $attempt, string $leaseToken, int $leaseGeneration): PromotionAttempt
@@ -83,9 +85,14 @@ final readonly class FinalizeImportPromotion
                 }
                 throw $exception;
             }
+            $effectiveFrom = CarbonImmutable::parse($definition['effective_from']);
+            if ($predecessor !== null && $effectiveFrom->lte($predecessor->effective_from)) {
+                return $this->conflict($locked, 'invalidated_predecessor');
+            }
             $this->applyFamilyMetadata($family, $locked->actor, $definition, $locked);
             $locations = $this->resolveLocations($item, $definition);
             $document = $this->createDocument($item, $locked, $family, $predecessor, $definition, $locations);
+            $document = $this->approval->handle($document, $locked->actor);
 
             $locked->status = PromotionAttemptStatus::Committed;
             $locked->terminal_reason = null;
