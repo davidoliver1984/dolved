@@ -168,7 +168,7 @@ describe("ChatWorkspace", () => {
 
   it("labels Dify context as retrieved sources rather than claim citations", async () => {
     const fixture = services();
-    fixture.completed.site_context = { scope_key: "global", location_id: null, name: "Organisation-wide" };
+    fixture.completed.site_context = { scope_key: "global", location_id: null, name: "Organisation-wide", status: "active" };
     fixture.completed.messages![1].text = "Use the **current procedure**.";
     fixture.completed.runs![0].answer = {
       id: "answer-1",
@@ -284,6 +284,47 @@ describe("ChatWorkspace", () => {
     await waitFor(() => expect(fixture.api.cancel).toHaveBeenCalledWith("workspace-1", "conversation-1", "run-1"));
     expect(view.container.querySelector('[data-chat-pending="false"]')).toBeTruthy();
     expect(screen.getByText(/Provider processing may continue/)).toBeTruthy();
+  });
+
+  it("keeps an unsafe conversation readable while requiring a new conversation", async () => {
+    const fixture = services();
+    fixture.completed.continuation = {
+      allowed: false,
+      reason: "remote_history_inconsistent",
+      message: "This conversation could not be safely continued after the interrupted response. Start a new conversation to continue.",
+      start_new_required: true,
+    };
+    fixture.api.get.mockResolvedValue(fixture.completed);
+    const user = userEvent.setup();
+    render(<ChatWorkspace initialConversationId="conversation-1" locations={[{ public_id: "site-1", name: "Oakfield" }]} services={fixture.api} workspaceId="workspace-1" workspaceName="Care" />);
+
+    expect(await screen.findByText("Use the current procedure.")).not.toBeNull();
+    expect(screen.getByText("This conversation is read-only")).not.toBeNull();
+    expect(screen.getByLabelText("Ask a question").hasAttribute("disabled")).toBe(true);
+    expect(screen.getByRole("button", { name: "Send" }).hasAttribute("disabled")).toBe(true);
+    expect(screen.queryByRole("button", { name: "Retry answer" })).toBeNull();
+
+    await user.click(screen.getByRole("button", { name: "Start new conversation" }));
+    expect(screen.getByLabelText("Ask a question").hasAttribute("disabled")).toBe(false);
+    expect(screen.getByLabelText("Location filter")).not.toBeNull();
+  });
+
+  it("labels a retired historical location and presents the safe continuation action after reload", async () => {
+    const fixture = services();
+    fixture.completed.site_context = { scope_key: "site-1", location_id: "site-1", name: "Oakfield Lodge", status: "retired" };
+    fixture.completed.continuation = {
+      allowed: false,
+      reason: "location_unavailable",
+      message: "This conversation uses a location that is no longer available. Start a new conversation with an available location to continue.",
+      start_new_required: true,
+    };
+    fixture.api.get.mockResolvedValue(fixture.completed);
+
+    render(<ChatWorkspace initialConversationId="conversation-1" services={fixture.api} workspaceId="workspace-1" workspaceName="Care" />);
+
+    expect(await screen.findByText(/Oakfield Lodge \(retired\)/)).not.toBeNull();
+    expect(screen.getByText(/location that is no longer available/i)).not.toBeNull();
+    expect(screen.getByRole("button", { name: "Start new conversation" })).not.toBeNull();
   });
 
   it("keeps a newly created conversation mounted until its live run settles", async () => {

@@ -83,6 +83,14 @@ export type SiteContext = {
   scope_key: string;
   location_id: string | null;
   name: string;
+  status: "active" | "retired";
+};
+
+export type ConversationContinuation = {
+  allowed: boolean;
+  reason: "remote_history_inconsistent" | "location_unavailable" | "conversation_not_active" | null;
+  message: string | null;
+  start_new_required: boolean;
 };
 
 export type Conversation = {
@@ -92,6 +100,7 @@ export type Conversation = {
   created_at: string;
   updated_at: string;
   site_context?: SiteContext;
+  continuation?: ConversationContinuation;
   messages?: ConversationMessage[];
   runs?: ConversationRun[];
 };

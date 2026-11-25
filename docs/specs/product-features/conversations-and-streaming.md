@@ -2471,3 +2471,33 @@ R18-S02/S03/S04's implementation. It does not redecide anything [grounded genera
 is noted, not applied — this document does not modify
 `IMPLEMENTATION_GUIDE.md`, `PROJECT_ROADMAP.md`, or `tasks.json`, per this
 session's explicit instruction.
+
+## Hosted Dify continuation safety correction — 25 November 2026
+
+For a conversation backed by a Dify remote conversation identity, a new turn is allowed
+only while the remote usable history is consistent with the history represented by
+Dolved. A post-dispatch cancellation, late success after cancellation, or uncertain
+dispatch against established remote history makes the conversation read-only. Dolved
+does not reveal a discarded answer, silently retry, replace a turn, or rewrite remote
+history. The user must start a new conversation. Older affected conversations are detected
+conservatively from their durable local run/session evidence; there is no blanket remote
+scan.
+
+Cancellation completed before provider dispatch does not block continuation. The server
+rechecks eligibility under the conversation lock before accepting another message and
+again immediately before provider dispatch. Idempotent replay of an already accepted
+submission retains its existing result; it is not a bypass for a new turn.
+
+A conversation's selected location is immutable. If that location is retired or otherwise
+unavailable, existing messages remain readable under the existing membership and source
+permissions, with the historical location labelled as retired, but no new turn may be
+accepted or dispatched. The location is never replaced with global, another location or a
+location inferred from question wording. Global conversations retain the global-only
+document rule.
+
+The Dify memory window remains enabled at size `10`, which in the pinned Dify 1.19.0 path
+means at most nine completed prior turns after removal of the current incomplete record,
+subject to further token-budget truncation. Retrieval remains latest-question-only. The
+prepared workflow correction removes only the separate user-role `sys.query` prompt entry
+so the current question is inserted once by the stock memory assembly path; substantive
+system instructions, context and retrieval are unchanged.

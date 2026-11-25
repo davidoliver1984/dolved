@@ -10,6 +10,7 @@ use App\Enums\GenerationRunStatus;
 use App\Models\Document;
 use App\Models\EvidenceSnapshot;
 use App\Models\RetrievedSourceReference;
+use App\Services\Conversation\ConversationContinuationPolicy;
 use App\Support\Pipeline\ActivePipelineCapabilities;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -19,6 +20,9 @@ class ConversationResource extends JsonResource
     /** @return array<string, mixed> */
     public function toArray(Request $request): array
     {
+        $continuation = app(ConversationContinuationPolicy::class)->decision($this->resource);
+        $locationAvailable = $this->selectedLocation === null || $this->selectedLocation->retired_at === null;
+
         return [
             'id' => $this->public_id,
             'title' => $this->title,
@@ -29,11 +33,14 @@ class ConversationResource extends JsonResource
                 'scope_key' => 'global',
                 'location_id' => null,
                 'name' => 'Organisation-wide',
+                'status' => 'active',
             ] : [
                 'scope_key' => (string) $this->selectedLocation->public_id,
                 'location_id' => (string) $this->selectedLocation->public_id,
                 'name' => $this->selectedLocation->name,
+                'status' => $locationAvailable ? 'active' : 'retired',
             ],
+            'continuation' => $continuation,
             'messages' => $this->whenLoaded('messages', fn () => $this->messages->map(fn ($message): array => [
                 'id' => $message->public_id,
                 'ordinal' => $message->ordinal,

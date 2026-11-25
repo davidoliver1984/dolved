@@ -30,6 +30,7 @@ class ConversationController extends Controller
         $user = $request->user();
         $workspace = $workspaces->handle($user, $workspacePublicId)->workspace;
         $conversations = Conversation::query()
+            ->with('selectedLocation')
             ->where('workspace_id', $workspace->id)
             ->where('created_by_user_id', $user->id)
             ->whereIn('status', [ConversationStatus::Active->value, ConversationStatus::Archived->value])

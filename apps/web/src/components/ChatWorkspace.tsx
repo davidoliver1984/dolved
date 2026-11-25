@@ -470,6 +470,7 @@ export function ChatWorkspace({
     setAnnouncement("Sending your question.");
     setProvisionalParts([]);
     provisionalPartsRef.current = [];
+    let submittedConversationId: string | null = active?.id ?? null;
     try {
       let conversation = active;
       let created = false;
@@ -477,6 +478,7 @@ export function ChatWorkspace({
         conversation = await services.create(workspaceId, selectedLocationId || null);
         setActive({ ...conversation, messages: [], runs: [] });
         pendingCreatedConversationId.current = conversation.id;
+        submittedConversationId = conversation.id;
         created = true;
       }
       const receipt = await services.send(
@@ -500,6 +502,11 @@ export function ChatWorkspace({
       setBusy(false);
       setProgress(null);
       setError(firstError(caught));
+      if (submittedConversationId) {
+        void services.get(workspaceId, submittedConversationId)
+          .then((saved) => setActive(saved))
+          .catch(() => undefined);
+      }
     }
   };
 
@@ -620,6 +627,7 @@ export function ChatWorkspace({
       .map((run) => [run.assistant_message_id, run]),
   );
   const failedRuns = (active?.runs ?? []).filter((run) => run.status === "failed");
+  const continuationBlocked = active?.continuation?.allowed === false;
   const resolvedWelcomeHeading = welcomeHeading || `Ask ${workspaceName}`;
   const resolvedWelcomeIntroduction = welcomeIntroduction || "Answers use the documents available to this workspace and your selected location.";
 
@@ -747,7 +755,7 @@ export function ChatWorkspace({
               <Notice key={run.id} tone="destructive">
                 <strong>{presentation.title}</strong>
                 <p className="mt-1">{presentation.description}</p>
-                {run.retryable ? <Button className="mt-3" disabled={busy || accessRevoked} onClick={() => void retry(run.id)} type="button" variant="outline"><RefreshCw />Retry answer</Button> : null}
+                {run.retryable && !continuationBlocked ? <Button className="mt-3" disabled={busy || accessRevoked} onClick={() => void retry(run.id)} type="button" variant="outline"><RefreshCw />Retry answer</Button> : null}
               </Notice>
             );
           })}
@@ -756,10 +764,15 @@ export function ChatWorkspace({
 
         {error ? <Notice tone={accessRevoked ? "warning" : "destructive"}>{accessRevoked ? <div><strong>Workspace access ended</strong><p className="mt-1">{error}</p></div> : error}</Notice> : null}
         {stoppedNotice ? <Notice tone="info">{stoppedNotice}</Notice> : null}
+        {continuationBlocked ? <Notice tone="warning">
+          <strong>This conversation is read-only</strong>
+          <p className="mt-1">{active?.continuation?.message}</p>
+          <Button className="mt-3" onClick={() => void newConversation()} type="button" variant="outline">Start new conversation</Button>
+        </Notice> : null}
         <form className="grid gap-3 rounded-xl border border-border bg-card p-4" onSubmit={submit}>
           <label className="text-sm font-semibold" htmlFor="chat-question">Ask a question</label>
           <Textarea
-            disabled={busy || accessRevoked}
+            disabled={busy || accessRevoked || continuationBlocked}
             id="chat-question"
             maxLength={8000}
             onChange={(event) => setDraft(event.target.value)}
@@ -769,14 +782,14 @@ export function ChatWorkspace({
             value={draft}
           />
           {active?.site_context ? <div className="rounded-lg bg-surface-raised px-3 py-2 text-sm">
-            <strong>Location filter:</strong> {active.site_context.name}
+            <strong>Location filter:</strong> {active.site_context.name}{active.site_context.status === "retired" ? " (retired)" : ""}
             <p className="mt-1 text-xs text-foreground-muted">This context is fixed for this conversation. Start a new chat to change it.</p>
           </div> : <div className="grid gap-2">
             <label className="text-sm font-semibold" htmlFor="chat-site-context">Location filter</label>
             <select
               aria-describedby="chat-site-context-help"
               className="min-h-11 rounded-lg border border-input bg-background px-3"
-              disabled={busy || accessRevoked}
+              disabled={busy || accessRevoked || continuationBlocked}
               id="chat-site-context"
               onChange={(event) => setSelectedLocationId(event.target.value)}
               value={selectedLocationId}
@@ -787,11 +800,11 @@ export function ChatWorkspace({
             <span className="text-xs text-foreground-muted" id="chat-site-context-help">Choose a registered location explicitly. Location names in the question do not change this selection.</span>
           </div>}
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <small className="text-foreground-muted">{accessRevoked ? "You no longer have access to send messages." : "Enter to send · Shift+Enter for a new line"}</small>
+            <small className="text-foreground-muted">{accessRevoked ? "You no longer have access to send messages." : continuationBlocked ? "Start a new conversation to ask another question." : "Enter to send · Shift+Enter for a new line"}</small>
             {busy && active?.runs?.some((run) => !run.completed_at) ? (
               <Button onClick={() => void cancel()} type="button" variant="ghost"><X />{active.runs?.find((run) => !run.completed_at)?.interaction?.stop_action === "stop_waiting" ? "Stop waiting" : "Cancel"}</Button>
             ) : null}
-            <Button disabled={busy || accessRevoked || !draft.trim()} type="submit"><Send />Send</Button>
+            <Button disabled={busy || accessRevoked || continuationBlocked || !draft.trim()} type="submit"><Send />Send</Button>
           </div>
         </form>
       </div>

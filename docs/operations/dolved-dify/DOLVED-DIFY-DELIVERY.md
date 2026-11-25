@@ -562,3 +562,15 @@ Rollback is the pre-deployment environment/database package at
 `/srv/dolved-pilot/backups/20261123-active-pipeline-predeploy` plus the prior immutable image
 identities recorded in the R30-S03 journal. No custom pipeline source, contract, data,
 recovery material or historical evidence was removed.
+
+### Conversation-state correction batch — 25 November 2026
+
+A provider-free local correction batch is prepared on revision
+`c80c45256112b7e919298d8123ec954e952aeede` without a commit, push, deployment or Dify
+publish. It removes the duplicate current-query insertion from the prepared Dify node
+configuration, makes conversations with divergent remote history read-only, and blocks
+new turns when a conversation's fixed location is retired. Retrieval, corpus, Top K,
+ranking, models and the sealed 40-question section are unchanged. The additive schema
+change and exact release constraints are recorded in
+`CONVERSATION-STATE-CORRECTIONS-20261125.md`. Hosted behaviour remains unchanged until a
+separately authorised application deployment, migration and supported Dify publish occur.
