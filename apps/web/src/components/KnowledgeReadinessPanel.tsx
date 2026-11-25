@@ -25,8 +25,8 @@ const detailedStates = [
 
 const userStages = [
   ["Upload documents", "Add the files that should become part of the workspace knowledge base."],
-  ["Match or create", "Match each upload to an existing document, or create a new document family."],
-  ["Review details", "Confirm metadata, applicability and any issues that need attention."],
+  ["Match or create", "Choose whether each upload is a new document or a new version."],
+  ["Review details", "Confirm the owner, category, dates and locations, then resolve anything that needs attention."],
   ["Approve", "Authorise the prepared version when it is ready to be used."],
   ["Ask grounded questions", "Only approved, current and indexed documents become searchable."],
 ];
@@ -46,7 +46,7 @@ export function KnowledgeReadinessPanel({ onAsk, onChooseQuestion, searchableDoc
           <h2 className="mt-3 text-xl font-semibold" id="knowledge-readiness-heading">{ready ? "Your searchable knowledge base is ready" : "Prepare a document before asking questions"}</h2>
           <p className="mt-2 max-w-3xl text-sm leading-6 text-foreground-muted">
             {ready
-              ? "This count includes document families whose current version is approved and fully indexed. A question can still narrow the eligible evidence by authority or location."
+              ? "This count includes documents whose current version is approved and ready to use. A question can still narrow the sources by date or location."
               : "Uploaded files are not searchable automatically. A version must finish processing, be approved, and be current before answers can use it."}
           </p>
 

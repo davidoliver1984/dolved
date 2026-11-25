@@ -66,7 +66,7 @@ describe("document family route scaffold", () => {
 
     expect(screen.getByText("Medication procedure")).not.toBeNull();
     expect(screen.getByRole("heading", { level: 1, name: "Medication procedure" })).not.toBeNull();
-    expect(screen.getByText("Current authority")).not.toBeNull();
+    expect(screen.getByText("Current version")).not.toBeNull();
     expect(screen.getByText("Version 1")).not.toBeNull();
     expect(familyDetailMock).toHaveBeenCalledWith("workspace-1", "family-1");
   });

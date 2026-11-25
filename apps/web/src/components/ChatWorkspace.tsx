@@ -90,8 +90,8 @@ const progressLabels: Record<string, string> = {
   queued: "Your question is queued…",
   contextualising: "Understanding your question…",
   planning: "Understanding your question…",
-  retrieving: "Finding eligible evidence…",
-  preparing_evidence: "Preparing eligible evidence…",
+  retrieving: "Finding relevant documents…",
+  preparing_evidence: "Preparing the source material…",
   generating: "Preparing a grounded answer…",
   validating: "Validating the grounded answer…",
 };
@@ -546,7 +546,7 @@ export function ChatWorkspace({
   );
   const failedRuns = (active?.runs ?? []).filter((run) => run.status === "failed");
   const resolvedWelcomeHeading = welcomeHeading || `Ask ${workspaceName}`;
-  const resolvedWelcomeIntroduction = welcomeIntroduction || "Answers use only evidence eligible for this workspace and the selected site.";
+  const resolvedWelcomeIntroduction = welcomeIntroduction || "Answers use the documents available to this workspace and your selected location.";
 
   return (
     <section data-chat-pending={busy} data-chat-progress={progress ?? ""} data-completion-run={completion?.runId} data-completion-path={completion?.path} className={showConversationNavigation ? "grid min-h-[42rem] overflow-hidden rounded-xl border border-border bg-card lg:grid-cols-[18rem_1fr]" : "grid min-h-[42rem]"} aria-labelledby="chat-heading">
@@ -589,7 +589,7 @@ export function ChatWorkspace({
           {loading ? <div aria-label="Loading conversation" className="grid gap-4"><Skeleton className="h-20 w-3/4" /><Skeleton className="ml-auto h-16 w-2/3" /><Skeleton className="h-28 w-4/5" /></div> : null}
           {!loading && !(active?.messages?.length) ? (
             <EmptyState
-              description={welcomeIntroduction || "Answers use eligible workspace evidence and keep their citation references close."}
+              description={welcomeIntroduction || "Answers use your workspace documents and keep the supporting sources close by."}
               icon={Inbox}
               title={welcomeHeading || "What do you need to know?"}
             />
@@ -607,11 +607,11 @@ export function ChatWorkspace({
                   <p className="whitespace-pre-wrap leading-7" data-canonical-answer>{formattedAnswerText(message.text)}</p>
                   {run?.answer?.sources_retrieved?.length ? <details className="group mt-4 border-t border-border pt-3">
                     <summary className="flex cursor-pointer list-none flex-wrap items-center gap-x-2 gap-y-1 text-sm [&::-webkit-details-marker]:hidden">
-                      <span className="font-semibold">Sources retrieved</span>
+                      <span className="font-semibold">Sources used</span>
                       <Plus aria-hidden="true" className="size-4 shrink-0 transition-transform group-open:rotate-45" />
-                      <span className="text-xs text-foreground-muted">These passages were supplied as context. They are not claim-level citations.</span>
+                      <span className="text-xs text-foreground-muted">Open these documents to check the source text used for this answer.</span>
                     </summary>
-                    <ol aria-label="Sources retrieved" className="mt-3 grid gap-2">
+                    <ol aria-label="Sources used" className="mt-3 grid gap-2">
                       {run.answer.sources_retrieved.map((source) => <RetrievedSourceEvidence key={source.id} source={source} />)}
                     </ol>
                   </details> : null}
@@ -619,8 +619,8 @@ export function ChatWorkspace({
                     {run.answer.citations.map((citation, index) => <CitationEvidence citation={citation} index={index} key={citation.id} />)}
                   </ol> : null}
                   {run?.answer?.scope_citations?.map((citation) => <details className="mt-3" key={citation.snapshot_digest}>
-                    <summary>Recorded applicability: {citation.policy_title}</summary>
-                    <p>Recorded scope: {citation.snapshot.scope}</p>
+                    <summary>Location record: {citation.policy_title}</summary>
+                    <p>Recorded locations: {citation.snapshot.scope}</p>
                     <p>Document version: {citation.document_version_id}</p>
                     {citation.source_route ? <a href={citation.source_route}>Open source version</a> : <p>Source unavailable</p>}
                   </details>)}
@@ -675,7 +675,7 @@ export function ChatWorkspace({
             maxLength={8000}
             onChange={(event) => setDraft(event.target.value)}
             onKeyDown={keyboardSubmit}
-            placeholder="Ask about an eligible policy or procedure…"
+            placeholder="Ask about a policy or procedure…"
             rows={3}
             value={draft}
           />

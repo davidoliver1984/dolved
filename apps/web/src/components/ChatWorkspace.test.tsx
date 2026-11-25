@@ -188,14 +188,14 @@ describe("ChatWorkspace", () => {
     const user = userEvent.setup();
     render(<ChatWorkspace initialConversationId="conversation-1" services={fixture.api} workspaceId="workspace-1" workspaceName="Care" />);
 
-    const sourceSummary = await screen.findByText("Sources retrieved");
+    const sourceSummary = await screen.findByText("Sources used");
     expect(screen.getByText("current procedure").tagName).toBe("STRONG");
     expect(screen.queryByText(/\*\*current procedure\*\*/)).toBeNull();
-    expect(screen.getByText(/not claim-level citations/i)).not.toBeNull();
+    expect(screen.getByText(/open these documents to check the source text/i)).not.toBeNull();
     expect(sourceSummary.closest("details")?.open).toBe(false);
     await user.click(sourceSummary);
     expect(sourceSummary.closest("details")?.open).toBe(true);
-    expect(screen.getByRole("list", { name: "Sources retrieved" })).not.toBeNull();
+    expect(screen.getByRole("list", { name: "Sources used" })).not.toBeNull();
     await user.click(screen.getByRole("button", { name: /Data Protection Policy.pdf/ }));
     expect(screen.getByText("Personal devices must not be used.")).not.toBeNull();
     expect(screen.getByText("Location filter:").parentElement?.textContent).toContain("Organisation-wide");
@@ -504,7 +504,7 @@ describe("ChatWorkspace", () => {
     await user.click(screen.getByRole("button", { name: "Send" }));
     await waitFor(() => expect(harness.api.send).toHaveBeenCalledOnce());
     harness.emit({ sequence: 1, type: "run_progress", provisional: false, payload: { stage: "retrieving" } });
-    await waitFor(() => expect(screen.getByRole("status").textContent).toBe("Finding eligible evidence…"));
+    await waitFor(() => expect(screen.getByRole("status").textContent).toBe("Finding relevant documents…"));
 
     harness.disconnect();
     await waitFor(() => expect(screen.getByRole("status").textContent).toBe("Live updates interrupted. Reconnecting."));

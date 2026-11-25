@@ -30,7 +30,7 @@ export function DocumentGovernanceActions({
         await operation();
         router.refresh();
       } catch (caught) {
-        setError(caught instanceof Error ? caught.message : "The governance action could not be completed.");
+        setError(caught instanceof Error ? caught.message : "The version could not be updated.");
       }
     });
   };
@@ -46,7 +46,7 @@ export function DocumentGovernanceActions({
 
       {capabilities.reschedule ? (
         <details className="rounded-lg border border-border p-3">
-          <summary className="cursor-pointer text-sm font-semibold">Reschedule authority</summary>
+          <summary className="cursor-pointer text-sm font-semibold">Change start date</summary>
           <form className="mt-3 flex flex-wrap items-end gap-2" onSubmit={(event: FormEvent<HTMLFormElement>) => {
             event.preventDefault();
             const value = new FormData(event.currentTarget).get("effective_from")?.toString() ?? "";

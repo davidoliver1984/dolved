@@ -173,8 +173,8 @@ export function DocumentVersionUpload({
               <Input disabled={busy} id="new-version-effective-from" min={nextEffectiveDate(latest.effective_from)} onChange={(event) => setEffectiveFrom(event.target.value)} type="date" value={effectiveFrom} />
             </FormField>
             <div className="rounded-lg border border-border bg-surface-muted p-3 text-sm">
-              <strong>Inherited from this family</strong>
-              <p className="mt-1 text-foreground-muted">Owner: {owner.name} · Applicability: {inheritedScope}</p>
+              <strong>Kept from the current version</strong>
+              <p className="mt-1 text-foreground-muted">Owner: {owner.name} · Locations: {inheritedScope}</p>
             </div>
             {busy ? <div className="grid gap-2"><div className="flex items-center gap-2 text-sm"><LoaderCircle className="size-4 animate-spin" />{progress < 100 ? "Uploading revised source…" : "Verifying and creating the version…"}</div><progress className="h-2 w-full accent-brand" max="100" value={progress}>{progress}%</progress></div> : null}
           </div>

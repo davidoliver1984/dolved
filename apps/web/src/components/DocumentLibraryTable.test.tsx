@@ -52,13 +52,13 @@ describe("DocumentLibraryTable", () => {
     expect(screen.getAllByRole("link", { name: /Medication procedure/ })).toHaveLength(2);
     expect(screen.getAllByText("Current")).toHaveLength(2);
     expect(screen.getAllByText("David Oliver")).toHaveLength(2);
-    expect(screen.getByText("Applicability is not confidentiality.", { exact: false })).toBeDefined();
+    expect(screen.getByText("Location filters help organise", { exact: false })).toBeDefined();
     expect(within(screen.getByRole("table")).getByText("medication-v2.pdf", { exact: false })).toBeDefined();
   });
 
   it("renders the truthful empty state", () => {
     render(<DocumentLibraryTable page={{ data: [], meta: { ...page.meta, total: 0 } }} query={{ search: "missing" }} workspacePublicId="workspace-1" />);
-    expect(screen.getByText("No matching document families")).toBeDefined();
+    expect(screen.getByText("No matching documents")).toBeDefined();
   });
 
   it("places import above the library and keeps saved views and selection in the compact filter toolbar", () => {
@@ -116,7 +116,7 @@ describe("DocumentLibraryTable", () => {
 
     expect(screen.queryByRole("dialog")).toBeNull();
     expect(screen.getByText("1 selected location")).toBeDefined();
-    expect((screen.getByRole("button", { name: "Review: Change applicability" }) as HTMLButtonElement).disabled).toBe(false);
+    expect((screen.getByRole("button", { name: "Review: Change locations" }) as HTMLButtonElement).disabled).toBe(false);
   });
 
   it("labels the review control for the selected bulk action", () => {

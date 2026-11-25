@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { type FormEvent, useMemo, useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
+import { HelpTip } from "@/components/ui/tooltip";
 import { createApplicabilitySuccessor, type DocumentVersion } from "@/lib/api";
 
 type Location = { public_id: string; name: string };
@@ -33,9 +34,9 @@ export function DocumentApplicabilityEditor({
 
   return (
     <details className="rounded-xl border border-border bg-surface p-4">
-      <summary className="cursor-pointer font-semibold">Edit applicability</summary>
+      <summary className="cursor-pointer font-semibold">Edit locations</summary>
       <div className="mt-3 grid gap-4">
-        <p className="max-w-3xl text-sm text-foreground-muted">Choose where this document applies. Saving creates a governed successor version using the same file; there is no separate successor document to select.</p>
+        <p className="max-w-3xl text-sm text-foreground-muted">Choose where this document should be used. Saving records the change as a new version while keeping the same file.</p>
         <form className="grid gap-4" onSubmit={(event: FormEvent<HTMLFormElement>) => {
           event.preventDefault();
           const data = new FormData(event.currentTarget);
@@ -45,11 +46,11 @@ export function DocumentApplicabilityEditor({
               await createApplicabilitySuccessor(workspacePublicId, version.public_id, data.get("effective_from")?.toString() ?? "", resultingLocationIds);
               router.refresh();
             } catch (caught) {
-              setError(caught instanceof Error ? caught.message : "The document applicability could not be updated.");
+              setError(caught instanceof Error ? caught.message : "The document locations could not be updated.");
             }
           });
         }}>
-          <label className="grid max-w-xs gap-1 text-sm font-semibold">Effective date<input className="min-h-11 rounded-lg border border-input bg-background px-3 font-normal" name="effective_from" required type="date" /></label>
+          <div className="grid max-w-xs gap-1 text-sm font-semibold"><span className="flex items-center gap-1"><label htmlFor="applicability-effective-from">Effective from</label><HelpTip label="Effective from" text="The date this location change should start being used." /></span><input className="min-h-11 rounded-lg border border-input bg-background px-3 font-normal" id="applicability-effective-from" name="effective_from" required type="date" /></div>
           <fieldset className="grid gap-2 rounded-xl border border-border bg-surface-muted/60 p-3">
             <legend className="px-2 text-sm font-semibold">Where does this document apply?</legend>
             <label className="flex min-h-11 items-center gap-3 rounded-lg px-3 py-2 text-sm hover:bg-surface-hover"><input checked={mode === "universal"} className="size-4" name="applicability_mode" onChange={() => setMode("universal")} type="radio" value="universal" />Organisation-wide</label>
@@ -59,9 +60,9 @@ export function DocumentApplicabilityEditor({
             </div> : null}
           </fieldset>
           {mode === "selected" && selectedLocationIds.length === 0 ? <p className="text-sm text-destructive" role="alert">Select at least one location, or choose organisation-wide.</p> : null}
-          {unchanged ? <p className="text-sm text-foreground-muted">This is the document’s current applicability.</p> : null}
+          {unchanged ? <p className="text-sm text-foreground-muted">These are the document’s current locations.</p> : null}
           {error ? <p className="text-sm text-destructive" role="alert">{error}</p> : null}
-          <Button className="justify-self-start" disabled={pending || unchanged || (mode === "selected" && selectedLocationIds.length === 0)} type="submit">{pending ? "Saving…" : "Save applicability"}</Button>
+          <Button className="justify-self-start" disabled={pending || unchanged || (mode === "selected" && selectedLocationIds.length === 0)} type="submit">{pending ? "Saving…" : "Save locations"}</Button>
         </form>
       </div>
     </details>

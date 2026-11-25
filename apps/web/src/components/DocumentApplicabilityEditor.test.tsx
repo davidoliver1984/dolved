@@ -37,13 +37,13 @@ describe("DocumentApplicabilityEditor", () => {
     vi.mocked(createApplicabilitySuccessor).mockResolvedValue({} as never);
     render(<DocumentApplicabilityEditor locations={[{ public_id: "location-1", name: "Oakfield Lodge" }]} version={version} workspacePublicId="workspace-1" />);
 
-    fireEvent.click(screen.getByText("Edit applicability"));
-    expect(screen.getByText(/there is no separate successor document to select/i)).toBeDefined();
+    fireEvent.click(screen.getByText("Edit locations"));
+    expect(screen.getByText(/records the change as a new version while keeping the same file/i)).toBeDefined();
     expect(screen.getByRole("radio", { name: "Organisation-wide" }).closest("label")?.className).toContain("min-h-11");
     fireEvent.click(screen.getByRole("radio", { name: "Selected registered locations" }));
     fireEvent.click(screen.getByRole("checkbox", { name: "Oakfield Lodge" }));
-    fireEvent.change(screen.getByLabelText("Effective date"), { target: { value: "2026-12-01" } });
-    fireEvent.click(screen.getByRole("button", { name: "Save applicability" }));
+    fireEvent.change(screen.getByLabelText("Effective from", { selector: "input" }), { target: { value: "2026-12-01" } });
+    fireEvent.click(screen.getByRole("button", { name: "Save locations" }));
 
     await waitFor(() => expect(createApplicabilitySuccessor).toHaveBeenCalledWith("workspace-1", "document-1", "2026-12-01", ["location-1"]));
     expect(refresh).toHaveBeenCalled();
