@@ -88,13 +88,15 @@ export function DocumentFamilyDetail({ detail, workspacePublicId }: Readonly<{ d
     ?? [...history.data].reverse().find((version) => version.capabilities.create_applicability_successor);
   return (
     <div className="grid gap-6">
-      <header className="flex flex-wrap items-start justify-between gap-4">
+      <header className="grid gap-4">
         <div>
           <p className="text-sm font-bold uppercase tracking-[0.14em] text-brand">Document</p>
           <h1 className="mt-2 text-3xl font-semibold sm:text-4xl">{family.name}</h1>
           <p className="mt-2 max-w-3xl text-foreground-muted">{family.description ?? "No description has been added."}</p>
         </div>
-        <DocumentVersionUpload detail={detail} workspacePublicId={workspacePublicId} />
+        <div className="flex justify-end">
+          <DocumentVersionUpload detail={detail} workspacePublicId={workspacePublicId} />
+        </div>
       </header>
 
       <DocumentFamilyMetadataEditor family={family} workspacePublicId={workspacePublicId} />
