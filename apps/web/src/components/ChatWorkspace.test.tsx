@@ -202,6 +202,21 @@ describe("ChatWorkspace", () => {
     expect(screen.queryByRole("list", { name: "Answer sources" })).toBeNull();
   });
 
+  it("shows a copy control and timestamp beneath assistant replies", async () => {
+    const fixture = services();
+    fixture.api.get.mockResolvedValue(fixture.completed);
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    const user = userEvent.setup();
+    Object.defineProperty(navigator, "clipboard", { configurable: true, value: { writeText } });
+    const view = render(<ChatWorkspace initialConversationId="conversation-1" services={fixture.api} workspaceId="workspace-1" workspaceName="Care" />);
+
+    const copy = await screen.findByRole("button", { name: "Copy answer" });
+    expect(view.container.querySelector('time[datetime="2026-08-18T12:02:00Z"]')?.textContent).toMatch(/^\d{2}:\d{2}$/);
+    await user.click(copy);
+    await waitFor(() => expect(writeText).toHaveBeenCalledWith("Use the current procedure."));
+    expect(screen.getByRole("button", { name: "Answer copied" })).not.toBeNull();
+  });
+
   it("observes an existing pending pilot run after route remount without sending again", async () => {
     const fixture = services();
     const pending = structuredClone(fixture.completed);

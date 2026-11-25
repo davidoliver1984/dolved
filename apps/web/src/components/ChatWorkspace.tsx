@@ -1,6 +1,6 @@
 "use client";
 
-import { Inbox, Plus, RefreshCw, Send, X } from "lucide-react";
+import { Check, Copy, Inbox, Plus, RefreshCw, Send, X } from "lucide-react";
 import {
   type FormEvent,
   type KeyboardEvent,
@@ -111,6 +111,10 @@ function formattedAnswerText(text: string) {
       ? <strong key={`${index}-${part.slice(2, 18)}`}>{part.slice(2, -2)}</strong>
       : part,
   );
+}
+
+function formatMessageTime(value: string): string {
+  return new Intl.DateTimeFormat("en-GB", { hour: "2-digit", minute: "2-digit" }).format(new Date(value));
 }
 
 function failurePresentation(run: ConversationRun): { title: string; description: string } {
@@ -241,6 +245,7 @@ export function ChatWorkspace({
   const [completedParts, setCompletedParts] = useState<Record<string, AnswerPart[]>>({});
   const [accessRevoked, setAccessRevoked] = useState(false);
   const [selectedLocationId, setSelectedLocationId] = useState("");
+  const [copiedMessageId, setCopiedMessageId] = useState<string | null>(null);
   const unsubscribe = useRef<null | (() => void)>(null);
   const transcript = useRef<HTMLDivElement>(null);
   const provisionalPartsRef = useRef<AnswerPart[]>([]);
@@ -643,6 +648,10 @@ export function ChatWorkspace({
                 )) : <p className="whitespace-pre-wrap leading-7">{formattedAnswerText(message.text)}</p>}
                 {!savedPresentation && run?.answer?.insufficiency_reason ? <Notice className="mt-3" tone="warning">{run.answer.insufficiency_reason}</Notice> : null}
                 {!savedPresentation && run?.answer?.unsupported_aspects?.length ? <p className="mt-3 text-sm text-foreground-muted">Not established by the available evidence: {run.answer.unsupported_aspects.join(", ")}</p> : null}
+                {message.role === "assistant" ? <div className="mt-4 flex items-center gap-3 border-t border-border pt-3 text-foreground-muted">
+                  <Button aria-label={copiedMessageId === message.id ? "Answer copied" : "Copy answer"} className="size-8 min-h-8 px-0" onClick={() => void navigator.clipboard.writeText(message.text).then(() => { setCopiedMessageId(message.id); window.setTimeout(() => setCopiedMessageId((current) => current === message.id ? null : current), 2000); })} size="icon" title="Copy answer" type="button" variant="ghost">{copiedMessageId === message.id ? <Check aria-hidden="true" className="size-4" /> : <Copy aria-hidden="true" className="size-4" />}</Button>
+                  <time className="text-xs tabular-nums" dateTime={message.created_at}>{formatMessageTime(message.created_at)}</time>
+                </div> : null}
               </Card>
             );
           })}
