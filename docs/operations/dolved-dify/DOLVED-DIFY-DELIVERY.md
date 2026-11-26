@@ -613,3 +613,33 @@ ranking, models and the sealed 40-question section are unchanged. The additive s
 change and exact release constraints are recorded in
 `CONVERSATION-STATE-CORRECTIONS-20261125.md`. Hosted behaviour remains unchanged until a
 separately authorised application deployment, migration and supported Dify publish occur.
+
+### Bounded pilot security acceptance — 26 November 2026
+
+The authorised pilot security review is complete. The sanitised findings and coverage
+limits are in the [pilot security acceptance](PILOT-SECURITY-ACCEPTANCE-20261126.md); the
+genuinely outstanding release items are in the
+[pilot launch checklist](PILOT-LAUNCH-CHECKLIST-20261126.md). One confirmed high-severity blocker in
+the live mail/request dependency path was corrected by the narrow lock-file commit
+`dd3d640bb59b5f32f3b8be0ba2d6001d502e6e42`. Focused verification passed 64 Laravel
+tests / 417 assertions and Pint, and the patched Composer audit now retains advisories
+only in the disabled passkey dependency chain.
+
+The Dolved API, worker and scheduler use immutable image
+`sha256:ff0e5545bc002a6ee3c7bb32128dea332aa9cf3e633cc284bf679892fc139405`
+with the matching OCI revision. The web image, production data and Dify prompt, model,
+memory, retrieval, corpus and evaluation configuration were not changed. The
+pre-deployment backup is
+`/srv/dolved-pilot/backups/20261126-security-acceptance-predeploy`; its checksum verified.
+The general running verifier stopped on the retained Dify API `OOMKilled` flag from the
+known memory-limit incident, despite Dify API being currently healthy. That evidence was
+not cleared by a restart. Focused provider-free verification of the changed Dolved
+services, image identity, private backplane, HTTPS/API denial, storage boundary and backup
+checksums passed.
+The restricted evidence package and its manifest are retained outside Git at
+`~/Desktop/dolved-experiments/dolved-pilot-security-acceptance-20261126/`; the manifest
+SHA-256 is `09db0c9b711c0d7c72a0e3652a5b806448235ed9ea4e512442f071dd7f7e019d`.
+
+Outcome: **READY FOR DAVID'S PILOT RELEASE DECISION**. This does not complete R30-S04,
+R30-S05 or R30-GATE, launch the pilot, send invitations, claim production readiness or
+accept the residual medium risks on David's behalf.

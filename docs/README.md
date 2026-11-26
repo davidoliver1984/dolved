@@ -29,11 +29,15 @@ See the [ADR index](adr/README.md). ADRs record consequential choices and ration
 
 - [Project roadmap](../PROJECT_ROADMAP.md)
 - [Implementation guide](../IMPLEMENTATION_GUIDE.md)
+- [Project journey](PROJECT-PROGRESSION.md)
 - [Dolved–Dify delivery plan](operations/dolved-dify/DOLVED-DIFY-DELIVERY.md)
 
 ## Operations and deployment
 
 - [Operations documentation](operations/)
+- [Current Dolved–Dify pilot architecture](operations/dolved-dify/CURRENT-ARCHITECTURE.md)
+- [Pilot security acceptance](operations/dolved-dify/PILOT-SECURITY-ACCEPTANCE-20261126.md)
+- [Invited-pilot launch checklist](operations/dolved-dify/PILOT-LAUNCH-CHECKLIST-20261126.md)
 - [Dolved–Dify production configuration](operations/dolved-dify/PRODUCTION-DIFY-CONFIG.md)
 - [Legacy custom RAG recovery](operations/dolved-dify/LEGACY-RAG-RECOVERY.md)
 

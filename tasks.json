@@ -5715,6 +5715,67 @@
           "completion_evidence": []
         },
         {
+          "id": "R30-S04a",
+          "guide_stage": "Stage 30.4a — Complete the bounded pilot security review",
+          "title": "Complete Security Review and Bounded Testing",
+          "status": "verified",
+          "objective": "Review the deployed Dolved–Dify pilot security boundary and perform provider-free automated checks plus low-volume read-only hosted verification, without testing unrelated co-hosted applications or reopening answer-quality evaluation.",
+          "session_mode": "implementation",
+          "requires_architecture_review": false,
+          "requires_adr": false,
+          "depends_on": [
+            "R30-S03"
+          ],
+          "journal": {
+            "required": false,
+            "status": "verified"
+          },
+          "completion_evidence": [
+            "The sanitised pilot security-acceptance report at docs/operations/dolved-dify/PILOT-SECURITY-ACCEPTANCE-20261126.md records the authorised scope, findings, provider-free tests, low-volume hosted checks and coverage limitations.",
+            "Detailed reproduction material and raw outputs are retained outside Git in the restricted checksummed evidence package recorded by the report. Famvam, sealed evaluation materials and answer-quality behaviour were not tested."
+          ]
+        },
+        {
+          "id": "R30-S04b",
+          "guide_stage": "Stage 30.4b — Remediate and verify pilot launch blockers",
+          "title": "Remediate and Verify Security Launch Blockers",
+          "status": "verified",
+          "objective": "Correct confirmed critical or high pilot risks within the existing architecture and perform focused regression and hosted verification without indiscriminate upgrades or unrelated changes.",
+          "session_mode": "implementation",
+          "requires_architecture_review": false,
+          "requires_adr": false,
+          "depends_on": [
+            "R30-S04a"
+          ],
+          "journal": {
+            "required": false,
+            "status": "verified"
+          },
+          "completion_evidence": [
+            "The live Symfony mail/request dependency path was updated only to the current security patch release and passed 64 focused Laravel tests / 417 assertions plus Pint.",
+            "Deployment identity, rollback evidence and focused hosted verification are recorded in docs/operations/dolved-dify/PILOT-SECURITY-ACCEPTANCE-20261126.md. No prompt, model, retrieval, corpus, Dify workflow or evaluation configuration changed."
+          ]
+        },
+        {
+          "id": "R30-S04c",
+          "guide_stage": "Stage 30.4c — Hand over security acceptance and record the pilot release decision",
+          "title": "Hand Over Security Acceptance and Record David's Release Decision",
+          "status": "not_started",
+          "objective": "Present the sanitised security acceptance, residual risks, coverage limits and launch checklist, then record David's explicit invited-pilot release decision separately from production-readiness, public-launch and scale claims.",
+          "session_mode": "architecture",
+          "requires_architecture_review": true,
+          "requires_adr": false,
+          "depends_on": [
+            "R30-S04",
+            "R30-S04b"
+          ],
+          "journal": {
+            "required": false,
+            "status": "not_started"
+          },
+          "completion_evidence": []
+        },
+        {
           "id": "R30-S05",
           "guide_stage": "Stage 30.5 — Hand over and decide pilot go/no-go",
           "title": "Hand Over and Decide Pilot Go/No-Go",
@@ -5724,7 +5785,7 @@
           "requires_architecture_review": true,
           "requires_adr": false,
           "depends_on": [
-            "R30-S04"
+            "R30-S04c"
           ],
           "journal": {
             "required": true,

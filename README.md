@@ -1,7 +1,26 @@
-# dolved RAG system
+# Dolved knowledge system
 
-A container-first, multi-service Retrieval Augmented Generation platform built with
-Next.js, Laravel, FastAPI and PostgreSQL.
+Dolved is a governed knowledge and document-answering system. The current hosted delivery
+is an invitation-only, single-client pilot: Next.js and Laravel provide the product,
+identity, tenancy, governance and audit boundary, while private stock self-hosted Dify
+provides the bound retrieval and generation workflow.
+
+The repository also preserves the original custom Laravel/Python/Qdrant RAG platform as a
+recoverable development path. It is not silently replaced or marked complete by the Dify
+pilot.
+
+Current navigation:
+
+- [Current pilot architecture](docs/operations/dolved-dify/CURRENT-ARCHITECTURE.md)
+- [Dolved–Dify delivery record](docs/operations/dolved-dify/DOLVED-DIFY-DELIVERY.md)
+- [Pilot security acceptance](docs/operations/dolved-dify/PILOT-SECURITY-ACCEPTANCE-20261126.md)
+- [Pilot launch checklist](docs/operations/dolved-dify/PILOT-LAUNCH-CHECKLIST-20261126.md)
+- [Project journey and future custom-RAG path](docs/PROJECT-PROGRESSION.md)
+- [Documentation index](docs/README.md)
+
+The pilot is not presented as production-certified, publicly launched, highly available or
+ready for unrestricted multi-client use. David's explicit invited-pilot release decision
+remains a separate acceptance step.
 
 ## Getting started
 

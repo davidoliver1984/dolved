@@ -2,9 +2,25 @@
 
 | Field | Value |
 |---|---|
-| Project status | In Progress — Phase 28 of 33 (Live-provider and Realistic-corpus Quality Evaluation) |
+| Project status | In Progress — Phase 30 invited Dolved–Dify pilot acceptance |
 | Version | 0.1 |
 | Owner | David Oliver |
+
+---
+
+## Current delivery note — 26 November 2026
+
+The active delivery path is the invitation-only, single-client Dolved–Dify pilot selected
+by ADR-0041. It is deployed and has completed bounded security acceptance; David's release
+decision and the remaining hands-on pilot checks are still open. See the
+[current architecture](docs/operations/dolved-dify/CURRENT-ARCHITECTURE.md),
+[security report](docs/operations/dolved-dify/PILOT-SECURITY-ACCEPTANCE-20261126.md) and
+[launch checklist](docs/operations/dolved-dify/PILOT-LAUNCH-CHECKLIST-20261126.md).
+
+The phase descriptions below retain the custom RAG programme's provenance. Its code,
+contracts, roadmap tasks and recovery assets remain preserved as a future path; Dify
+equivalence does not complete them. AWS, high-availability and multi-client work are
+separate future decisions.
 
 ---
 
