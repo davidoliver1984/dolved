@@ -643,3 +643,20 @@ SHA-256 is `09db0c9b711c0d7c72a0e3652a5b806448235ed9ea4e512442f071dd7f7e019d`.
 Outcome: **READY FOR DAVID'S PILOT RELEASE DECISION**. This does not complete R30-S04,
 R30-S05 or R30-GATE, launch the pilot, send invitations, claim production readiness or
 accept the residual medium risks on David's behalf.
+
+### Final access-control acceptance boundary — 26 November 2026
+
+The final bounded hands-on session is recorded in
+`PILOT-ACCESS-CONTROL-ACCEPTANCE-ADDENDUM-20261126.md`. Live checks confirmed generic
+recovery privacy for known/unknown controlled addresses, created and then revoked the exact
+known-account reset record, and reconciled existing owner issue/revoke invitation audit
+evidence. Current production has one workspace, no explicitly synthetic workspace and one
+verified controlled account, so the required two-workspace owner/admin/member matrix could
+not be exercised through normal workflows. R30-S04 remains in progress and David's release
+decision remains open; deterministic controls are not represented as hosted passes.
+
+The isolated supplementary test app and dataset were removed using Dify's supported
+lifecycle after the security dependency was released. Post-cleanup verification found all
+targeted live test records absent while preserving production's app/workflow/dataset,
+11 eligible documents, 248 searchable segments and corpus timestamps. The quality verdicts
+remain unchanged.

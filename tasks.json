@@ -5699,7 +5699,7 @@
           "id": "R30-S04",
           "guide_stage": "Stage 30.4 — Verify the bounded pilot",
           "title": "Verify the Bounded Pilot",
-          "status": "not_started",
+          "status": "in_progress",
           "objective": "Run provider-free checks first and only explicitly authorised live smoke/evaluation calls, verifying invitation access, tenancy, document/citation flows, failure behaviour, usage/cost and privacy-safe trace correlation.",
           "session_mode": "implementation",
           "requires_architecture_review": false,
@@ -5710,9 +5710,14 @@
           "journal": {
             "required": true,
             "path_template": "docs/journal/YYYY-MM-DD-r30-s04-verify-bounded-pilot.md",
-            "status": "not_started"
+            "status": "in_progress",
+            "actual_path": "docs/journal/2026-11-26-r30-s04-verify-bounded-pilot.md"
           },
-          "completion_evidence": []
+          "completion_evidence": [
+            "docs/operations/dolved-dify/PILOT-ACCESS-CONTROL-ACCEPTANCE-ADDENDUM-20261126.md records the final bounded PASS/NOT EXERCISED matrix, live recovery/reset cleanup evidence, deterministic-only controls and exact hosted coverage blocker.",
+            "docs/operations/dolved-dify/SIX-CASE-QUALITY-CLOSURE-20261126.md records supported removal of the isolated test app/dataset and preservation of the production 11-document / 248-segment corpus.",
+            "The hosted environment currently has one workspace, no explicitly synthetic workspace and one verified controlled account; two-workspace owner/admin/member acceptance remains unexercised and David's release decision remains open."
+          ]
         },
         {
           "id": "R30-S04a",

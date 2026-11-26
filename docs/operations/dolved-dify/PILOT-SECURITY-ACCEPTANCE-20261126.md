@@ -3,6 +3,12 @@
 Date: 26 November 2026  
 Outcome: **READY FOR DAVID'S PILOT RELEASE DECISION**
 
+Status note: this was the outcome of the earlier engineering security phase. The later
+[final access-control acceptance addendum](PILOT-ACCESS-CONTROL-ACCEPTANCE-ADDENDUM-20261126.md)
+found no new confirmed vulnerability but records the required hosted two-workspace/role
+coverage as **NOT EXERCISED**. The invited-pilot decision is therefore not yet ready to be
+recorded; the launch checklist is authoritative for the remaining prerequisite.
+
 This is a sanitised engineering security review of the invitation-only Dolved–Dify
 pilot. It is not a penetration-test certificate, production-readiness claim, public
 launch approval or multi-client security assessment. David's release decision remains
