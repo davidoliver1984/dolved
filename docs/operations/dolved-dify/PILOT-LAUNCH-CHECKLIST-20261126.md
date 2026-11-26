@@ -1,7 +1,7 @@
 # Dolved invited-pilot launch checklist
 
 Date: 26 November 2026  
-Security phase: complete; final hands-on access-control acceptance incomplete
+Security phase: complete; hosted actor matrix complete; fixture-dependent controls remain
 Pilot release decision: **not yet recorded**
 
 This is the short outstanding checklist for the invitation-only pilot. It does not
@@ -9,17 +9,21 @@ authorise invitations or claim production, public-launch or multi-client readine
 
 - [ ] David reviews the residual medium findings and coverage limits in the
   [security-acceptance report](PILOT-SECURITY-ACCEPTANCE-20261126.md).
-- [ ] Resolve the concrete test-setup prerequisite in the
-  [access-control acceptance addendum](PILOT-ACCESS-CONTROL-ACCEPTANCE-ADDENDUM-20261126.md):
-  provision, through a supported workflow, at least two clearly synthetic workspaces and
-  controlled owner/admin/member accounts. Do not repurpose a real identity.
-- [ ] Complete the still-unexercised hosted invitation acceptance/reuse/expiry, recovery
-  completion/session invalidation, role reduction/removal and direct API denial checks.
-- [ ] Exercise cross-workspace conversation, source/document and export denial with the
-  synthetic actor matrix; verify link behaviour after permission removal.
-- [ ] Exercise question-review opt-in, audited opening, revocation and permission denial
-  with synthetic content only. Retention expiry may continue to rely on deterministic
-  evidence where waiting is impractical.
+- [x] Resolve the concrete actor-matrix prerequisite through supported lifecycle actions:
+  two clearly synthetic Dolved workspaces and controlled owner/admin/member identities.
+- [x] Complete hosted invitation acceptance/replay/revocation/invalid-token, recovery,
+  session invalidation, role reduction/removal and direct API denial checks. Genuine
+  invitation expiry remains supported by retained deterministic evidence.
+- [x] Exercise cross-workspace conversation and synchronous usage-export denial with the
+  synthetic actor matrix.
+- [ ] Retain a separate hosted result for a second submission of the same consumed reset
+  link; current hosted state proves consumption and engineering tests cover single use.
+- [ ] Exercise authorised source delivery, existing-link revocation and cross-workspace
+  source denial. No safe provider-free indexed synthetic-source mechanism currently
+  exists; do not touch the production corpus to manufacture coverage.
+- [ ] Exercise restricted question-review content opening, audit and post-revocation read.
+  Policy/effective-date/role checks passed, but no safe provider-free generated-answer
+  fixture exists. Retention expiry may continue to use deterministic evidence.
 - [x] Reconfirm the deployed document inventory and effective Dify configuration without
   changing frozen quality evidence: the six-case cleanup verifier preserved production at
   11 eligible documents / 248 searchable segments with unchanged identities and corpus
@@ -44,4 +48,13 @@ Restricted final-session evidence:
 `~/Desktop/dolved-experiments/dolved-pilot-final-access-acceptance-20261126T162315Z/`;
 checksum-manifest SHA-256
 `3cd2c04b20094c9bb906bc63e24afe761bbd4684e140f90f21f467f6856617b3`.
+
+Continuation evidence and the updated matrix are recorded in
+[PILOT-ACCESS-CONTROL-ACCEPTANCE-CONTINUATION-20261126.md](PILOT-ACCESS-CONTROL-ACCEPTANCE-CONTINUATION-20261126.md).
+The synthetic accounts were disabled and their sessions/tokens/memberships retired. The
+two empty workspaces remain inert because no supported deletion lifecycle exists.
+Restricted continuation evidence:
+`~/Desktop/dolved-experiments/dolved-pilot-synthetic-access-acceptance-20261126T192723Z/`;
+checksum-manifest SHA-256
+`eb6403b0624f662492d80a65a3b5486be03ddb2c942be369d34c7df6e005b40b`.
 

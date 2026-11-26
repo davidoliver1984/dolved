@@ -660,3 +660,29 @@ lifecycle after the security dependency was released. Post-cleanup verification 
 targeted live test records absent while preserving production's app/workflow/dataset,
 11 eligible documents, 248 searchable segments and corpus timestamps. The quality verdicts
 remain unchanged.
+
+### Access-control continuation — 26 November 2026
+
+The authorised continuation is recorded in
+`PILOT-ACCESS-CONTROL-ACCEPTANCE-CONTINUATION-20261126.md`. The earlier incomplete
+addendum is preserved. Controlled plus-address identities and two empty Dolved workspaces
+closed the hosted invitation, recovery/session, role, cross-workspace, conversation,
+membership-removal, usage-export and review-policy gaps without creating Dify resources or
+calling a provider. No bypass was found.
+
+The product has no safe provider-free production mechanism for an indexed source or a
+completed generated-answer/review fixture. Authorised source/link behaviour and restricted
+review-content opening/audit/revocation therefore remain honestly unexercised, as does a
+separately retained second submission of the same consumed reset link. R30-S04 remains in
+progress and David's invited-pilot release decision remains open.
+
+Cleanup used supported application lifecycles: all three synthetic users are disabled,
+their sessions/reset tokens and temporary production/admin/member memberships are gone,
+and no pending synthetic invitation or reconciliation remains. Two empty workspaces are
+retained inert under the disabled synthetic owner because no supported workspace deletion
+lifecycle exists; neither contains documents or a Dify binding. Production revisions and
+the previously verified 11-document / 248-segment corpus were unchanged.
+Restricted continuation evidence is retained at
+`~/Desktop/dolved-experiments/dolved-pilot-synthetic-access-acceptance-20261126T192723Z/`;
+the checksum-manifest SHA-256 is
+`eb6403b0624f662492d80a65a3b5486be03ddb2c942be369d34c7df6e005b40b`.
