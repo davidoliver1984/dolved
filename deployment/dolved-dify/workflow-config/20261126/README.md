@@ -1,8 +1,8 @@
 # Bounded pilot prompt correction
 
 **Prepared:** 26 November 2026  
-**Status:** deployable configuration prepared and provider-free checked; not saved to or
-published in Dify.
+**Status:** published through supported Dify controls on 26 November 2026 and verified by
+lossless graph read-back; no retrieval or generation probe was used.
 
 The baseline is the currently published node snapshot at
 `../20261125/published-llm-node.corrected.json`. The proposed node is
@@ -17,12 +17,15 @@ Baseline identities:
 - baseline prompt SHA-256
   `1ec04255227de84b21e2fee22e49e3df037c51bae21125594f7adb45b466a26c`
 
-Proposed identity:
+Published correction identity:
 
 - proposed prompt SHA-256
   `0d9c2147a354bbd611166cac0b8bd7eda8132d8bf08bd1a2b23406921e597fae`
-- workflow ID/version/graph SHA-256: deliberately unassigned until a separately
-  authorised supported save and publication
+- workflow `5a85aa42-bca1-408f-953d-ecc08a130e6a`, version `5`
+- canonical graph SHA-256
+  `a53b32ad396f68c433e837cdaf73579f31334ae21bd0145720109f0fb0cc9561`
+- lossless comparison with version `4`: only
+  `$.nodes[1].data.prompt_template[0].text` changed
 
 Exact instruction diff:
 
@@ -47,5 +50,5 @@ Run the provider-free check from this directory with:
 node verify-config.mjs
 ```
 
-Rollback remains the published workflow version `4`; no rollback action is needed while
-this artifact remains unpublished.
+Rollback remains published workflow version `4`, preserved in the restricted predeploy
+backup and available through supported Dify version restore controls.

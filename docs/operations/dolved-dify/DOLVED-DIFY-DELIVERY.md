@@ -563,6 +563,28 @@ Rollback is the pre-deployment environment/database package at
 identities recorded in the R30-S03 journal. No custom pipeline source, contract, data,
 recovery material or historical evidence was removed.
 
+### Bounded supplementary-assessment correction — 26 November 2026
+
+The focused correction at revision
+`7b4c1df3b4f1437010601774021f1f2175d766be` is deployed as API image
+`sha256:bff6314f3f77d905b4f6568b9a2294dffc25c889e66b2736a39d62db4465bfa4`
+and web image
+`sha256:1e5ad967280629b06df3106712b6f943e2b41d9068c88ce2adddb2e32c42b6ee`.
+Dify application `32199630-6a11-40a0-96ca-618560e6e394` now points to workflow
+`5a85aa42-bca1-408f-953d-ecc08a130e6a`, version `5`, with canonical graph SHA-256
+`a53b32ad396f68c433e837cdaf73579f31334ae21bd0145720109f0fb0cc9561`.
+Lossless read-back against version 4 proves the system-prompt text is the only changed
+graph path. The frozen corpus remains 11 eligible documents / 248 searchable segments at
+digest `733a20a23390f9e1a02116922aa9613c3afd3e128a5645c9eba4710140ccba71`.
+The complete provider-free production gate passed after a clean Dify API restart.
+
+No assessment question, retrieval probe or generation call was made. The fixture files
+and release receipt are not yet present at Claude's neutral handoff location, so the
+isolated app/dataset and fixture ingestion remain pending rather than being substituted or
+partially fabricated. The complete identities, rollback references, prerequisite and
+later capture procedure are recorded in
+`SIX-CASE-PREPARATION-READINESS-20261126.md`.
+
 ### Conversation-state correction batch — 25 November 2026
 
 A provider-free local correction batch is prepared on revision
