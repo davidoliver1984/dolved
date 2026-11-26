@@ -119,6 +119,13 @@ function formattedAnswerText(text: string) {
   );
 }
 
+function answerDisplayText(text: string): string {
+  return text
+    .replace(/\uE200(?:cite|filecite)\uE202[^\uE201\r\n]*\uE201/g, "")
+    .replace(/【Retrieved context】/g, "")
+    .replace(/[ \t]+(?=\r?$)/gm, "");
+}
+
 function formatMessageTime(value: string): string {
   return new Intl.DateTimeFormat("en-GB", { hour: "2-digit", minute: "2-digit" }).format(new Date(value));
 }
@@ -687,14 +694,14 @@ export function ChatWorkspace({
               <Card className={message.role === "user" ? "ml-auto w-fit max-w-[85%] border-brand/30 bg-brand/10 p-4" : "max-w-[92%] p-4"} key={message.id}>
                 <div className="mb-2 flex items-center gap-2"><p className="text-xs font-bold uppercase tracking-[0.12em] text-foreground-muted">{message.role === "user" ? "You" : assistantName}</p>{!savedPresentation && run?.answer?.outcome ? <StatusBadge status={run.answer.outcome === "answered" ? "success" : "warning"}>{run.answer.outcome.replaceAll("_", " ")}</StatusBadge> : null}</div>
                 {savedPresentation ? <>
-                  <p className="whitespace-pre-wrap leading-7" data-canonical-answer>{formattedAnswerText(message.text)}</p>
+                  <p className="whitespace-pre-wrap leading-7" data-canonical-answer>{formattedAnswerText(answerDisplayText(message.text))}</p>
                   {run?.answer?.sources_retrieved?.length ? <details className="group mt-4 border-t border-border pt-3">
                     <summary className="flex cursor-pointer list-none flex-wrap items-center gap-x-2 gap-y-1 text-sm [&::-webkit-details-marker]:hidden">
-                      <span className="font-semibold">Sources used</span>
+                      <span className="font-semibold">Sources retrieved</span>
                       <Plus aria-hidden="true" className="size-4 shrink-0 transition-transform group-open:rotate-45" />
-                      <span className="text-xs text-foreground-muted">Open these documents to check the source text used for this answer.</span>
+                      <span className="text-xs text-foreground-muted">Documents provided to help generate this answer. Check the relevant source before acting.</span>
                     </summary>
-                    <ol aria-label="Sources used" className="mt-3 grid gap-2">
+                    <ol aria-label="Sources retrieved" className="mt-3 grid gap-2">
                       {run.answer.sources_retrieved.map((source) => <RetrievedSourceEvidence key={source.id} source={source} />)}
                     </ol>
                   </details> : null}
@@ -709,7 +716,7 @@ export function ChatWorkspace({
                   </details>)}
                 </> : parts?.length ? parts.map((part, index) => (
                   <div className="grid gap-3" key={part.id ?? `${message.id}-${index}`}>
-                    <p className="whitespace-pre-wrap">{formattedAnswerText(part.text)}</p>
+                    <p className="whitespace-pre-wrap">{formattedAnswerText(answerDisplayText(part.text))}</p>
                     {part.citations.length ? (
                       <div className="mt-3 rounded-lg border border-border bg-surface-raised p-3">
                         <p className="text-sm font-semibold">{part.citations.length} {part.citations.length === 1 ? "source" : "sources"}</p>
@@ -723,11 +730,11 @@ export function ChatWorkspace({
                       </div>
                     ) : null}
                   </div>
-                )) : <p className="whitespace-pre-wrap leading-7">{formattedAnswerText(message.text)}</p>}
+                )) : <p className="whitespace-pre-wrap leading-7">{formattedAnswerText(message.role === "assistant" ? answerDisplayText(message.text) : message.text)}</p>}
                 {!savedPresentation && run?.answer?.insufficiency_reason ? <Notice className="mt-3" tone="warning">{run.answer.insufficiency_reason}</Notice> : null}
                 {!savedPresentation && run?.answer?.unsupported_aspects?.length ? <p className="mt-3 text-sm text-foreground-muted">Not established by the available evidence: {run.answer.unsupported_aspects.join(", ")}</p> : null}
                 {message.role === "assistant" ? <div className="mt-4 flex items-center gap-3 border-t border-border pt-3 text-foreground-muted">
-                  <Button aria-label={copiedMessageId === message.id ? "Answer copied" : "Copy answer"} className="size-8 min-h-8 px-0" onClick={() => void navigator.clipboard.writeText(message.text).then(() => { setCopiedMessageId(message.id); window.setTimeout(() => setCopiedMessageId((current) => current === message.id ? null : current), 2000); })} size="icon" title="Copy answer" type="button" variant="ghost">{copiedMessageId === message.id ? <Check aria-hidden="true" className="size-4" /> : <Copy aria-hidden="true" className="size-4" />}</Button>
+                  <Button aria-label={copiedMessageId === message.id ? "Answer copied" : "Copy answer"} className="size-8 min-h-8 px-0" onClick={() => void navigator.clipboard.writeText(answerDisplayText(message.text)).then(() => { setCopiedMessageId(message.id); window.setTimeout(() => setCopiedMessageId((current) => current === message.id ? null : current), 2000); })} size="icon" title="Copy answer" type="button" variant="ghost">{copiedMessageId === message.id ? <Check aria-hidden="true" className="size-4" /> : <Copy aria-hidden="true" className="size-4" />}</Button>
                   {run?.completed_at ? <>
                     <Button aria-pressed={run.feedback?.rating === "helpful"} aria-label="Mark answer helpful" className={run.feedback?.rating === "helpful" ? "size-8 min-h-8 bg-brand/15 px-0 text-brand" : "size-8 min-h-8 px-0"} disabled={feedbackSaving} onClick={() => void rateAnswer(run, "helpful")} size="icon" title="Helpful" type="button" variant="ghost"><ThumbsUp aria-hidden="true" className="size-4" /></Button>
                     <Button aria-pressed={run.feedback?.rating === "not_helpful"} aria-label="Mark answer not helpful" className={run.feedback?.rating === "not_helpful" ? "size-8 min-h-8 bg-brand/15 px-0 text-brand" : "size-8 min-h-8 px-0"} disabled={feedbackSaving} onClick={() => void rateAnswer(run, "not_helpful")} size="icon" title="Not helpful" type="button" variant="ghost"><ThumbsDown aria-hidden="true" className="size-4" /></Button>

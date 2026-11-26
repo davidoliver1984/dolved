@@ -169,12 +169,12 @@ describe("ChatWorkspace", () => {
   it("labels Dify context as retrieved sources rather than claim citations", async () => {
     const fixture = services();
     fixture.completed.site_context = { scope_key: "global", location_id: null, name: "Organisation-wide", status: "active" };
-    fixture.completed.messages![1].text = "Use the **current procedure**.";
+    fixture.completed.messages![1].text = "Use the **current procedure** [Schedule A]. citeturn0search0 【Retrieved context】";
     fixture.completed.runs![0].answer = {
       id: "answer-1",
       outcome: "answered",
       presentation: "saved-message-v1",
-      text: "Use the **current procedure**.",
+      text: "Use the **current procedure** [Schedule A]. citeturn0search0 【Retrieved context】",
       sources_retrieved: [{
         id: "source-1",
         rank: 1,
@@ -190,22 +190,26 @@ describe("ChatWorkspace", () => {
     const user = userEvent.setup();
     render(<ChatWorkspace initialConversationId="conversation-1" services={fixture.api} workspaceId="workspace-1" workspaceName="Care" />);
 
-    const sourceSummary = await screen.findByText("Sources used");
+    const sourceSummary = await screen.findByText("Sources retrieved");
     expect(screen.getByText("current procedure").tagName).toBe("STRONG");
     expect(screen.queryByText(/\*\*current procedure\*\*/)).toBeNull();
-    expect(screen.getByText(/open these documents to check the source text/i)).not.toBeNull();
+    expect(screen.getByText("[Schedule A].", { exact: false })).not.toBeNull();
+    expect(screen.queryByText(/turn0search0|Retrieved context/)).toBeNull();
+    expect(screen.getByText("Documents provided to help generate this answer. Check the relevant source before acting.")).not.toBeNull();
     expect(sourceSummary.closest("details")?.open).toBe(false);
     await user.click(sourceSummary);
     expect(sourceSummary.closest("details")?.open).toBe(true);
-    expect(screen.getByRole("list", { name: "Sources used" })).not.toBeNull();
+    expect(screen.getByRole("list", { name: "Sources retrieved" })).not.toBeNull();
     await user.click(screen.getByRole("button", { name: /Data Protection Policy.pdf/ }));
     expect(screen.getByText("Personal devices must not be used.")).not.toBeNull();
+    expect(screen.getByRole("link", { name: "View source" }).getAttribute("href")).toBe("/app/workspaces/workspace-1/documents/document-1");
     expect(screen.getByText("Location filter:").parentElement?.textContent).toContain("Organisation-wide");
     expect(screen.queryByRole("list", { name: "Answer sources" })).toBeNull();
   });
 
   it("shows a copy control and timestamp beneath assistant replies", async () => {
     const fixture = services();
+    fixture.completed.messages![1].text = "Use [Schedule A]. citeturn0search0 【Retrieved context】";
     fixture.api.get.mockResolvedValue(fixture.completed);
     const writeText = vi.fn().mockResolvedValue(undefined);
     const user = userEvent.setup();
@@ -215,7 +219,7 @@ describe("ChatWorkspace", () => {
     const copy = await screen.findByRole("button", { name: "Copy answer" });
     expect(view.container.querySelector('time[datetime="2026-08-18T12:02:00Z"]')?.textContent).toMatch(/^\d{2}:\d{2}$/);
     await user.click(copy);
-    await waitFor(() => expect(writeText).toHaveBeenCalledWith("Use the current procedure."));
+    await waitFor(() => expect(writeText).toHaveBeenCalledWith("Use [Schedule A]."));
     expect(screen.getByRole("button", { name: "Answer copied" })).not.toBeNull();
   });
 

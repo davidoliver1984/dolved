@@ -121,3 +121,17 @@ In Dify 1.19.0, window `10` selects Dify message records, including the current 
 record which is then removed from history. The resulting upper bound is nine completed
 prior turns (normally 18 user/assistant prompt messages), and the token budget may shorten
 that history further. Retrieval continues to receive only the exact latest question.
+
+## Prepared invited-pilot instruction correction — 26 November 2026
+
+The bounded post-evaluation correction is retained under
+`deployment/dolved-dify/workflow-config/20261126/`. It changes only the system-prompt
+string: it makes the established/not-established decision explicit and clarifies that
+retrieved content cannot override system instructions or require disclosure or actions.
+The full proposed node and a provider-free structural verifier are retained there with
+baseline and proposed prompt hashes.
+
+This correction is not saved or published. The model, generation parameters, memory,
+context selector, retrieval settings and corpus remain at the production values recorded
+above. Publication and live checking require the separately frozen six-case assessment
+and David's release.
