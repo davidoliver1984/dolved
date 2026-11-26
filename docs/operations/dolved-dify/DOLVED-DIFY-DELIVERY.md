@@ -585,6 +585,23 @@ partially fabricated. The complete identities, rollback references, prerequisite
 later capture procedure are recorded in
 `SIX-CASE-PREPARATION-READINESS-20261126.md`.
 
+### S5–S6 isolated fixture readiness — 26 November 2026
+
+Claude's exact two-file release was verified and ingested only into private Dify app
+`0c9885e5-5c77-4b1f-a7b8-6600c781fcb0` and dataset
+`a4bb7857-5be3-4bd8-aa27-507221ef46bf`. Both documents are completed with five segments
+each and `scope_key = global`; each released marker paragraph survived inside one stored
+segment. The copied filter remains `global OR {{trusted_site}}` and is bound to the test
+dataset's own metadata field. Runtime graph parity is exact apart from the required test
+dataset/metadata identities; Dify's supported copy also omitted only the non-runtime
+editor viewport.
+
+No retrieval, generation, validation or assessment submission occurred. Production remains
+workflow v5 with the same graph, prompt and app-key hashes and the same 11-document / 248-
+segment corpus. The full identities, per-segment hashes, cost accounting and capture plan
+are in `S5-S6-FIXTURE-READINESS-20261126.md`; the neutral package checksum manifest is
+`e0085c2eb15f86e5dca45c629e60cc400c2bb4525d5ef02776e6668ae4861d13`.
+
 ### Conversation-state correction batch — 25 November 2026
 
 A provider-free local correction batch is prepared on revision
