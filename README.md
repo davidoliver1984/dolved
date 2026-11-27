@@ -1,9 +1,36 @@
-# dolved RAG system
+# Dolved knowledge system
 
-A container-first, multi-service Retrieval Augmented Generation platform built with
-Next.js, Laravel, FastAPI and PostgreSQL.
+Dolved is a governed knowledge and document-answering system. The current hosted delivery
+is approved for a bounded, invitation-only, single-client private pilot: Next.js and
+Laravel provide the product,
+identity, tenancy, governance and audit boundary, while private stock self-hosted Dify
+provides the bound retrieval and generation workflow.
+
+The repository also preserves the original custom Laravel/Python/Qdrant RAG platform as a
+recoverable development path. It is not silently replaced or marked complete by the Dify
+pilot.
+
+Current navigation:
+
+- [Private-pilot acceptance and release decision](docs/operations/dolved-dify/PRIVATE-PILOT-ACCEPTANCE-20261127.md)
+- [Current pilot architecture](docs/operations/dolved-dify/CURRENT-ARCHITECTURE.md)
+- [Dolved–Dify delivery record](docs/operations/dolved-dify/DOLVED-DIFY-DELIVERY.md)
+- [Pilot security acceptance](docs/operations/dolved-dify/PILOT-SECURITY-ACCEPTANCE-20261126.md)
+- [Pilot acceptance and onboarding checklist](docs/operations/dolved-dify/PILOT-LAUNCH-CHECKLIST-20261126.md)
+- [Project journey and future custom-RAG path](docs/PROJECT-PROGRESSION.md)
+- [Documentation index](docs/README.md)
+
+David has accepted the documented residual risks and coverage gaps for this named-user
+feedback pilot. Invitations and participant onboarding are separate operational actions and
+are not claimed as complete. The decision is not a production-certification, public-launch,
+high-availability or unrestricted multi-client readiness claim.
 
 ## Getting started
+
+The workflow below starts the repository's full local development stack, including the
+preserved custom Laravel/Python/Qdrant path. It is not a reproduction of the accepted
+hosted Dify deployment; use the current architecture and delivery records above for that
+operating model.
 
 Docker with Docker Compose and Make are the only host tools required for the standard
 development workflow.

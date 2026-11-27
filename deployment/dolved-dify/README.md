@@ -3,6 +3,25 @@
 This directory deploys the public Dolved web/API boundary. Dify remains a stock,
 private backend and administration console. Client users never use the Dify web UI.
 
+Current pilot security and operations entry points:
+
+- [`PRIVATE-PILOT-ACCEPTANCE-20261127.md`](../../docs/operations/dolved-dify/PRIVATE-PILOT-ACCEPTANCE-20261127.md)
+- [`CURRENT-ARCHITECTURE.md`](../../docs/operations/dolved-dify/CURRENT-ARCHITECTURE.md)
+- [`PILOT-SECURITY-ACCEPTANCE-20261126.md`](../../docs/operations/dolved-dify/PILOT-SECURITY-ACCEPTANCE-20261126.md)
+- [`PILOT-LAUNCH-CHECKLIST-20261126.md`](../../docs/operations/dolved-dify/PILOT-LAUNCH-CHECKLIST-20261126.md)
+- [`DOLVED-DIFY-DELIVERY.md`](../../docs/operations/dolved-dify/DOLVED-DIFY-DELIVERY.md)
+- [`LEGACY-RAG-RECOVERY.md`](../../docs/operations/dolved-dify/LEGACY-RAG-RECOVERY.md)
+
+The supported pilot boundary is invitation-only HTTPS through Dolved. Dify administration,
+databases, object/vector stores and specialist consoles are not public user interfaces.
+David has approved this bounded private-pilot scope; invitation sending and participant
+onboarding remain separate operational actions.
+Secrets remain in host-managed environment files, backups remain checksummed and
+permission-restricted, and the provider-free preflight/running verifier is the required
+deployment gate. Incident response starts by preserving current identities and logs,
+checking the delivery record, and using the documented backup/rollback point; do not alter
+Dify workflow or corpus settings as an incidental repair.
+
 ## Pinned identities
 
 - Dolved source baseline: `9e43561cedcf53174d2367fb9c71bfd55a4bab8a`

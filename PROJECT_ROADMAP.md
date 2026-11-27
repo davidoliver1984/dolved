@@ -2,9 +2,29 @@
 
 | Field | Value |
 |---|---|
-| Project status | In Progress — Phase 28 of 33 (Live-provider and Realistic-corpus Quality Evaluation) |
+| Project status | Phase 30 accepted — invitation-only private pilot approved; onboarding open |
 | Version | 0.1 |
 | Owner | David Oliver |
+
+---
+
+## Current delivery note — 27 November 2026
+
+The active delivery path is the invitation-only, single-client Dolved–Dify pilot selected
+by ADR-0041. It is deployed, its bounded engineering/security and hosted access-control
+checks are complete, and David has accepted the documented residual risks and coverage
+gaps as sufficient for the private pilot. No further pre-launch testing is required within
+that accepted scope. Invitations and participant onboarding remain separate operational
+actions. See the
+[private-pilot acceptance](docs/operations/dolved-dify/PRIVATE-PILOT-ACCEPTANCE-20261127.md),
+[current architecture](docs/operations/dolved-dify/CURRENT-ARCHITECTURE.md),
+[security report](docs/operations/dolved-dify/PILOT-SECURITY-ACCEPTANCE-20261126.md) and
+[launch checklist](docs/operations/dolved-dify/PILOT-LAUNCH-CHECKLIST-20261126.md).
+
+The phase descriptions below retain the custom RAG programme's provenance. Its code,
+contracts, roadmap tasks and recovery assets remain preserved as a future path; Dify
+equivalence does not complete them. AWS, high-availability and multi-client work are
+separate future decisions.
 
 ---
 
@@ -123,31 +143,33 @@ provisioned.
 ## Bounded single-client delivery track — Dolved with stock self-hosted Dify
 
 This separately authorised track has reached a live hosted single-client pilot at
-https://pilot.dolved.com, undergoing engineering acceptance. It preserves the canonical
-R28-S04 position and does not pre-complete any later gate. Dolved remains the public
-Next.js/Laravel security and governance boundary; pinned stock Dify 1.19.0 provides the
-private retrieval/generation services.
+https://pilot.dolved.com and is approved for bounded invitation-only use. Dolved remains
+the public Next.js/Laravel security and governance boundary; pinned stock Dify 1.19.0
+provides the private retrieval/generation services.
 
-As reconciled from David's 20 November status report and the delivery-branch records,
-DNS/HTTPS, dedicated Dify credentials, SMTP configuration and pilot activation are complete.
-The eleven governed documents, structured site context, persisted chat/reload and source
-links are implemented; backup/restore foundations are recorded. The deployed first-message
-fix at `c115890` still awaits David's hosted confirmation. SMTP configuration is complete,
-but actual delivery and the remaining hosted lifecycle/mobile/permission checks are pending.
+DNS/HTTPS, private Dify services, dedicated credentials, SMTP, governed documents,
+structured site context, persisted conversations, authorised sources, observability,
+backup/rollback and the current product identity are implemented. The confirmed
+high-severity live dependency issue was corrected and deployed. Hosted synthetic checks
+covered invitations, recovery/session invalidation, role and workspace boundaries,
+conversation ownership, removal effects, exports and review-policy permissions. The
+supplementary frozen six-case assessment passed; the original quality and memory verdicts
+remain unchanged.
 
-The fixed Dolved visual identity is applied. The bounded platform-admin branding editor
-remains unbuilt under the R29 seam; this is not permission to add multi-client tenancy.
-Next: finish hands-on acceptance defects and branding controls, complete privacy-safe
-observability and restricted exact-model-input/user-visible capture, recheck the corpus and
-effective Top K 10 settings, then freeze and prepare one neutral readiness handoff. Capture
-verification can proceed alongside acceptance. The 40 questions remain sealed; no new
-answer-quality test campaign is implied. The status reconciliation did not itself run live
-checks. No activation dependency is currently reported as blocking the track.
+David accepted the explicitly documented residual medium risks and fixture-dependent
+coverage gaps on 27 November 2026. That decision closes Phase 30's pre-launch testing and
+release-decision activity for this bounded scope; it does not represent unexercised checks
+as passes. The fixed product identity is applied. Configurable-branding and later
+product-wide visual gates retain their own requirements and are not completed by this
+decision.
 
-See `docs/operations/dolved-dify/DOLVED-DIFY-DELIVERY.md` and ADR-0041. This track does not
-authorise multi-client Dify tenancy, replace historical evaluation evidence, pre-complete
-the canonical R28/R29/R30 gates or declare the pilot ready for client invitation. Future
-AWS phases remain preserved and follow the private pilot/product-acceptance work.
+See the
+[private-pilot acceptance](docs/operations/dolved-dify/PRIVATE-PILOT-ACCEPTANCE-20261127.md),
+`docs/operations/dolved-dify/DOLVED-DIFY-DELIVERY.md` and ADR-0041. Invitation sending and
+participant onboarding remain open. This track does not authorise public registration,
+multi-client Dify tenancy, public launch, general production-readiness or high-availability
+claims. The historical custom-RAG programme and its original gates remain preserved; future
+AWS and multi-client decisions remain separate.
 
 ---
 
