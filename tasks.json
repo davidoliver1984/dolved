@@ -40,19 +40,19 @@
   "progress": {
     "current_phase": "R28",
     "current_session": "R28-S04",
-    "next_action": "R28-S04 remains the canonical roadmap session; no later gate is pre-completed. The separately authorised ADR-0041 track is a live hosted single-client pilot undergoing consolidated engineering acceptance. The repository has been moved cleanly out of iCloud to /Users/davidoliver/Developer/RAG, with the active delivery worktree at /private/tmp/RAG-admin-observability-20261121. DNS/HTTPS, dedicated Dify credentials, SMTP, pilot activation, configurable branding, explicit multi-location applicability, bounded Dify conversation memory, restricted exact-model-input capture, Question review and privacy-safe observability are deployed. Next: complete the custom/fallback light/dark/mobile branding matrix and hands-on lifecycle/permission/source-link/telemetry acceptance, re-freeze the exact corpus and effective settings, then prepare one neutral checksummed Claude readiness handoff. Keep the 40 questions sealed. R29/R30 evidence may be reused without closing their gates; R31 acceptance and R32 AWS/R33 production/R34 documentation remain preserved.",
+    "next_action": "R28-S04 remains the canonical session for the separate, preserved custom-RAG roadmap; no later custom-RAG gate is pre-completed, and this pointer does not describe the current status of the Dify private pilot. The separately authorised ADR-0041 delivery track is verified and approved for the bounded, invitation-only private pilot. Next: send invitations to the named pilot participants, then record the invited participants and pilot start date. The unfinished R29 custom/fallback light/dark/mobile visual matrix is deferred and non-blocking for the accepted invitation-only private pilot; its detailed task status and requirements remain unchanged. No additional evaluation is currently authorised. R31 acceptance and R32 AWS/R33 production/R34 documentation remain preserved future work.",
     "authorised_delivery_track": {
       "decision_reference": "ADR-0041 and docs/operations/dolved-dify/DOLVED-DIFY-DELIVERY.md",
-      "status": "in_progress",
+      "status": "verified",
       "scope": "One private, invitation-only, single-client Dolved pilot using pinned stock self-hosted Dify on the approved non-AWS host.",
       "completed": [
-        "The platform-admin branding editor and safe draft/apply/default lifecycle are deployed. David approved the hosted Cherish identity and received the corrected branded email in the inbox; the complete custom/fallback light/dark/mobile matrix remains open.",
+        "The platform-admin branding editor and safe draft/apply/default lifecycle are deployed. David approved the hosted Cherish identity and received the corrected branded email in the inbox. The complete custom/fallback light/dark/mobile matrix remains unfinished. Deferred and non-blocking for the accepted invitation-only private pilot.",
         "Production Dolved frontend and Laravel backend are deployed on the approved OVH VPS. The first-message live-update correction at c115890 is deployed and the hosted chat path is operational.",
         "Stock Dify 1.19.0 at 8e689e868b63b6dd2b449d0eb568ca5cc7127759 is deployed privately.",
-        "The eleven assessment originals are recorded as hash-verified, governed, applicability-bound and mapped in Dolved/Dify without duplicate searchable copies; recheck against the final freeze before evaluation.",
-        "Dataset and node Top K 10, threshold off, weighted hybrid 0.7/0.3 and global-or-selected-site filtering were verified in the retained deployment record; final freeze verification remains.",
+        "The eleven assessment originals are recorded as hash-verified, governed, applicability-bound and mapped in Dolved/Dify without duplicate searchable copies; post-cleanup verification preserved the production app, dataset, 11 eligible documents and 248 searchable segments.",
+        "Dataset and node Top K 10, threshold off, weighted hybrid 0.7/0.3 and global-or-selected-site filtering are verified in the retained deployment record and accepted release evidence.",
         "DNS/HTTPS, dedicated Dify credentials, SMTP configuration and pilot activation are complete. David confirmed successful inbox delivery of the corrected tenant-branded email.",
-        "Authentication, roles, workspace/conversation boundaries, structured site context, saved chat/reload and authorised source links are implemented; hosted acceptance coverage remains to be completed.",
+        "Authentication, roles, workspace/conversation boundaries, structured site context, saved chat/reload and authorised source links are implemented; hosted access-control acceptance is complete within the explicitly accepted coverage limits.",
         "Compact expandable Sources retrieved display and import-verification corrections are deployed per David's report and delivery-branch commits.",
         "Restricted exact model-input capture is verified from an existing hosted acceptance run without a new provider call: the direct Dify 1.19.0 PromptMessage sequence is natively correlated to the global site input, Dolved answer and ten ordered source links. Provider-wire bytes remain outside the stated capture boundary.",
         "Explicit document applicability is deployed: organisation-wide or one or more registered locations, with the saved choice visible before promotion and on the governed document record.",
@@ -63,15 +63,11 @@
         "The bounded active-pipeline interface cleanup is deployed at OCI revision cc72a8da699cb3bbe11b847785379dd7a59c0f99: Dify-only custom projections are capability-gated, Usage uses cached supported-API segment observations with honest unavailable states, Dify progress/stop and source-retention wording are accurate, tenant branding propagates, and custom-pipeline recovery contracts remain preserved."
       ],
       "remaining": [
-        "Complete David's consolidated hands-on hosted acceptance across chat live updates, lifecycle transitions, permissions, source links and operational screens.",
-        "Complete explicit visual acceptance of the custom and Dolved-fallback identities in light/dark themes, narrow mobile layout, favicon reload and keyboard/focus states.",
-        "Verify the full hosted upload, processing, replacement, withdrawal and deletion lifecycle, including ordinary failure/recovery cases.",
-        "Verify roles/permissions, conversation ownership, optional Question review boundaries, telemetry retention/failure states and source-link access during the consolidated run.",
-        "Recheck the exact eleven-document corpus, site mapping and effective dataset/node Top K 10; freeze final deployed application, Dify/plugins, prompt, model and configuration identities.",
-        "Prepare one checksummed neutral readiness handoff for Claude; stop before sealed-question release or evaluation execution."
+        "Send invitations to the named pilot participants.",
+        "Record invited participants and the pilot start date."
       ],
       "blockers": [],
-      "evaluation_boundary": "The 40 questions, expected answers, controls and item-to-source mappings remain sealed. No release or execution is authorised in this delivery step."
+      "evaluation_boundary": "No additional evaluation is currently authorised. Existing sealed material, historical evidence and recorded results remain preserved. The supplementary PASS does not overwrite the original evaluation verdicts."
     },
     "completed_through": "R27-GATE",
     "completed_phase_count": 28,
