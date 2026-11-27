@@ -34,7 +34,14 @@ const representativeDocuments = [
   "food-safety-policy.txt",
   "complaints-policy.txt",
 ] as const;
-const password = readFileSync(resolve(repositoryRoot, ".env.e2e"), "utf8")
+const e2eEnvironment = resolve(repositoryRoot, "tests/end-to-end/runtime/.env.e2e");
+const composeArguments = [
+  "compose", "--project-directory", repositoryRoot,
+  "--env-file", e2eEnvironment, "-p", "dolved-e2e",
+  "-f", resolve(repositoryRoot, "compose.yaml"),
+  "-f", resolve(repositoryRoot, "tests/end-to-end/runtime/compose.e2e.yaml"),
+];
+const password = readFileSync(e2eEnvironment, "utf8")
   .split("\n")
   .find((line) => line.startsWith("E2E_ACCOUNT_PASSWORD="))
   ?.slice("E2E_ACCOUNT_PASSWORD=".length);
@@ -43,8 +50,7 @@ function bootstrap(scenario: string): BootstrapIdentity {
   const output = execFileSync(
     "docker",
     [
-      "compose", "--env-file", ".env.e2e", "-p", "dolved-e2e",
-      "-f", "compose.yaml", "-f", "compose.e2e.yaml",
+      ...composeArguments,
       "exec", "-T", "api", "php", "artisan", "e2e:bootstrap",
       "--run", "r22-s03", "--scenario", scenario,
     ],
@@ -57,8 +63,7 @@ function approveDocument(identity: BootstrapIdentity, documentId: string): void 
   execFileSync(
     "docker",
     [
-      "compose", "--env-file", ".env.e2e", "-p", "dolved-e2e",
-      "-f", "compose.yaml", "-f", "compose.e2e.yaml",
+      ...composeArguments,
       "exec", "-T", "api", "php", "artisan", "e2e:approve-document",
       "--workspace", identity.workspace_public_id,
       "--document", documentId,
@@ -72,8 +77,7 @@ function composeService(operation: "start" | "stop", service: "conversation-work
   execFileSync(
     "docker",
     [
-      "compose", "--env-file", ".env.e2e", "-p", "dolved-e2e",
-      "-f", "compose.yaml", "-f", "compose.e2e.yaml",
+      ...composeArguments,
       operation, service,
     ],
     { cwd: repositoryRoot, encoding: "utf8" },

@@ -39,7 +39,38 @@ No container, image, volume, database or file named above is to be removed as pa
 
 At the last inspection, `api`, `web`, `ai`, PostgreSQL and Qdrant were running and healthy; mutation-capable workers, publisher, scheduler-equivalent one-offs and LocalStack were not running. Preservation work did not start, stop or delete any legacy container.
 
-## Isolated restart outline
+## Current-revision custom-pipeline configuration
+
+The current repository keeps the E2E and R28 runtime inputs under their owning
+test directories. Validate the current effective model from any working
+directory with repository-root-derived paths and the established project name:
+
+```sh
+repository_root="$(git rev-parse --show-toplevel)"
+docker compose --project-directory "$repository_root" \
+  --project-name dolved-r28-s03 \
+  --env-file "$repository_root/tests/evaluation/runtime/.env.r28-s03" \
+  -f "$repository_root/compose.yaml" \
+  -f "$repository_root/tests/end-to-end/runtime/compose.e2e.yaml" \
+  -f "$repository_root/tests/evaluation/runtime/compose.r28-s03.yaml" \
+  -f /Users/davidoliver/.dolved/r28-s03/production.override.json \
+  -f /Users/davidoliver/Desktop/dolved-experiments/current-policy-pilot-20261116/sealed-confirmation-02/preparation/smoke.override.json \
+  config --quiet
+```
+
+Set `R28_CORPUS_ROOT` to the approved extracted corpus before rendering or
+starting this model. Starting services remains a separate, explicitly
+authorised recovery action.
+
+Historical evidence must be reproduced from its recorded revision rather than
+by translating old literal commands to the current layout. For a general
+pre-relocation snapshot, tag `pilot-unified-design-20261125` resolves to
+`b201f34b844a3359b97c422bfc498e0d8cb12437` and retains all 13 former root paths.
+Run-specific evidence takes precedence and should be checked out in a detached
+worktree at the exact commit it records. Frozen manifests, journals and command
+captures are intentionally unchanged.
+
+## Frozen-revision isolated restart outline
 
 Do not start this legacy stack alongside production Dify using shared ports, credentials or project names. From the frozen checkout, with the retained private environment and override files available, validate the effective Compose model first:
 

@@ -5,7 +5,7 @@ set -euo pipefail
 readonly repository_root="$(git rev-parse --show-toplevel)"
 readonly launcher="${repository_root}/scripts/evaluation/cal_exp_0002_runtime.sh"
 readonly definition="${repository_root}/tests/evaluation/experiment-definitions/CAL-EXP-0002-v3-evidence-threshold-calibration/runtime-lineage.json"
-readonly override="${repository_root}/compose.cal-exp-0002.yaml"
+readonly override="${repository_root}/tests/evaluation/runtime/compose.cal-exp-0002.yaml"
 
 jq -e '.experiment_id == "CAL-EXP-0002-v3-evidence-threshold-calibration"' "${definition}" >/dev/null
 jq -e '.population.case_count == 44 and .population.variant_count == 132' "${definition}" >/dev/null

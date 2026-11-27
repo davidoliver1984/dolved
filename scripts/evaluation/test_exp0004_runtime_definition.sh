@@ -3,7 +3,7 @@
 set -euo pipefail
 
 readonly repository_root="$(git rev-parse --show-toplevel)"
-readonly override="${repository_root}/compose.exp0004.yaml"
+readonly override="${repository_root}/tests/evaluation/runtime/compose.exp0004.yaml"
 readonly launcher="${repository_root}/scripts/evaluation/exp0004_runtime.sh"
 readonly definition="${repository_root}/tests/evaluation/experiment-definitions/EXP-0004-rrf-k-5-controlled-engineering-experiment/runtime-lineage.json"
 

@@ -4,7 +4,7 @@ set -euo pipefail
 
 readonly repository_root="$(git rev-parse --show-toplevel)"
 readonly runtime="${repository_root}/scripts/evaluation/exp0007_runtime.sh"
-readonly compose_file="${repository_root}/compose.exp0007.yaml"
+readonly compose_file="${repository_root}/tests/evaluation/runtime/compose.exp0007.yaml"
 
 bash -n "${runtime}"
 if grep -Eq '/evaluation/(calibration|held-out)|engineering-snapshots/dolved-care-engineering/v2' "${runtime}" "${compose_file}"; then

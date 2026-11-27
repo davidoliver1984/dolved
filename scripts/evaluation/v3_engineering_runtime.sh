@@ -4,8 +4,8 @@ set -euo pipefail
 
 readonly project_name='rag-platform'
 readonly repository_root="$(git rev-parse --show-toplevel)"
-readonly environment_file="${V3_ENGINEERING_ENV_FILE:-/Users/davidoliver/Desktop/RAG/.env}"
-readonly compose_override="${repository_root}/compose.v3-engineering.yaml"
+readonly environment_file="${V3_ENGINEERING_ENV_FILE:-${repository_root}/.env}"
+readonly compose_override="${repository_root}/tests/evaluation/runtime/compose.v3-engineering.yaml"
 readonly state_source="${repository_root}/apps/api/storage/app/private/evaluation/dolved-care-engineering/v3/provisioning.json"
 readonly exported_record="${V3_ENGINEERING_PROVISIONING_RECORD:-/private/tmp/rag-platform-v3-engineering/provisioning.json}"
 
@@ -30,6 +30,7 @@ assert_clean_lineage() {
 
 compose() {
     docker compose \
+        --project-directory "${repository_root}" \
         --project-name "${project_name}" \
         --env-file "${environment_file}" \
         --file "${repository_root}/compose.yaml" \

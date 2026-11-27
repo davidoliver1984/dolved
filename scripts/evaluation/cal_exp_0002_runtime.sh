@@ -7,7 +7,7 @@ readonly project_name='rag-platform'
 readonly repository_root="$(git rev-parse --show-toplevel)"
 readonly definition="${CALIBRATION_DEFINITION:-${repository_root}/tests/evaluation/experiment-definitions/${run_id}/runtime-lineage.json}"
 readonly population_root="${repository_root}/tests/evaluation/calibration-populations/dolved-care-engineering/v3/v1"
-readonly compose_override="${CALIBRATION_COMPOSE_OVERRIDE:-${repository_root}/compose.cal-exp-0002.yaml}"
+readonly compose_override="${CALIBRATION_COMPOSE_OVERRIDE:-${repository_root}/tests/evaluation/runtime/compose.cal-exp-0002.yaml}"
 readonly artisan_command="${CALIBRATION_ARTISAN_COMMAND:-evaluation:benchmark:run-cal-exp-0002}"
 readonly environment_file="${CALIBRATION_ENV_FILE:-${repository_root}/.env}"
 readonly isolated_root="${CALIBRATION_ISOLATED_ROOT:-/private/tmp/rag-platform-cal-exp-0002}"
@@ -113,7 +113,7 @@ compose() {
     CALIBRATION_AUTHORING_REVIEW="${authoring_review}" \
     CALIBRATION_PROVISIONING_RECORD="${provisioning_record}" \
     CALIBRATION_RUNS_ROOT="${runs_root}" \
-    docker compose --project-name "${project_name}" --env-file "${environment_file}" \
+    docker compose --project-directory "${repository_root}" --project-name "${project_name}" --env-file "${environment_file}" \
         --file "${repository_root}/compose.yaml" --file "${compose_override}" "$@"
 }
 

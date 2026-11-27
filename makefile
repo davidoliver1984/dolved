@@ -2,6 +2,7 @@ SHELL := /bin/bash
 .DEFAULT_GOAL := help
 
 COMPOSE := docker compose
+REPOSITORY_ROOT := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
 EXEC := $(COMPOSE) exec -T
 WAIT_TIMEOUT ?= 180
 TAIL ?= 100
@@ -243,8 +244,8 @@ telemetry-outage:
 EVALUATION_CORPUS_VERSION ?= v2
 EVALUATION_BENCHMARK_VERSION ?= v2
 EVALUATION_CONTRACT_VERSION ?= v2
-E2E_COMPOSE := docker compose --env-file .env.e2e --project-name dolved-e2e --file compose.yaml --file compose.e2e.yaml
-EVALUATION_CURRENT_COMPOSE := docker compose --env-file .env.e2e --project-name dolved-evaluation-current --file compose.yaml --file compose.e2e.yaml --file compose.evaluation-current.yaml
+E2E_COMPOSE := docker compose --project-directory "$(REPOSITORY_ROOT)" --env-file "$(REPOSITORY_ROOT)/tests/end-to-end/runtime/.env.e2e" --project-name dolved-e2e --file "$(REPOSITORY_ROOT)/compose.yaml" --file "$(REPOSITORY_ROOT)/tests/end-to-end/runtime/compose.e2e.yaml"
+EVALUATION_CURRENT_COMPOSE := docker compose --project-directory "$(REPOSITORY_ROOT)" --env-file "$(REPOSITORY_ROOT)/tests/end-to-end/runtime/.env.e2e" --project-name dolved-evaluation-current --file "$(REPOSITORY_ROOT)/compose.yaml" --file "$(REPOSITORY_ROOT)/tests/end-to-end/runtime/compose.e2e.yaml" --file "$(REPOSITORY_ROOT)/tests/evaluation/runtime/compose.evaluation-current.yaml"
 
 evaluation-benchmark-sync:
 	$(COMPOSE) run --rm --no-deps \

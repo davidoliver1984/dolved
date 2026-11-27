@@ -5,7 +5,7 @@ repository_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "$repository_root"
 
 ./scripts/e2e/preflight.sh
-compose=(docker compose --env-file .env.e2e -p dolved-e2e -f compose.yaml -f compose.e2e.yaml)
+compose=(docker compose --project-directory "$repository_root" --env-file "$repository_root/tests/end-to-end/runtime/.env.e2e" -p dolved-e2e -f "$repository_root/compose.yaml" -f "$repository_root/tests/end-to-end/runtime/compose.e2e.yaml")
 services=(postgres qdrant localstack mailpit ai api publisher worker conversation-worker web)
 
 "${compose[@]}" up --detach --build --wait --wait-timeout "${WAIT_TIMEOUT:-180}" "${services[@]}"

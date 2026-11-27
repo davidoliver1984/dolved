@@ -6,7 +6,7 @@ readonly run_id='CAL-EXP-0001-evidence-threshold-calibration'
 readonly project_name='rag-platform'
 readonly repository_root="$(git rev-parse --show-toplevel)"
 readonly definition="${repository_root}/tests/evaluation/experiment-definitions/${run_id}/runtime-lineage.json"
-readonly compose_override="${repository_root}/compose.calibration.yaml"
+readonly compose_override="${repository_root}/tests/evaluation/runtime/compose.calibration.yaml"
 readonly environment_file="${CALIBRATION_ENV_FILE:-${repository_root}/.env}"
 readonly isolated_root="${CALIBRATION_ISOLATED_ROOT:-/private/tmp/rag-platform-threshold-calibration}"
 readonly calibration_snapshot="${isolated_root}/corpus.json"
@@ -88,7 +88,7 @@ compose() {
     CALIBRATION_EXPECTATIONS="${calibration_expectations}" \
     CALIBRATION_PROVISIONING_RECORD="${provisioning_record}" \
     CALIBRATION_RUNS_ROOT="${runs_root}" \
-    docker compose --project-name "${project_name}" --env-file "${environment_file}" \
+    docker compose --project-directory "${repository_root}" --project-name "${project_name}" --env-file "${environment_file}" \
         --file "${repository_root}/compose.yaml" --file "${compose_override}" "$@"
 }
 

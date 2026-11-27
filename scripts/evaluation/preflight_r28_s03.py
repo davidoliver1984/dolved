@@ -12,6 +12,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 DEFINITION = ROOT / "docs/evaluation/r28-s03/run-definition.json"
+E2E_RUNTIME = ROOT / "tests/end-to-end/runtime"
+EVALUATION_RUNTIME = ROOT / "tests/evaluation/runtime"
 
 
 def sha256(path: Path) -> str:
@@ -43,7 +45,7 @@ def main() -> int:
     profile_path = ROOT / profile["profile_path"]
     if sha256(profile_path) != profile["profile_sha256"]:
         fail("deterministic retrieval profile identity mismatch")
-    env = (ROOT / ".env.r28-s03").read_text()
+    env = (EVALUATION_RUNTIME / ".env.r28-s03").read_text()
     required = {
         "COMPOSE_PROJECT_NAME=dolved-r28-s03",
         "POSTGRES_DB=dolved_e2e_r28_s03",
@@ -51,7 +53,7 @@ def main() -> int:
     }
     if not required.issubset(set(env.splitlines())):
         fail("isolated runtime identity is incomplete")
-    compose = (ROOT / "compose.r28-s03.yaml").read_text()
+    compose = (EVALUATION_RUNTIME / "compose.r28-s03.yaml").read_text()
     for forbidden in ("/evaluation", "/evaluation-runs", "held-out", "calibration"):
         if forbidden in compose:
             fail(f"protected mount/reference present: {forbidden}")
@@ -65,16 +67,18 @@ def main() -> int:
             [
                 "docker",
                 "compose",
+                "--project-directory",
+                str(ROOT),
                 "--env-file",
-                ".env.r28-s03",
+                str(EVALUATION_RUNTIME / ".env.r28-s03"),
                 "-p",
                 "dolved-r28-s03",
                 "-f",
-                "compose.yaml",
+                str(ROOT / "compose.yaml"),
                 "-f",
-                "compose.e2e.yaml",
+                str(E2E_RUNTIME / "compose.e2e.yaml"),
                 "-f",
-                "compose.r28-s03.yaml",
+                str(EVALUATION_RUNTIME / "compose.r28-s03.yaml"),
                 "config",
                 "--format",
                 "json",

@@ -3,7 +3,7 @@
 set -euo pipefail
 
 readonly repository_root="$(git rev-parse --show-toplevel)"
-readonly compose_file="${repository_root}/compose.v3-engineering.yaml"
+readonly compose_file="${repository_root}/tests/evaluation/runtime/compose.v3-engineering.yaml"
 readonly runtime="${repository_root}/scripts/evaluation/v3_engineering_runtime.sh"
 
 grep -Fq '/evaluation/engineering/corpus.json:ro' "${compose_file}"

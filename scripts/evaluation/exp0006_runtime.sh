@@ -5,7 +5,7 @@ set -euo pipefail
 readonly run_id='EXP-0006-adr0022-v4-consolidated-engineering-confirmation'
 readonly project_name='rag-platform'
 readonly repository_root="$(git rev-parse --show-toplevel)"
-readonly compose_override="${repository_root}/compose.exp0006.yaml"
+readonly compose_override="${repository_root}/tests/evaluation/runtime/compose.exp0006.yaml"
 readonly definition="${repository_root}/tests/evaluation/experiment-definitions/${run_id}/runtime-lineage.json"
 readonly expected_record_sha="$(jq -er '.provisioning.record_sha256' "${definition}")"
 readonly environment_file="${EXP0006_ENV_FILE:-${repository_root}/.env}"
@@ -50,6 +50,7 @@ compose() {
     EXP0006_RUNS_ROOT="${runs_root}" \
     EXP0006_INDEX_FILE="${index_file}" \
     docker compose \
+        --project-directory "${repository_root}" \
         --project-name "${project_name}" \
         --env-file "${environment_file}" \
         --file "${repository_root}/compose.yaml" \

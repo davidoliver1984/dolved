@@ -5,10 +5,10 @@ set -euo pipefail
 readonly run_id='EXP-0008-v3-final-engineering-confirmation'
 readonly project_name='rag-platform'
 readonly repository_root="$(git rev-parse --show-toplevel)"
-readonly compose_override="${repository_root}/compose.exp0008.yaml"
+readonly compose_override="${repository_root}/tests/evaluation/runtime/compose.exp0008.yaml"
 readonly definition="${repository_root}/tests/evaluation/experiment-definitions/${run_id}/runtime-lineage.json"
 readonly expected_record_sha="$(jq -er '.materialisation_reuse.record_sha256' "${definition}")"
-readonly environment_file="${EXP0008_ENV_FILE:-/Users/davidoliver/Desktop/RAG/.env}"
+readonly environment_file="${EXP0008_ENV_FILE:-${repository_root}/.env}"
 readonly provisioning_record="${EXP0008_PROVISIONING_RECORD:-/private/tmp/rag-platform-exp0008/provisioning.json}"
 readonly runs_root="${EXP0008_RUNS_ROOT:-/private/tmp/rag-platform-exp0008/runs}"
 readonly index_file="${EXP0008_INDEX_FILE:-/private/tmp/rag-platform-exp0008/index/EXPERIMENTS.md}"
@@ -49,6 +49,7 @@ compose() {
     EXP0008_PROVISIONING_RECORD="${provisioning_record}" \
     EXP0008_RUNS_ROOT="${runs_root}" \
     EXP0008_INDEX_FILE="${index_file}" docker compose \
+        --project-directory "${repository_root}" \
         --project-name "${project_name}" \
         --env-file "${environment_file}" \
         --file "${repository_root}/compose.yaml" \

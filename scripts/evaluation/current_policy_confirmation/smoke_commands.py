@@ -20,8 +20,8 @@ def readiness():
     assert value['cache_files']==b['sparse_readiness']['cache_files']
     return value
 def future_worker():
-    b=binding();cmd=['docker','compose','--env-file','/Users/davidoliver/Desktop/RAG/.env.r28-s03','-p','dolved-r28-s03']
-    for f in ['compose.yaml','compose.e2e.yaml','compose.r28-s03.yaml',str(Path.home()/'.dolved/r28-s03/production.override.json'),str(ROOT/'smoke.override.json')]:cmd+=['-f',f]
+    b=binding();cmd=['docker','compose','--project-directory',str(WORKTREE),'--env-file',str(WORKTREE/'tests/evaluation/runtime/.env.r28-s03'),'-p','dolved-r28-s03']
+    for f in [WORKTREE/'compose.yaml',WORKTREE/'tests/end-to-end/runtime/compose.e2e.yaml',WORKTREE/'tests/evaluation/runtime/compose.r28-s03.yaml',Path.home()/'.dolved/r28-s03/production.override.json',ROOT/'smoke.override.json']:cmd+=['-f',str(f)]
     config=json.loads(subprocess.check_output(cmd+['config','--format','json'],cwd=WORKTREE,env={**os.environ,'R28_CORPUS_ROOT':'/private/tmp/dolved-r28-s03.zU3HX6/corpus/eval-corpus-v4-authoring'}))
     service=config['services']['api'];api=inspect('dolved-r28-s03-api-1')
     assert hashlib.sha256(json.dumps(service,sort_keys=True).encode()).hexdigest()==b['future_worker']['compose_service_sha256']
@@ -71,8 +71,8 @@ def worker_start():
     b=binding();auth=json.loads(Path(b['authorization']).read_text())
     assert auth['binding_sha256']==sha(ROOT/'binding.json') and auth['approved'] is True
     assert Path(b['authorization']+'.consumed').is_dir() and (ROOT/'started.json').is_file()
-    cmd=['docker','compose','--env-file','/Users/davidoliver/Desktop/RAG/.env.r28-s03','-p','dolved-r28-s03']
-    for f in ['compose.yaml','compose.e2e.yaml','compose.r28-s03.yaml',str(Path.home()/'.dolved/r28-s03/production.override.json'),str(ROOT/'smoke.override.json')]:cmd+=['-f',f]
+    cmd=['docker','compose','--project-directory',str(WORKTREE),'--env-file',str(WORKTREE/'tests/evaluation/runtime/.env.r28-s03'),'-p','dolved-r28-s03']
+    for f in [WORKTREE/'compose.yaml',WORKTREE/'tests/end-to-end/runtime/compose.e2e.yaml',WORKTREE/'tests/evaluation/runtime/compose.r28-s03.yaml',Path.home()/'.dolved/r28-s03/production.override.json',ROOT/'smoke.override.json']:cmd+=['-f',str(f)]
     cmd+=['run','-d','--no-deps','--pull','never','--name',WORKER,'--label','dolved.smoke-binding='+sha(ROOT/'binding.json'),'api','php','artisan','queue:work','conversation','--queue=conversation-generation','--tries=1','--timeout=900']
     subprocess.run(cmd,cwd=WORKTREE,env={**os.environ,'R28_CORPUS_ROOT':'/private/tmp/dolved-r28-s03.zU3HX6/corpus/eval-corpus-v4-authoring'},check=True)
 def worker_stop():

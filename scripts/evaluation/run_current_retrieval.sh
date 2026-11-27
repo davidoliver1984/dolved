@@ -4,7 +4,7 @@ set -euo pipefail
 
 ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)
 OUTPUT=${EVALUATION_CURRENT_OUTPUT:-/tmp/rag-platform-evaluation-current}
-COMPOSE=(docker compose --env-file "$ROOT/.env.e2e" --project-name dolved-evaluation-current --file "$ROOT/compose.yaml" --file "$ROOT/compose.e2e.yaml" --file "$ROOT/compose.evaluation-current.yaml")
+COMPOSE=(docker compose --project-directory "$ROOT" --env-file "$ROOT/tests/end-to-end/runtime/.env.e2e" --project-name dolved-evaluation-current --file "$ROOT/compose.yaml" --file "$ROOT/tests/end-to-end/runtime/compose.e2e.yaml" --file "$ROOT/tests/evaluation/runtime/compose.evaluation-current.yaml")
 
 cd "$ROOT"
 

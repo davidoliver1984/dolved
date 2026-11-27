@@ -20,7 +20,14 @@ const testDirectory = fileURLToPath(new URL(".", import.meta.url));
 const repositoryRoot = resolve(testDirectory, "../../..");
 const fixtures = resolve(testDirectory, "../fixtures/v1");
 const apiBaseUrl = "http://localhost:8100";
-const password = readFileSync(resolve(repositoryRoot, ".env.e2e"), "utf8")
+const e2eEnvironment = resolve(repositoryRoot, "tests/end-to-end/runtime/.env.e2e");
+const composeArguments = [
+  "compose", "--project-directory", repositoryRoot,
+  "--env-file", e2eEnvironment, "-p", "dolved-e2e",
+  "-f", resolve(repositoryRoot, "compose.yaml"),
+  "-f", resolve(repositoryRoot, "tests/end-to-end/runtime/compose.e2e.yaml"),
+];
+const password = readFileSync(e2eEnvironment, "utf8")
   .split("\n")
   .find((line) => line.startsWith("E2E_ACCOUNT_PASSWORD="))
   ?.slice("E2E_ACCOUNT_PASSWORD=".length);
@@ -29,8 +36,7 @@ function artisan(command: string, options: string[] = []): string {
   return execFileSync(
     "docker",
     [
-      "compose", "--env-file", ".env.e2e", "-p", "dolved-e2e",
-      "-f", "compose.yaml", "-f", "compose.e2e.yaml",
+      ...composeArguments,
       "exec", "-T", "api", "php", "artisan", command, ...options,
     ],
     { cwd: repositoryRoot, encoding: "utf8" },

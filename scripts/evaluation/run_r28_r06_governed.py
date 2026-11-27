@@ -19,6 +19,8 @@ from typing import Any
 import block1_extractive_stage
 
 ROOT = Path(__file__).resolve().parents[2]
+E2E_RUNTIME = ROOT / "tests/end-to-end/runtime"
+EVALUATION_RUNTIME = ROOT / "tests/evaluation/runtime"
 SELECTION = ROOT / "docs/evaluation/r28-s04/r06-selection-20261108.json"
 PREPARED = ROOT / "docs/evaluation/r28-s04/r06-prepared-20261108"
 POPULATION = (
@@ -49,16 +51,18 @@ STAGES = {"block1_closing": 14, "block1_feedback": 4, "block1_remaining": 4, "bl
 COMPOSE = [
     "docker",
     "compose",
+    "--project-directory",
+    str(ROOT),
     "--env-file",
-    ".env.r28-s03",
+    str(EVALUATION_RUNTIME / ".env.r28-s03"),
     "-p",
     "dolved-r28-s03",
     "-f",
-    "compose.yaml",
+    str(ROOT / "compose.yaml"),
     "-f",
-    "compose.e2e.yaml",
+    str(E2E_RUNTIME / "compose.e2e.yaml"),
     "-f",
-    "compose.r28-s03.yaml",
+    str(EVALUATION_RUNTIME / "compose.r28-s03.yaml"),
 ]
 RUNTIME_PATHS = (
     "apps/api/app",

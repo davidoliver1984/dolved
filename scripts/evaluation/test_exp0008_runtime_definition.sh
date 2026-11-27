@@ -4,7 +4,7 @@ set -euo pipefail
 
 readonly repository_root="$(git rev-parse --show-toplevel)"
 readonly runtime="${repository_root}/scripts/evaluation/exp0008_runtime.sh"
-readonly compose_file="${repository_root}/compose.exp0008.yaml"
+readonly compose_file="${repository_root}/tests/evaluation/runtime/compose.exp0008.yaml"
 
 if grep -Eq 'calibration|held-out|engineering-snapshots|planner-expectations|/evaluation:' "${compose_file}"; then
     printf 'EXP-0008 exposes a protected population.\n' >&2

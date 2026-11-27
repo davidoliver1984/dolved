@@ -44,8 +44,8 @@ def env(): return {**os.environ,'R28_CORPUS_ROOT':'/private/tmp/dolved-r28-s03.z
 
 
 def compose(observer=False):
-    cmd=['docker','compose','--env-file','/Users/davidoliver/Desktop/RAG/.env.r28-s03','-p','dolved-r28-s03']
-    for f in ['compose.yaml','compose.e2e.yaml','compose.r28-s03.yaml',str(Path.home()/'.dolved/r28-s03/production.override.json'),str(ROOT/'smoke.override.json')]:cmd+=['-f',f]
+    cmd=['docker','compose','--project-directory',str(WORKTREE),'--env-file',str(WORKTREE/'tests/evaluation/runtime/.env.r28-s03'),'-p','dolved-r28-s03']
+    for f in [WORKTREE/'compose.yaml',WORKTREE/'tests/end-to-end/runtime/compose.e2e.yaml',WORKTREE/'tests/evaluation/runtime/compose.r28-s03.yaml',Path.home()/'.dolved/r28-s03/production.override.json',ROOT/'smoke.override.json']:cmd+=['-f',str(f)]
     if observer:cmd+=['-f',str(ROOT/'observer-worker.override.yaml')]
     return cmd
 

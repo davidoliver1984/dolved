@@ -3,7 +3,7 @@
 set -euo pipefail
 
 readonly repository_root="$(git rev-parse --show-toplevel)"
-readonly override="${repository_root}/compose.calibration.yaml"
+readonly override="${repository_root}/tests/evaluation/runtime/compose.calibration.yaml"
 readonly launcher="${repository_root}/scripts/evaluation/calibration_runtime.sh"
 readonly definition="${repository_root}/tests/evaluation/experiment-definitions/CAL-EXP-0001-evidence-threshold-calibration/runtime-lineage.json"
 

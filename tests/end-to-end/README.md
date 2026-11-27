@@ -23,6 +23,11 @@ indexing, signed completion, retrieval and cross-workspace concealment. Its
 fixtures are synthetic regression evidence; they are not a retrieval-quality
 benchmark.
 
+The deterministic E2E environment fixture and Compose overlay are kept in
+`tests/end-to-end/runtime/`. Repository commands resolve those files from the
+repository root and pass that root explicitly as the Compose project directory,
+so the commands are safe to invoke from another working directory.
+
 Successful runs remove the isolated stack and volumes. Failed runs preserve
 them for `make test-e2e-inspect`; remove only those resources with
 `make test-e2e-clean` after inspection.

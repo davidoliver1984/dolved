@@ -44,7 +44,10 @@ verify_rendered() {
 
 verify_rendered local "$(docker compose --profile tools config --format json)"
 verify_rendered e2e "$(
-  docker compose --env-file .env.e2e --file compose.yaml --file compose.e2e.yaml \
+  docker compose --project-directory "$repository_root" \
+    --env-file "$repository_root/tests/end-to-end/runtime/.env.e2e" \
+    --file "$repository_root/compose.yaml" \
+    --file "$repository_root/tests/end-to-end/runtime/compose.e2e.yaml" \
     --profile tools config --format json
 )"
 

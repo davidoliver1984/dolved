@@ -13,7 +13,7 @@ export R28_CORPUS_ROOT="$corpus_root"
 
 python3 scripts/evaluation/preflight_r28_s03.py
 
-compose=(docker compose --env-file .env.r28-s03 -p dolved-r28-s03 -f compose.yaml -f compose.e2e.yaml -f compose.r28-s03.yaml)
+compose=(docker compose --project-directory "$repository_root" --env-file "$repository_root/tests/evaluation/runtime/.env.r28-s03" -p dolved-r28-s03 -f "$repository_root/compose.yaml" -f "$repository_root/tests/end-to-end/runtime/compose.e2e.yaml" -f "$repository_root/tests/evaluation/runtime/compose.r28-s03.yaml")
 services=(postgres qdrant localstack mailpit ai api publisher worker conversation-worker)
 
 "${compose[@]}" up --detach --build --wait --wait-timeout "${WAIT_TIMEOUT:-240}" "${services[@]}"

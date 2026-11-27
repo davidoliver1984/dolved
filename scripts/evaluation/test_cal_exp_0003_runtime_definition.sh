@@ -6,7 +6,7 @@ readonly repository_root="$(git rev-parse --show-toplevel)"
 readonly launcher="${repository_root}/scripts/evaluation/cal_exp_0003_runtime.sh"
 readonly shared_launcher="${repository_root}/scripts/evaluation/cal_exp_0002_runtime.sh"
 readonly definition="${repository_root}/tests/evaluation/experiment-definitions/CAL-EXP-0003-v3-post-planner-hardening-calibration/runtime-lineage.json"
-readonly override="${repository_root}/compose.cal-exp-0002.yaml"
+readonly override="${repository_root}/tests/evaluation/runtime/compose.cal-exp-0002.yaml"
 
 jq -e '.experiment_id == "CAL-EXP-0003-v3-post-planner-hardening-calibration"' "${definition}" >/dev/null
 jq -e '.predecessor.disposition == "immutable_failed_closed"' "${definition}" >/dev/null
