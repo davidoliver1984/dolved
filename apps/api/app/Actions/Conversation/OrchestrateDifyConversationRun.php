@@ -10,6 +10,7 @@ use App\Enums\GenerationRunFailureCode;
 use App\Enums\GenerationRunStatus;
 use App\Enums\MessageKind;
 use App\Enums\MessageRole;
+use App\Exceptions\ConversationException;
 use App\Exceptions\DifyDispatchException;
 use App\Models\AnswerPart;
 use App\Models\Conversation;
@@ -20,6 +21,7 @@ use App\Models\GenerationRun;
 use App\Models\Message;
 use App\Models\RetrievedSourceReference;
 use App\Services\Conversation\ChatDeliveryEventRecorder;
+use App\Services\Conversation\ConversationContinuationPolicy;
 use App\Services\Dify\DifyChatClient;
 use App\Support\Dify\DifyChatResult;
 use App\Support\Usage\RecordWorkspaceUsage;
@@ -33,6 +35,7 @@ final readonly class OrchestrateDifyConversationRun
         private DifyChatClient $client,
         private ChatDeliveryEventRecorder $events,
         private RecordWorkspaceUsage $usageRecorder,
+        private ConversationContinuationPolicy $continuation,
     ) {}
 
     public function handle(int $runId): void
@@ -45,6 +48,19 @@ final readonly class OrchestrateDifyConversationRun
         try {
             $conversation = $run->conversation;
             $this->transition($run, GenerationRunStatus::Retrieving);
+            $conversation->refresh();
+            try {
+                $this->continuation->assertCanContinue($conversation);
+            } catch (ConversationException) {
+                $this->failBeforeDispatch($run);
+
+                return;
+            }
+            if (! $this->markDispatching($run)) {
+                $this->failBeforeDispatch($run);
+
+                return;
+            }
             $session = $conversation->difySession;
             $site = $conversation->selectedLocation?->public_id ?? 'global';
             $result = $this->client->send(
@@ -54,7 +70,7 @@ final readonly class OrchestrateDifyConversationRun
                 $session?->remote_conversation_id,
             );
             if ($session !== null && ! hash_equals($session->remote_conversation_id, $result->conversationId)) {
-                throw new DifyDispatchException('conversation_identity_mismatch', false);
+                throw new DifyDispatchException('conversation_identity_mismatch', true);
             }
             $this->transition($run, GenerationRunStatus::Generating);
             $this->complete($run, $result);
@@ -100,14 +116,38 @@ final readonly class OrchestrateDifyConversationRun
 
     private function transition(GenerationRun $run, GenerationRunStatus $status): void
     {
-        $run->update([
-            'status' => $status,
-            ...($status === GenerationRunStatus::Retrieving ? ['provider_dispatch_state' => 'dispatching'] : []),
-        ]);
-        $this->events->record($run, ChatStreamEventType::RunProgress, [
+        $transitioned = DB::transaction(function () use ($run, $status): ?GenerationRun {
+            $locked = GenerationRun::query()->lockForUpdate()->findOrFail($run->id);
+            if ($locked->status->isTerminal() || $locked->status === GenerationRunStatus::CancellationRequested) {
+                return null;
+            }
+            $locked->update([
+                'status' => $status,
+                ...($status === GenerationRunStatus::Retrieving ? ['provider_dispatch_state' => 'ready_to_dispatch'] : []),
+            ]);
+
+            return $locked;
+        });
+        if (! $transitioned instanceof GenerationRun) {
+            return;
+        }
+        $this->events->record($transitioned, ChatStreamEventType::RunProgress, [
             'stage' => $status->value,
             'display_key' => 'conversation.progress.'.$status->value,
         ]);
+    }
+
+    private function markDispatching(GenerationRun $run): bool
+    {
+        return DB::transaction(function () use ($run): bool {
+            $locked = GenerationRun::query()->lockForUpdate()->findOrFail($run->id);
+            if ($locked->status->isTerminal() || $locked->status === GenerationRunStatus::CancellationRequested) {
+                return false;
+            }
+            $locked->update(['provider_dispatch_state' => 'dispatching']);
+
+            return true;
+        });
     }
 
     private function complete(GenerationRun $run, DifyChatResult $result): void
@@ -119,6 +159,9 @@ final readonly class OrchestrateDifyConversationRun
                 return;
             }
             if ($locked->status === GenerationRunStatus::CancellationRequested) {
+                if ($conversation->difySession()->exists()) {
+                    $this->continuation->blockForRemoteHistory($conversation);
+                }
                 $locked->update(['status' => GenerationRunStatus::Cancelled, 'provider_dispatch_state' => 'completed_after_cancel', 'completed_at' => now()]);
                 $this->events->record($locked, ChatStreamEventType::RunCancelled, []);
 
@@ -280,18 +323,91 @@ final readonly class OrchestrateDifyConversationRun
 
     private function fail(GenerationRun $run, string $dispatchState, ?array $usage = null): void
     {
-        $run->refresh()->update([
-            'status' => GenerationRunStatus::Failed,
-            'failure_code' => GenerationRunFailureCode::ProviderUnavailable,
-            'provider_dispatch_state' => $dispatchState,
-            'usage' => $usage,
-            'completed_at' => now(),
-        ]);
-        $this->usageRecorder->activity($run->workspace_id, 'run_outcome', $run->public_id, GenerationRunStatus::Failed->value);
-        $this->events->record($run, ChatStreamEventType::RunFailed, [
+        $failed = DB::transaction(function () use ($dispatchState, $run, $usage): ?GenerationRun {
+            $locked = GenerationRun::query()->lockForUpdate()->findOrFail($run->id);
+            if ($locked->status->isTerminal()) {
+                return null;
+            }
+            $conversation = $locked->conversation()->lockForUpdate()->firstOrFail();
+            if ($dispatchState === 'uncertain' && $conversation->difySession()->exists()) {
+                $this->continuation->blockForRemoteHistory($conversation);
+            }
+            if ($locked->status === GenerationRunStatus::CancellationRequested) {
+                $locked->update([
+                    'status' => GenerationRunStatus::Cancelled,
+                    'provider_dispatch_state' => $dispatchState,
+                    'usage' => $usage,
+                    'cancellation_acknowledged_at' => now(),
+                    'completed_at' => now(),
+                ]);
+
+                return $locked;
+            }
+            $locked->update([
+                'status' => GenerationRunStatus::Failed,
+                'failure_code' => GenerationRunFailureCode::ProviderUnavailable,
+                'provider_dispatch_state' => $dispatchState,
+                'usage' => $usage,
+                'completed_at' => now(),
+            ]);
+
+            return $locked;
+        });
+        if (! $failed instanceof GenerationRun) {
+            return;
+        }
+        $this->usageRecorder->activity($failed->workspace_id, 'run_outcome', $failed->public_id, $failed->status->value);
+        if ($failed->status === GenerationRunStatus::Cancelled) {
+            $this->events->record($failed, ChatStreamEventType::RunCancelled, []);
+
+            return;
+        }
+        $this->events->record($failed, ChatStreamEventType::RunFailed, [
             'failure_code' => GenerationRunFailureCode::ProviderUnavailable->value,
             'retryable' => $dispatchState !== 'uncertain',
             'dispatch_uncertain' => $dispatchState === 'uncertain',
+        ]);
+    }
+
+    private function failBeforeDispatch(GenerationRun $run): void
+    {
+        $failed = DB::transaction(function () use ($run): ?GenerationRun {
+            $locked = GenerationRun::query()->lockForUpdate()->findOrFail($run->id);
+            if ($locked->status->isTerminal()) {
+                return null;
+            }
+            if ($locked->status === GenerationRunStatus::CancellationRequested) {
+                $locked->update([
+                    'status' => GenerationRunStatus::Cancelled,
+                    'provider_dispatch_state' => 'not_dispatched',
+                    'cancellation_acknowledged_at' => now(),
+                    'completed_at' => now(),
+                ]);
+
+                return $locked;
+            }
+            $locked->update([
+                'status' => GenerationRunStatus::Failed,
+                'failure_code' => GenerationRunFailureCode::ConversationContextUnavailable,
+                'provider_dispatch_state' => 'not_dispatched',
+                'completed_at' => now(),
+            ]);
+
+            return $locked;
+        });
+        if (! $failed instanceof GenerationRun) {
+            return;
+        }
+        $this->usageRecorder->activity($failed->workspace_id, 'run_outcome', $failed->public_id, $failed->status->value);
+        if ($failed->status === GenerationRunStatus::Cancelled) {
+            $this->events->record($failed, ChatStreamEventType::RunCancelled, []);
+
+            return;
+        }
+        $this->events->record($failed, ChatStreamEventType::RunFailed, [
+            'failure_code' => GenerationRunFailureCode::ConversationContextUnavailable->value,
+            'retryable' => false,
+            'dispatch_uncertain' => false,
         ]);
     }
 

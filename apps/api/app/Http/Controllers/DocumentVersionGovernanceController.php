@@ -26,6 +26,7 @@ use App\Queries\Documents\FindDocumentFamilyForWorkspace;
 use App\Queries\Documents\FindDocumentForWorkspace;
 use App\Queries\Workspaces\FindWorkspaceForUser;
 use App\Support\Documents\DocumentAuthorityTimeline;
+use App\Support\Pipeline\ActivePipelineCapabilities;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -41,6 +42,7 @@ final class DocumentVersionGovernanceController extends Controller
         FindWorkspaceForUser $workspaces,
         FindDocumentFamilyForWorkspace $families,
         DocumentAuthorityTimeline $timeline,
+        ActivePipelineCapabilities $pipeline,
     ): JsonResponse {
         /** @var User $user */
         $user = $request->user();
@@ -55,7 +57,7 @@ final class DocumentVersionGovernanceController extends Controller
         $current = $timeline->resolve($family, now());
         $canManage = Gate::allows('manageDocumentGovernance', $workspace);
         $canCorrect = Gate::allows('correctDocumentGovernance', $workspace);
-        $versions->each(function (Document $version) use ($canCorrect, $canManage, $current, $timeline): void {
+        $versions->each(function (Document $version) use ($canCorrect, $canManage, $current, $pipeline, $timeline, $versions): void {
             $authorityStart = $timeline->authorityStart($version);
             $version->setAttribute('is_current_authority', $current?->is($version) ?? false);
             $version->setAttribute('capabilities', [
@@ -67,6 +69,9 @@ final class DocumentVersionGovernanceController extends Controller
                 'create_applicability_successor' => $canManage && $version->status === DocumentStatus::Indexed,
                 'correct_timestamps' => $canCorrect,
             ]);
+            $version->setAttribute('comparison_compatible_with', $versions
+                ->filter(fn (Document $candidate): bool => ! $candidate->is($version) && $pipeline->comparable($version, $candidate))
+                ->pluck('public_id')->values()->all());
         });
 
         return response()->json([
@@ -74,6 +79,7 @@ final class DocumentVersionGovernanceController extends Controller
             'meta' => [
                 'current_version_public_id' => $current?->public_id,
                 'locations' => $workspace->organisationalLocations()
+                    ->whereNull('retired_at')
                     ->orderBy('name')
                     ->get(['public_id', 'name'])
                     ->map(fn ($location): array => [
@@ -105,6 +111,7 @@ final class DocumentVersionGovernanceController extends Controller
         $locationPublicIds = $request->array('location_public_ids');
         $locations = OrganisationalLocation::query()
             ->where('workspace_id', $workspace->id)
+            ->whereNull('retired_at')
             ->whereIn('public_id', $locationPublicIds)
             ->orderBy('id')->get();
         if ($locations->count() !== count($locationPublicIds)) {

@@ -3,7 +3,11 @@ import { ResendVerificationButton } from "@/components/ResendVerificationButton"
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
-export default function VerifyEmailPage() {
+type Props = { searchParams?: Promise<{ next?: string }> };
+
+export default async function VerifyEmailPage({ searchParams = Promise.resolve({}) }: Props = {}) {
+  const { next } = await searchParams;
+  const invitationEntry = typeof next === "string" && /^\/invitations\/[A-Za-z0-9_-]+$/.test(next) ? next : undefined;
   return (
     <main className="grid min-h-screen place-items-center bg-background p-6">
       <Card className="w-full max-w-xl">
@@ -18,7 +22,7 @@ export default function VerifyEmailPage() {
           </p>
           <ResendVerificationButton />
           <Button asChild className="w-fit" variant="link">
-            <Link href="/login">Return to sign in</Link>
+            <Link href={invitationEntry ? `/login?next=${encodeURIComponent(invitationEntry)}` : "/login"}>Return to sign in</Link>
           </Button>
         </CardContent>
       </Card>

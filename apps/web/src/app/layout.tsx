@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Sora, Source_Sans_3 } from "next/font/google";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { FeedbackToastProvider } from "@/components/ui/feedback-toast";
 import "./globals.css";
 
 const sourceSans = Source_Sans_3({
@@ -36,7 +37,7 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body>
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeProvider><FeedbackToastProvider>{children}</FeedbackToastProvider></ThemeProvider>
       </body>
     </html>
   );

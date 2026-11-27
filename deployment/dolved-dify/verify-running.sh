@@ -93,7 +93,7 @@ report_running_service() {
 }
 
 dify_runtime_services='db_postgres local_sandbox weaviate agent_ssrf_proxy plugin_daemon redis agent_backend api web nginx sandbox worker worker_beat ssrf_proxy api_websocket'
-dolved_runtime_services='postgres objectstore api web worker caddy scheduler'
+dolved_runtime_services='postgres objectstore api web worker caddy scheduler alertmanager otel-lgtm otel-collector'
 
 attempt=1
 while [ "$attempt" -le 60 ]; do

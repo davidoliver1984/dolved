@@ -10,6 +10,7 @@ return [
     'contract_version' => 'dify-chatflow-answer-v1',
     'adapter_version' => 'dify-service-api-v1',
     'document_sync_queue' => env('DIFY_DOCUMENT_SYNC_QUEUE', 'document-administration'),
+    'usage_observation_max_age_seconds' => max(300, (int) env('DIFY_USAGE_OBSERVATION_MAX_AGE_SECONDS', 7200)),
     'document_chunk_size' => 1000,
     'document_chunk_overlap' => 100,
     'document_separator' => "\n\n",

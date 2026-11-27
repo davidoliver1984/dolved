@@ -1,6 +1,6 @@
 "use client";
 
-import { Inbox, Plus, RefreshCw, Send, X } from "lucide-react";
+import { Check, Copy, Inbox, Plus, RefreshCw, Send, ThumbsDown, ThumbsUp, X } from "lucide-react";
 import {
   type FormEvent,
   type KeyboardEvent,
@@ -34,7 +34,9 @@ import {
   getConversation,
   listConversations,
   retryConversationRun,
+  removeAnswerFeedback,
   sendConversationMessage,
+  updateAnswerFeedback,
 } from "@/lib/conversations";
 
 type Citation = {
@@ -60,6 +62,8 @@ type ChatServices = {
   send: typeof sendConversationMessage;
   retry: typeof retryConversationRun;
   cancel: typeof cancelConversationRun;
+  feedback: typeof updateAnswerFeedback;
+  removeFeedback: typeof removeAnswerFeedback;
   subscribe: typeof subscribeToGenerationRun;
 };
 
@@ -70,10 +74,13 @@ const defaultServices: ChatServices = {
   send: sendConversationMessage,
   retry: retryConversationRun,
   cancel: cancelConversationRun,
+  feedback: updateAnswerFeedback,
+  removeFeedback: removeAnswerFeedback,
   subscribe: subscribeToGenerationRun,
 };
 
 type ChatWorkspaceProps = {
+  assistantName?: string;
   initialConversationId?: string | null;
   onConversationCreated?: (conversationId: string) => void;
   showConversationNavigation?: boolean;
@@ -81,14 +88,16 @@ type ChatWorkspaceProps = {
   workspaceName: string;
   locations?: Array<{ public_id: string; name: string }>;
   services?: ChatServices;
+  welcomeHeading?: string | null;
+  welcomeIntroduction?: string | null;
 };
 
 const progressLabels: Record<string, string> = {
   queued: "Your question is queued…",
   contextualising: "Understanding your question…",
   planning: "Understanding your question…",
-  retrieving: "Finding eligible evidence…",
-  preparing_evidence: "Preparing eligible evidence…",
+  retrieving: "Finding relevant documents…",
+  preparing_evidence: "Preparing the source material…",
   generating: "Preparing a grounded answer…",
   validating: "Validating the grounded answer…",
 };
@@ -100,6 +109,25 @@ function bytes(value: number | null | undefined): string | null {
   if (value < 1024) return `${value} B`;
   if (value < 1024 * 1024) return `${(value / 1024).toFixed(1)} KB`;
   return `${(value / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+function formattedAnswerText(text: string) {
+  return text.split(/(\*\*[^\n]+?\*\*)/g).map((part, index) =>
+    part.startsWith("**") && part.endsWith("**")
+      ? <strong key={`${index}-${part.slice(2, 18)}`}>{part.slice(2, -2)}</strong>
+      : part,
+  );
+}
+
+function answerDisplayText(text: string): string {
+  return text
+    .replace(/\uE200(?:cite|filecite)\uE202[^\uE201\r\n]*\uE201/g, "")
+    .replace(/【Retrieved context】/g, "")
+    .replace(/[ \t]+(?=\r?$)/gm, "");
+}
+
+function formatMessageTime(value: string): string {
+  return new Intl.DateTimeFormat("en-GB", { hour: "2-digit", minute: "2-digit" }).format(new Date(value));
 }
 
 function failurePresentation(run: ConversationRun): { title: string; description: string } {
@@ -206,6 +234,7 @@ function eventParts(event: ChatStreamEvent): AnswerPart[] {
 }
 
 export function ChatWorkspace({
+  assistantName = "Dolved",
   initialConversationId,
   onConversationCreated,
   showConversationNavigation = true,
@@ -213,6 +242,8 @@ export function ChatWorkspace({
   workspaceName,
   locations = [],
   services = defaultServices,
+  welcomeHeading,
+  welcomeIntroduction,
 }: ChatWorkspaceProps) {
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [active, setActive] = useState<Conversation | null>(null);
@@ -220,12 +251,18 @@ export function ChatWorkspace({
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [stoppedNotice, setStoppedNotice] = useState<string | null>(null);
   const [progress, setProgress] = useState<string | null>(null);
   const [announcement, setAnnouncement] = useState("");
   const [provisionalParts, setProvisionalParts] = useState<AnswerPart[]>([]);
   const [completedParts, setCompletedParts] = useState<Record<string, AnswerPart[]>>({});
   const [accessRevoked, setAccessRevoked] = useState(false);
   const [selectedLocationId, setSelectedLocationId] = useState("");
+  const [copiedMessageId, setCopiedMessageId] = useState<string | null>(null);
+  const [feedbackRunId, setFeedbackRunId] = useState<string | null>(null);
+  const [feedbackReason, setFeedbackReason] = useState<string>("");
+  const [feedbackComment, setFeedbackComment] = useState("");
+  const [feedbackSaving, setFeedbackSaving] = useState(false);
   const unsubscribe = useRef<null | (() => void)>(null);
   const transcript = useRef<HTMLDivElement>(null);
   const provisionalPartsRef = useRef<AnswerPart[]>([]);
@@ -311,7 +348,7 @@ export function ChatWorkspace({
   );
 
   const watchRun = useCallback(
-    (conversationId: string, runId: string) => {
+    (conversationId: string, runId: string, interaction: NonNullable<ConversationRun["interaction"]>) => {
       unsubscribe.current?.();
       unsubscribe.current = services.subscribe(
         workspaceId,
@@ -321,12 +358,14 @@ export function ChatWorkspace({
           if (settledRun.current === runId) return;
           if (event.type === "run_progress") {
             const stage = String(event.payload.stage ?? "");
-            const label = progressLabels[stage] ?? "Working on your answer…";
+            const label = interaction.progress === "dify_blocking"
+              ? "Searching and preparing…"
+              : progressLabels[stage] ?? "Working on your answer…";
             setProgress(label);
             setAnnouncement(label);
           } else if (event.type === "answer_part_accepted_for_display") {
             setProgress("Writing from the retrieved evidence…");
-            setAnnouncement("Dolved is writing from the retrieved evidence.");
+            setAnnouncement(`${assistantName} is writing from the retrieved evidence.`);
             setProvisionalParts((parts) => {
               const updated = [...parts, ...eventParts(event)];
               provisionalPartsRef.current = updated;
@@ -383,7 +422,7 @@ export function ChatWorkspace({
         },
       );
     },
-    [finishRun, routeCreatedConversation, services, settleSavedRun, workspaceId],
+    [assistantName, finishRun, routeCreatedConversation, services, settleSavedRun, workspaceId],
   );
 
   useEffect(() => {
@@ -401,10 +440,12 @@ export function ChatWorkspace({
         && latest.presentation === "saved-message-v1"
         && ["queued", "contextualising", "retrieving", "generating"].includes(latest.status)) {
         setBusy(true);
-        const label = progressLabels[latest.status] ?? "Working on your answer…";
+        const label = latest.interaction?.progress === "dify_blocking"
+          ? "Searching and preparing…"
+          : progressLabels[latest.status] ?? "Working on your answer…";
         setProgress(label);
         setAnnouncement(label);
-        watchRun(selectedId, latest.id);
+        watchRun(selectedId, latest.id, latest.interaction ?? { progress: "custom_pipeline", stop_action: "cancel" });
       }
     }).catch((caught) => current && setError(firstError(caught)))
       .finally(() => current && setLoading(false));
@@ -417,6 +458,7 @@ export function ChatWorkspace({
     setSelectedLocationId("");
     setDraft("");
     setCompletion(null);
+    setStoppedNotice(null);
     pendingCreatedConversationId.current = null;
     setProvisionalParts([]);
     provisionalPartsRef.current = [];
@@ -435,6 +477,7 @@ export function ChatWorkspace({
     setAnnouncement("Sending your question.");
     setProvisionalParts([]);
     provisionalPartsRef.current = [];
+    let submittedConversationId: string | null = active?.id ?? null;
     try {
       let conversation = active;
       let created = false;
@@ -442,6 +485,7 @@ export function ChatWorkspace({
         conversation = await services.create(workspaceId, selectedLocationId || null);
         setActive({ ...conversation, messages: [], runs: [] });
         pendingCreatedConversationId.current = conversation.id;
+        submittedConversationId = conversation.id;
         created = true;
       }
       const receipt = await services.send(
@@ -458,12 +502,18 @@ export function ChatWorkspace({
       if (settleSavedRun(saved, receipt.run_id, "persisted_state")) {
         if (created) routeCreatedConversation(conversation.id);
       } else {
-        watchRun(conversation.id, receipt.run_id);
+        const submittedRun = saved.runs?.find((run) => run.id === receipt.run_id);
+        watchRun(conversation.id, receipt.run_id, submittedRun?.interaction ?? { progress: "custom_pipeline", stop_action: "cancel" });
       }
     } catch (caught) {
       setBusy(false);
       setProgress(null);
       setError(firstError(caught));
+      if (submittedConversationId) {
+        void services.get(workspaceId, submittedConversationId)
+          .then((saved) => setActive(saved))
+          .catch(() => undefined);
+      }
     }
   };
 
@@ -480,7 +530,10 @@ export function ChatWorkspace({
         runId,
         idempotencyKey(),
       );
-      watchRun(active.id, receipt.run_id);
+      const saved = await services.get(workspaceId, active.id);
+      const retryRun = saved.runs?.find((run) => run.id === receipt.run_id);
+      setActive(saved);
+      watchRun(active.id, receipt.run_id, retryRun?.interaction ?? { progress: "custom_pipeline", stop_action: "cancel" });
     } catch (caught) {
       setBusy(false);
       setProgress(null);
@@ -493,8 +546,16 @@ export function ChatWorkspace({
     if (!active || !run) return;
     try {
       await services.cancel(workspaceId, active.id, run.id);
-      setProgress("Cancelling…");
-      setAnnouncement("Cancelling answer generation.");
+      if (run.interaction?.stop_action === "stop_waiting") {
+        unsubscribe.current?.();
+        setBusy(false);
+        setProgress(null);
+        setStoppedNotice("You stopped waiting. Provider processing may continue and may still incur cost; any late result will be discarded.");
+        setAnnouncement("Stopped waiting for the answer.");
+      } else {
+        setProgress("Cancelling…");
+        setAnnouncement("Cancelling answer generation.");
+      }
     } catch (caught) {
       setError(firstError(caught));
     }
@@ -507,12 +568,75 @@ export function ChatWorkspace({
     }
   };
 
+  const setRunFeedback = (runId: string, feedback: ConversationRun["feedback"]) => {
+    setActive((current) => current ? {
+      ...current,
+      runs: current.runs?.map((run) => run.id === runId ? { ...run, feedback } : run),
+    } : current);
+  };
+
+  const rateAnswer = async (run: ConversationRun, rating: "helpful" | "not_helpful") => {
+    if (!active || feedbackSaving) return;
+    setFeedbackSaving(true);
+    setError(null);
+    try {
+      if (run.feedback?.rating === rating) {
+        await services.removeFeedback(workspaceId, active.id, run.id);
+        setRunFeedback(run.id, null);
+        setFeedbackRunId(null);
+        setAnnouncement("Answer feedback removed.");
+        return;
+      }
+      const feedback = await services.feedback(workspaceId, active.id, run.id, {
+        rating,
+        reason_code: null,
+        comment: null,
+      });
+      setRunFeedback(run.id, feedback);
+      if (rating === "not_helpful") {
+        setFeedbackRunId(run.id);
+        setFeedbackReason(feedback.reason_code ?? "");
+        setFeedbackComment(feedback.comment ?? "");
+      } else {
+        setFeedbackRunId(null);
+      }
+      setAnnouncement(rating === "helpful" ? "Answer marked helpful." : "Answer marked not helpful. You can optionally add more detail.");
+    } catch (caught) {
+      setError(firstError(caught));
+    } finally {
+      setFeedbackSaving(false);
+    }
+  };
+
+  const saveFeedbackDetail = async (run: ConversationRun) => {
+    if (!active || feedbackSaving) return;
+    setFeedbackSaving(true);
+    setError(null);
+    try {
+      const feedback = await services.feedback(workspaceId, active.id, run.id, {
+        rating: "not_helpful",
+        reason_code: feedbackReason ? feedbackReason as NonNullable<ConversationRun["feedback"]>["reason_code"] : null,
+        comment: feedbackComment.trim() || null,
+      });
+      setRunFeedback(run.id, feedback);
+      setFeedbackRunId(null);
+      setAnnouncement("Feedback details saved.");
+    } catch (caught) {
+      setError(firstError(caught));
+    } finally {
+      setFeedbackSaving(false);
+    }
+  };
+
   const runsByMessage = new Map(
     (active?.runs ?? [])
       .filter((run) => run.assistant_message_id)
       .map((run) => [run.assistant_message_id, run]),
   );
   const failedRuns = (active?.runs ?? []).filter((run) => run.status === "failed");
+  const continuationBlocked = active?.continuation?.allowed === false;
+  const resolvedWelcomeHeading = welcomeHeading || `Ask ${workspaceName}`;
+  const resolvedWelcomeIntroduction = welcomeIntroduction || "Answers use the documents available to this workspace and your selected location.";
 
   return (
     <section data-chat-pending={busy} data-chat-progress={progress ?? ""} data-completion-run={completion?.runId} data-completion-path={completion?.path} className={showConversationNavigation ? "grid min-h-[42rem] overflow-hidden rounded-xl border border-border bg-card lg:grid-cols-[18rem_1fr]" : "grid min-h-[42rem]"} aria-labelledby="chat-heading">
@@ -520,13 +644,13 @@ export function ChatWorkspace({
         <div className="flex items-start justify-between gap-3">
           <div>
             <p className="text-xs font-bold uppercase tracking-[0.16em] text-brand">Grounded chat</p>
-            <h2 id="chat-heading">Ask {workspaceName}</h2>
+            <h2 id="chat-heading">{resolvedWelcomeHeading}</h2>
           </div>
           <Button disabled={busy} onClick={newConversation} size="sm" type="button">
             New chat
           </Button>
         </div>
-        <p className="mt-4 text-xs leading-5 text-foreground-muted">Scope: all documents eligible for this workspace and question.</p>
+        <p className="mt-4 text-xs leading-5 text-foreground-muted">{resolvedWelcomeIntroduction}</p>
         <nav aria-label="Conversation history" className="mt-5 grid gap-2">
           {conversations.length === 0 && !loading ? (
             <p className="text-sm text-foreground-muted">No conversations yet.</p>
@@ -549,12 +673,16 @@ export function ChatWorkspace({
       </aside> : null}
 
       <div className="grid min-h-0 grid-rows-[auto_1fr_auto_auto] gap-4">
-        {!showConversationNavigation ? <header className="mb-5"><p className="text-sm font-bold uppercase tracking-[0.14em] text-brand">Grounded chat</p><h1 className="mt-2 text-3xl font-semibold" id="chat-heading">Ask {workspaceName}</h1><p className="mt-2 text-sm text-foreground-muted">Answers use only evidence eligible for this workspace and the selected site.</p></header> : null}
+        {!showConversationNavigation ? <header className="mb-5"><p className="text-sm font-bold uppercase tracking-[0.14em] text-brand">Grounded chat</p><h1 className="mt-2 text-3xl font-semibold" id="chat-heading">{resolvedWelcomeHeading}</h1><p className="mt-2 text-sm text-foreground-muted">{resolvedWelcomeIntroduction}</p></header> : null}
         <p data-chat-announcement aria-atomic="true" aria-live="polite" className="sr-only" role="status">{announcement}</p>
         <div aria-busy={loading} className="grid min-h-96 content-start gap-4 overflow-y-auto rounded-xl border border-border bg-surface p-4 sm:p-6" ref={transcript}>
           {loading ? <div aria-label="Loading conversation" className="grid gap-4"><Skeleton className="h-20 w-3/4" /><Skeleton className="ml-auto h-16 w-2/3" /><Skeleton className="h-28 w-4/5" /></div> : null}
           {!loading && !(active?.messages?.length) ? (
-            <EmptyState description="Answers use eligible workspace evidence and keep their citation references close." icon={Inbox} title="What do you need to know?" />
+            <EmptyState
+              description={welcomeIntroduction || "Answers use your workspace documents and keep the supporting sources close by."}
+              icon={Inbox}
+              title={welcomeHeading || "What do you need to know?"}
+            />
           ) : null}
           {active?.messages?.map((message) => {
             const run = runsByMessage.get(message.id);
@@ -564,14 +692,14 @@ export function ChatWorkspace({
               : undefined;
             return (
               <Card className={message.role === "user" ? "ml-auto w-fit max-w-[85%] border-brand/30 bg-brand/10 p-4" : "max-w-[92%] p-4"} key={message.id}>
-                <div className="mb-2 flex items-center gap-2"><p className="text-xs font-bold uppercase tracking-[0.12em] text-foreground-muted">{message.role === "user" ? "You" : "Dolved"}</p>{!savedPresentation && run?.answer?.outcome ? <StatusBadge status={run.answer.outcome === "answered" ? "success" : "warning"}>{run.answer.outcome.replaceAll("_", " ")}</StatusBadge> : null}</div>
+                <div className="mb-2 flex items-center gap-2"><p className="text-xs font-bold uppercase tracking-[0.12em] text-foreground-muted">{message.role === "user" ? "You" : assistantName}</p>{!savedPresentation && run?.answer?.outcome ? <StatusBadge status={run.answer.outcome === "answered" ? "success" : "warning"}>{run.answer.outcome.replaceAll("_", " ")}</StatusBadge> : null}</div>
                 {savedPresentation ? <>
-                  <p className="whitespace-pre-wrap leading-7" data-canonical-answer>{message.text}</p>
+                  <p className="whitespace-pre-wrap leading-7" data-canonical-answer>{formattedAnswerText(answerDisplayText(message.text))}</p>
                   {run?.answer?.sources_retrieved?.length ? <details className="group mt-4 border-t border-border pt-3">
                     <summary className="flex cursor-pointer list-none flex-wrap items-center gap-x-2 gap-y-1 text-sm [&::-webkit-details-marker]:hidden">
                       <span className="font-semibold">Sources retrieved</span>
                       <Plus aria-hidden="true" className="size-4 shrink-0 transition-transform group-open:rotate-45" />
-                      <span className="text-xs text-foreground-muted">These passages were supplied as context. They are not claim-level citations.</span>
+                      <span className="text-xs text-foreground-muted">Documents provided to help generate this answer. Check the relevant source before acting.</span>
                     </summary>
                     <ol aria-label="Sources retrieved" className="mt-3 grid gap-2">
                       {run.answer.sources_retrieved.map((source) => <RetrievedSourceEvidence key={source.id} source={source} />)}
@@ -581,14 +709,14 @@ export function ChatWorkspace({
                     {run.answer.citations.map((citation, index) => <CitationEvidence citation={citation} index={index} key={citation.id} />)}
                   </ol> : null}
                   {run?.answer?.scope_citations?.map((citation) => <details className="mt-3" key={citation.snapshot_digest}>
-                    <summary>Recorded applicability: {citation.policy_title}</summary>
-                    <p>Recorded scope: {citation.snapshot.scope}</p>
+                    <summary>Location record: {citation.policy_title}</summary>
+                    <p>Recorded locations: {citation.snapshot.scope}</p>
                     <p>Document version: {citation.document_version_id}</p>
                     {citation.source_route ? <a href={citation.source_route}>Open source version</a> : <p>Source unavailable</p>}
                   </details>)}
                 </> : parts?.length ? parts.map((part, index) => (
                   <div className="grid gap-3" key={part.id ?? `${message.id}-${index}`}>
-                    <p>{part.text}</p>
+                    <p className="whitespace-pre-wrap">{formattedAnswerText(answerDisplayText(part.text))}</p>
                     {part.citations.length ? (
                       <div className="mt-3 rounded-lg border border-border bg-surface-raised p-3">
                         <p className="text-sm font-semibold">{part.citations.length} {part.citations.length === 1 ? "source" : "sources"}</p>
@@ -602,15 +730,29 @@ export function ChatWorkspace({
                       </div>
                     ) : null}
                   </div>
-                )) : <p className="leading-7">{message.text}</p>}
+                )) : <p className="whitespace-pre-wrap leading-7">{formattedAnswerText(message.role === "assistant" ? answerDisplayText(message.text) : message.text)}</p>}
                 {!savedPresentation && run?.answer?.insufficiency_reason ? <Notice className="mt-3" tone="warning">{run.answer.insufficiency_reason}</Notice> : null}
                 {!savedPresentation && run?.answer?.unsupported_aspects?.length ? <p className="mt-3 text-sm text-foreground-muted">Not established by the available evidence: {run.answer.unsupported_aspects.join(", ")}</p> : null}
+                {message.role === "assistant" ? <div className="mt-4 flex items-center gap-3 border-t border-border pt-3 text-foreground-muted">
+                  <Button aria-label={copiedMessageId === message.id ? "Answer copied" : "Copy answer"} className="size-8 min-h-8 px-0" onClick={() => void navigator.clipboard.writeText(answerDisplayText(message.text)).then(() => { setCopiedMessageId(message.id); window.setTimeout(() => setCopiedMessageId((current) => current === message.id ? null : current), 2000); })} size="icon" title="Copy answer" type="button" variant="ghost">{copiedMessageId === message.id ? <Check aria-hidden="true" className="size-4" /> : <Copy aria-hidden="true" className="size-4" />}</Button>
+                  {run?.completed_at ? <>
+                    <Button aria-pressed={run.feedback?.rating === "helpful"} aria-label="Mark answer helpful" className={run.feedback?.rating === "helpful" ? "size-8 min-h-8 bg-brand/15 px-0 text-brand" : "size-8 min-h-8 px-0"} disabled={feedbackSaving} onClick={() => void rateAnswer(run, "helpful")} size="icon" title="Helpful" type="button" variant="ghost"><ThumbsUp aria-hidden="true" className="size-4" /></Button>
+                    <Button aria-pressed={run.feedback?.rating === "not_helpful"} aria-label="Mark answer not helpful" className={run.feedback?.rating === "not_helpful" ? "size-8 min-h-8 bg-brand/15 px-0 text-brand" : "size-8 min-h-8 px-0"} disabled={feedbackSaving} onClick={() => void rateAnswer(run, "not_helpful")} size="icon" title="Not helpful" type="button" variant="ghost"><ThumbsDown aria-hidden="true" className="size-4" /></Button>
+                  </> : null}
+                  <time className="text-xs tabular-nums" dateTime={message.created_at}>{formatMessageTime(message.created_at)}</time>
+                </div> : null}
+                {run && feedbackRunId === run.id && run.feedback?.rating === "not_helpful" ? <div className="mt-3 grid gap-3 rounded-lg border border-border bg-surface-raised p-3">
+                  <div><strong className="text-sm">What could be improved?</strong><p className="text-xs text-foreground-muted">Optional. This is visible only in the restricted question-review workflow.</p></div>
+                  <label className="grid gap-1 text-sm" htmlFor={`feedback-reason-${run.id}`}>Reason<select className="min-h-10 rounded-md border border-input bg-background px-3" id={`feedback-reason-${run.id}`} onChange={(event) => setFeedbackReason(event.target.value)} value={feedbackReason}><option value="">Choose a reason</option><option value="inaccurate">Incorrect</option><option value="incomplete">Incomplete</option><option value="unclear">Unclear</option><option value="outdated">Out of date</option><option value="other">Something else</option></select></label>
+                  <label className="grid gap-1 text-sm" htmlFor={`feedback-comment-${run.id}`}>Comment (optional)<Textarea id={`feedback-comment-${run.id}`} maxLength={1000} onChange={(event) => setFeedbackComment(event.target.value)} rows={2} value={feedbackComment} /></label>
+                  <div className="flex gap-2"><Button disabled={feedbackSaving} onClick={() => void saveFeedbackDetail(run)} size="sm" type="button">Save feedback</Button><Button onClick={() => setFeedbackRunId(null)} size="sm" type="button" variant="ghost">Done</Button></div>
+                </div> : null}
               </Card>
             );
           })}
           {provisionalParts.length ? (
             <Card className="max-w-[92%] border-dashed p-4">
-              <p className="mb-2 text-xs font-bold uppercase tracking-[0.12em] text-foreground-muted">Dolved · streaming</p>
+              <p className="mb-2 text-xs font-bold uppercase tracking-[0.12em] text-foreground-muted">{assistantName} · streaming</p>
               {provisionalParts.map((part, index) => <p key={index}>{part.text}</p>)}
             </Card>
           ) : null}
@@ -620,7 +762,7 @@ export function ChatWorkspace({
               <Notice key={run.id} tone="destructive">
                 <strong>{presentation.title}</strong>
                 <p className="mt-1">{presentation.description}</p>
-                {run.retryable ? <Button className="mt-3" disabled={busy || accessRevoked} onClick={() => void retry(run.id)} type="button" variant="outline"><RefreshCw />Retry answer</Button> : null}
+                {run.retryable && !continuationBlocked ? <Button className="mt-3" disabled={busy || accessRevoked} onClick={() => void retry(run.id)} type="button" variant="outline"><RefreshCw />Retry answer</Button> : null}
               </Notice>
             );
           })}
@@ -628,42 +770,48 @@ export function ChatWorkspace({
         </div>
 
         {error ? <Notice tone={accessRevoked ? "warning" : "destructive"}>{accessRevoked ? <div><strong>Workspace access ended</strong><p className="mt-1">{error}</p></div> : error}</Notice> : null}
+        {stoppedNotice ? <Notice tone="info">{stoppedNotice}</Notice> : null}
+        {continuationBlocked ? <Notice tone="warning">
+          <strong>This conversation is read-only</strong>
+          <p className="mt-1">{active?.continuation?.message}</p>
+          <Button className="mt-3" onClick={() => void newConversation()} type="button" variant="outline">Start new conversation</Button>
+        </Notice> : null}
         <form className="grid gap-3 rounded-xl border border-border bg-card p-4" onSubmit={submit}>
-          {active?.site_context ? <div className="rounded-lg bg-surface-raised px-3 py-2 text-sm">
-            <strong>Site context:</strong> {active.site_context.name}
-            <p className="mt-1 text-xs text-foreground-muted">This context is fixed for this conversation. Start a new chat to change it.</p>
-          </div> : <div className="grid gap-2">
-            <label className="text-sm font-semibold" htmlFor="chat-site-context">Site context</label>
-            <select
-              aria-describedby="chat-site-context-help"
-              className="min-h-11 rounded-lg border border-input bg-background px-3"
-              disabled={busy || accessRevoked}
-              id="chat-site-context"
-              onChange={(event) => setSelectedLocationId(event.target.value)}
-              value={selectedLocationId}
-            >
-              <option value="">Organisation-wide only</option>
-              {locations.map((location) => <option key={location.public_id} value={location.public_id}>{location.name}</option>)}
-            </select>
-            <span className="text-xs text-foreground-muted" id="chat-site-context-help">Choose a registered site explicitly. Site names in the question do not change this selection.</span>
-          </div>}
           <label className="text-sm font-semibold" htmlFor="chat-question">Ask a question</label>
           <Textarea
-            disabled={busy || accessRevoked}
+            disabled={busy || accessRevoked || continuationBlocked}
             id="chat-question"
             maxLength={8000}
             onChange={(event) => setDraft(event.target.value)}
             onKeyDown={keyboardSubmit}
-            placeholder="Ask about an eligible policy or procedure…"
+            placeholder="Ask about a policy or procedure…"
             rows={3}
             value={draft}
           />
+          {active?.site_context ? <div className="rounded-lg bg-surface-raised px-3 py-2 text-sm">
+            <strong>Location filter:</strong> {active.site_context.name}{active.site_context.status === "retired" ? " (retired)" : ""}
+            <p className="mt-1 text-xs text-foreground-muted">This context is fixed for this conversation. Start a new chat to change it.</p>
+          </div> : <div className="grid gap-2">
+            <label className="text-sm font-semibold" htmlFor="chat-site-context">Location filter</label>
+            <select
+              aria-describedby="chat-site-context-help"
+              className="min-h-11 rounded-lg border border-input bg-background px-3"
+              disabled={busy || accessRevoked || continuationBlocked}
+              id="chat-site-context"
+              onChange={(event) => setSelectedLocationId(event.target.value)}
+              value={selectedLocationId}
+            >
+              <option value="">Organisation-wide</option>
+              {locations.map((location) => <option key={location.public_id} value={location.public_id}>{location.name}</option>)}
+            </select>
+            <span className="text-xs text-foreground-muted" id="chat-site-context-help">Choose a registered location explicitly. Location names in the question do not change this selection.</span>
+          </div>}
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <small className="text-foreground-muted">{accessRevoked ? "You no longer have access to send messages." : "Enter to send · Shift+Enter for a new line"}</small>
+            <small className="text-foreground-muted">{accessRevoked ? "You no longer have access to send messages." : continuationBlocked ? "Start a new conversation to ask another question." : "Enter to send · Shift+Enter for a new line"}</small>
             {busy && active?.runs?.some((run) => !run.completed_at) ? (
-              <Button onClick={() => void cancel()} type="button" variant="ghost"><X />Cancel</Button>
+              <Button onClick={() => void cancel()} type="button" variant="ghost"><X />{active.runs?.find((run) => !run.completed_at)?.interaction?.stop_action === "stop_waiting" ? "Stop waiting" : "Cancel"}</Button>
             ) : null}
-            <Button disabled={busy || accessRevoked || !draft.trim()} type="submit"><Send />Send</Button>
+            <Button disabled={busy || accessRevoked || continuationBlocked || !draft.trim()} type="submit"><Send />Send</Button>
           </div>
         </form>
       </div>

@@ -199,6 +199,25 @@ final class PlatformOperationsTest extends TestCase
         $this->assertNull(User::query()->where('email', 'new-user@example.test')->sole()->platform_role);
     }
 
+    public function test_metrics_reader_returns_immediately_unavailable_when_collection_is_disabled(): void
+    {
+        Cache::forget('platform:operational-metrics:v2');
+        config(['platform.metrics.enabled' => false]);
+        Http::fake();
+
+        $snapshot = app(PrometheusOperationalMetricsReader::class)->snapshot();
+
+        $this->assertSame('unavailable', $snapshot['status']);
+        $this->assertSame('unknown', $snapshot['health_status']);
+        $this->assertSame('unavailable', $snapshot['alerts']['status']);
+        $this->assertCount(2, $snapshot['slos']);
+        foreach ($snapshot['metrics'] as $metric) {
+            $this->assertSame('unavailable', $metric['status']);
+            $this->assertSame([], $metric['values']);
+        }
+        Http::assertNothingSent();
+    }
+
     public function test_slo_and_alert_adapter_preserve_controlled_outcomes_and_filter_specialist_payloads(): void
     {
         Cache::forget('platform:operational-metrics:v2');

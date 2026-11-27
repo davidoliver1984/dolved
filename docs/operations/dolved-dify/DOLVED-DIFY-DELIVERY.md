@@ -706,3 +706,7 @@ Invitation sending and participant onboarding remain open operational actions. T
 does not claim public launch, multi-client hosting, general production readiness or high
 availability, and it does not complete the preserved custom-RAG roadmap or later visual and
 AWS gates.
+
+The repository-history reconciliation that restored the complete accepted implementation
+to `main` without changing the hosted system is recorded in
+[`PILOT-IMPLEMENTATION-RECONCILIATION-20261127.md`](PILOT-IMPLEMENTATION-RECONCILIATION-20261127.md).

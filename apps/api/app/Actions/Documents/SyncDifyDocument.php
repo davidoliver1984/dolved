@@ -210,10 +210,25 @@ final readonly class SyncDifyDocument
             $scopeKey,
         );
         $this->dify->changeStatus($workspace->dataset_id, $binding->remote_document_id, 'enable');
+        try {
+            $segmentCount = $this->dify->segmentCount($workspace->dataset_id, $binding->remote_document_id);
+            $segmentObservation = [
+                'indexed_segment_count' => $segmentCount,
+                'segment_count_status' => 'available',
+                'segment_count_observed_at' => now(),
+            ];
+        } catch (Throwable) {
+            $segmentObservation = [
+                'indexed_segment_count' => null,
+                'segment_count_status' => 'unavailable',
+                'segment_count_observed_at' => now(),
+            ];
+        }
         $binding->forceFill([
             'sync_status' => 'available',
             'failure_code' => null,
             'synced_at' => now(),
+            ...$segmentObservation,
         ])->save();
 
         return true;

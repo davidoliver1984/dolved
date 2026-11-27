@@ -52,6 +52,9 @@ final class DifyDocumentLifecycleTest extends TestCase
                     'total_segments' => 2,
                 ]]]);
             }
+            if ($request->method() === 'GET' && str_contains($request->url(), '/segments?')) {
+                return Http::response(['data' => [['id' => (string) Str::uuid()]], 'total' => 2]);
+            }
 
             return Http::response(['result' => 'success']);
         });
@@ -65,6 +68,9 @@ final class DifyDocumentLifecycleTest extends TestCase
         $this->assertSame($batchId, $binding->remote_batch_id);
         $this->assertSame($document->source_checksum_sha256, $binding->source_checksum_sha256);
         $this->assertNotNull($binding->synced_at);
+        $this->assertSame(2, $binding->indexed_segment_count);
+        $this->assertSame('available', $binding->segment_count_status);
+        $this->assertNotNull($binding->segment_count_observed_at);
 
         $statusActions = collect($requests)
             ->filter(fn (Request $request): bool => $request->method() === 'PATCH')
@@ -151,7 +157,7 @@ final class DifyDocumentLifecycleTest extends TestCase
             DifyDocumentBinding::query()->pluck('scope_key')->sort()->values()->all(),
         );
         $this->assertSame(2, DifyDocumentBinding::query()->where('sync_status', 'available')->count());
-        Http::assertSentCount(12);
+        Http::assertSentCount(14);
         foreach ($locations as $location) {
             Http::assertSent(fn (Request $request): bool => str_ends_with($request->url(), '/documents/metadata')
                 && $request->data()['operation_data'][0]['metadata_list'][0]['value'] === $location->public_id);
@@ -245,7 +251,7 @@ final class DifyDocumentLifecycleTest extends TestCase
 
         $this->assertSame('indexed', $document->fresh()->status->value);
         $this->assertSame('available', $document->difyBindings()->sole()->sync_status);
-        Http::assertSentCount(5);
+        Http::assertSentCount(6);
         Http::assertSent(fn (Request $request): bool => $request->method() === 'PATCH'
             && str_ends_with($request->url(), '/'.$remoteId));
     }

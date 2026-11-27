@@ -99,6 +99,61 @@ export type Workspace = {
   name: string;
   slug: string;
   role: WorkspaceRole;
+  branding?: EffectiveBranding;
+  pipeline_capabilities?: { document_processing: "dify" | "custom" | "unavailable"; chat_generation: "dify" | "custom"; status: "available" | "unavailable" };
+};
+
+export type BrandingAsset = {
+  public_id: string;
+  kind: "primary_logo" | "dark_logo" | "favicon";
+  url: string;
+  width: number;
+  height: number;
+};
+
+export type BrandingConfiguration = {
+  display_name: string;
+  logo_label: string;
+  primary_logo: BrandingAsset | null;
+  dark_logo: BrandingAsset | null;
+  favicon: BrandingAsset | null;
+  primary_colour: string;
+  accent_colour: string;
+  primary_foreground: string;
+  accent_foreground: string;
+  sign_in_heading: string | null;
+  sign_in_introduction: string | null;
+  chat_welcome_heading: string | null;
+  chat_welcome_introduction: string | null;
+  sender_display_name: string | null;
+  footer_text: string | null;
+  support_contact: string | null;
+};
+
+export type EffectiveBranding = {
+  mode: "default" | "custom";
+  revision: number | null;
+  revision_public_id?: string | null;
+  configuration: BrandingConfiguration;
+};
+
+export type PlatformTenant = {
+  public_id: string;
+  name: string;
+  slug: string;
+  branding_mode: "default" | "custom";
+};
+
+export type TenantBrandingSnapshot = {
+  tenant: { public_id: string; name: string; slug: string };
+  mode: "default" | "custom";
+  draft_version: number;
+  draft: BrandingConfiguration;
+  applied_revision: number | null;
+  applied_revision_public_id: string | null;
+  last_custom_revision: number | null;
+  can_reapply_custom: boolean;
+  effective: EffectiveBranding;
 };
 
 export type GovernanceNotification = {
@@ -212,9 +267,9 @@ export type WorkspaceAdministrationSnapshot = {
 export type WorkspaceUsageSnapshot = {
   range: { key: "7d" | "30d" | "month"; start: string; end: string; semantics: string };
   as_of: string;
-  gauges: { active_documents: number; logical_source_bytes: number; indexed_chunks: number };
+  gauges: { active_documents: number; logical_source_bytes: number; indexed_chunks: number | null; current_processing_failures: number | null };
   historical: {
-    ingestion_failures: number;
+    ingestion_failures: number | null;
     activity: Array<{ event_kind: string; outcome: string | null; aggregate_count: number | string }>;
     usage: Array<{
       operation_kind: string;
@@ -231,7 +286,19 @@ export type WorkspaceUsageSnapshot = {
       cost_usd: number | string | null;
       observation_count: number | string;
     }>;
+    chat: {
+      accepted_submissions: number;
+      statuses: Array<{ status: string; aggregate_count: number | string }>;
+      first_visible_response_ms_average: number | null;
+      completion_ms_average: number | null;
+    };
+    retrieval: { runs_with_recorded_sources: number; average_returned_passages: number | null; empty_retrievals: number };
+    document_sync: Array<{ sync_status: string; aggregate_count: number | string }>;
+    unknown_cost_observations: number | string;
   };
+  coverage: { status: "no_data" | "partial" | "complete"; collected_at: string; usage_observation_count: number | string; limitations: string[] };
+  pipeline: { document_processing: "dify" | "custom" | "unavailable"; chat_generation: "dify" | "custom"; status: "available" | "unavailable" };
+  observations: { indexed_chunks: { status: "available" | "stale" | "unavailable"; source: string; observed_at: string | null } };
   labels: { logical_source_bytes: string; cost: string };
 };
 
@@ -258,7 +325,8 @@ export type AdminDocument = {
     failure_code: string | null;
     stuck: boolean;
   } | null;
-  capabilities: { retry: boolean; delete: boolean };
+  capabilities: { retry: boolean; delete: boolean; extracted_text?: boolean };
+  presentation?: { extracted_text: boolean; projection: string };
   created_at: string;
   updated_at: string;
 };
@@ -396,6 +464,7 @@ export type DocumentVersion = {
   withdrawn_at: string | null;
   is_current_authority: boolean;
   extraction_warning_count: number;
+  presentation?: { extracted_text: boolean; projection: string; comparison_compatible_with: string[] };
   applicability: {
     scope: string;
     locations: Array<{ public_id: string; name: string }>;
@@ -698,6 +767,78 @@ function isUnsafe(method: string): boolean {
   return !["GET", "HEAD", "OPTIONS"].includes(method.toUpperCase());
 }
 
+function feedback(message: string, tone: "success" | "destructive"): void {
+  if (typeof window !== "undefined") window.dispatchEvent(new CustomEvent("dolved:feedback", { detail: { message, tone } }));
+}
+
+function mutationFeedback(path: string, method: string): string | null {
+  const cleanPath = path.split("?")[0];
+  const verb = method.toUpperCase();
+  const matches = (pattern: RegExp) => pattern.test(cleanPath);
+
+  if (matches(/\/governance-notifications\/[^/]+\/(read|dismiss)$/)) return null;
+  if (cleanPath === "/api/auth/login") return "Signed in successfully.";
+  if (cleanPath === "/api/auth/logout") return "Signed out successfully.";
+  if (cleanPath === "/api/auth/register") return "Account created. Check your email to verify it.";
+  if (cleanPath === "/api/auth/forgot-password") return "If an account exists for that email, a reset link has been sent.";
+  if (cleanPath === "/api/auth/reset-password") return "Password changed successfully.";
+  if (cleanPath === "/api/auth/email/verification-notification") return "Verification email sent.";
+  if (cleanPath === "/api/workspace-invitations/accept") return "Invitation accepted successfully.";
+
+  if (matches(/\/documents\/[^/]+\/governance\/approve$/)) return "Document approved.";
+  if (matches(/\/documents\/[^/]+\/governance\/withdraw$/)) return "Document withdrawn.";
+  if (matches(/\/documents\/[^/]+\/governance\/schedule$/)) return "Document effective date updated.";
+  if (matches(/\/documents\/[^/]+\/governance\/applicability-successors$/)) return "Document applicability updated and successor version created.";
+  if (matches(/\/documents\/[^/]+\/governance\/timestamps$/)) return "Historical document timestamps corrected.";
+  if (matches(/\/document-families\/[^/]+\/metadata$/)) return "Document family details updated.";
+  if (matches(/\/document-families\/[^/]+\/tags$/)) return "Document family tags updated.";
+  if (matches(/\/documents\/[^/]+\/retries$/)) return "Document retry queued.";
+  if (verb === "DELETE" && matches(/\/documents\/[^/]+$/)) return "Document deletion queued.";
+
+  if (verb === "POST" && matches(/\/saved-views$/)) return "View saved.";
+  if (verb === "PATCH" && matches(/\/saved-views\/[^/]+$/)) return "Saved view renamed.";
+  if (verb === "DELETE" && matches(/\/saved-views\/[^/]+$/)) return "Saved view deleted.";
+  if (verb === "POST" && matches(/\/document-categories$/)) return "Category created.";
+  if (matches(/\/document-categories\/[^/]+\/archive$/)) return "Category archived.";
+  if (verb === "PATCH" && matches(/\/document-categories\/[^/]+$/)) return "Category renamed.";
+
+  if (verb === "POST" && matches(/\/bulk-operations$/)) return "Bulk operation review prepared.";
+  if (matches(/\/bulk-operations\/[^/]+\/confirm$/)) return "Bulk operation started.";
+  if (matches(/\/bulk-operations\/[^/]+\/cancel$/)) return "Bulk operation cancellation requested.";
+  if (matches(/\/bulk-operations\/[^/]+\/retry$/)) return "Bulk operation retry queued.";
+
+  if (verb === "POST" && matches(/\/invitations$/)) return "Invitation sent.";
+  if (verb === "DELETE" && matches(/\/invitations\/[^/]+$/)) return "Invitation revoked.";
+  if (matches(/\/memberships\/[^/]+\/role$/)) return "Member role updated.";
+  if (verb === "DELETE" && matches(/\/memberships\/[^/]+$/)) return "Member removed from the workspace.";
+  if (matches(/\/memberships\/[^/]+\/ownership-transfers$/)) return "Workspace ownership transferred.";
+  if (verb === "DELETE" && matches(/\/membership$/)) return "You left the workspace.";
+
+  if (matches(/\/branding\/draft$/)) return "Branding draft saved.";
+  if (matches(/\/branding\/apply$/)) return "Custom branding applied.";
+  if (matches(/\/branding\/mode$/)) return "Branding mode updated.";
+  if (matches(/\/branding\/assets$/)) return "Branding asset uploaded.";
+
+  if (matches(/\/governance-notification-preferences\/personal$/)) return "Your notification preference was updated.";
+  if (matches(/\/governance-notification-preferences\/workspace$/)) return "Workspace notification preferences updated.";
+  if (matches(/\/question-review\/policy$/)) return "Question review policy updated.";
+  if (verb === "PATCH" && matches(/\/question-review\/questions\/[^/]+$/)) return "Question review saved.";
+  if (verb === "POST" && matches(/\/question-review\/subjects$/)) return "Subject added.";
+  if (verb === "POST" && matches(/\/locations$/)) return "Location created.";
+  if (verb === "PATCH" && matches(/\/locations\/[^/]+\/retire$/)) return "Location retired. Existing document history was preserved.";
+  if (cleanPath === "/api/platform/operations/policy") return "Operational policy submitted.";
+
+  if (verb === "POST" && matches(/\/imports$/)) return "Import batch created.";
+  if (matches(/\/imports\/[^/]+\/items\/[^/]+\/uploaded$/)) return "Document uploaded for import review.";
+  if (matches(/\/imports\/[^/]+\/items\/[^/]+\/replacements$/)) return "Replacement document prepared.";
+  if (matches(/\/imports\/[^/]+\/items\/[^/]+\/decision$/)) return "Import review decision saved.";
+  if (matches(/\/imports\/[^/]+\/items\/[^/]+\/promotions$/)) return "Document indexing started.";
+  if (matches(/\/imports\/[^/]+\/items\/[^/]+\/adoptions$/)) return "Import conflict resolved and indexing restarted.";
+
+  // Background and conversational writes do not need a generic success toast.
+  return null;
+}
+
 export async function apiFetch<T>(
   path: string,
   init: RequestInit = {},
@@ -707,7 +848,7 @@ export async function apiFetch<T>(
 
   headers.set("Accept", "application/json");
 
-  if (init.body && !headers.has("Content-Type")) {
+  if (init.body && !(init.body instanceof FormData) && !headers.has("Content-Type")) {
     headers.set("Content-Type", "application/json");
   }
 
@@ -721,10 +862,9 @@ export async function apiFetch<T>(
         },
       );
     } catch {
-      throw new ApiError(
-        "Dolved could not reach the API. Please try again.",
-        0,
-      );
+      const message = "We could not reach the service. Please try again.";
+      feedback(message, "destructive");
+      throw new ApiError(message, 0);
     }
 
     const token = cookieValue("XSRF-TOKEN");
@@ -746,7 +886,9 @@ export async function apiFetch<T>(
       },
     );
   } catch {
-    throw new ApiError("Dolved could not reach the API. Please try again.", 0);
+    const message = "We could not reach the service. Please try again.";
+    feedback(message, "destructive");
+    throw new ApiError(message, 0);
   }
 
   if (response.redirected) {
@@ -763,21 +905,192 @@ export async function apiFetch<T>(
       payload = await response.json();
     } catch {
       throw new ApiError(
-        "Dolved received an unexpected response. Please try again.",
+        "The service returned an unexpected response. Please try again.",
         response.status,
       );
     }
   }
 
   if (!response.ok) {
+    const message = payload?.message ?? "The request could not be completed.";
+    const validationMessage = Object.values((payload?.errors ?? {}) as ValidationErrors).flat()[0];
+    if (isUnsafe(method) && response.status !== 401) feedback(validationMessage ?? message, "destructive");
     throw new ApiError(
-      payload?.message ?? "The request could not be completed.",
+      message,
       response.status,
       payload?.errors,
     );
   }
 
+  const success = isUnsafe(method) ? mutationFeedback(path, method) : null;
+  if (success) feedback(success, "success");
+
   return payload as T;
+}
+
+export async function workspaceBranding(workspacePublicId: string): Promise<EffectiveBranding> {
+  const response = await apiFetch<{ data: EffectiveBranding }>(`/api/workspaces/${encodeURIComponent(workspacePublicId)}/branding`);
+  return response.data;
+}
+
+export async function deploymentBranding(): Promise<EffectiveBranding> {
+  const response = await apiFetch<{ data: EffectiveBranding }>("/api/branding/effective");
+  return response.data;
+}
+
+export async function invitationBranding(token: string): Promise<EffectiveBranding> {
+  const response = await apiFetch<{ data: EffectiveBranding }>(`/api/branding/invitations/${encodeURIComponent(token)}`);
+  return response.data;
+}
+
+export async function saveTenantBrandingDraft(workspacePublicId: string, draftVersion: number, configuration: BrandingConfiguration): Promise<TenantBrandingSnapshot> {
+  const assetId = (asset: BrandingAsset | null) => asset?.public_id ?? null;
+  const response = await apiFetch<{ data: TenantBrandingSnapshot }>(`/api/platform/tenants/${encodeURIComponent(workspacePublicId)}/branding/draft`, {
+    method: "PUT",
+    body: JSON.stringify({
+      draft_version: draftVersion,
+      configuration: {
+        ...configuration,
+        primary_logo: assetId(configuration.primary_logo),
+        dark_logo: assetId(configuration.dark_logo),
+        favicon: assetId(configuration.favicon),
+      },
+    }),
+  });
+  return response.data;
+}
+
+export async function applyTenantBranding(workspacePublicId: string, draftVersion: number): Promise<TenantBrandingSnapshot> {
+  const response = await apiFetch<{ data: TenantBrandingSnapshot }>(`/api/platform/tenants/${encodeURIComponent(workspacePublicId)}/branding/apply`, {
+    method: "POST", body: JSON.stringify({ draft_version: draftVersion }),
+  });
+  return response.data;
+}
+
+export async function switchTenantBrandingMode(workspacePublicId: string, mode: "default" | "custom"): Promise<TenantBrandingSnapshot> {
+  const response = await apiFetch<{ data: TenantBrandingSnapshot }>(`/api/platform/tenants/${encodeURIComponent(workspacePublicId)}/branding/mode`, {
+    method: "PUT", body: JSON.stringify({ mode }),
+  });
+  return response.data;
+}
+
+export async function uploadTenantBrandingAsset(workspacePublicId: string, kind: BrandingAsset["kind"], file: File): Promise<BrandingAsset> {
+  const body = new FormData();
+  body.set("kind", kind);
+  body.set("asset", file);
+  const response = await apiFetch<{ data: BrandingAsset }>(`/api/platform/tenants/${encodeURIComponent(workspacePublicId)}/branding/assets`, { method: "POST", body });
+  return response.data;
+}
+
+export type QuestionReviewPolicy = {
+  enabled: boolean;
+  policy_version: string;
+  effective_from: string | null;
+  review_from: string | null;
+  retrospective_days: number;
+  can_manage: boolean;
+  can_review: boolean;
+  retrospective_default: "off";
+};
+
+export type QuestionReviewSubject = { public_id: string; name: string; status: string; priority: string };
+export type QuestionReviewState = {
+  public_id?: string;
+  review_status: string;
+  issue_type: string | null;
+  workflow_state: string;
+  priority: string;
+  review_notes: string | null;
+  linked_document_public_id?: string | null;
+  owner_user_id?: string | null;
+  reviewed_at?: string | null;
+  subjects: QuestionReviewSubject[];
+};
+export type QuestionReviewItem = {
+  run_id: string;
+  occurred_at: string;
+  run_status: string;
+  retrieval_outcome: string | null;
+  site_context: string;
+  answer_feedback: AnswerFeedbackSignal | null;
+  review: QuestionReviewState;
+};
+export type AnswerFeedbackSignal = {
+  rating: "helpful" | "not_helpful";
+  reason_code: string | null;
+  comment: string | null;
+  submitted_at: string;
+};
+export type QuestionReviewDetail = QuestionReviewItem & {
+  question: string;
+  answer: string | null;
+  sources: Array<{ public_id: string; rank: number; display_name: string; document_id: string | null }>;
+  notice: string;
+};
+export type KnowledgeGap = QuestionReviewSubject & {
+  question_count: number;
+  reviewed_count: number;
+  unresolved_count: number;
+  confirmed_gap_count: number;
+};
+export type PotentialContentGap = {
+  suggested_subject: string;
+  candidate_count: number;
+  no_answer_count: number;
+  negative_feedback_count: number;
+  reviewed_missing_evidence_count: number;
+  latest_signal_at: string;
+  signal_strength: "early" | "repeated";
+};
+
+const questionReviewRoot = (workspaceId: string) => `/api/workspaces/${encodeURIComponent(workspaceId)}/question-review`;
+export async function questionReviewPolicy(workspaceId: string): Promise<QuestionReviewPolicy> {
+  return (await apiFetch<{ data: QuestionReviewPolicy }>(`${questionReviewRoot(workspaceId)}/policy`)).data;
+}
+export async function updateQuestionReviewPolicy(workspaceId: string, enabled: boolean, includeRetrospective: boolean, retrospectiveDays: number): Promise<QuestionReviewPolicy> {
+  return (await apiFetch<{ data: QuestionReviewPolicy }>(`${questionReviewRoot(workspaceId)}/policy`, { method: "PUT", body: JSON.stringify({ enabled, include_retrospective: includeRetrospective, retrospective_days: retrospectiveDays, privacy_confirmation: true }) })).data;
+}
+export async function questionReviewItems(workspaceId: string): Promise<QuestionReviewItem[]> {
+  return (await apiFetch<{ data: QuestionReviewItem[] }>(`${questionReviewRoot(workspaceId)}/questions`)).data;
+}
+export async function questionReviewDetail(workspaceId: string, runId: string, purpose: string): Promise<QuestionReviewDetail> {
+  return (await apiFetch<{ data: QuestionReviewDetail }>(`${questionReviewRoot(workspaceId)}/questions/${encodeURIComponent(runId)}?purpose=${encodeURIComponent(purpose)}`)).data;
+}
+export async function updateQuestionReview(workspaceId: string, runId: string, review: Omit<QuestionReviewState, "public_id" | "reviewed_at" | "subjects"> & { subject_ids: string[] }): Promise<QuestionReviewState> {
+  return (await apiFetch<{ data: QuestionReviewState }>(`${questionReviewRoot(workspaceId)}/questions/${encodeURIComponent(runId)}`, { method: "PATCH", body: JSON.stringify(review) })).data;
+}
+export async function questionReviewSubjects(workspaceId: string): Promise<QuestionReviewSubject[]> {
+  return (await apiFetch<{ data: QuestionReviewSubject[] }>(`${questionReviewRoot(workspaceId)}/subjects`)).data;
+}
+export async function createQuestionReviewSubject(workspaceId: string, name: string, priority: string): Promise<QuestionReviewSubject> {
+  return (await apiFetch<{ data: QuestionReviewSubject }>(`${questionReviewRoot(workspaceId)}/subjects`, { method: "POST", body: JSON.stringify({ name, priority }) })).data;
+}
+export async function questionReviewKnowledgeGaps(workspaceId: string): Promise<{ data: KnowledgeGap[]; description: string }> {
+  const response = await apiFetch<{ data: KnowledgeGap[]; meta: { description: string } }>(`${questionReviewRoot(workspaceId)}/knowledge-gaps`);
+  return { data: response.data, description: response.meta.description };
+}
+export async function questionReviewPotentialGaps(workspaceId: string): Promise<{ data: PotentialContentGap[]; description: string }> {
+  const response = await apiFetch<{ data: PotentialContentGap[]; meta: { description: string } }>(`${questionReviewRoot(workspaceId)}/potential-gaps`);
+  return { data: response.data, description: response.meta.description };
+}
+
+export type WorkspaceLocation = {
+  public_id: string;
+  name: string;
+  kind: "site" | "service" | "region";
+  parent: { public_id: string; name: string } | null;
+  status: "active" | "retired";
+  usage: { active_children: number; applicability_snapshots: number; family_defaults: number };
+  capabilities: { retire: boolean };
+};
+export async function workspaceLocations(workspaceId: string): Promise<WorkspaceLocation[]> {
+  return (await apiFetch<{ data: WorkspaceLocation[] }>(`/api/workspaces/${encodeURIComponent(workspaceId)}/locations`)).data;
+}
+export async function createWorkspaceLocation(workspaceId: string, name: string, kind: WorkspaceLocation["kind"], parentPublicId: string | null): Promise<WorkspaceLocation> {
+  return (await apiFetch<{ data: WorkspaceLocation }>(`/api/workspaces/${encodeURIComponent(workspaceId)}/locations`, { method: "POST", body: JSON.stringify({ name, kind, parent_public_id: parentPublicId }) })).data;
+}
+export async function retireWorkspaceLocation(workspaceId: string, locationId: string): Promise<WorkspaceLocation> {
+  return (await apiFetch<{ data: WorkspaceLocation }>(`/api/workspaces/${encodeURIComponent(workspaceId)}/locations/${encodeURIComponent(locationId)}/retire`, { method: "PATCH" })).data;
 }
 
 export function firstError(error: unknown): string {

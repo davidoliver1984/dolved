@@ -109,6 +109,7 @@ or tests that have retrospectively passed.
 
 - [Current architecture](CURRENT-ARCHITECTURE.md)
 - [Delivery record](DOLVED-DIFY-DELIVERY.md)
+- [Accepted-pilot implementation reconciliation](PILOT-IMPLEMENTATION-RECONCILIATION-20261127.md)
 - [Pilot launch and onboarding checklist](PILOT-LAUNCH-CHECKLIST-20261126.md)
 - [Security acceptance](PILOT-SECURITY-ACCEPTANCE-20261126.md)
 - [Hosted access-control continuation](PILOT-ACCESS-CONTROL-ACCEPTANCE-CONTINUATION-20261126.md)

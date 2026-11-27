@@ -30,6 +30,7 @@ class ConversationController extends Controller
         $user = $request->user();
         $workspace = $workspaces->handle($user, $workspacePublicId)->workspace;
         $conversations = Conversation::query()
+            ->with('selectedLocation')
             ->where('workspace_id', $workspace->id)
             ->where('created_by_user_id', $user->id)
             ->whereIn('status', [ConversationStatus::Active->value, ConversationStatus::Archived->value])
@@ -49,6 +50,7 @@ class ConversationController extends Controller
         $selectedLocation = $request->filled('selected_location_id')
             ? OrganisationalLocation::query()
                 ->where('workspace_id', $workspace->id)
+                ->whereNull('retired_at')
                 ->where('public_id', $request->string('selected_location_id')->value())
                 ->firstOrFail()
             : null;
@@ -128,6 +130,7 @@ class ConversationController extends Controller
             'generationRuns.assistantMessage',
             'generationRuns.retryOf',
             'generationRuns.deliveryEvents',
+            'generationRuns.answerFeedback',
             'generationRuns.generatedAnswer.answerParts.evidenceSnapshots.document',
             'generationRuns.generatedAnswer.retrievedSources.document',
             'selectedLocation',

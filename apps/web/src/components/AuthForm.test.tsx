@@ -22,6 +22,7 @@ describe("AuthForm", () => {
   beforeEach(() => {
     apiFetchMock.mockReset();
     routerPushMock.mockReset();
+    window.localStorage.clear();
   });
 
   afterEach(cleanup);
@@ -74,10 +75,50 @@ describe("AuthForm", () => {
     await waitFor(() => expect(routerPushMock).toHaveBeenCalledWith("/app/platform/operations"));
   });
 
+  it("keeps the invitation journey through registration and email verification", async () => {
+    apiFetchMock.mockResolvedValue({ data: { user: {} } });
+    const returnTo = "/invitations/invite-token";
+    render(<AuthForm mode="register" returnTo={returnTo} />);
+
+    fireEvent.change(screen.getByLabelText("Name"), { target: { value: "Invited Person" } });
+    fireEvent.change(screen.getByLabelText("Email address"), { target: { value: "invited@example.test" } });
+    fireEvent.change(screen.getByLabelText("Password"), { target: { value: "Correct-Horse-7!" } });
+    fireEvent.change(screen.getByLabelText("Confirm password"), { target: { value: "Correct-Horse-7!" } });
+    fireEvent.submit(screen.getByRole("button", { name: "Create account" }).closest("form")!);
+
+    await waitFor(() => expect(routerPushMock).toHaveBeenCalledWith(
+      "/verify-email?next=%2Finvitations%2Finvite-token",
+    ));
+    expect(apiFetchMock).toHaveBeenCalledWith("/api/auth/register", expect.objectContaining({
+      body: expect.stringContaining('"invitation_token":"invite-token"'),
+    }));
+    expect(window.localStorage.getItem("dolved.postVerificationReturnTo")).toBe(returnTo);
+    expect(screen.getByRole("link", { name: "Already have an account? Sign in" }).getAttribute("href"))
+      .toBe("/login?next=%2Finvitations%2Finvite-token");
+  });
+
   it("does not advertise self-registration when it is disabled", () => {
     render(<AuthForm mode="login" registrationEnabled={false} />);
 
     expect(screen.queryByRole("link", { name: "Create an account" })).toBeNull();
     expect(screen.getByRole("link", { name: "Forgot password?" })).toBeTruthy();
+  });
+
+  it("offers password reveal and persistent-session controls on sign in", () => {
+    render(<AuthForm mode="login" />);
+
+    const password = screen.getByLabelText("Password") as HTMLInputElement;
+    expect(password.type).toBe("password");
+    fireEvent.click(screen.getByRole("button", { name: "Show password" }));
+    expect(password.type).toBe("text");
+    expect(screen.getByRole("checkbox", { name: "Remember me on this device" })).toBeTruthy();
+  });
+
+  it("shows live password strength when choosing a new password", () => {
+    render(<AuthForm mode="reset" />);
+
+    fireEvent.change(screen.getByLabelText("Password"), { target: { value: "Correct-Horse-7!Long" } });
+    expect(screen.getByText(/Strong/)).toBeTruthy();
+    expect(screen.getAllByRole("button", { name: "Show password" })).toHaveLength(2);
   });
 });

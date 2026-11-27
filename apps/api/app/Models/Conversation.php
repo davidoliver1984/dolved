@@ -26,7 +26,10 @@ class Conversation extends Model
 
     protected function casts(): array
     {
-        return ['status' => ConversationStatus::class];
+        return [
+            'status' => ConversationStatus::class,
+            'continuation_blocked_at' => 'immutable_datetime',
+        ];
     }
 
     public function workspace(): BelongsTo

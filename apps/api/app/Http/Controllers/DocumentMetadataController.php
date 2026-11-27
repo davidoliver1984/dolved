@@ -92,6 +92,7 @@ final class DocumentMetadataController extends Controller
                     'name' => $membership->user->name,
                 ])->values()->all(),
             'locations' => $workspace->organisationalLocations()
+                ->whereNull('retired_at')
                 ->orderBy('name')->get(['public_id', 'name'])
                 ->map(fn ($location): array => ['public_id' => $location->public_id, 'name' => $location->name])
                 ->values()->all(),

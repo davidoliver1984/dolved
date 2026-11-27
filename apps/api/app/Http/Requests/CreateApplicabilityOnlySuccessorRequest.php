@@ -12,7 +12,7 @@ final class CreateApplicabilityOnlySuccessorRequest extends DocumentGovernanceCo
         return [
             ...parent::rules(),
             'effective_from' => ['required', 'date'],
-            'location_public_ids' => ['required', 'array', 'max:100'],
+            'location_public_ids' => ['present', 'array', 'max:100'],
             'location_public_ids.*' => ['required', 'uuid', 'distinct'],
         ];
     }

@@ -13,6 +13,7 @@ use App\Models\Conversation;
 use App\Models\GenerationRun;
 use App\Models\Message;
 use App\Models\User;
+use App\Services\Conversation\ConversationContinuationPolicy;
 use App\Services\Generation\GenerationProfileFactory;
 use App\Support\Usage\RecordWorkspaceUsage;
 use Illuminate\Support\Facades\DB;
@@ -20,7 +21,11 @@ use Illuminate\Support\Str;
 
 final readonly class SubmitConversationMessage
 {
-    public function __construct(private RecordWorkspaceUsage $usage, private GenerationProfileFactory $profiles) {}
+    public function __construct(
+        private RecordWorkspaceUsage $usage,
+        private GenerationProfileFactory $profiles,
+        private ConversationContinuationPolicy $continuation,
+    ) {}
 
     public function handle(Conversation $conversation, User $user, string $text, string $idempotencyKey): GenerationRun
     {
@@ -40,6 +45,7 @@ final readonly class SubmitConversationMessage
 
                 return [$existing->generationRuns()->oldest('id')->firstOrFail(), false];
             }
+            $this->continuation->assertCanContinue($locked);
             if ($locked->generationRuns()->whereIn('status', $this->activeStatusValues())->exists()) {
                 throw new ConversationException('The conversation already has an active generation run.');
             }

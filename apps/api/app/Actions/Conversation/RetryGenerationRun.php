@@ -10,11 +10,14 @@ use App\Exceptions\ConversationException;
 use App\Jobs\ExecuteGenerationRun;
 use App\Models\Conversation;
 use App\Models\GenerationRun;
+use App\Services\Conversation\ConversationContinuationPolicy;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 final readonly class RetryGenerationRun
 {
+    public function __construct(private ConversationContinuationPolicy $continuation) {}
+
     public function handle(GenerationRun $run, string $idempotencyKey): GenerationRun
     {
         [$retry, $created] = DB::transaction(function () use ($run, $idempotencyKey): array {
@@ -30,6 +33,7 @@ final readonly class RetryGenerationRun
                 throw new ConversationException('This generation run is not retry eligible.');
             }
             $conversation = Conversation::query()->lockForUpdate()->findOrFail($original->conversation_id);
+            $this->continuation->assertCanContinue($conversation);
             if ($conversation->status !== ConversationStatus::Active
                 || $conversation->generationRuns()->whereIn('status', $this->activeStatusValues())->exists()) {
                 throw new ConversationException('The conversation cannot start another generation run.');

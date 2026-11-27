@@ -60,6 +60,64 @@ describe("AppShell", () => {
     await waitFor(() => expect(screen.getByRole("link", { name: "Medication safety" }).getAttribute("href")).toBe("/app/workspaces/workspace-1/conversations/conversation-1"));
   });
 
+  it("stacks sidebar utilities when the navigation is collapsed", async () => {
+    const userInteraction = userEvent.setup();
+    const view = render(
+      <AppShell
+        canOperatePlatform={false}
+        user={user}
+        workspaces={[{ public_id: "workspace-1", name: "Alderbridge", slug: "alderbridge", role: "owner" }]}
+      >
+        <p>Workspace content</p>
+      </AppShell>,
+    );
+
+    await userInteraction.click(screen.getByRole("button", { name: "Collapse sidebar" }));
+    expect(view.container.querySelector("[data-sidebar-utilities]")?.className).toContain("lg:flex-col");
+  });
+
+  it("applies tenant colour variables to the document root for portalled interfaces", () => {
+    render(
+      <AppShell
+        canOperatePlatform={false}
+        user={user}
+        workspaces={[{
+          public_id: "workspace-1",
+          name: "Cherish",
+          slug: "cherish",
+          role: "owner",
+          branding: {
+            mode: "custom",
+            revision: 1,
+            configuration: {
+              display_name: "Cherish",
+              logo_label: "Cherish",
+              primary_logo: null,
+              dark_logo: null,
+              favicon: null,
+              primary_colour: "#932b99",
+              accent_colour: "#d67adb",
+              primary_foreground: "#ffffff",
+              accent_foreground: "#ffffff",
+              sign_in_heading: null,
+              sign_in_introduction: null,
+              chat_welcome_heading: null,
+              chat_welcome_introduction: null,
+              sender_display_name: null,
+              footer_text: null,
+              support_contact: null,
+            },
+          },
+        }]}
+      >
+        <p>Workspace content</p>
+      </AppShell>,
+    );
+
+    expect(document.documentElement.style.getPropertyValue("--brand")).toBe("#932b99");
+    expect(document.documentElement.style.getPropertyValue("--ring")).toBe("#d67adb");
+  });
+
   it("does not render authority-gated destinations for an ordinary member", () => {
     render(
       <AppShell
@@ -72,7 +130,7 @@ describe("AppShell", () => {
     );
 
     expect(screen.queryByRole("link", { name: "Administration" })).toBeNull();
-    expect(screen.queryByRole("link", { name: "Platform operations" })).toBeNull();
+    expect(screen.queryByRole("link", { name: "Platform administration" })).toBeNull();
     pathnameState.value = "/app/workspaces/workspace-1/documents";
     cleanup();
     render(
@@ -99,11 +157,11 @@ describe("AppShell", () => {
       </AppShell>,
     );
 
-    expect(screen.getByRole("link", { name: "Administration" }).getAttribute("aria-current")).toBeNull();
+    expect(screen.getByRole("link", { name: "Administration" }).getAttribute("aria-current")).toBe("page");
     expect(screen.getByRole("link", { name: "People & roles" }).getAttribute("href")).toBe("/app/workspaces/workspace-1/administration/people");
     expect(screen.getByRole("link", { name: "People & roles" }).getAttribute("aria-current")).toBe("page");
     expect(screen.getByRole("link", { name: "New conversation" }).getAttribute("aria-current")).toBeNull();
-    expect(screen.getByRole("link", { name: "Platform operations" }).getAttribute("href")).toBe("/app/platform/operations");
+    expect(screen.getByRole("link", { name: "Platform administration" }).getAttribute("href")).toBe("/app/platform/operations");
   });
 
   it("renders route-backed platform context with exactly one contextual destination active", () => {
@@ -114,7 +172,8 @@ describe("AppShell", () => {
       </AppShell>,
     );
 
-    expect(screen.getByRole("link", { name: "Platform operations" }).getAttribute("aria-current")).toBe("page");
+    expect(screen.getByRole("link", { name: "Platform administration" }).getAttribute("aria-current")).toBe("page");
+    expect(screen.getByRole("link", { name: "Tenants" }).getAttribute("href")).toBe("/app/platform/tenants");
     expect(screen.getByRole("link", { name: "Overview" }).getAttribute("aria-current")).toBeNull();
     expect(screen.getByRole("link", { name: "Active alerts" }).getAttribute("href")).toBe("/app/platform/operations/alerts");
     expect(screen.getByRole("link", { name: "Global telemetry" }).getAttribute("aria-current")).toBe("page");
@@ -178,6 +237,29 @@ describe("AppShell", () => {
 
     await interaction.click(screen.getByRole("button", { name: "Account menu for David Oliver" }));
     expect(screen.getByRole("button", { name: "Sign out" })).toBeTruthy();
+  });
+
+  it("keeps collapsed controls clear of navigation and constrains contextual rows", () => {
+    pathnameState.value = "/app/workspaces/workspace-1/documents";
+    render(
+      <AppShell
+        canOperatePlatform={false}
+        user={user}
+        workspaces={[{ public_id: "workspace-1", name: "Alderbridge", slug: "alderbridge", role: "owner" }]}
+      >
+        <p>Library content</p>
+      </AppShell>,
+    );
+
+    const library = screen.getByRole("link", { name: "Library" });
+    expect(library.className).toContain("w-full");
+    expect(library.className).toContain("min-w-0");
+    expect(screen.getByRole("navigation", { name: "Knowledge library" }).parentElement?.className).toContain("overflow-x-hidden");
+
+    const collapse = screen.getByRole("button", { name: "Collapse sidebar" });
+    expect(collapse.parentElement?.className).toContain("h-11");
+    fireEvent.click(collapse);
+    expect(screen.getByRole("button", { name: "Expand sidebar" })).toBeTruthy();
   });
 
   it("closes mobile navigation after following a destination and omits the duplicated wordmark", async () => {

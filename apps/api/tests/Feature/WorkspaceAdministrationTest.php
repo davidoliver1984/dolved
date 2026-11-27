@@ -107,6 +107,24 @@ class WorkspaceAdministrationTest extends TestCase
         ])->assertConflict()->assertJsonPath('error.code', 'member_removal_forbidden');
     }
 
+    public function test_owner_and_admin_can_revoke_pending_member_invitations(): void
+    {
+        [$workspace, $owner, $admin] = $this->workspaceWithRoles();
+        $base = "/api/workspaces/{$workspace->public_id}/invitations";
+        $ownerInvitation = $this->invitation($workspace, $owner, str_repeat('1', 64), 'owner-revoke@example.test');
+        $adminInvitation = $this->invitation($workspace, $owner, str_repeat('2', 64), 'admin-revoke@example.test');
+
+        $this->actingAs($owner)->deleteJson("{$base}/{$ownerInvitation->public_id}", [
+            'idempotency_key' => (string) Str::uuid(),
+        ])->assertOk()->assertJsonPath('data.invitation.status', WorkspaceInvitationStatus::Revoked->value);
+        $this->actingAs($admin)->deleteJson("{$base}/{$adminInvitation->public_id}", [
+            'idempotency_key' => (string) Str::uuid(),
+        ])->assertOk()->assertJsonPath('data.invitation.status', WorkspaceInvitationStatus::Revoked->value);
+
+        $this->assertSame(WorkspaceInvitationStatus::Revoked, $ownerInvitation->fresh()->status);
+        $this->assertSame(WorkspaceInvitationStatus::Revoked, $adminInvitation->fresh()->status);
+    }
+
     public function test_delivery_failure_does_not_invalidate_an_already_issued_invitation(): void
     {
         [$workspace, $owner] = $this->workspaceWithRoles();
@@ -125,6 +143,33 @@ class WorkspaceAdministrationTest extends TestCase
             'invited_email' => 'delivery-failure@example.test',
             'status' => WorkspaceInvitationStatus::Pending->value,
         ]);
+    }
+
+    public function test_invitation_mail_uses_the_applied_workspace_branding_layout(): void
+    {
+        [$workspace, $owner] = $this->workspaceWithRoles();
+        $token = str_repeat('f', 64);
+        $invitation = $this->invitation($workspace, $owner, $token, 'invitee@example.test');
+        $branding = [
+            'display_name' => 'Cherish',
+            'sender_display_name' => 'Cherish',
+            'primary_colour' => '#8D2F93',
+            'accent_colour' => '#DA95DF',
+            'accent_foreground' => '#000000',
+            'primary_logo' => ['url' => 'https://assets.example.test/cherish.png'],
+            'footer_text' => 'Care and support service',
+            'support_contact' => 'support@example.test',
+        ];
+
+        $mail = (new WorkspaceInvitationNotification($invitation, $token, $branding))->toMail((object) []);
+        $html = view('mail.invitation.html', $mail->viewData)->render();
+
+        $this->assertSame('You have been invited to Cherish', $mail->subject);
+        $this->assertSame('Cherish', $mail->from[1]);
+        $this->assertStringContainsString('https://assets.example.test/cherish.png', $html);
+        $this->assertStringContainsString('background-color:#DA95DF', $html);
+        $this->assertStringContainsString('Sent by Cherish', $html);
+        $this->assertStringNotContainsString('Regards,<br>\nDolved', $html);
     }
 
     public function test_invitation_acceptance_requires_the_matching_verified_email_and_materializes_expiry(): void

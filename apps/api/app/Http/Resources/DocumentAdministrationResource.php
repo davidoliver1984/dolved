@@ -6,6 +6,7 @@ namespace App\Http\Resources;
 
 use App\Enums\DocumentDeletionStatus;
 use App\Enums\DocumentStatus;
+use App\Support\Pipeline\ActivePipelineCapabilities;
 use Illuminate\Http\Request;
 
 class DocumentAdministrationResource extends DocumentResource
@@ -50,7 +51,10 @@ class DocumentAdministrationResource extends DocumentResource
                     && $this->status === DocumentStatus::Failed,
                 'delete' => $request->user()?->can('delete', $this->resource) === true
                     && ! in_array($this->status, [DocumentStatus::Deleting, DocumentStatus::Deleted], true),
+                'extracted_text' => app(ActivePipelineCapabilities::class)
+                    ->documentPresentation($this->resource)['extracted_text'],
             ],
+            'presentation' => app(ActivePipelineCapabilities::class)->documentPresentation($this->resource),
         ];
     }
 }

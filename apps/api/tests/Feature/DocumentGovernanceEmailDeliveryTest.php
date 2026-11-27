@@ -161,7 +161,9 @@ final class DocumentGovernanceEmailDeliveryTest extends TestCase
         $text = view('mail.governance.text', get_object_vars($mail))->render();
 
         $this->assertStringContainsString('Dolved', $html);
-        $this->assertStringContainsString($workspace->name, $html);
+        $this->assertStringNotContainsString($workspace->name, $html);
+        $this->assertSame('Dolved', $mail->workspaceName);
+        $this->assertSame('Import complete · Dolved', $mail->mailSubject);
         $this->assertStringContainsString("/app/workspaces/{$workspace->public_id}/documents/{$document->public_id}", $html);
         $this->assertStringContainsString('Manage notification preferences', $html);
         $this->assertStringContainsString('Import complete', $text);
@@ -280,7 +282,13 @@ final class DocumentGovernanceEmailDeliveryTest extends TestCase
         {
             public function resolve(string $configurationIdentity, string $accentIdentity): ResolvedGovernanceEmailBranding
             {
-                return new ResolvedGovernanceEmailBranding('Alderbridge Care', '#6B2D84', 'https://assets.example.test/alderbridge.png');
+                return new ResolvedGovernanceEmailBranding(
+                    brandName: 'Alderbridge Care',
+                    accentColour: '#DA95DF',
+                    logoUrl: 'https://assets.example.test/alderbridge.png',
+                    accentForeground: '#000000',
+                    linkColour: '#8D2F93',
+                );
             }
         });
 
@@ -288,8 +296,17 @@ final class DocumentGovernanceEmailDeliveryTest extends TestCase
         $html = $mail->render();
         $this->assertStringContainsString('Alderbridge Care', $html);
         $this->assertStringContainsString('https://assets.example.test/alderbridge.png', $html);
-        $this->assertStringContainsString('background:#6B2D84', $html);
-        $this->assertStringContainsString('Sent by Dolved', $html);
+        $this->assertStringContainsString('align="center"', $html);
+        $this->assertStringContainsString('max-height:80px;max-width:220px;margin:0 auto 12px', $html);
+        $this->assertStringContainsString('background-color:#DA95DF', $html);
+        $this->assertStringContainsString('linear-gradient(#DA95DF,#DA95DF)', $html);
+        $this->assertStringContainsString('color:#000000', $html);
+        $this->assertStringContainsString('color:#8D2F93', $html);
+        $this->assertStringNotContainsString('background-color:#008466', $html);
+        $this->assertStringContainsString('Sent by Alderbridge Care', $html);
+        $this->assertStringNotContainsString($workspace->name, $html);
+        $this->assertSame('Alderbridge Care', $mail->workspaceName);
+        $this->assertSame('Import complete · Alderbridge Care', $mail->mailSubject);
     }
 
     public function test_invalid_logo_and_low_contrast_accent_fall_back_without_delaying_rendering(): void
@@ -324,13 +341,29 @@ final class DocumentGovernanceEmailDeliveryTest extends TestCase
         CarbonImmutable::setTestNow(CarbonImmutable::parse('2026-09-02 16:00:00', 'UTC'));
         [$owner, $workspace] = $this->ownerWorkspace();
         $assemble = app(AssembleDocumentGovernanceEmailEnvelope::class);
-        $familyA = DocumentFamily::factory()->for($workspace)->create(['owner_user_id' => $owner->id]);
-        $familyB = DocumentFamily::factory()->for($workspace)->create(['owner_user_id' => $owner->id]);
+        $familyA = DocumentFamily::factory()->for($workspace)->create([
+            'name' => 'Medication Policy',
+            'owner_user_id' => $owner->id,
+            'review_due_date' => '2026-09-09',
+        ]);
+        $familyB = DocumentFamily::factory()->for($workspace)->create([
+            'name' => 'Annual Leave Policy',
+            'owner_user_id' => $owner->id,
+            'review_due_date' => '2026-08-31',
+        ]);
         CarbonImmutable::setTestNow(CarbonImmutable::parse('2026-09-02 10:00:00', 'UTC'));
         $dueSoon = $this->notification($owner, $workspace, DocumentGovernanceEventKey::GovernanceReviewDueSoon);
-        $dueSoon->forceFill(['parameters' => ['document_family_public_id' => $familyA->public_id]])->save();
+        $dueSoon->forceFill(['parameters' => [
+            'document_family_public_id' => $familyA->public_id,
+            'target_display_label' => $familyA->name,
+            'review_due_date' => $familyA->review_due_date->toDateString(),
+        ]])->save();
         $overdue = $this->notification($owner, $workspace, DocumentGovernanceEventKey::GovernanceReviewOverdue);
-        $overdue->forceFill(['parameters' => ['document_family_public_id' => $familyB->public_id]])->save();
+        $overdue->forceFill(['parameters' => [
+            'document_family_public_id' => $familyB->public_id,
+            'target_display_label' => $familyB->name,
+            'review_due_date' => $familyB->review_due_date->toDateString(),
+        ]])->save();
         $envelope = $assemble->handle($dueSoon);
         $assemble->handle($overdue);
         CarbonImmutable::setTestNow(CarbonImmutable::parse('2026-09-02 16:00:00', 'UTC'));
@@ -341,7 +374,11 @@ final class DocumentGovernanceEmailDeliveryTest extends TestCase
         $claim = app(ClaimDocumentGovernanceEmailEnvelope::class)->handle($envelope->id);
         $mail = app(BuildDocumentGovernanceEmail::class)->handle($claim['envelope']->refresh());
         $this->assertSame('Document reviews need attention', $mail->heading);
-        $this->assertSame(['Review due soon', 'Review overdue'], array_column($mail->items, 'title'));
+        $this->assertSame(
+            ['Medication Policy still needs to be reviewed', 'Annual Leave Policy still needs to be reviewed'],
+            array_column($mail->items, 'title'),
+        );
+        $this->assertSame(['Due by 9 September 2026', 'Due by 31 August 2026'], array_column($mail->items, 'message'));
         $this->assertStringContainsString('/documents/attention', $mail->actionUrl);
     }
 

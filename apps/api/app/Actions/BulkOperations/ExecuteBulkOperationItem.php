@@ -252,6 +252,7 @@ final readonly class ExecuteBulkOperationItem
         $predecessorId = $item->expected_state_snapshot['current_document_public_id'] ?? null;
         $predecessor = Document::query()->where('public_id', $predecessorId)->firstOrFail();
         $locations = OrganisationalLocation::query()->where('workspace_id', $family->workspace_id)
+            ->whereNull('retired_at')
             ->whereIn('public_id', $payload['location_public_ids'])->get()->all();
         [$target, $clone, $leaseToken] = $this->applicability->prepare(
             $predecessor,

@@ -46,7 +46,7 @@ final class DifyChatClient
         if (! $response->successful()) {
             throw new DifyDispatchException(
                 $response->status() === 429 ? 'rate_limit' : ($response->serverError() ? 'provider_failure' : 'request_rejected'),
-                $response->serverError() || $response->status() === 429,
+                $response->serverError(),
                 $response->status(),
             );
         }
@@ -57,7 +57,7 @@ final class DifyChatClient
             || ! is_string($body['conversation_id'] ?? null) || ! Str::isUuid($body['conversation_id'])
             || ! is_string($body['message_id'] ?? null) || ! Str::isUuid($body['message_id'])
             || (isset($body['task_id']) && (! is_string($body['task_id']) || ! Str::isUuid($body['task_id'])))) {
-            throw new DifyDispatchException('invalid_response', false, $response->status());
+            throw new DifyDispatchException('invalid_response', true, $response->status());
         }
 
         $metadata = is_array($body['metadata'] ?? null) ? $body['metadata'] : [];

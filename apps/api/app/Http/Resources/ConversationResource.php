@@ -10,6 +10,8 @@ use App\Enums\GenerationRunStatus;
 use App\Models\Document;
 use App\Models\EvidenceSnapshot;
 use App\Models\RetrievedSourceReference;
+use App\Services\Conversation\ConversationContinuationPolicy;
+use App\Support\Pipeline\ActivePipelineCapabilities;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -18,6 +20,9 @@ class ConversationResource extends JsonResource
     /** @return array<string, mixed> */
     public function toArray(Request $request): array
     {
+        $continuation = app(ConversationContinuationPolicy::class)->decision($this->resource);
+        $locationAvailable = $this->selectedLocation === null || $this->selectedLocation->retired_at === null;
+
         return [
             'id' => $this->public_id,
             'title' => $this->title,
@@ -27,12 +32,15 @@ class ConversationResource extends JsonResource
             'site_context' => $this->selectedLocation === null ? [
                 'scope_key' => 'global',
                 'location_id' => null,
-                'name' => 'Organisation-wide only',
+                'name' => 'Organisation-wide',
+                'status' => 'active',
             ] : [
                 'scope_key' => (string) $this->selectedLocation->public_id,
                 'location_id' => (string) $this->selectedLocation->public_id,
                 'name' => $this->selectedLocation->name,
+                'status' => $locationAvailable ? 'active' : 'retired',
             ],
+            'continuation' => $continuation,
             'messages' => $this->whenLoaded('messages', fn () => $this->messages->map(fn ($message): array => [
                 'id' => $message->public_id,
                 'ordinal' => $message->ordinal,
@@ -50,6 +58,7 @@ class ConversationResource extends JsonResource
                 'status' => $run->status->value,
                 'failure_code' => $run->failure_code?->value,
                 'delivery_mode' => $run->delivery_mode,
+                'interaction' => app(ActivePipelineCapabilities::class)->runInteraction($run),
                 'presentation' => ($run->needs_profile['product_profile'] ?? null) === 'current-policy-pool-v1' ? 'saved-message-v1' : null,
                 'retryable' => $run->status->isRetryEligible(),
                 'provisional_content_retracted' => $run->status === GenerationRunStatus::Failed
@@ -58,6 +67,12 @@ class ConversationResource extends JsonResource
                         'event_type',
                         ChatStreamEventType::AnswerPartAcceptedForDisplay,
                     ),
+                'feedback' => $run->relationLoaded('answerFeedback') && $run->answerFeedback !== null ? [
+                    'rating' => $run->answerFeedback->rating,
+                    'reason_code' => $run->answerFeedback->reason_code,
+                    'comment' => $run->answerFeedback->comment,
+                    'submitted_at' => $run->answerFeedback->submitted_at?->toIso8601String(),
+                ] : null,
                 'answer' => $run->relationLoaded('generatedAnswer') && $run->generatedAnswer !== null ? ($run->generatedAnswer->contract_version === 'dify-chatflow-answer-v1' ? [
                     'id' => $run->generatedAnswer->public_id,
                     'outcome' => $run->generatedAnswer->outcome->value,

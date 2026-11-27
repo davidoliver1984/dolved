@@ -2,14 +2,14 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Wordmark } from "@/components/Wordmark";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Notice } from "@/components/ui/notice";
-import { apiFetch, ApiError, firstError, User } from "@/lib/api";
-import type { PlatformOperationsPath } from "@/lib/platform-operations";
+import { PasswordInput, PasswordStrength } from "@/components/ui/password-input";
+import { apiFetch, ApiError, deploymentBranding, firstError, type EffectiveBranding, User } from "@/lib/api";
 
 type Mode = "login" | "register" | "forgot" | "reset";
 
@@ -49,7 +49,7 @@ type Props = {
   registrationEnabled?: boolean;
   token?: string;
   email?: string;
-  returnTo?: PlatformOperationsPath;
+  returnTo?: string;
 };
 
 export function AuthForm({ context = "workspace", mode, registrationEnabled = true, token, email: initialEmail, returnTo }: Props) {
@@ -57,7 +57,29 @@ export function AuthForm({ context = "workspace", mode, registrationEnabled = tr
   const [pending, setPending] = useState(false);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
+  const [password, setPassword] = useState("");
   const copy = content[mode];
+  const [branding, setBranding] = useState<EffectiveBranding | null>(null);
+  useEffect(() => {
+    if (context === "platform") return;
+    let active = true;
+    void deploymentBranding().then((value) => active && setBranding(value)).catch(() => undefined);
+    return () => { active = false; };
+  }, [context]);
+  const brand = branding?.configuration;
+  const invitationToken = mode === "register" && returnTo?.startsWith("/invitations/")
+    ? returnTo.slice("/invitations/".length)
+    : undefined;
+  const style = brand ? { "--brand": brand.primary_colour, "--brand-foreground": brand.primary_foreground, "--ring": brand.accent_colour } as React.CSSProperties : undefined;
+  useEffect(() => {
+    if (context === "platform" || !brand) return;
+    document.title = `${mode === "login" ? "Sign in" : copy.title} · ${brand.display_name}`;
+    let icon = document.querySelector<HTMLLinkElement>('link[rel="icon"][data-tenant-branding]');
+    if (!icon) {
+      icon = document.createElement("link"); icon.rel = "icon"; icon.dataset.tenantBranding = "true"; document.head.appendChild(icon);
+    }
+    icon.href = brand.favicon?.url ?? "/favicon.ico";
+  }, [brand, context, copy.title, mode]);
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -81,11 +103,15 @@ export function AuthForm({ context = "workspace", mode, registrationEnabled = tr
       );
 
       if (mode === "forgot") {
-        setMessage(
-          "If an account exists for that email, a reset link has been sent.",
-        );
+        const confirmation = "If an account exists for that email, a reset link has been sent.";
+        setMessage(confirmation);
       } else if (mode === "register") {
-        router.push("/verify-email");
+        if (returnTo) {
+          window.localStorage.setItem("dolved.postVerificationReturnTo", returnTo);
+        }
+        router.push(returnTo
+          ? `/verify-email?next=${encodeURIComponent(returnTo)}`
+          : "/verify-email");
       } else if (mode === "reset") {
         router.push("/login?reset=complete");
       } else if (mode === "login" && response.data?.redirect_to) {
@@ -101,7 +127,8 @@ export function AuthForm({ context = "workspace", mode, registrationEnabled = tr
       ) {
         router.push(returnTo ?? "/app");
       } else {
-        setError(firstError(caught));
+        const failure = firstError(caught);
+        setError(failure);
       }
     } finally {
       setPending(false);
@@ -109,22 +136,22 @@ export function AuthForm({ context = "workspace", mode, registrationEnabled = tr
   }
 
   return (
-    <main className="grid min-h-screen bg-background lg:grid-cols-2">
+    <main className="grid min-h-screen bg-background lg:grid-cols-2" style={style}>
       <section className="flex min-h-screen flex-col px-6 py-8 sm:px-10 lg:px-[max(3rem,calc((100vw-80rem)/4))] lg:py-10">
         <div className="flex items-center justify-between gap-4">
-          <Wordmark />
+          {context === "workspace" && brand?.primary_logo ? <img alt={brand.logo_label} className="h-12 max-w-56 object-contain object-left" src={brand.primary_logo.url} /> : <Wordmark />}
           <ThemeToggle />
         </div>
 
         <div className="mt-20 max-w-xl sm:mt-28">
-          <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand">{context === "platform" ? "Platform administration" : copy.eyebrow}</p>
-          <h1 className="mt-4 text-5xl font-semibold leading-[0.95] tracking-tight sm:text-6xl">{context === "platform" ? "Platform Operations" : copy.title}</h1>
+          <p className="text-xs font-bold uppercase tracking-[0.18em] text-brand">{context === "platform" ? "Platform administration" : mode === "login" && brand?.sign_in_heading ? brand.sign_in_heading : copy.eyebrow}</p>
+          <h1 className="mt-4 text-5xl font-semibold leading-[0.95] tracking-tight sm:text-6xl">{context === "platform" ? "Platform Operations" : brand?.display_name ? (mode === "login" ? `Sign in to ${brand.display_name}` : `${copy.title} · ${brand.display_name}`) : copy.title}</h1>
           <p className="mt-5 text-lg text-foreground-muted">
             {context === "platform"
               ? "Platform metrics, OpenTelemetry health, alerting and Grafana access."
               : mode === "register"
               ? "One secure account for your documents, searches, and answers."
-              : "Your workspace is protected by the Laravel API."}
+              : mode === "login" && brand?.sign_in_introduction ? brand.sign_in_introduction : "Your workspace is protected by the Laravel API."}
           </p>
         </div>
 
@@ -152,31 +179,30 @@ export function AuthForm({ context = "workspace", mode, registrationEnabled = tr
           {(mode === "login" || mode === "register" || mode === "reset") && (
             <label className="grid gap-2 text-sm font-semibold" htmlFor="auth-password">
               Password
-              <Input
+              <PasswordInput
                 id="auth-password"
                 name="password"
-                type="password"
                 autoComplete={
                   mode === "login" ? "current-password" : "new-password"
                 }
                 minLength={mode === "login" ? undefined : 12}
+                onChange={(event) => setPassword(event.target.value)}
                 required
               />
             </label>
           )}
 
+          {(mode === "register" || mode === "reset") && <PasswordStrength password={password} />}
+
+          {mode === "login" && <label className="flex items-center gap-3 text-sm font-semibold" htmlFor="auth-remember"><input className="size-4 accent-[var(--brand)]" id="auth-remember" name="remember" type="checkbox" value="1" />Remember me on this device</label>}
+
           {(mode === "register" || mode === "reset") && (
             <>
-              <p className="text-sm text-foreground-muted">
-                Use 12+ characters with upper and lowercase letters, a number,
-                and a symbol.
-              </p>
               <label className="grid gap-2 text-sm font-semibold" htmlFor="auth-password-confirmation">
                 Confirm password
-                <Input
+                <PasswordInput
                   id="auth-password-confirmation"
                   name="password_confirmation"
-                  type="password"
                   autoComplete="new-password"
                   minLength={12}
                   required
@@ -186,6 +212,7 @@ export function AuthForm({ context = "workspace", mode, registrationEnabled = tr
           )}
 
           {mode === "reset" && <input name="token" type="hidden" value={token} />}
+          {invitationToken && <input name="invitation_token" type="hidden" value={invitationToken} />}
 
           {error ? <Notice tone="destructive">{error}</Notice> : null}
           {message ? <Notice tone="success">{message}</Notice> : null}
@@ -199,10 +226,11 @@ export function AuthForm({ context = "workspace", mode, registrationEnabled = tr
           {mode === "login" && (
             <>
               <Link href="/forgot-password">Forgot password?</Link>
-              {registrationEnabled ? <Link href="/register">Create an account</Link> : null}
+              {registrationEnabled ? <Link href={returnTo ? `/register?next=${encodeURIComponent(returnTo)}` : "/register"}>Create an account</Link> : null}
             </>
           )}
-          {mode !== "login" && <Link href="/login">Back to sign in</Link>}
+          {mode === "register" && <Link href={returnTo ? `/login?next=${encodeURIComponent(returnTo)}` : "/login"}>Already have an account? Sign in</Link>}
+          {mode !== "login" && mode !== "register" && <Link href="/login">Back to sign in</Link>}
         </nav>
       </section>
 

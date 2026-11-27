@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Tests\Feature;
 
 use App\Enums\WorkspaceRole;
+use App\Models\DifyDocumentBinding;
+use App\Models\DifyWorkspaceBinding;
 use App\Models\Document;
 use App\Models\User;
 use App\Models\Workspace;
@@ -13,6 +15,7 @@ use App\Models\WorkspaceMembership;
 use App\Models\WorkspaceUsageEvent;
 use App\Support\Usage\RecordWorkspaceUsage;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
 use Tests\TestCase;
@@ -20,6 +23,61 @@ use Tests\TestCase;
 class WorkspaceUsageVisibilityTest extends TestCase
 {
     use RefreshDatabase;
+
+    public function test_dify_usage_uses_cached_segment_observations_and_keeps_historical_attempts_unavailable(): void
+    {
+        config()->set('documents.processing_driver', 'dify');
+        $owner = User::factory()->create();
+        $workspace = Workspace::factory()->withOwner($owner)->create();
+        $document = Document::factory()->for($workspace)->indexed()->create([
+            'source_checksum_sha256' => hash('sha256', 'observed-policy'),
+        ]);
+        DifyWorkspaceBinding::query()->create([
+            'workspace_id' => $workspace->id,
+            'app_id' => (string) Str::uuid(),
+            'dataset_id' => (string) Str::uuid(),
+            'scope_metadata_id' => (string) Str::uuid(),
+            'enabled' => true,
+        ]);
+        DifyDocumentBinding::query()->create([
+            'workspace_id' => $workspace->id,
+            'document_id' => $document->id,
+            'dataset_id' => DifyWorkspaceBinding::query()->sole()->dataset_id,
+            'scope_key' => 'global',
+            'remote_document_id' => (string) Str::uuid(),
+            'remote_name' => 'observed-policy.pdf',
+            'sync_status' => 'available',
+            'source_checksum_sha256' => $document->source_checksum_sha256,
+            'indexed_segment_count' => 12,
+            'segment_count_status' => 'available',
+            'segment_count_observed_at' => now()->subMinute(),
+            'synced_at' => now(),
+        ]);
+
+        $this->actingAs($owner)
+            ->getJson("/api/workspaces/{$workspace->public_id}/usage?range=7d")
+            ->assertOk()
+            ->assertJsonPath('data.pipeline.document_processing', 'dify')
+            ->assertJsonPath('data.gauges.indexed_chunks', 12)
+            ->assertJsonPath('data.gauges.current_processing_failures', 0)
+            ->assertJsonPath('data.historical.ingestion_failures', null)
+            ->assertJsonPath('data.observations.indexed_chunks.status', 'available');
+
+        DifyDocumentBinding::query()->update(['segment_count_observed_at' => now()->subHours(3)]);
+        $this->getJson("/api/workspaces/{$workspace->public_id}/usage?range=7d")
+            ->assertOk()
+            ->assertJsonPath('data.gauges.indexed_chunks', null)
+            ->assertJsonPath('data.observations.indexed_chunks.status', 'stale');
+
+        DifyDocumentBinding::query()->update([
+            'segment_count_status' => 'unavailable',
+            'segment_count_observed_at' => now(),
+        ]);
+        $this->getJson("/api/workspaces/{$workspace->public_id}/usage?range=7d")
+            ->assertOk()
+            ->assertJsonPath('data.gauges.indexed_chunks', null)
+            ->assertJsonPath('data.observations.indexed_chunks.status', 'unavailable');
+    }
 
     public function test_usage_is_owner_admin_only_tenant_scoped_bounded_and_distinguishes_unavailable_cost(): void
     {
@@ -68,6 +126,40 @@ class WorkspaceUsageVisibilityTest extends TestCase
             'pricing_snapshot' => null,
             'occurred_at' => now()->subDay(),
         ]);
+        $startedAt = now()->subSeconds(2)->startOfSecond();
+        $conversationId = DB::table('conversations')->insertGetId([
+            'public_id' => (string) Str::uuid(),
+            'workspace_id' => $workspace->id,
+            'created_by_user_id' => $owner->id,
+            'title' => 'Usage timing regression',
+            'status' => 'active',
+            'created_at' => $startedAt,
+            'updated_at' => $startedAt,
+        ]);
+        $messageId = DB::table('messages')->insertGetId([
+            'public_id' => (string) Str::uuid(),
+            'workspace_id' => $workspace->id,
+            'conversation_id' => $conversationId,
+            'ordinal' => 1,
+            'role' => 'user',
+            'display_text' => 'How long did this run take?',
+            'created_by_user_id' => $owner->id,
+            'created_at' => $startedAt,
+            'updated_at' => $startedAt,
+        ]);
+        DB::table('generation_runs')->insert([
+            'public_id' => (string) Str::uuid(),
+            'workspace_id' => $workspace->id,
+            'conversation_id' => $conversationId,
+            'user_message_id' => $messageId,
+            'status' => 'completed',
+            'correlation_id' => (string) Str::uuid(),
+            'started_at' => $startedAt,
+            'first_progress_at' => $startedAt->copy()->addSecond(),
+            'completed_at' => $startedAt->copy()->addSeconds(2),
+            'created_at' => $startedAt,
+            'updated_at' => $startedAt,
+        ]);
 
         $path = "/api/workspaces/{$workspace->public_id}/usage?range=7d";
         $this->actingAs($owner)->getJson($path)->assertOk()
@@ -76,6 +168,8 @@ class WorkspaceUsageVisibilityTest extends TestCase
             ->assertJsonPath('data.historical.activity.0.aggregate_count', 1)
             ->assertJsonPath('data.historical.usage.0.cost_basis', 'unavailable')
             ->assertJsonPath('data.historical.usage.0.cost_usd', null)
+            ->assertJsonPath('data.historical.chat.first_visible_response_ms_average', 1000)
+            ->assertJsonPath('data.historical.chat.completion_ms_average', 2000)
             ->assertJsonPath('data.range.semantics', '[start,end) UTC');
         $this->actingAs($member)->getJson($path)->assertForbidden();
         $this->actingAs($admin)->getJson($path)->assertOk();

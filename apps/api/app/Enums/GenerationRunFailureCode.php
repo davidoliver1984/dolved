@@ -9,6 +9,7 @@ enum GenerationRunFailureCode: string
     case ContextualisationFailed = 'contextualisation_failed';
     case RetrievalFailed = 'retrieval_failed';
     case RetrievalScopeUnresolved = 'retrieval_scope_unresolved';
+    case ConversationContextUnavailable = 'conversation_context_unavailable';
     case GenerationContextBudgetExceeded = 'generation_context_budget_exceeded';
     case ProviderUnavailable = 'provider_unavailable';
     case ProviderResponseTimeout = 'provider_response_timeout';

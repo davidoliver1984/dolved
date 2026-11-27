@@ -10,7 +10,7 @@ export function FormField({ children, className, error, help, id, label }: Reado
         id,
       })
     : children;
-  return <div className={cn("grid gap-2", className)} data-slot="form-field"><label className="text-sm font-semibold" htmlFor={id}>{label}</label>{control}{error ? <p className="text-sm text-status-destructive" id={`${id}-error`} role="alert">{error}</p> : help ? <p className="text-sm text-foreground-muted" id={`${id}-help`}>{help}</p> : null}</div>;
+  return <div className={cn("grid content-start gap-2", className)} data-slot="form-field"><label className="text-sm font-semibold" htmlFor={id}>{label}</label>{control}{error ? <p className="text-sm text-status-destructive" id={`${id}-error`} role="alert">{error}</p> : help ? <p className="text-sm text-foreground-muted" id={`${id}-help`}>{help}</p> : null}</div>;
 }
 
 export function FieldGroup({ className, ...props }: HTMLAttributes<HTMLDivElement>) { return <div className={cn("grid gap-4", className)} {...props} />; }

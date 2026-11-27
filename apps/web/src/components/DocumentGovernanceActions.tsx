@@ -5,21 +5,16 @@ import { type FormEvent, useState, useTransition } from "react";
 import {
   approveDocumentVersion,
   correctDocumentVersionTimestamps,
-  createApplicabilitySuccessor,
   rescheduleDocumentVersion,
   withdrawDocumentVersion,
   type DocumentVersion,
 } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 
-type Location = { public_id: string; name: string };
-
 export function DocumentGovernanceActions({
-  locations,
   version,
   workspacePublicId,
 }: Readonly<{
-  locations: Location[];
   version: DocumentVersion;
   workspacePublicId: string;
 }>) {
@@ -35,7 +30,7 @@ export function DocumentGovernanceActions({
         await operation();
         router.refresh();
       } catch (caught) {
-        setError(caught instanceof Error ? caught.message : "The governance action could not be completed.");
+        setError(caught instanceof Error ? caught.message : "The version could not be updated.");
       }
     });
   };
@@ -51,7 +46,7 @@ export function DocumentGovernanceActions({
 
       {capabilities.reschedule ? (
         <details className="rounded-lg border border-border p-3">
-          <summary className="cursor-pointer text-sm font-semibold">Reschedule authority</summary>
+          <summary className="cursor-pointer text-sm font-semibold">Change start date</summary>
           <form className="mt-3 flex flex-wrap items-end gap-2" onSubmit={(event: FormEvent<HTMLFormElement>) => {
             event.preventDefault();
             const value = new FormData(event.currentTarget).get("effective_from")?.toString() ?? "";
@@ -59,24 +54,6 @@ export function DocumentGovernanceActions({
           }}>
             <label className="grid gap-1 text-sm">Effective date<input className="min-h-11 rounded-lg border border-input bg-background px-3" defaultValue={version.effective_from.slice(0, 10)} name="effective_from" required type="date" /></label>
             <Button disabled={pending} size="sm" type="submit" variant="secondary">Save schedule</Button>
-          </form>
-        </details>
-      ) : null}
-
-      {capabilities.create_applicability_successor ? (
-        <details className="rounded-lg border border-border p-3">
-          <summary className="cursor-pointer text-sm font-semibold">Create applicability successor</summary>
-          <form className="mt-3 grid gap-3" onSubmit={(event: FormEvent<HTMLFormElement>) => {
-            event.preventDefault();
-            const data = new FormData(event.currentTarget);
-            execute(() => createApplicabilitySuccessor(workspacePublicId, version.public_id, data.get("effective_from")?.toString() ?? "", data.getAll("locations").map(String)));
-          }}>
-            <label className="grid max-w-xs gap-1 text-sm">Effective date<input className="min-h-11 rounded-lg border border-input bg-background px-3" name="effective_from" required type="date" /></label>
-            <fieldset className="grid gap-2"><legend className="text-sm font-semibold">Applies at</legend>
-              <p className="text-sm text-foreground-muted">Leave every location unchecked to apply universally.</p>
-              {locations.map((location) => <label className="flex gap-2 text-sm" key={location.public_id}><input name="locations" type="checkbox" value={location.public_id} />{location.name}</label>)}
-            </fieldset>
-            <Button className="justify-self-start" disabled={pending} size="sm" type="submit" variant="secondary">Create successor</Button>
           </form>
         </details>
       ) : null}

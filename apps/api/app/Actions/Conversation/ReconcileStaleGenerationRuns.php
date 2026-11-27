@@ -9,12 +9,17 @@ use App\Enums\GenerationRunFailureCode;
 use App\Enums\GenerationRunStatus;
 use App\Models\GenerationRun;
 use App\Services\Conversation\ChatDeliveryEventRecorder;
+use App\Services\Conversation\ConversationContinuationPolicy;
 use App\Support\Usage\RecordWorkspaceUsage;
 use Illuminate\Support\Facades\DB;
 
 final readonly class ReconcileStaleGenerationRuns
 {
-    public function __construct(private ChatDeliveryEventRecorder $events, private RecordWorkspaceUsage $usage) {}
+    public function __construct(
+        private ChatDeliveryEventRecorder $events,
+        private RecordWorkspaceUsage $usage,
+        private ConversationContinuationPolicy $continuation,
+    ) {}
 
     public function handle(): int
     {
@@ -43,6 +48,12 @@ final readonly class ReconcileStaleGenerationRuns
                             'failure_code' => GenerationRunFailureCode::RunTimeout,
                             'completed_at' => now(),
                         ]);
+                    }
+                    if ($run->provider_dispatch_state === 'dispatching') {
+                        $conversation = $run->conversation()->lockForUpdate()->firstOrFail();
+                        if ($conversation->difySession()->exists()) {
+                            $this->continuation->blockForRemoteHistory($conversation);
+                        }
                     }
                     $this->usage->activity($run->workspace_id, 'run_outcome', $run->public_id, $run->status->value);
                     $reconciled++;

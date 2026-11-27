@@ -40,7 +40,7 @@ final class SavedViewController extends Controller
         [$user, $workspace] = $this->scope($request, $workspacePublicId, $workspaces);
         $values = $request->validate([
             'name' => ['required', 'string', 'max:100', 'regex:/^[^\p{C}]+$/u'],
-            'definition' => ['required', 'array'],
+            'definition' => ['present', 'array'],
         ]);
         $definition = SavedViewDefinition::forWrite($values['definition']);
         $this->rejectDuplicateName($workspace, $user, $values['name']);

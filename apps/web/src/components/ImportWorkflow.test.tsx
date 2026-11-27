@@ -9,14 +9,18 @@ const configuration = {
   upload_concurrency: 3,
   retention_days: 7,
   review_options: {
-    categories: [], tags: [], locations: [],
+    categories: [], tags: [], locations: [
+      { public_id: "location-cedar", name: "Cedar House" },
+      { public_id: "location-oakfield", name: "Oakfield" },
+    ],
     owners: [{ public_id: "owner-1", name: "David Oliver" }],
     current_user_public_id: "owner-1",
   },
 };
 
-const { adoptImport, getImportBatch, importMatches, listImportBatches, replaceImportFile } = vi.hoisted(() => ({
+const { adoptImport, decideImport, getImportBatch, importMatches, listImportBatches, promoteImport, replaceImportFile } = vi.hoisted(() => ({
   adoptImport: vi.fn(async () => undefined),
+  decideImport: vi.fn(async () => undefined),
   getImportBatch: vi.fn<() => Promise<ImportBatch>>(),
   importMatches: vi.fn<() => Promise<ImportMatches>>(async () => ({
     profile_version: "import-match-v1",
@@ -26,6 +30,7 @@ const { adoptImport, getImportBatch, importMatches, listImportBatches, replaceIm
     family_candidates: [],
   })),
   listImportBatches: vi.fn<() => Promise<ImportBatch[]>>(async () => []),
+  promoteImport: vi.fn(async () => undefined),
   replaceImportFile: vi.fn(async () => undefined),
 }));
 vi.mock("@/lib/import-workflow", async () => {
@@ -33,10 +38,12 @@ vi.mock("@/lib/import-workflow", async () => {
   return {
     ...actual,
     adoptImport,
+    decideImport,
     getImportBatch,
     importMatches,
     importConfiguration: vi.fn(async () => configuration),
     listImportBatches,
+    promoteImport,
     replaceImportFile,
   };
 });
@@ -44,14 +51,15 @@ vi.mock("@/lib/import-workflow", async () => {
 afterEach(() => { cleanup(); vi.clearAllMocks(); });
 
 describe("ImportWorkflow", () => {
-  it("presents the complete honest seven-stage flow before upload", async () => {
+  it("presents the streamlined six-stage flow before upload", async () => {
     render(<ImportWorkflow workspacePublicId="workspace-1" />);
 
     await waitFor(() => expect(screen.getByText("Add documents")).toBeTruthy());
-    for (const stage of ["Select", "Stage", "Verify", "Match", "Review", "Promote", "Index"]) {
+    for (const stage of ["Select", "Stage", "Verify", "Match", "Review", "Index"]) {
       expect(screen.getByText(stage)).toBeTruthy();
     }
-    expect(screen.getByText(/Nothing reaches the Library until/)).toBeTruthy();
+    expect(screen.queryByText("Promote")).toBeNull();
+    expect(screen.getByText(/before indexing begins/)).toBeTruthy();
   });
 
   it("validates a source locally and makes the staging action explicit", async () => {
@@ -97,10 +105,10 @@ describe("ImportWorkflow", () => {
     await waitFor(() => expect(screen.getByRole("button", { name: /3 documents/ })).toBeTruthy());
     fireEvent.click(screen.getByRole("button", { name: /3 documents/ }));
 
-    expect(screen.getAllByText("Promoted · queued").length).toBeGreaterThan(0);
-    expect(screen.getAllByText("Processing").length).toBeGreaterThan(0);
-    expect(screen.getAllByText("Indexed").length).toBeGreaterThan(0);
-    expect(screen.getAllByText(/Finer ingestion sub-stages are not claimed here/)).toHaveLength(3);
+    expect(screen.getAllByText("Indexing").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("Current").length).toBeGreaterThan(0);
+    expect(screen.getByText("Indexed and current in the knowledge library.")).toBeTruthy();
+    expect(screen.getAllByText(/Indexing is continuing automatically/)).toHaveLength(2);
   });
 
   it("offers an explicit revised-decision adoption action for a terminal conflict", async () => {
@@ -122,9 +130,10 @@ describe("ImportWorkflow", () => {
 
     await waitFor(() => expect(screen.getByRole("button", { name: /1 document/ })).toBeTruthy());
     fireEvent.click(screen.getByRole("button", { name: /1 document/ }));
-    fireEvent.click(screen.getByRole("button", { name: "Review and adopt" }));
-    await waitFor(() => expect(screen.getByRole("heading", { name: "Review and adopt Controlled drugs.pdf" })).toBeTruthy());
-    fireEvent.click(screen.getByRole("button", { name: "Save and adopt" }));
+    fireEvent.click(screen.getByRole("button", { name: "Review and resolve" }));
+    await waitFor(() => expect(screen.getByRole("heading", { name: "Review and resolve Controlled drugs.pdf" })).toBeTruthy());
+    expect(screen.getByRole("dialog")).toBeTruthy();
+    fireEvent.click(screen.getByRole("button", { name: "Save and resolve" }));
 
     await waitFor(() => expect(adoptImport).toHaveBeenCalledWith(
       "workspace-1",
@@ -132,6 +141,117 @@ describe("ImportWorkflow", () => {
       "item-conflict",
       expect.objectContaining({ family: { mode: "new", title: "Controlled drugs" } }),
     ));
+    await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
+  });
+
+  it("requires an explicit applicability choice and supports multiple registered locations", async () => {
+    const reviewable: ImportBatch = {
+      public_id: "batch-applicability",
+      status: "open",
+      retention_expires_at: "2026-11-28T12:00:00Z",
+      created_at: "2026-11-21T12:00:00Z",
+      items: [{
+        public_id: "item-applicability", filename: "Site procedure.pdf", declared_media_type: "application/pdf", size_bytes: 100,
+        preflight_status: "verified", preflight_rejection_reason: null, match_status: "pending", decision_ready: false,
+        promotion: null, document: null,
+      }],
+    };
+    listImportBatches.mockResolvedValueOnce([reviewable]);
+    getImportBatch.mockResolvedValue(reviewable);
+    render(<ImportWorkflow workspacePublicId="workspace-1" />);
+
+    await waitFor(() => expect(screen.getByRole("button", { name: /1 document/ })).toBeTruthy());
+    fireEvent.click(screen.getByRole("button", { name: /1 document/ }));
+    fireEvent.click(screen.getByRole("button", { name: "Review match and metadata" }));
+    await waitFor(() => expect(screen.getByRole("group", { name: "Where does this document apply?" })).toBeTruthy());
+    expect(screen.getByRole("dialog")).toBeTruthy();
+
+    fireEvent.click(screen.getByLabelText(/Selected registered locations/));
+    const save = screen.getByRole("button", { name: "Save review" });
+    expect(save.hasAttribute("disabled")).toBe(true);
+    fireEvent.click(screen.getByLabelText("Cedar House"));
+    fireEvent.click(screen.getByLabelText("Oakfield"));
+    expect(save.hasAttribute("disabled")).toBe(false);
+  });
+
+  it("starts indexing automatically after a review is saved", async () => {
+    const reviewable: ImportBatch = {
+      public_id: "batch-auto-index",
+      status: "open",
+      retention_expires_at: "2026-11-28T12:00:00Z",
+      created_at: "2026-11-21T12:00:00Z",
+      items: [{
+        public_id: "item-auto-index", filename: "Medication policy.pdf", declared_media_type: "application/pdf", size_bytes: 100,
+        preflight_status: "verified", preflight_rejection_reason: null, match_status: "pending", decision_ready: false,
+        promotion: null, document: null,
+      }],
+    };
+    listImportBatches.mockResolvedValueOnce([reviewable]);
+    getImportBatch.mockResolvedValue(reviewable);
+    render(<ImportWorkflow workspacePublicId="workspace-1" />);
+
+    await waitFor(() => expect(screen.getByRole("button", { name: /1 document/ })).toBeTruthy());
+    fireEvent.click(screen.getByRole("button", { name: /1 document/ }));
+    fireEvent.click(screen.getByRole("button", { name: "Review match and metadata" }));
+    await waitFor(() => expect(screen.getByRole("dialog")).toBeTruthy());
+    fireEvent.click(screen.getByRole("button", { name: "Save review" }));
+
+    await waitFor(() => expect(decideImport).toHaveBeenCalledWith(
+      "workspace-1", "batch-auto-index", "item-auto-index", expect.objectContaining({ family: { mode: "new", title: "Medication policy" } }),
+    ));
+    expect(promoteImport).toHaveBeenCalledWith("workspace-1", "batch-auto-index", "item-auto-index");
+    await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
+    expect(screen.queryByRole("button", { name: "Promote to Library" })).toBeNull();
+  });
+
+  it("does not silently select a weak family match as a new version", async () => {
+    const reviewable: ImportBatch = {
+      public_id: "batch-weak-match", status: "open", retention_expires_at: "2026-11-28T12:00:00Z", created_at: "2026-11-21T12:00:00Z",
+      items: [{
+        public_id: "item-weak-match", filename: "Infection prevention control.pdf", declared_media_type: "application/pdf", size_bytes: 100,
+        preflight_status: "verified", preflight_rejection_reason: null, match_status: "pending", decision_ready: false, promotion: null, document: null,
+      }],
+    };
+    listImportBatches.mockResolvedValueOnce([reviewable]);
+    getImportBatch.mockResolvedValue(reviewable);
+    importMatches.mockResolvedValueOnce({
+      profile_version: "import-match-v1", exact_live_duplicates: [], deleted_duplicates: [], applicability_only_redirect_document_id: null,
+      family_candidates: [{ family_id: "data-protection", title: "Data protection standard", score_basis_points: 6300, current_effective_from: "2026-11-25T00:00:00Z" }],
+    });
+    render(<ImportWorkflow workspacePublicId="workspace-1" />);
+
+    await waitFor(() => expect(screen.getByRole("button", { name: /1 document/ })).toBeTruthy());
+    fireEvent.click(screen.getByRole("button", { name: /1 document/ }));
+    fireEvent.click(screen.getByRole("button", { name: "Review match and metadata" }));
+    await waitFor(() => expect(screen.getByRole("dialog")).toBeTruthy());
+
+    expect((screen.getByLabelText("Create a new document") as HTMLInputElement).checked).toBe(true);
+    expect((screen.getByLabelText("Add as a new version of Data protection standard") as HTMLInputElement).checked).toBe(false);
+  });
+
+  it("closes the review modal from its top-right close control", async () => {
+    const reviewable: ImportBatch = {
+      public_id: "batch-close-review",
+      status: "open",
+      retention_expires_at: "2026-11-28T12:00:00Z",
+      created_at: "2026-11-21T12:00:00Z",
+      items: [{
+        public_id: "item-close-review", filename: "Fire procedure.pdf", declared_media_type: "application/pdf", size_bytes: 100,
+        preflight_status: "verified", preflight_rejection_reason: null, match_status: "pending", decision_ready: false,
+        promotion: null, document: null,
+      }],
+    };
+    listImportBatches.mockResolvedValueOnce([reviewable]);
+    getImportBatch.mockResolvedValue(reviewable);
+    render(<ImportWorkflow workspacePublicId="workspace-1" />);
+
+    await waitFor(() => expect(screen.getByRole("button", { name: /1 document/ })).toBeTruthy());
+    fireEvent.click(screen.getByRole("button", { name: /1 document/ }));
+    fireEvent.click(screen.getByRole("button", { name: "Review match and metadata" }));
+    await waitFor(() => expect(screen.getByRole("dialog")).toBeTruthy());
+    fireEvent.click(screen.getByRole("button", { name: "Close dialog" }));
+
+    expect(screen.queryByRole("dialog")).toBeNull();
   });
 
   it("stages a corrected replacement instead of promoting a duplicate", async () => {

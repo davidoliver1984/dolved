@@ -148,6 +148,19 @@ final class DocumentMetadataApiTest extends TestCase
             ->assertJsonCount(20, 'data.tags');
 
         $this->actingAs($owner)
+            ->putJson($this->tagsUrl($workspace, $family), ['tag_public_ids' => []])
+            ->assertOk()
+            ->assertJsonCount(0, 'data.tags');
+
+        $this->assertCount(0, $family->refresh()->tags);
+
+        $this->actingAs($owner)
+            ->putJson($this->tagsUrl($workspace, $family), [
+                'tag_public_ids' => $tags->take(20)->pluck('public_id')->all(),
+            ])
+            ->assertOk();
+
+        $this->actingAs($owner)
             ->putJson($this->tagsUrl($workspace, $family), [
                 'tag_public_ids' => $tags->pluck('public_id')->all(),
             ])

@@ -171,6 +171,20 @@ final class DocumentContentDeliveryTest extends TestCase
             ->assertJsonPath('data.warnings.0.code', 'layout_changed');
     }
 
+    public function test_extracted_text_fails_closed_when_the_active_projection_is_not_currently_presentable(): void
+    {
+        [$user, $workspace, $document] = $this->memberDocument('policy.pdf', 'application/pdf', 'source');
+        $generation = $this->publishedGeneration($document);
+        $document->forceFill([
+            'active_extraction_projection_generation_id' => $generation->id,
+            'status' => 'processing',
+        ])->save();
+
+        $this->actingAs($user)->getJson(
+            "/api/workspaces/{$workspace->public_id}/documents/{$document->public_id}/extracted-text",
+        )->assertNotFound();
+    }
+
     /** @return array{User, Workspace, Document} */
     private function memberDocument(string $filename, string $mediaType, string $bytes): array
     {

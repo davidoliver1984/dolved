@@ -33,6 +33,8 @@ x-api-environment: &api-environment
   FILESYSTEM_DISK: s3
   DOCUMENT_STORAGE_DISK: s3
   DOCUMENT_UPLOAD_DISK: s3_uploads
+  BRANDING_WORKSPACE_PUBLIC_ID: ${BRANDING_WORKSPACE_PUBLIC_ID:-}
+  BRANDING_ASSET_DISK: ${BRANDING_ASSET_DISK:-s3}
   DOCUMENT_PROCESSING_DRIVER: dify
   IMPORT_PREFLIGHT_DRIVER: local
   AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:?AWS_ACCESS_KEY_ID is required}
@@ -52,7 +54,19 @@ x-api-environment: &api-environment
   DOCUMENT_ADMINISTRATION_QUEUE: document-administration
   DOCUMENT_GOVERNANCE_QUEUE: document-governance
   LOG_CHANNEL: stderr
-  OTEL_SDK_DISABLED: "true"
+  OTEL_SDK_DISABLED: ${OTEL_SDK_DISABLED:-false}
+  OTEL_SERVICE_NAME: dolved-pilot-api
+  OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
+  OTEL_EXPORTER_OTLP_PROTOCOL: http/protobuf
+  OTEL_EXPORTER_OTLP_TIMEOUT: ${OTEL_EXPORTER_OTLP_TIMEOUT:-250}
+  OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE: cumulative
+  OPERATIONAL_METRICS_ENABLED: ${OPERATIONAL_METRICS_ENABLED:-true}
+  OPERATIONAL_METRICS_URL: http://otel-lgtm:9090
+  OPERATIONAL_METRICS_TIMEOUT_SECONDS: ${OPERATIONAL_METRICS_TIMEOUT_SECONDS:-1}
+  OPERATIONAL_METRICS_CACHE_SECONDS: ${OPERATIONAL_METRICS_CACHE_SECONDS:-10}
+  OPERATIONAL_GRAFANA_URL: https://${DOLVED_DOMAIN}/__ops/grafana/
+  OPERATIONAL_ALERTMANAGER_URL: http://alertmanager:9093/__ops/alerts
+  OPERATIONAL_ALERTMANAGER_PUBLIC_URL: https://${DOLVED_DOMAIN}/__ops/alerts/
   MAIL_MAILER: ${MAIL_MAILER:-smtp}
   MAIL_HOST: ${MAIL_HOST:?MAIL_HOST is required}
   MAIL_PORT: ${MAIL_PORT:-587}
@@ -66,6 +80,8 @@ x-api-service: &api-service
   build:
     context: ../../apps/api
     target: production
+    args:
+      VCS_REF: ${DOLVED_SOURCE_REVISION:-unknown}
     additional_contexts:
       contracts: ../../contracts
   image: dolved-api:${DOLVED_IMAGE_TAG:-local}
@@ -174,6 +190,7 @@ services:
       target: production
       args:
         NEXT_PUBLIC_API_URL: https://${API_DOMAIN:?API_DOMAIN is required}
+        VCS_REF: ${DOLVED_SOURCE_REVISION:-unknown}
     image: dolved-web:${DOLVED_IMAGE_TAG:-local}
     environment:
       API_INTERNAL_URL: http://api
@@ -193,6 +210,86 @@ services:
     cpus: 0.5
     restart: unless-stopped
 
+  alertmanager:
+    image: prom/alertmanager:v0.33.1
+    command:
+      - --config.file=/etc/alertmanager/alertmanager.yaml
+      - --storage.path=/alertmanager
+      - --web.external-url=https://${DOLVED_DOMAIN}/__ops/alerts/
+      - --web.route-prefix=/__ops/alerts/
+    volumes:
+      - ../../infrastructure/observability/alertmanager.yaml:/etc/alertmanager/alertmanager.yaml:ro
+      - alertmanager_data:/alertmanager
+    ports:
+      - "127.0.0.1:${ALERTMANAGER_PORT:-9093}:9093"
+    healthcheck:
+      test: [CMD, /bin/amtool, --alertmanager.url=http://127.0.0.1:9093/__ops/alerts/, config, show]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 10s
+    logging: *bounded-logging
+    mem_limit: 256m
+    cpus: 0.25
+    restart: unless-stopped
+
+  otel-lgtm:
+    image: grafana/otel-lgtm:0.29.2
+    environment:
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+      GF_AUTH_ANONYMOUS_ORG_ROLE: Admin
+      GF_AUTH_DISABLE_LOGIN_FORM: "true"
+      GF_SERVER_ROOT_URL: https://${DOLVED_DOMAIN}/__ops/grafana/
+      GF_SERVER_SERVE_FROM_SUB_PATH: "true"
+    volumes:
+      - telemetry_data:/data
+      - ../../infrastructure/observability/prometheus.yaml:/otel-lgtm/prometheus.yaml:ro
+      - ../../infrastructure/observability/rules:/etc/dolved-observability/rules:ro
+    ports:
+      - "127.0.0.1:${GRAFANA_PORT:-3001}:3000"
+    depends_on:
+      alertmanager:
+        condition: service_healthy
+    healthcheck:
+      test: [CMD, curl, --fail, --silent, --show-error, http://127.0.0.1:3000/api/health]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 20s
+    stop_grace_period: 20s
+    logging: *bounded-logging
+    mem_limit: 1536m
+    cpus: 1.0
+    restart: unless-stopped
+
+  otel-collector:
+    image: ghcr.io/open-telemetry/opentelemetry-collector-releases/opentelemetry-collector:0.153.0
+    command:
+      - --config=/etc/otelcol/config.yaml
+    environment:
+      OTEL_BACKEND_OTLP_ENDPOINT: http://otel-lgtm:4318
+      OTEL_TRACE_SAMPLING_PERCENTAGE: ${OTEL_TRACE_SAMPLING_PERCENTAGE:-100}
+    volumes:
+      - ../../infrastructure/opentelemetry/collector.yaml:/etc/otelcol/config.yaml:ro
+    ports:
+      - "127.0.0.1:${OTEL_COLLECTOR_GRPC_PORT:-4317}:4317"
+      - "127.0.0.1:${OTEL_COLLECTOR_HTTP_PORT:-4318}:4318"
+      - "127.0.0.1:${OTEL_COLLECTOR_HEALTH_PORT:-13133}:13133"
+    depends_on:
+      otel-lgtm:
+        condition: service_healthy
+    healthcheck:
+      test: [CMD, /otelcol, validate, --config=/etc/otelcol/config.yaml]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+    stop_grace_period: 15s
+    logging: *bounded-logging
+    mem_limit: 256m
+    cpus: 0.25
+    restart: unless-stopped
+
   caddy:
     image: caddy:2.10.2-alpine
     environment:
@@ -206,6 +303,7 @@ services:
       - 443:443/udp
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - /etc/dolved/caddy-sites:/etc/caddy/external-sites:ro
       - caddy_data:/data
       - caddy_config:/config
     depends_on:
@@ -213,14 +311,20 @@ services:
         condition: service_healthy
       objectstore:
         condition: service_healthy
+      alertmanager:
+        condition: service_healthy
+      otel-lgtm:
+        condition: service_healthy
     logging: *bounded-logging
     mem_limit: 128m
     cpus: 0.5
     restart: unless-stopped
 
 volumes:
+  alertmanager_data:
   postgres_data:
   object_data:
+  telemetry_data:
   caddy_data:
   caddy_config:
 

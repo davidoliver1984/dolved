@@ -10,6 +10,7 @@ import type {
   DocumentVersionHistory,
   GovernanceActionableWork,
   PlatformOperationsSnapshot,
+  PlatformTenant,
   SavedView,
   User,
   Workspace,
@@ -18,6 +19,7 @@ import type {
   WorkspaceInvitation,
   WorkspaceMembership,
   WorkspaceUsageSnapshot,
+  TenantBrandingSnapshot,
 } from "@/lib/api";
 import type { Conversation } from "@/lib/conversations";
 import { forwardedAuthCookieHeader } from "@/lib/auth-cookies";
@@ -157,6 +159,40 @@ export async function platformOperations(): Promise<
   }
 }
 
+export async function platformTenants(): Promise<
+  | { status: "ok"; data: PlatformTenant[] }
+  | { status: "unauthorized" }
+  | { status: "concealed" }
+  | { status: "unavailable" }
+> {
+  try {
+    const response = await serverFetch("/api/platform/tenants");
+    if (response.status === 401) return { status: "unauthorized" };
+    if (response.status === 404) return { status: "concealed" };
+    if (!response.ok) return { status: "unavailable" };
+    return { status: "ok", data: ((await response.json()) as { data: PlatformTenant[] }).data };
+  } catch {
+    return { status: "unavailable" };
+  }
+}
+
+export async function platformTenantBranding(workspacePublicId: string): Promise<
+  | { status: "ok"; data: TenantBrandingSnapshot }
+  | { status: "unauthorized" }
+  | { status: "concealed" }
+  | { status: "unavailable" }
+> {
+  try {
+    const response = await serverFetch(`/api/platform/tenants/${encodeURIComponent(workspacePublicId)}/branding`);
+    if (response.status === 401) return { status: "unauthorized" };
+    if (response.status === 404) return { status: "concealed" };
+    if (!response.ok) return { status: "unavailable" };
+    return { status: "ok", data: ((await response.json()) as { data: TenantBrandingSnapshot }).data };
+  } catch {
+    return { status: "unavailable" };
+  }
+}
+
 export async function currentUser(): Promise<User | null> {
   const response = await serverFetch("/api/auth/user");
 
@@ -171,6 +207,13 @@ export async function currentUser(): Promise<User | null> {
   const payload = (await response.json()) as { data: { user: User } };
 
   return payload.data.user;
+}
+
+export async function validPendingInvitation(token: string): Promise<boolean> {
+  if (!/^[A-Za-z0-9_-]{32,512}$/.test(token)) return false;
+
+  const response = await serverFetch(`/api/branding/invitations/${encodeURIComponent(token)}`);
+  return response.ok;
 }
 
 export async function userWorkspaces(): Promise<Workspace[]> {

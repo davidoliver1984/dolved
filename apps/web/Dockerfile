@@ -25,6 +25,9 @@ COPY . .
 RUN npm run build
 
 FROM node:${NODE_VERSION} AS production
+ARG VCS_REF="unknown"
+LABEL org.opencontainers.image.revision="${VCS_REF}" \
+      org.opencontainers.image.source="https://github.com/davidoliver1984/dolved"
 WORKDIR /app
 ENV NODE_ENV=production
 ENV HOSTNAME=0.0.0.0

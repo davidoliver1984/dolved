@@ -32,6 +32,35 @@ describe("apiFetch", () => {
     expect(headers.get("X-XSRF-TOKEN")).toBe("signed=token");
   });
 
+  it("announces the specific completed mutation instead of a generic save", async () => {
+    document.cookie = "XSRF-TOKEN=signed%3Dtoken; Path=/";
+    const receive = vi.fn();
+    window.addEventListener("dolved:feedback", receive);
+    vi.spyOn(globalThis, "fetch")
+      .mockResolvedValueOnce(new Response(null, { status: 204 }))
+      .mockResolvedValueOnce(Response.json({ data: {} }, { status: 200 }));
+
+    await apiFetch("/api/workspaces/workspace-1/documents/document-1/governance/approve", { method: "POST" });
+
+    expect(receive).toHaveBeenCalledOnce();
+    expect((receive.mock.calls[0][0] as CustomEvent).detail).toEqual({ message: "Document approved.", tone: "success" });
+    window.removeEventListener("dolved:feedback", receive);
+  });
+
+  it("does not invent a generic success message for background writes", async () => {
+    document.cookie = "XSRF-TOKEN=signed%3Dtoken; Path=/";
+    const receive = vi.fn();
+    window.addEventListener("dolved:feedback", receive);
+    vi.spyOn(globalThis, "fetch")
+      .mockResolvedValueOnce(new Response(null, { status: 204 }))
+      .mockResolvedValueOnce(Response.json({ data: {} }, { status: 200 }));
+
+    await apiFetch("/api/workspaces/workspace-1/conversations/conversation-1/messages", { method: "POST" });
+
+    expect(receive).not.toHaveBeenCalled();
+    window.removeEventListener("dolved:feedback", receive);
+  });
+
   it("does not make a CSRF bootstrap request for safe reads", async () => {
     const fetchMock = vi
       .spyOn(globalThis, "fetch")
@@ -51,7 +80,7 @@ describe("apiFetch", () => {
         body: JSON.stringify({ email: "david@example.test" }),
       }),
     ).rejects.toMatchObject({
-      message: "Dolved could not reach the API. Please try again.",
+      message: "We could not reach the service. Please try again.",
       status: 0,
     });
   });
@@ -85,7 +114,7 @@ describe("apiFetch", () => {
     );
 
     await expect(apiFetch("/api/auth/user")).rejects.toMatchObject({
-      message: "Dolved received an unexpected response. Please try again.",
+      message: "The service returned an unexpected response. Please try again.",
       status: 502,
     });
   });

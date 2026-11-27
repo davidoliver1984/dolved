@@ -48,7 +48,7 @@ final class ImportWorkflowController extends Controller
                         'public_id' => $membership->user->public_id,
                         'name' => $membership->user->name,
                     ])->values(),
-                'locations' => $workspace->organisationalLocations()->orderBy('name')
+                'locations' => $workspace->organisationalLocations()->whereNull('retired_at')->orderBy('name')
                     ->get(['public_id', 'name'])->values(),
                 'current_user_public_id' => $user->public_id,
             ],

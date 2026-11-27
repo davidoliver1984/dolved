@@ -67,6 +67,8 @@ final class DocumentVersionGovernanceApiTest extends TestCase
             ->assertJsonPath('meta.current_version_public_id', $first->public_id)
             ->assertJsonPath('data.0.is_current_authority', true)
             ->assertJsonPath('data.0.capabilities.withdraw', true)
+            ->assertJsonPath('data.0.presentation.extracted_text', false)
+            ->assertJsonPath('data.0.presentation.comparison_compatible_with', [])
             ->assertJsonPath('data.0.capabilities.create_applicability_successor', true)
             ->assertJsonPath('data.0.capabilities.approve', false)
             ->assertJsonPath('data.1.capabilities.approve', true)
@@ -83,11 +85,8 @@ final class DocumentVersionGovernanceApiTest extends TestCase
 
         $this->actingAs($owner)->getJson($url.'?'.http_build_query(['from' => $first->public_id, 'to' => $second->public_id]))
             ->assertOk()
-            ->assertJsonPath('data.available', true)
-            ->assertJsonPath('data.from.document.public_id', $first->public_id)
-            ->assertJsonPath('data.to.document.public_id', $second->public_id)
-            ->assertJsonPath('data.from.content_available', false)
-            ->assertJsonPath('data.to.content_available', false);
+            ->assertJsonPath('data.available', false)
+            ->assertJsonPath('data.reason', 'A compatible published text projection is not available for both versions.');
 
         $this->actingAs($owner)->getJson($url.'?'.http_build_query(['from' => $first->public_id, 'to' => $first->public_id]))
             ->assertUnprocessable();
@@ -116,14 +115,13 @@ final class DocumentVersionGovernanceApiTest extends TestCase
 
         $this->actingAs($owner)->getJson($url)
             ->assertOk()
-            ->assertJsonPath('data.from.document.public_id', $first->public_id)
-            ->assertJsonPath('data.to.document.public_id', $second->public_id);
+            ->assertJsonPath('data.available', false);
         $this->actingAs($owner)->getJson($url.'?'.http_build_query(['to' => $second->public_id]))
             ->assertOk()
-            ->assertJsonPath('data.from.document.public_id', $first->public_id);
+            ->assertJsonPath('data.available', false);
         $this->actingAs($owner)->getJson($url.'?'.http_build_query(['from' => $first->public_id]))
             ->assertOk()
-            ->assertJsonPath('data.to.document.public_id', $second->public_id);
+            ->assertJsonPath('data.available', false);
 
         $singleFamily = DocumentFamily::factory()->for($workspace)->create(['owner_user_id' => $owner->id]);
         Document::factory()->for($workspace)->for($singleFamily, 'family')->for($owner, 'createdBy')->create();
@@ -145,9 +143,8 @@ final class DocumentVersionGovernanceApiTest extends TestCase
 
         $this->actingAs($owner)->getJson($url.'?'.http_build_query(['from' => $first->public_id, 'to' => $second->public_id]))
             ->assertOk()
-            ->assertJsonPath('data.from.document.public_id', $first->public_id)
-            ->assertJsonPath('data.from.content_available', false)
-            ->assertJsonPath('data.to.document.public_id', $second->public_id);
+            ->assertJsonPath('data.available', false)
+            ->assertJsonPath('data.reason', 'A compatible published text projection is not available for both versions.');
     }
 
     public function test_matching_completed_command_replays_and_conflicting_binding_fails_closed(): void
@@ -207,6 +204,27 @@ final class DocumentVersionGovernanceApiTest extends TestCase
             ->assertJsonPath('error.code', 'governance_state_conflict');
 
         $this->assertDatabaseCount('document_governance_commands', 2);
+    }
+
+    public function test_universal_applicability_is_an_explicit_empty_location_set_not_a_missing_field(): void
+    {
+        [$owner, $workspace] = $this->ownerWorkspace();
+        $document = Document::factory()->for($workspace)->for($owner, 'createdBy')->uploading()->create();
+        $url = $this->commandUrl($workspace, $document, 'applicability-successors');
+        $payload = [
+            'idempotency_key' => (string) Str::uuid(),
+            'effective_from' => '2026-12-01',
+        ];
+
+        $this->actingAs($owner)
+            ->postJson($url, [...$payload, 'location_public_ids' => []])
+            ->assertConflict()
+            ->assertJsonPath('error.code', 'governance_state_conflict');
+
+        $this->actingAs($owner)
+            ->postJson($url, $payload)
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors('location_public_ids');
     }
 
     public function test_reschedule_and_owner_only_historical_correction_use_durable_commands(): void

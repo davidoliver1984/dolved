@@ -9,10 +9,10 @@ describe("KnowledgeReadinessPanel", () => {
     render(<KnowledgeReadinessPanel onAsk={vi.fn()} onChooseQuestion={vi.fn()} searchableDocumentCount={0} starterQuestions={[]} workspaceId="workspace-1" />);
 
     expect(screen.getByText("0 documents currently searchable within your workspace’s knowledge base")).not.toBeNull();
-    expect(screen.getByText("Prepare a document before asking Dolved")).not.toBeNull();
+    expect(screen.getByText("Prepare a document before asking questions")).not.toBeNull();
     expect(screen.getByText(/Uploaded files are not searchable automatically/)).not.toBeNull();
     expect(screen.getByRole("link", { name: /Upload documents/ }).getAttribute("href")).toBe("/app/workspaces/workspace-1/documents");
-    expect(screen.queryByRole("button", { name: /Ask Dolved/ })).toBeNull();
+    expect(screen.queryByRole("button", { name: /Ask a question/ })).toBeNull();
   });
 
   it("shows exact readiness, deterministic questions and both real actions", () => {
@@ -23,7 +23,7 @@ describe("KnowledgeReadinessPanel", () => {
     expect(screen.getByText("2 documents currently searchable within your workspace’s knowledge base")).not.toBeNull();
     fireEvent.click(screen.getByRole("button", { name: "What are the key points in Medication policy?" }));
     expect(choose).toHaveBeenCalledWith("What are the key points in Medication policy?");
-    fireEvent.click(screen.getByRole("button", { name: /Ask Dolved/ }));
+    fireEvent.click(screen.getByRole("button", { name: /Ask a question/ }));
     expect(ask).toHaveBeenCalledOnce();
     expect(screen.getByRole("link", { name: /View searchable documents/ }).getAttribute("href")).toBe("/app/workspaces/workspace-1/documents?searchable=true");
   });

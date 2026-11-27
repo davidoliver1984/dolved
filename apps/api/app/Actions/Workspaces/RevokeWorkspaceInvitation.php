@@ -38,11 +38,11 @@ class RevokeWorkspaceInvitation
             }
             $actorRole = WorkspaceMembership::query()
                 ->where('workspace_id', $workspace->id)->where('user_id', $actor->id)
-                ->lockForUpdate()->value('role');
-            if ($actorRole === WorkspaceRole::Admin->value && $invitation->intended_role !== WorkspaceRole::Member) {
+                ->lockForUpdate()->first()?->role;
+            if ($actorRole === WorkspaceRole::Admin && $invitation->intended_role !== WorkspaceRole::Member) {
                 throw WorkspaceAdministrationException::conflict('invitation_revoke_forbidden', 'An admin may revoke only ordinary-member invitations.');
             }
-            if (! in_array($actorRole, [WorkspaceRole::Owner->value, WorkspaceRole::Admin->value], true)) {
+            if (! in_array($actorRole, [WorkspaceRole::Owner, WorkspaceRole::Admin], true)) {
                 throw WorkspaceAdministrationException::conflict('invitation_revoke_forbidden', 'You cannot revoke this invitation.');
             }
             if ($invitation->status === WorkspaceInvitationStatus::Pending) {

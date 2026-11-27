@@ -8,7 +8,7 @@ afterEach(cleanup);
 const snapshot: WorkspaceUsageSnapshot = {
   range: { key: "30d", start: "2026-07-20T10:00:00Z", end: "2026-08-19T10:00:00Z", semantics: "[start,end) UTC" },
   as_of: "2026-08-19T10:00:00Z",
-  gauges: { active_documents: 12, logical_source_bytes: 4096, indexed_chunks: 34 },
+  gauges: { active_documents: 12, logical_source_bytes: 4096, indexed_chunks: 34, current_processing_failures: 1 },
   historical: {
     ingestion_failures: 2,
     activity: [{ event_kind: "run_outcome", outcome: "completed", aggregate_count: 7 }],
@@ -27,7 +27,19 @@ const snapshot: WorkspaceUsageSnapshot = {
       cost_usd: "0.00125",
       observation_count: 7,
     }],
+    chat: {
+      accepted_submissions: 7,
+      statuses: [{ status: "completed", aggregate_count: 7 }],
+      first_visible_response_ms_average: 350,
+      completion_ms_average: 1200,
+    },
+    retrieval: { runs_with_recorded_sources: 7, average_returned_passages: 8.5, empty_retrievals: 0 },
+    document_sync: [{ sync_status: "available", aggregate_count: 12 }],
+    unknown_cost_observations: 0,
   },
+  coverage: { status: "partial", collected_at: "2026-08-19T10:00:00Z", usage_observation_count: 7, limitations: ["A stated limitation."] },
+  pipeline: { document_processing: "dify", chat_generation: "dify", status: "available" },
+  observations: { indexed_chunks: { status: "available", source: "dify_segments_api_cached", observed_at: "2026-08-19T09:55:00Z" } },
   labels: {
     logical_source_bytes: "Logical uploaded source bytes; not physical storage or billing usage.",
     cost: "Estimated cost is not billing-grade.",
@@ -39,8 +51,20 @@ describe("WorkspaceUsage", () => {
     render(<WorkspaceUsage initialSnapshot={snapshot} workspaceId="workspace" />);
     expect(screen.getByText("Reporting period")).toBeTruthy();
     expect(screen.getByText("Workspace activity")).toBeTruthy();
-    expect(screen.getByText("12")).toBeTruthy();
+    expect(screen.getAllByText("12").length).toBeGreaterThan(0);
     expect(screen.getAllByText(/estimated/).length).toBeGreaterThan(0);
     expect(screen.getByText(/not billing-grade/)).toBeTruthy();
+  });
+
+  it("shows an overdue Dify observation as stale rather than zero", () => {
+    const stale = structuredClone(snapshot);
+    stale.gauges.indexed_chunks = null;
+    stale.observations.indexed_chunks.status = "stale";
+    stale.observations.indexed_chunks.observed_at = "2026-08-18T09:55:00Z";
+
+    render(<WorkspaceUsage initialSnapshot={stale} workspaceId="workspace" />);
+
+    expect(screen.getByText("Stale")).toBeTruthy();
+    expect(screen.getByText(/refresh overdue/)).toBeTruthy();
   });
 });

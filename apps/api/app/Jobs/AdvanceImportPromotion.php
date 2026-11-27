@@ -8,6 +8,8 @@ use App\Actions\Imports\ClaimImportPromotion;
 use App\Actions\Imports\FinalizeImportPromotion;
 use App\Actions\Imports\RecordImportPromotionFailure;
 use App\Actions\Imports\VerifyImportPromotionSource;
+use App\Enums\PromotionAttemptStatus;
+use App\Exceptions\ImportPromotionException;
 use App\Models\PromotionAttempt;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -41,11 +43,13 @@ final class AdvanceImportPromotion implements ShouldQueue
         $attempt = PromotionAttempt::query()->findOrFail($this->attemptId);
         $lease = $claim->handle($attempt);
         try {
-            $verified = $verify->handle(
-                $lease['attempt'],
-                $lease['lease_token'],
-                $lease['lease_generation'],
-            );
+            $verified = $lease['attempt']->status === PromotionAttemptStatus::SourceVerified
+                ? $lease['attempt']
+                : $verify->handle(
+                    $lease['attempt'],
+                    $lease['lease_token'],
+                    $lease['lease_generation'],
+                );
             $finalize->handle(
                 $verified,
                 $lease['lease_token'],
@@ -56,7 +60,9 @@ final class AdvanceImportPromotion implements ShouldQueue
                 $lease['attempt'],
                 $lease['lease_token'],
                 $lease['lease_generation'],
-                'promotion_execution_failed',
+                $exception instanceof ImportPromotionException
+                    ? $exception->reason
+                    : 'promotion_execution_failed',
             );
             throw $exception;
         }

@@ -97,6 +97,8 @@ function services() {
       send: vi.fn().mockResolvedValue({ run_id: "run-1", status: "queued" }),
       retry: vi.fn(),
       cancel: vi.fn(),
+      feedback: vi.fn().mockImplementation(async (_workspace, _conversation, _run, feedback) => ({ ...feedback, submitted_at: "2026-08-18T12:03:00Z" })),
+      removeFeedback: vi.fn().mockResolvedValue(undefined),
       subscribe: vi.fn(
         (
           _workspace: string,
@@ -122,6 +124,23 @@ function services() {
 }
 
 describe("ChatWorkspace", () => {
+  it("uses the configured chat welcome copy in the page header and empty state", async () => {
+    const fixture = services();
+    render(<ChatWorkspace
+      initialConversationId={null}
+      services={fixture.api}
+      showConversationNavigation={false}
+      welcomeHeading="Ask Cherish"
+      welcomeIntroduction="Ask about approved Cherish policies and procedures."
+      workspaceId="workspace-1"
+      workspaceName="Dolved pilot"
+    />);
+
+    expect(await screen.findByRole("heading", { level: 1, name: "Ask Cherish" })).not.toBeNull();
+    expect(screen.getAllByText("Ask Cherish")).toHaveLength(2);
+    expect(screen.getAllByText("Ask about approved Cherish policies and procedures.")).toHaveLength(2);
+  });
+
   it("binds an explicit registered site when creating a conversation", async () => {
     const fixture = services();
     const user = userEvent.setup();
@@ -133,8 +152,12 @@ describe("ChatWorkspace", () => {
       workspaceName="Care"
     />);
 
-    await user.selectOptions(await screen.findByLabelText("Site context"), "09d65ad7-299f-46f7-b9f1-a0ae564cd31a");
-    await user.type(screen.getByLabelText("Ask a question"), "What is the local rule?");
+    const question = screen.getByLabelText("Ask a question");
+    const locationFilter = await screen.findByLabelText("Location filter");
+    expect(question.compareDocumentPosition(locationFilter) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(screen.getByRole("option", { name: "Organisation-wide" })).not.toBeNull();
+    await user.selectOptions(locationFilter, "09d65ad7-299f-46f7-b9f1-a0ae564cd31a");
+    await user.type(question, "What is the local rule?");
     await user.click(screen.getByRole("button", { name: "Send" }));
 
     await waitFor(() => expect(fixture.api.create).toHaveBeenCalledWith(
@@ -145,12 +168,13 @@ describe("ChatWorkspace", () => {
 
   it("labels Dify context as retrieved sources rather than claim citations", async () => {
     const fixture = services();
-    fixture.completed.site_context = { scope_key: "global", location_id: null, name: "Organisation-wide only" };
+    fixture.completed.site_context = { scope_key: "global", location_id: null, name: "Organisation-wide", status: "active" };
+    fixture.completed.messages![1].text = "Use the **current procedure** [Schedule A]. citeturn0search0 【Retrieved context】";
     fixture.completed.runs![0].answer = {
       id: "answer-1",
       outcome: "answered",
       presentation: "saved-message-v1",
-      text: "Use the current procedure.",
+      text: "Use the **current procedure** [Schedule A]. citeturn0search0 【Retrieved context】",
       sources_retrieved: [{
         id: "source-1",
         rank: 1,
@@ -167,15 +191,61 @@ describe("ChatWorkspace", () => {
     render(<ChatWorkspace initialConversationId="conversation-1" services={fixture.api} workspaceId="workspace-1" workspaceName="Care" />);
 
     const sourceSummary = await screen.findByText("Sources retrieved");
-    expect(screen.getByText(/not claim-level citations/i)).not.toBeNull();
+    expect(screen.getByText("current procedure").tagName).toBe("STRONG");
+    expect(screen.queryByText(/\*\*current procedure\*\*/)).toBeNull();
+    expect(screen.getByText("[Schedule A].", { exact: false })).not.toBeNull();
+    expect(screen.queryByText(/turn0search0|Retrieved context/)).toBeNull();
+    expect(screen.getByText("Documents provided to help generate this answer. Check the relevant source before acting.")).not.toBeNull();
     expect(sourceSummary.closest("details")?.open).toBe(false);
     await user.click(sourceSummary);
     expect(sourceSummary.closest("details")?.open).toBe(true);
     expect(screen.getByRole("list", { name: "Sources retrieved" })).not.toBeNull();
     await user.click(screen.getByRole("button", { name: /Data Protection Policy.pdf/ }));
     expect(screen.getByText("Personal devices must not be used.")).not.toBeNull();
-    expect(screen.getByText("Site context:").parentElement?.textContent).toContain("Organisation-wide only");
+    expect(screen.getByRole("link", { name: "View source" }).getAttribute("href")).toBe("/app/workspaces/workspace-1/documents/document-1");
+    expect(screen.getByText("Location filter:").parentElement?.textContent).toContain("Organisation-wide");
     expect(screen.queryByRole("list", { name: "Answer sources" })).toBeNull();
+  });
+
+  it("shows a copy control and timestamp beneath assistant replies", async () => {
+    const fixture = services();
+    fixture.completed.messages![1].text = "Use [Schedule A]. citeturn0search0 【Retrieved context】";
+    fixture.api.get.mockResolvedValue(fixture.completed);
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    const user = userEvent.setup();
+    Object.defineProperty(navigator, "clipboard", { configurable: true, value: { writeText } });
+    const view = render(<ChatWorkspace initialConversationId="conversation-1" services={fixture.api} workspaceId="workspace-1" workspaceName="Care" />);
+
+    const copy = await screen.findByRole("button", { name: "Copy answer" });
+    expect(view.container.querySelector('time[datetime="2026-08-18T12:02:00Z"]')?.textContent).toMatch(/^\d{2}:\d{2}$/);
+    await user.click(copy);
+    await waitFor(() => expect(writeText).toHaveBeenCalledWith("Use [Schedule A]."));
+    expect(screen.getByRole("button", { name: "Answer copied" })).not.toBeNull();
+  });
+
+  it("records answer feedback and optional improvement detail", async () => {
+    const fixture = services();
+    fixture.api.get.mockResolvedValue(fixture.completed);
+    const user = userEvent.setup();
+    render(<ChatWorkspace initialConversationId="conversation-1" services={fixture.api} workspaceId="workspace-1" workspaceName="Care" />);
+
+    await user.click(await screen.findByRole("button", { name: "Mark answer not helpful" }));
+    await waitFor(() => expect(fixture.api.feedback).toHaveBeenCalledWith(
+      "workspace-1",
+      "conversation-1",
+      "run-1",
+      { rating: "not_helpful", reason_code: null, comment: null },
+    ));
+    expect(screen.getByText("What could be improved?")).not.toBeNull();
+    await user.selectOptions(screen.getByLabelText("Reason"), "incomplete");
+    await user.type(screen.getByLabelText("Comment (optional)"), "It omitted the escalation route.");
+    await user.click(screen.getByRole("button", { name: "Save feedback" }));
+    await waitFor(() => expect(fixture.api.feedback).toHaveBeenLastCalledWith(
+      "workspace-1",
+      "conversation-1",
+      "run-1",
+      { rating: "not_helpful", reason_code: "incomplete", comment: "It omitted the escalation route." },
+    ));
   });
 
   it("observes an existing pending pilot run after route remount without sending again", async () => {
@@ -192,6 +262,73 @@ describe("ChatWorkspace", () => {
     await waitFor(() => expect(view.container.querySelector('[data-completion-path="sse"]')).not.toBeNull());
     expect(screen.getByRole("status").textContent).toBe("Answer complete.");
     expect(fixture.api.send).not.toHaveBeenCalled();
+  });
+
+  it("uses neutral Dify progress and releases the interface when the user stops waiting", async () => {
+    const fixture = services();
+    const pending = structuredClone(fixture.completed);
+    pending.messages = pending.messages!.slice(0, 1);
+    Object.assign(pending.runs![0], {
+      presentation: "saved-message-v1",
+      status: "retrieving",
+      completed_at: null,
+      assistant_message_id: null,
+      answer: null,
+      interaction: { progress: "dify_blocking", stop_action: "stop_waiting" },
+    });
+    fixture.api.get.mockResolvedValue(pending);
+    const user = userEvent.setup();
+    const view = render(<ChatWorkspace assistantName="Cherish" initialConversationId="conversation-1" services={fixture.api} workspaceId="workspace-1" workspaceName="Care" />);
+
+    await waitFor(() => expect(view.container.querySelector('[data-chat-progress="Searching and preparing…"]')).toBeTruthy());
+    fixture.emit({ sequence: 2, type: "run_progress", provisional: false, payload: { stage: "generating" } });
+    expect(view.container.querySelector('[data-chat-progress="Searching and preparing…"]')).toBeTruthy();
+    await user.click(screen.getByRole("button", { name: "Stop waiting" }));
+
+    await waitFor(() => expect(fixture.api.cancel).toHaveBeenCalledWith("workspace-1", "conversation-1", "run-1"));
+    expect(view.container.querySelector('[data-chat-pending="false"]')).toBeTruthy();
+    expect(screen.getByText(/Provider processing may continue/)).toBeTruthy();
+  });
+
+  it("keeps an unsafe conversation readable while requiring a new conversation", async () => {
+    const fixture = services();
+    fixture.completed.continuation = {
+      allowed: false,
+      reason: "remote_history_inconsistent",
+      message: "This conversation could not be safely continued after the interrupted response. Start a new conversation to continue.",
+      start_new_required: true,
+    };
+    fixture.api.get.mockResolvedValue(fixture.completed);
+    const user = userEvent.setup();
+    render(<ChatWorkspace initialConversationId="conversation-1" locations={[{ public_id: "site-1", name: "Oakfield" }]} services={fixture.api} workspaceId="workspace-1" workspaceName="Care" />);
+
+    expect(await screen.findByText("Use the current procedure.")).not.toBeNull();
+    expect(screen.getByText("This conversation is read-only")).not.toBeNull();
+    expect(screen.getByLabelText("Ask a question").hasAttribute("disabled")).toBe(true);
+    expect(screen.getByRole("button", { name: "Send" }).hasAttribute("disabled")).toBe(true);
+    expect(screen.queryByRole("button", { name: "Retry answer" })).toBeNull();
+
+    await user.click(screen.getByRole("button", { name: "Start new conversation" }));
+    expect(screen.getByLabelText("Ask a question").hasAttribute("disabled")).toBe(false);
+    expect(screen.getByLabelText("Location filter")).not.toBeNull();
+  });
+
+  it("labels a retired historical location and presents the safe continuation action after reload", async () => {
+    const fixture = services();
+    fixture.completed.site_context = { scope_key: "site-1", location_id: "site-1", name: "Oakfield Lodge", status: "retired" };
+    fixture.completed.continuation = {
+      allowed: false,
+      reason: "location_unavailable",
+      message: "This conversation uses a location that is no longer available. Start a new conversation with an available location to continue.",
+      start_new_required: true,
+    };
+    fixture.api.get.mockResolvedValue(fixture.completed);
+
+    render(<ChatWorkspace initialConversationId="conversation-1" services={fixture.api} workspaceId="workspace-1" workspaceName="Care" />);
+
+    expect(await screen.findByText(/Oakfield Lodge \(retired\)/)).not.toBeNull();
+    expect(screen.getByText(/location that is no longer available/i)).not.toBeNull();
+    expect(screen.getByRole("button", { name: "Start new conversation" })).not.toBeNull();
   });
 
   it("keeps a newly created conversation mounted until its live run settles", async () => {
@@ -454,7 +591,7 @@ describe("ChatWorkspace", () => {
     await user.click(screen.getByRole("button", { name: "Send" }));
     await waitFor(() => expect(harness.api.send).toHaveBeenCalledOnce());
     harness.emit({ sequence: 1, type: "run_progress", provisional: false, payload: { stage: "retrieving" } });
-    await waitFor(() => expect(screen.getByRole("status").textContent).toBe("Finding eligible evidence…"));
+    await waitFor(() => expect(screen.getByRole("status").textContent).toBe("Finding relevant documents…"));
 
     harness.disconnect();
     await waitFor(() => expect(screen.getByRole("status").textContent).toBe("Live updates interrupted. Reconnecting."));

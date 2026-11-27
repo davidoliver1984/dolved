@@ -14,6 +14,7 @@ use App\Actions\Imports\RecordImportPromotionFailure;
 use App\Actions\Imports\RequestImportPromotionCancellation;
 use App\Actions\Imports\ReserveImportPromotion;
 use App\Actions\Imports\VerifyImportPromotionSource;
+use App\Enums\DocumentGovernanceStatus;
 use App\Enums\DocumentStatus;
 use App\Enums\ImportBatchStatus;
 use App\Enums\ImportMatchStatus;
@@ -63,6 +64,8 @@ final class ImportPromotionStateMachineTest extends TestCase
         $document = $committed->committedDocument;
         $this->assertInstanceOf(Document::class, $document);
         $this->assertSame(DocumentStatus::Queued, $document->status);
+        $this->assertSame(DocumentGovernanceStatus::Approved, $document->governance_status);
+        $this->assertNotNull($document->approved_at);
         $this->assertSame('version-1', $document->storage_version_id);
         $this->assertSame($item->source_checksum_sha256, $document->source_checksum_sha256);
         $this->assertSame($attempt->reserved_object_key, $document->storage_key);
@@ -136,7 +139,7 @@ final class ImportPromotionStateMachineTest extends TestCase
         $this->assertDatabaseHas('promotion_attempt_failures', [
             'promotion_attempt_id' => $attempt->id,
             'lease_generation' => 1,
-            'failure_code' => 'promotion_execution_failed',
+            'failure_code' => 'promotion_storage_unavailable',
         ]);
     }
 

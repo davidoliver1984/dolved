@@ -11,16 +11,24 @@ RUN apk add --no-cache \
         libxml2 \
         oniguruma \
         libpq \
+        libpng \
+        libjpeg-turbo \
+        libwebp \
         sqlite-libs \
     && apk add --no-cache --virtual .build-dependencies \
         $PHPIZE_DEPS \
         icu-dev \
         libpq-dev \
+        libpng-dev \
+        libjpeg-turbo-dev \
+        libwebp-dev \
         libxml2-dev \
         oniguruma-dev \
         sqlite-dev \
+    && docker-php-ext-configure gd --with-jpeg --with-webp \
     && docker-php-ext-install -j"$(nproc)" \
         dom \
+        gd \
         intl \
         mbstring \
         pcntl \
@@ -73,16 +81,25 @@ CMD ["php", "-S", "0.0.0.0:8000", "-t", "public", "public/index.php"]
 
 FROM php:8.4-apache-bookworm AS production
 
+ARG VCS_REF="unknown"
+LABEL org.opencontainers.image.revision="${VCS_REF}" \
+      org.opencontainers.image.source="https://github.com/davidoliver1984/dolved"
+
 RUN apt-get update \
     && apt-get install --yes --no-install-recommends \
         libicu-dev \
         libonig-dev \
         libpq-dev \
+        libpng-dev \
+        libjpeg62-turbo-dev \
+        libwebp-dev \
         libxml2-dev \
         libzip-dev \
         unzip \
+    && docker-php-ext-configure gd --with-jpeg --with-webp \
     && docker-php-ext-install -j"$(nproc)" \
         dom \
+        gd \
         intl \
         mbstring \
         pcntl \

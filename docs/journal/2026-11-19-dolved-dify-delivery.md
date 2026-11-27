@@ -188,3 +188,26 @@ questions remain sealed and no release/execution or client invitation is implied
 This was a documentation reconciliation only: no application edits, live host checks,
 provider calls, tests, deployment or sealed-material access. David's supplied hosted status
 is attributed rather than represented as newly independently verified evidence.
+
+## 25 November conversation-state correction deployment
+
+- Committed and pushed `8b43ded8964f5ff52ab49d9c3159382f2af36d5d`, then built the
+  production API and web images on the deployment host. The Next production build,
+  TypeScript and 22-page static generation completed.
+- Took a restricted pre-deployment backup of both logical databases, the active Dify
+  workflow and deployment configuration at
+  `/srv/dolved-pilot/backups/20261125-conversation-state-predeploy`. The checksum-manifest
+  SHA-256 is `634d289e6bbbc8ced53015b0e26b2af39b7b40323b1fd0702905d735b3341a4f`.
+- Applied additive migration
+  `2026_11_25_000001_add_continuation_safety_to_conversations` and deployed API, worker,
+  scheduler and web coherently. Production verification passed without retrieval or
+  generation and all Dolved services were healthy. Famvam was not changed.
+- Published Dify workflow version number 4 through stock Dify 1.19.0's workflow services.
+  Provider-free structural read-back proves its only graph difference from version 3 is
+  removal of the duplicate explicit user-role `sys.query` prompt. Model, generation
+  parameters, memory window 10, context, retrieval, features and variables are unchanged.
+  The active graph SHA-256 is
+  `77948ad3d5056f701c386b46ea088f008897e0fae49257baa84c913fa53de009`.
+- No live chat, retrieval, embedding, generation, evaluation or test-email operation ran;
+  no sealed question was opened. A separately authorised captured clean memory turn is
+  still required to verify live prompt assembly before the evaluation freeze.

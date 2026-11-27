@@ -13,6 +13,7 @@ use App\Models\DocumentGovernanceNotification;
 use App\Models\Workspace;
 use App\Support\Documents\GovernanceEmailCategories;
 use App\Support\Documents\ResolveDocumentGovernanceNotificationRoute;
+use Carbon\CarbonImmutable;
 use LogicException;
 
 final readonly class BuildDocumentGovernanceEmail
@@ -53,11 +54,11 @@ final readonly class BuildDocumentGovernanceEmail
         ));
 
         return new DocumentGovernanceMail(
-            mailSubject: "{$heading} · {$envelope->workspace_display_name_snapshot}",
+            mailSubject: "{$heading} · {$branding->brandName}",
             heading: $heading,
             summary: $summary,
-            workspaceName: (string) $envelope->workspace_display_name_snapshot,
-            actionLabel: $digest ? 'Review governance work' : 'Open in Dolved',
+            workspaceName: $branding->brandName,
+            actionLabel: $digest ? 'Review governance work' : 'Open in '.$branding->brandName,
             actionUrl: $frontend.$route,
             preferenceUrl: $frontend."/app/workspaces/{$workspace->public_id}/settings/notifications",
             items: $digest ? $items : [],
@@ -65,6 +66,11 @@ final readonly class BuildDocumentGovernanceEmail
             brandName: $branding->brandName,
             accentColour: $branding->accentColour,
             logoUrl: $branding->logoUrl,
+            senderDisplayName: $branding->senderDisplayName,
+            footerText: $branding->footerText,
+            supportContact: $branding->supportContact,
+            accentForeground: $branding->accentForeground,
+            linkColour: $branding->linkColour,
         );
     }
 
@@ -104,14 +110,27 @@ final readonly class BuildDocumentGovernanceEmail
         }
 
         $accent = strtoupper($branding->accentColour);
-        if (! preg_match('/^#[0-9A-F]{6}$/', $accent) || $this->contrastAgainstWhite($accent) < 4.5) {
+        $foreground = strtoupper($branding->accentForeground);
+        if (! preg_match('/^#[0-9A-F]{6}$/', $accent)
+            || ! in_array($foreground, ['#000000', '#FFFFFF'], true)
+            || $this->contrast($accent, $foreground) < 4.5) {
             $accent = '#008466';
+            $foreground = '#FFFFFF';
+        }
+        $link = strtoupper($branding->linkColour);
+        if (! preg_match('/^#[0-9A-F]{6}$/', $link) || $this->contrast($link, '#FFFFFF') < 4.5) {
+            $link = '#006C4D';
         }
 
         return new ResolvedGovernanceEmailBranding(
             brandName: $branding->brandName,
             accentColour: $accent,
             logoUrl: $branding->logoUrl,
+            senderDisplayName: $branding->senderDisplayName,
+            footerText: $branding->footerText,
+            supportContact: $branding->supportContact,
+            accentForeground: $foreground,
+            linkColour: $link,
         );
     }
 
@@ -120,7 +139,16 @@ final readonly class BuildDocumentGovernanceEmail
         return new ResolvedGovernanceEmailBranding('Dolved', '#008466');
     }
 
-    private function contrastAgainstWhite(string $hex): float
+    private function contrast(string $first, string $second): float
+    {
+        $firstLuminance = $this->luminance($first);
+        $secondLuminance = $this->luminance($second);
+
+        return (max($firstLuminance, $secondLuminance) + 0.05)
+            / (min($firstLuminance, $secondLuminance) + 0.05);
+    }
+
+    private function luminance(string $hex): float
     {
         $components = [substr($hex, 1, 2), substr($hex, 3, 2), substr($hex, 5, 2)];
         $linear = array_map(function (string $component): float {
@@ -128,9 +156,8 @@ final readonly class BuildDocumentGovernanceEmail
 
             return $value <= 0.03928 ? $value / 12.92 : (($value + 0.055) / 1.055) ** 2.4;
         }, $components);
-        $luminance = 0.2126 * $linear[0] + 0.7152 * $linear[1] + 0.0722 * $linear[2];
 
-        return 1.05 / ($luminance + 0.05);
+        return 0.2126 * $linear[0] + 0.7152 * $linear[1] + 0.0722 * $linear[2];
     }
 
     /** @return array{title: string, message: string} */
@@ -145,8 +172,8 @@ final readonly class BuildDocumentGovernanceEmail
             DocumentGovernanceEventKey::GovernanceVersionApproved => $this->copy('Document version approved', 'A document version was approved.'),
             DocumentGovernanceEventKey::PromotionCompleted => $this->copy('Document added to the library', 'A staged document was promoted successfully.'),
             DocumentGovernanceEventKey::PromotionFailed => $this->copy('Document promotion failed', 'A staged document could not be promoted.'),
-            DocumentGovernanceEventKey::GovernanceReviewDueSoon => $this->copy('Review due soon', 'A document family is approaching its review date.'),
-            DocumentGovernanceEventKey::GovernanceReviewOverdue => $this->copy('Review overdue', 'A document family has passed its review date.'),
+            DocumentGovernanceEventKey::GovernanceReviewDueSoon => $this->reviewCopy($notification, 'Review due soon', 'A document family is approaching its review date.'),
+            DocumentGovernanceEventKey::GovernanceReviewOverdue => $this->reviewCopy($notification, 'Review overdue', 'A document family has passed its review date.'),
             DocumentGovernanceEventKey::GovernanceOwnershipReassignmentRequired => $this->copy('Document owner required', 'Assign an eligible owner to a document family.'),
             DocumentGovernanceEventKey::GovernanceAuthorityBlocked => $this->copy('Scheduled authority blocked', 'A scheduled document version cannot attain authority.'),
             DocumentGovernanceEventKey::GovernanceAuthorityApproaching => $this->copy('Scheduled change approaching', 'A document version is approaching its authority date.'),
@@ -164,5 +191,21 @@ final readonly class BuildDocumentGovernanceEmail
     private function copy(string $title, string $message): array
     {
         return ['title' => $title, 'message' => $message];
+    }
+
+    /** @return array{title: string, message: string} */
+    private function reviewCopy(DocumentGovernanceNotification $notification, string $fallbackTitle, string $fallbackMessage): array
+    {
+        $label = trim((string) ($notification->parameters['target_display_label'] ?? ''));
+        $date = $notification->parameters['review_due_date'] ?? null;
+        if ($label === '' || mb_strlen($label) > 200 || ! is_string($date)
+            || ! preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) {
+            return $this->copy($fallbackTitle, $fallbackMessage);
+        }
+
+        return $this->copy(
+            "{$label} still needs to be reviewed",
+            'Due by '.CarbonImmutable::createFromFormat('!Y-m-d', $date, 'UTC')->format('j F Y'),
+        );
     }
 }

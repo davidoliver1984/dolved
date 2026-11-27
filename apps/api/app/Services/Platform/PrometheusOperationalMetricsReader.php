@@ -11,7 +11,7 @@ use Throwable;
 
 final class PrometheusOperationalMetricsReader implements OperationalMetricsReader
 {
-    private const CACHE_KEY = 'platform:operational-metrics:v2';
+    private const CACHE_KEY = 'platform:operational-metrics:v3';
 
     private const ALLOWED_RESPONSE_LABELS = [
         'messaging_destination_name',
@@ -30,10 +30,10 @@ final class PrometheusOperationalMetricsReader implements OperationalMetricsRead
         'api_latency_p95_seconds' => 'histogram_quantile(0.95, sum by (le) (rate(http_server_request_duration_seconds_bucket[5m])))',
         'operation_rate' => 'sum by (rag_operation_stage,rag_operation_outcome) (rate(rag_operation_count_total[5m]))',
         'operation_latency_p95_seconds' => 'histogram_quantile(0.95, sum by (le,rag_operation_stage) (rate(rag_operation_duration_seconds_bucket[5m])))',
-        'dependency_availability' => 'min by (rag_dependency_kind) (rag_dependency_available)',
-        'queue_depth' => 'max by (messaging_destination_name) (rag_queue_depth)',
-        'queue_oldest_message_age_seconds' => 'max by (messaging_destination_name) (rag_queue_oldest_message_age_seconds)',
-        'stuck_operations' => 'sum by (rag_operation_stage) (rag_stuck_operation_count)',
+        'dependency_availability' => 'min by (rag_dependency_kind) (rag_snapshot_dependency_available)',
+        'queue_depth' => 'max by (messaging_destination_name) (rag_snapshot_queue_depth)',
+        'queue_oldest_message_age_seconds' => 'max by (messaging_destination_name) (rag_snapshot_queue_oldest_message_age_seconds)',
+        'stuck_operations' => 'sum by (rag_operation_stage) (rag_snapshot_stuck_operation_count)',
     ];
 
     private const SLOS = [
@@ -51,6 +51,10 @@ final class PrometheusOperationalMetricsReader implements OperationalMetricsRead
 
     public function snapshot(): array
     {
+        if (! (bool) config('platform.metrics.enabled')) {
+            return $this->unavailableSnapshot();
+        }
+
         return Cache::remember(self::CACHE_KEY, (int) config('platform.metrics.cache_seconds'), function (): array {
             $metrics = [];
             foreach (self::QUERIES as $name => $query) {
@@ -89,6 +93,28 @@ final class PrometheusOperationalMetricsReader implements OperationalMetricsRead
                 'alertmanager_url' => (string) config('platform.metrics.alertmanager_public_url'),
             ];
         });
+    }
+
+    private function unavailableSnapshot(): array
+    {
+        return [
+            'status' => 'unavailable',
+            'health_status' => 'unknown',
+            'as_of' => now()->toIso8601String(),
+            'freshness' => 'unavailable',
+            'metrics' => array_fill_keys(array_keys(self::QUERIES), ['status' => 'unavailable', 'values' => []]),
+            'slos' => array_map(fn (string $id, array $definition): array => [
+                'id' => $id,
+                'objective' => $definition['objective'],
+                'window_days' => $definition['window_days'],
+                'status' => 'unavailable',
+                'value' => null,
+                'compliant' => null,
+            ], array_keys(self::SLOS), array_values(self::SLOS)),
+            'alerts' => ['status' => 'unavailable', 'values' => []],
+            'grafana_url' => (string) config('platform.metrics.grafana_url'),
+            'alertmanager_url' => (string) config('platform.metrics.alertmanager_public_url'),
+        ];
     }
 
     /** @return array{status: string, values: array<int, array<string, string>>} */

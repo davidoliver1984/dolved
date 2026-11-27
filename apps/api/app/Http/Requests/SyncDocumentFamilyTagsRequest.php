@@ -17,7 +17,7 @@ final class SyncDocumentFamilyTagsRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'tag_public_ids' => ['required', 'array', 'max:20'],
+            'tag_public_ids' => ['present', 'array', 'max:20'],
             'tag_public_ids.*' => ['required', 'uuid', 'distinct'],
         ];
     }

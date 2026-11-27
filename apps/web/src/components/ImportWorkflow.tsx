@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, ChevronRight, CircleAlert, FileCheck2, FileSearch, FileUp, FolderInput, LoaderCircle, Rocket, ShieldCheck, UploadCloud, X } from "lucide-react";
+import { Check, ChevronRight, CircleAlert, FileCheck2, FileSearch, FileUp, FolderInput, LoaderCircle, ShieldCheck, UploadCloud, X } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { ApiError } from "@/lib/api";
 import {
@@ -23,6 +23,7 @@ import {
 } from "@/lib/import-workflow";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { FormField } from "@/components/ui/form-field";
 import { Input } from "@/components/ui/input";
 import { Notice } from "@/components/ui/notice";
@@ -32,16 +33,15 @@ import { cn } from "@/lib/utils";
 
 const stages = [
   ["Select", FileUp], ["Stage", UploadCloud], ["Verify", ShieldCheck], ["Match", FileSearch],
-  ["Review", FileCheck2], ["Promote", Rocket], ["Index", FolderInput],
+  ["Review", FileCheck2], ["Index", FolderInput],
 ] as const;
 
 type SelectedFile = { file: File; progress: number; error: string | null };
 type ReviewState = { item: ImportItem; matches: ImportMatches; purpose: "decision" | "adoption" };
 
 function itemStage(item: ImportItem): number {
-  if (item.document?.status === "indexed") return 7;
-  if (item.document) return item.document.status === "processing" ? 6 : 6;
-  if (item.promotion) return 6;
+  if (item.document?.status === "indexed") return 6;
+  if (item.document || item.promotion) return 6;
   if (item.decision_ready) return 5;
   if (item.preflight_status === "verified") return 4;
   return 3;
@@ -50,14 +50,25 @@ function itemStage(item: ImportItem): number {
 function itemStatus(item: ImportItem): { label: string; tone: "success" | "pending" | "destructive" | "unavailable" | "info" } {
   if (item.replaced_by_import_item_public_id) return { label: "Replaced", tone: "unavailable" };
   if (item.preflight_status === "rejected") return { label: "Needs attention", tone: "destructive" };
-  if (item.promotion?.status === "conflict" || item.promotion?.status === "failed") return { label: "Promotion stopped", tone: "destructive" };
-  if (item.document?.status === "indexed") return { label: "Indexed", tone: "success" };
-  if (item.document?.status === "processing") return { label: "Processing", tone: "pending" };
-  if (item.document) return { label: "Promoted · queued", tone: "info" };
-  if (item.promotion) return { label: "Promoting", tone: "pending" };
-  if (item.decision_ready) return { label: "Ready to promote", tone: "info" };
+  if (item.promotion?.status === "conflict" || item.promotion?.status === "failed") return { label: "Indexing stopped", tone: "destructive" };
+  if (item.document?.status === "indexed") return { label: "Current", tone: "success" };
+  if (item.document || item.promotion) return { label: "Indexing", tone: "pending" };
+  if (item.decision_ready) return { label: "Ready to index", tone: "info" };
   if (item.preflight_status === "verified") return { label: "Ready for review", tone: "info" };
   return { label: "Verifying", tone: "pending" };
+}
+
+function nextDate(value: string | null): string {
+  if (!value) return new Date().toISOString().slice(0, 10);
+  const date = new Date(value);
+  date.setUTCDate(date.getUTCDate() + 1);
+  return date.toISOString().slice(0, 10);
+}
+
+function promotionProblem(reason: string): string {
+  if (reason === "invalidated_predecessor") return "The suggested document or effective date is no longer valid. Review the match and choose a later date.";
+  if (reason === "technical_exhaustion") return "Indexing could not finish after several attempts. Please try the review again.";
+  return `Indexing stopped: ${reason.replaceAll("_", " ")}.`;
 }
 
 export function ImportWorkflow({ workspacePublicId, initialBatchPublicId }: Readonly<{ workspacePublicId: string; initialBatchPublicId?: string }>) {
@@ -142,7 +153,10 @@ export function ImportWorkflow({ workspacePublicId, initialBatchPublicId }: Read
     setBusy(true); setError(null);
     try {
       if (review.purpose === "adoption") await adoptImport(workspacePublicId, batch.public_id, review.item.public_id, definition);
-      else await decideImport(workspacePublicId, batch.public_id, review.item.public_id, definition);
+      else {
+        await decideImport(workspacePublicId, batch.public_id, review.item.public_id, definition);
+        await promoteImport(workspacePublicId, batch.public_id, review.item.public_id);
+      }
       setReview(null);
       setBatch(await getImportBatch(workspacePublicId, batch.public_id));
     } catch (cause) { setError(cause instanceof Error ? cause.message : "The review could not be saved."); }
@@ -162,67 +176,85 @@ export function ImportWorkflow({ workspacePublicId, initialBatchPublicId }: Read
     finally { setBusy(false); }
   };
 
-  const promote = async (item: ImportItem) => {
-    if (!batch) return;
-    setBusy(true); setError(null);
-    try {
-      await promoteImport(workspacePublicId, batch.public_id, item.public_id);
-      setBatch(await getImportBatch(workspacePublicId, batch.public_id));
-    } catch (cause) { setError(cause instanceof Error ? cause.message : "Promotion could not start."); }
-    finally { setBusy(false); }
-  };
-
   if (!configuration) return <Card><CardContent className="flex min-h-48 items-center justify-center gap-3"><LoaderCircle className="animate-spin text-brand" />Loading import workspace…</CardContent></Card>;
 
   return <div className="grid gap-6">
-    <ol aria-label="Import stages" className="grid grid-cols-2 gap-2 sm:grid-cols-4 xl:grid-cols-7">
-      {stages.map(([label, Icon], index) => <li className={cn("flex items-center gap-2 rounded-lg border border-border bg-surface px-3 py-3 text-sm font-semibold", (batch ? Math.max(...batch.items.map(itemStage), 1) : files.length ? 1 : 0) >= index + 1 && "border-brand/40 bg-brand-soft text-brand-strong")} key={label}><span className="grid size-7 place-items-center rounded-full bg-surface-raised"><Icon className="size-4" /></span>{label}</li>)}
+    <ol aria-label="Import stages" className="grid grid-cols-2 gap-2 sm:grid-cols-3 xl:grid-cols-6">
+      {stages.map(([label, Icon], index) => <li className={cn("flex items-center gap-2 rounded-xl border border-transparent bg-surface-muted px-3 py-3 text-sm font-semibold text-foreground-muted", (batch ? Math.max(...batch.items.map(itemStage), 1) : files.length ? 1 : 0) >= index + 1 && "border-brand/40 bg-brand-soft text-brand-strong shadow-panel")} key={label}><span className="grid size-7 place-items-center rounded-lg bg-surface-raised"><Icon className="size-4" /></span>{label}</li>)}
     </ol>
 
     {error ? <Notice tone="destructive"><div className="flex items-start gap-2"><CircleAlert className="mt-0.5 size-4 shrink-0" /><span>{error}</span></div></Notice> : null}
 
-    {!batch ? <Card>
-      <CardHeader><CardTitle>Add documents</CardTitle><CardDescription>Select one file or a whole working set. Nothing reaches the Library until each source has been verified, matched, reviewed and promoted.</CardDescription></CardHeader>
+    {!batch ? <Card className="border-brand/20">
+      <CardHeader><CardTitle>Add documents</CardTitle><CardDescription>Select one file or a whole working set. Each source is verified, matched and reviewed before indexing begins.</CardDescription></CardHeader>
       <CardContent className="grid gap-5">
-        <div className="grid min-h-56 place-items-center rounded-xl border border-dashed border-border bg-surface p-6 text-center" onDragOver={(event) => event.preventDefault()} onDrop={(event) => { event.preventDefault(); chooseFiles(Array.from(event.dataTransfer.files)); }}>
+        <div className="grid min-h-44 place-items-center rounded-xl border border-dashed border-brand/35 bg-surface-muted p-6 text-center transition-colors hover:border-brand/60 hover:bg-brand/5" onDragOver={(event) => event.preventDefault()} onDrop={(event) => { event.preventDefault(); chooseFiles(Array.from(event.dataTransfer.files)); }}>
           <div className="grid justify-items-center gap-3"><span className="grid size-12 place-items-center rounded-full bg-brand-soft text-brand"><UploadCloud /></span><strong>Drop documents here</strong><span className="text-sm text-foreground-muted">or choose from your device</span><label className={cn(buttonVariants({ variant: "secondary" }), "cursor-pointer")} htmlFor="import-files">Choose files</label><input accept={accepted} className="sr-only" id="import-files" multiple onChange={(event) => { chooseFiles(Array.from(event.target.files ?? [])); event.target.value = ""; }} type="file" /><small className="text-foreground-muted">PDF, Word, RTF, text or Markdown · up to {Math.floor(configuration.max_upload_bytes / 1024 / 1024)} MB each</small></div>
         </div>
         {files.length ? <div className="grid gap-3"><div className="flex items-center justify-between"><strong>{files.length} file{files.length === 1 ? "" : "s"} selected</strong><Button onClick={() => setFiles([])} size="sm" variant="ghost"><X />Clear</Button></div>{files.map(({ file, progress, error: itemError }) => <div className="rounded-lg border border-border bg-surface p-4" key={`${file.name}-${file.size}`}><div className="flex justify-between gap-3"><span className="min-w-0 truncate font-medium">{file.name}</span><span className="text-sm text-foreground-muted">{(file.size / 1024).toFixed(1)} KB</span></div>{progress ? <progress className="mt-3 h-2 w-full accent-brand" max="100" value={progress}>{progress}%</progress> : null}{itemError ? <p className="mt-2 text-sm text-destructive">{itemError}</p> : null}</div>)}<Button disabled={busy} onClick={begin}>{busy ? <LoaderCircle className="animate-spin" /> : <ChevronRight />}Stage and verify {files.length === 1 ? "document" : `${files.length} documents`}</Button></div> : null}
       </CardContent>
-    </Card> : <ActiveBatch batch={batch} busy={busy} onAdopt={(item) => openReview(item, "adoption")} onNew={() => { setBatch(null); setFiles([]); setReview(null); }} onPromote={promote} onReview={openReview} />}
+    </Card> : <ActiveBatch batch={batch} busy={busy} onAdopt={(item) => openReview(item, "adoption")} onNew={() => { setBatch(null); setFiles([]); setReview(null); }} onReview={openReview} />}
 
-    {review ? <ReviewPanel accepted={accepted} configuration={configuration} matches={review.matches} item={review.item} onCancel={() => setReview(null)} onReplace={replaceDuplicate} onSubmit={submitReview} purpose={review.purpose} /> : null}
+    {review ? <Dialog onOpenChange={(open) => { if (!open) setReview(null); }} open>
+      <DialogContent className="max-h-[90vh] max-w-5xl overflow-y-auto p-0">
+        <DialogHeader className="sr-only">
+          <DialogTitle>{review.purpose === "adoption" ? "Review and resolve" : "Review match and metadata"}</DialogTitle>
+          <DialogDescription>Confirm whether this is a new document or a new version, then check its details and locations.</DialogDescription>
+        </DialogHeader>
+        <ReviewPanel accepted={accepted} configuration={configuration} matches={review.matches} item={review.item} onCancel={() => setReview(null)} onReplace={replaceDuplicate} onSubmit={submitReview} purpose={review.purpose} />
+      </DialogContent>
+    </Dialog> : null}
 
-    {batches.length ? <Card><CardHeader><CardTitle>Recent imports</CardTitle><CardDescription>Resume an unfinished batch or check what happened after promotion.</CardDescription></CardHeader><CardContent className="grid gap-2">{batches.slice(0, 6).map((candidate) => <button className="flex min-h-12 items-center justify-between gap-3 rounded-lg border border-border px-4 text-left hover:bg-surface-raised" key={candidate.public_id} onClick={() => { setBatch(candidate); setReview(null); }} type="button"><span><strong>{candidate.items.length} document{candidate.items.length === 1 ? "" : "s"}</strong><span className="ml-2 text-sm text-foreground-muted">{new Date(candidate.created_at).toLocaleDateString()}</span></span><StatusBadge status={candidate.items.every((item) => item.document?.status === "indexed") ? "success" : "pending"}>{candidate.items.every((item) => item.document?.status === "indexed") ? "Indexed" : "In progress"}</StatusBadge></button>)}</CardContent></Card> : null}
+    {batches.length ? <Card><CardHeader><CardTitle>Recent imports</CardTitle><CardDescription>Resume an unfinished batch or review completed indexing.</CardDescription></CardHeader><CardContent className="grid gap-2">{batches.slice(0, 6).map((candidate) => <button className="flex min-h-12 items-center justify-between gap-3 rounded-xl border border-border bg-surface-muted/60 px-4 text-left transition-colors hover:border-brand/30 hover:bg-surface-raised" key={candidate.public_id} onClick={() => { setBatch(candidate); setReview(null); }} type="button"><span><strong>{candidate.items.length} document{candidate.items.length === 1 ? "" : "s"}</strong><span className="ml-2 text-sm text-foreground-muted">{new Date(candidate.created_at).toLocaleDateString()}</span></span><StatusBadge status={candidate.items.every((item) => item.document?.status === "indexed") ? "success" : "pending"}>{candidate.items.every((item) => item.document?.status === "indexed") ? "Indexed" : "In progress"}</StatusBadge></button>)}</CardContent></Card> : null}
   </div>;
 }
 
-function ActiveBatch({ batch, busy, onAdopt, onNew, onPromote, onReview }: Readonly<{ batch: ImportBatch; busy: boolean; onAdopt: (item: ImportItem) => void; onNew: () => void; onPromote: (item: ImportItem) => void; onReview: (item: ImportItem) => void }>) {
-  return <Card><CardHeader className="gap-3 sm:flex-row sm:items-start sm:justify-between"><div><CardTitle>Import in progress</CardTitle><CardDescription>Each document advances independently. You can leave this page and resume the batch later.</CardDescription></div><Button onClick={onNew} size="sm" variant="outline"><FileUp />New import</Button></CardHeader><CardContent><ul className="grid gap-3">{batch.items.map((item) => { const status = itemStatus(item); const active = !item.replaced_by_import_item_public_id; return <li className="rounded-xl border border-border bg-surface p-4" key={item.public_id}><div className="flex flex-wrap items-start justify-between gap-3"><div className="min-w-0"><strong className="block truncate">{item.filename}</strong><p className="mt-1 text-sm text-foreground-muted">Stage {itemStage(item)} of 7 · {status.label}</p></div><StatusBadge status={status.tone}>{status.label}</StatusBadge></div><div className="mt-4 h-2 overflow-hidden rounded-full bg-surface-raised"><span className="block h-full bg-brand transition-[width]" style={{ width: `${Math.round(itemStage(item) / 7 * 100)}%` }} /></div>{active && item.preflight_status === "rejected" ? <Notice className="mt-4" tone="destructive">This source could not be verified: {item.preflight_rejection_reason?.replaceAll("_", " ")}.</Notice> : null}{active && item.preflight_status === "verified" && !item.decision_ready ? <Button className="mt-4" disabled={busy} onClick={() => onReview(item)} size="sm"><FileSearch />Review match and metadata</Button> : null}{active && item.decision_ready && !item.promotion ? <Button className="mt-4" disabled={busy} onClick={() => onPromote(item)} size="sm"><Rocket />Promote to Library</Button> : null}{active && item.promotion?.reason ? <><Notice className="mt-4" tone="destructive">Promotion stopped: {item.promotion.reason.replaceAll("_", " ")}.</Notice>{item.promotion.status === "conflict" ? <Button className="mt-3" disabled={busy} onClick={() => onAdopt(item)} size="sm" variant="outline"><FileSearch />Review and adopt</Button> : null}</> : null}{item.document ? <p className="mt-4 text-sm text-foreground-muted">Promoted to the ordinary ingestion pipeline. Status: <strong className="text-foreground">{item.document.status}</strong>. Finer ingestion sub-stages are not claimed here.</p> : null}</li>; })}</ul></CardContent></Card>;
+function ActiveBatch({ batch, busy, onAdopt, onNew, onReview }: Readonly<{ batch: ImportBatch; busy: boolean; onAdopt: (item: ImportItem) => void; onNew: () => void; onReview: (item: ImportItem) => void }>) {
+  return <Card><CardHeader className="gap-3 sm:flex-row sm:items-start sm:justify-between"><div><CardTitle>Import in progress</CardTitle><CardDescription>Review each document once. After saving, indexing continues automatically and exceptions return here for attention.</CardDescription></div><Button onClick={onNew} size="sm" variant="outline"><FileUp />New import</Button></CardHeader><CardContent><ul className="grid gap-3">{batch.items.map((item) => { const status = itemStatus(item); const active = !item.replaced_by_import_item_public_id; return <li className="rounded-xl border border-border bg-surface p-4" key={item.public_id}><div className="flex flex-wrap items-start justify-between gap-3"><div className="min-w-0"><strong className="block truncate">{item.filename}</strong><p className="mt-1 text-sm text-foreground-muted">Stage {itemStage(item)} of 6 · {status.label}</p></div><StatusBadge status={status.tone}>{status.label}</StatusBadge></div><div className="mt-4 h-2 overflow-hidden rounded-full bg-surface-raised"><span className="block h-full bg-brand transition-[width]" style={{ width: `${Math.round(itemStage(item) / 6 * 100)}%` }} /></div>{active && item.preflight_status === "rejected" ? <Notice className="mt-4" tone="destructive">This source could not be verified: {item.preflight_rejection_reason?.replaceAll("_", " ")}.</Notice> : null}{active && item.preflight_status === "verified" && !item.decision_ready ? <Button className="mt-4" disabled={busy} onClick={() => onReview(item)} size="sm"><FileSearch />Review match and metadata</Button> : null}{active && item.promotion?.reason ? <><Notice className="mt-4" tone="destructive">{promotionProblem(item.promotion.reason)}</Notice>{item.promotion.status === "conflict" ? <Button className="mt-3" disabled={busy} onClick={() => onAdopt(item)} size="sm" variant="outline"><FileSearch />Review and resolve</Button> : null}</> : null}{item.document ? <p className="mt-4 text-sm text-foreground-muted">{item.document.status === "indexed" ? "Indexed and current in the knowledge library." : "Indexing is continuing automatically. You can leave this page and return later."}</p> : null}</li>; })}</ul></CardContent></Card>;
 }
 
 function ReviewPanel({ accepted, configuration, item, matches, onCancel, onReplace, onSubmit, purpose }: Readonly<{ accepted: string; configuration: ImportConfiguration; item: ImportItem; matches: ImportMatches; onCancel: () => void; onReplace: (item: ImportItem, file: File) => void; onSubmit: (definition: ImportDefinition) => void; purpose: ReviewState["purpose"] }>) {
-  const firstCandidate = matches.family_candidates[0];
-  const [mode, setMode] = useState<"new" | "successor">(firstCandidate ? "successor" : "new");
-  const [familyId, setFamilyId] = useState(firstCandidate?.family_id ?? "");
+  const exactTitleCandidate = matches.family_candidates.find((candidate) => candidate.score_basis_points === 10_000);
+  const [mode, setMode] = useState<"new" | "successor">(exactTitleCandidate ? "successor" : "new");
+  const [familyId, setFamilyId] = useState(exactTitleCandidate?.family_id ?? "");
   const [title, setTitle] = useState(item.filename.replace(/\.[^.]+$/, ""));
   const [description, setDescription] = useState("");
   const [ownerId, setOwnerId] = useState(configuration.review_options.current_user_public_id);
   const [categoryId, setCategoryId] = useState("");
-  const [effectiveFrom, setEffectiveFrom] = useState(new Date().toISOString().slice(0, 10));
+  const [effectiveFrom, setEffectiveFrom] = useState(nextDate(exactTitleCandidate?.current_effective_from ?? null));
+  const [applicabilityMode, setApplicabilityMode] = useState<"universal" | "selected">("universal");
+  const [locationIds, setLocationIds] = useState<string[]>([]);
+  const selectedCandidate = matches.family_candidates.find((candidate) => candidate.family_id === familyId);
+  const minimumEffectiveFrom = mode === "successor" ? nextDate(selectedCandidate?.current_effective_from ?? null) : undefined;
+  const effectiveDateInvalid = Boolean(minimumEffectiveFrom && effectiveFrom < minimumEffectiveFrom);
 
-  if (matches.exact_live_duplicates.length) return <Card><CardHeader><CardTitle>Duplicate found</CardTitle><CardDescription>{item.filename} has the same verified checksum as an existing live document. Promotion is blocked so the existing source can be reviewed instead.</CardDescription></CardHeader><CardContent><Notice tone="warning">Identical live document: {matches.exact_live_duplicates[0].document_id}. For an applicability-only change, use the existing document’s governance action.</Notice><div className="mt-4 flex flex-wrap gap-3"><label className={cn(buttonVariants({ variant: "secondary" }), "cursor-pointer")} htmlFor={`replacement-${item.public_id}`}><FileUp />Choose corrected file</label><input accept={accepted} className="sr-only" id={`replacement-${item.public_id}`} onChange={(event) => { const file = event.target.files?.[0]; if (file) onReplace(item, file); event.target.value = ""; }} type="file" /><Button onClick={onCancel} variant="outline">Close review</Button></div></CardContent></Card>;
+  if (matches.exact_live_duplicates.length) return <Card className="border-0"><CardHeader className="pr-16"><CardTitle>Duplicate found</CardTitle><CardDescription>{item.filename} has the same contents as a document already in the library, so a second copy will not be added.</CardDescription></CardHeader><CardContent><Notice tone="warning">An identical document is already in the library. To change its locations, open the existing document and choose Edit locations.</Notice><div className="mt-4 flex flex-wrap gap-3"><label className={cn(buttonVariants({ variant: "secondary" }), "cursor-pointer")} htmlFor={`replacement-${item.public_id}`}><FileUp />Choose corrected file</label><input accept={accepted} className="sr-only" id={`replacement-${item.public_id}`} onChange={(event) => { const file = event.target.files?.[0]; if (file) onReplace(item, file); event.target.value = ""; }} type="file" /><Button onClick={onCancel} variant="outline">Close review</Button></div></CardContent></Card>;
 
   const definition: ImportDefinition = {
     family: mode === "new" ? { mode: "new", title } : { mode: "successor", family_public_id: familyId },
     metadata: { category_public_id: categoryId || null, description: description || null, owner_user_public_id: ownerId, publisher_label: null, review_due_date: null, source_url: null, tag_public_ids: [] },
-    applicability: { location_public_ids: [] }, effective_from: effectiveFrom,
+    applicability: { location_public_ids: applicabilityMode === "selected" ? locationIds : [] }, effective_from: effectiveFrom,
   };
-  return <Card><CardHeader><CardTitle>{purpose === "adoption" ? "Review and adopt" : "Review"} {item.filename}</CardTitle><CardDescription>{purpose === "adoption" ? "Create a revised immutable decision under your own authority before starting a new promotion attempt." : "Matching is advisory. Confirm the family and essential metadata before creating an immutable decision snapshot."}</CardDescription></CardHeader><CardContent className="grid gap-5"><div className="grid gap-3 rounded-xl border border-border bg-surface p-4"><strong>Document family</strong>{matches.family_candidates.length ? <div className="grid gap-2">{matches.family_candidates.map((candidate) => <div className="flex items-start gap-3 rounded-lg border border-border p-3" key={candidate.family_id}><input aria-label={`Use existing family ${candidate.title}`} checked={mode === "successor" && familyId === candidate.family_id} name="family" onChange={() => { setMode("successor"); setFamilyId(candidate.family_id); }} type="radio" /><span><strong>{candidate.title}</strong><span className="block text-sm text-foreground-muted">Possible existing family · {Math.round(candidate.score_basis_points / 100)}% filename/title match</span></span></div>)}</div> : null}<div className="flex items-start gap-3 rounded-lg border border-border p-3"><input aria-label="Create a new document family" checked={mode === "new"} name="family" onChange={() => setMode("new")} type="radio" /><span><strong>Create a new family</strong><span className="block text-sm text-foreground-muted">Use when this is genuinely a new source, not a revision.</span></span></div></div>
+  return <Card className="border-0"><CardHeader className="pr-16"><CardTitle>{purpose === "adoption" ? "Review and resolve" : "Review"} {item.filename}</CardTitle><CardDescription>{purpose === "adoption" ? "Review the details and restart indexing." : "Choose whether this is a new document or a new version, then confirm the essential details."}</CardDescription></CardHeader><CardContent className="grid gap-5"><div className="grid gap-3 rounded-xl border border-border bg-surface p-4"><strong>Document or version</strong>{matches.family_candidates.length ? <div className="grid gap-2">{matches.family_candidates.map((candidate) => <div className="flex items-start gap-3 rounded-lg border border-border p-3" key={candidate.family_id}><input aria-label={`Add as a new version of ${candidate.title}`} checked={mode === "successor" && familyId === candidate.family_id} name="family" onChange={() => { setMode("successor"); setFamilyId(candidate.family_id); setEffectiveFrom(nextDate(candidate.current_effective_from)); }} type="radio" /><span><strong>{candidate.title}</strong><span className="block text-sm text-foreground-muted">Possible existing document · {Math.round(candidate.score_basis_points / 100)}% filename/title match</span></span></div>)}</div> : null}<div className="flex items-start gap-3 rounded-lg border border-border p-3"><input aria-label="Create a new document" checked={mode === "new"} name="family" onChange={() => { setMode("new"); setEffectiveFrom(nextDate(null)); }} type="radio" /><span><strong>Create a new document</strong><span className="block text-sm text-foreground-muted">Use this when the file is not an update to an existing document.</span></span></div></div>
     {mode === "new" ? <FormField id="import-family-title" label="Family title"><Input onChange={(event) => setTitle(event.target.value)} value={title} /></FormField> : null}
     <FormField help="Optional" id="import-description" label="Description"><Textarea onChange={(event) => setDescription(event.target.value)} value={description} /></FormField>
-    <div className="grid gap-4 sm:grid-cols-3"><FormField id="import-owner" label="Owner"><select className="min-h-11 rounded-md border border-input bg-background px-3" onChange={(event) => setOwnerId(event.target.value)} value={ownerId}>{configuration.review_options.owners.map((option) => <option key={option.public_id} value={option.public_id}>{option.name}</option>)}</select></FormField><FormField help="Optional" id="import-category" label="Category"><select className="min-h-11 rounded-md border border-input bg-background px-3" onChange={(event) => setCategoryId(event.target.value)} value={categoryId}><option value="">Uncategorised</option>{configuration.review_options.categories.map((option) => <option key={option.public_id} value={option.public_id}>{option.name}</option>)}</select></FormField><FormField id="import-effective-from" label="Effective from"><Input onChange={(event) => setEffectiveFrom(event.target.value)} type="date" value={effectiveFrom} /></FormField></div>
-    <details className="rounded-lg border border-border p-4"><summary className="cursor-pointer font-semibold">Advanced metadata and applicability</summary><p className="mt-3 text-sm text-foreground-muted">Optional publisher, source URL, review date, tags and location applicability remain empty unless deliberately supplied. They are never inferred from the filename.</p></details>
-    <div className="flex flex-wrap gap-3"><Button disabled={!ownerId || (mode === "new" ? !title.trim() : !familyId)} onClick={() => onSubmit(definition)}><Check />{purpose === "adoption" ? "Save and adopt" : "Save review"}</Button><Button onClick={onCancel} variant="outline">Cancel</Button></div>
+    <div className="grid gap-4 sm:grid-cols-3"><FormField id="import-owner" label="Owner"><select className="min-h-11 rounded-md border border-input bg-background px-3" onChange={(event) => setOwnerId(event.target.value)} value={ownerId}>{configuration.review_options.owners.map((option) => <option key={option.public_id} value={option.public_id}>{option.name}</option>)}</select></FormField><FormField help="Optional" id="import-category" label="Category"><select className="min-h-11 rounded-md border border-input bg-background px-3" onChange={(event) => setCategoryId(event.target.value)} value={categoryId}><option value="">Uncategorised</option>{configuration.review_options.categories.map((option) => <option key={option.public_id} value={option.public_id}>{option.name}</option>)}</select></FormField><FormField help={effectiveDateInvalid ? `Choose ${minimumEffectiveFrom} or later.` : mode === "successor" ? "Must be later than the current version." : undefined} id="import-effective-from" label="Effective from"><Input min={minimumEffectiveFrom} onChange={(event) => setEffectiveFrom(event.target.value)} type="date" value={effectiveFrom} /></FormField></div>
+    <fieldset className="grid gap-3 rounded-xl border border-border bg-surface p-4">
+      <legend className="px-1 font-semibold">Where does this document apply?</legend>
+      <p className="text-sm text-foreground-muted">Choose where this document should be used. Location names found inside the file will not change this selection.</p>
+      <div className="flex items-start gap-3 rounded-lg border border-border p-3">
+        <input aria-labelledby={`applicability-universal-label-${item.public_id}`} checked={applicabilityMode === "universal"} id={`applicability-universal-${item.public_id}`} name={`applicability-${item.public_id}`} onChange={() => { setApplicabilityMode("universal"); setLocationIds([]); }} type="radio" />
+        <label htmlFor={`applicability-universal-${item.public_id}`} id={`applicability-universal-label-${item.public_id}`}><strong>Organisation-wide</strong><span className="block text-sm text-foreground-muted">Use this document across the whole organisation.</span></label>
+      </div>
+      <div className="flex items-start gap-3 rounded-lg border border-border p-3">
+        <input aria-labelledby={`applicability-selected-label-${item.public_id}`} checked={applicabilityMode === "selected"} id={`applicability-selected-${item.public_id}`} name={`applicability-${item.public_id}`} onChange={() => setApplicabilityMode("selected")} type="radio" />
+        <label htmlFor={`applicability-selected-${item.public_id}`} id={`applicability-selected-label-${item.public_id}`}><strong>Selected registered locations</strong><span className="block text-sm text-foreground-muted">Choose one or more locations below.</span></label>
+      </div>
+      {applicabilityMode === "selected" ? configuration.review_options.locations.length ? <div className="grid gap-2 rounded-lg bg-surface-raised p-3 sm:grid-cols-2">
+        {configuration.review_options.locations.map((location) => <label className="flex min-h-10 items-center gap-3" htmlFor={`applicability-location-${item.public_id}-${location.public_id}`} key={location.public_id}><input checked={locationIds.includes(location.public_id)} id={`applicability-location-${item.public_id}-${location.public_id}`} onChange={(event) => setLocationIds((current) => event.target.checked ? [...current, location.public_id] : current.filter((id) => id !== location.public_id))} type="checkbox" />{location.name}</label>)}
+      </div> : <Notice tone="warning">No registered locations are available. Add locations in workspace administration or choose organisation-wide.</Notice> : null}
+    </fieldset>
+    <details className="rounded-lg border border-border p-4"><summary className="cursor-pointer font-semibold">Advanced metadata</summary><p className="mt-3 text-sm text-foreground-muted">Optional publisher, source URL, review date and tags remain empty unless deliberately supplied. They are never inferred from the filename.</p></details>
+    <div className="flex flex-wrap gap-3"><Button disabled={!ownerId || effectiveDateInvalid || (mode === "new" ? !title.trim() : !familyId) || (applicabilityMode === "selected" && locationIds.length === 0)} onClick={() => onSubmit(definition)}><Check />{purpose === "adoption" ? "Save and resolve" : "Save review"}</Button><Button onClick={onCancel} variant="outline">Cancel</Button></div>
   </CardContent></Card>;
 }

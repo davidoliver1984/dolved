@@ -1,5 +1,19 @@
 # RAG Platform Implementation Guide
 
+## 2026-11-26 — Current pilot and preserved custom-RAG paths
+
+The current delivery is the invitation-only Dolved–Dify pilot documented in the
+[architecture overview](docs/operations/dolved-dify/CURRENT-ARCHITECTURE.md). Its bounded
+security phase is recorded in the
+[sanitised acceptance report](docs/operations/dolved-dify/PILOT-SECURITY-ACCEPTANCE-20261126.md);
+the remaining human acceptance and release-decision items are in the
+[launch checklist](docs/operations/dolved-dify/PILOT-LAUNCH-CHECKLIST-20261126.md).
+
+Older chronological entries below remain evidence of the custom RAG development path and
+must not be read as the current pilot deployment state. Recovery and any future adoption of
+that pipeline remain separate, as described in [Project journey](docs/PROJECT-PROGRESSION.md) and
+the [legacy recovery guide](docs/operations/dolved-dify/LEGACY-RAG-RECOVERY.md).
+
 ## 2026-11-17 — Smoke-03 exact mount-equivalence harness correction
 
 Application remains `d3a760f22f7d565702e0efb5ab371d5f8d773031`. David authorised

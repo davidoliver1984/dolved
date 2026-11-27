@@ -18,6 +18,7 @@ return [
         ],
     ], fn (array $credential): bool => is_string($credential['key_id']) && $credential['key_id'] !== '')),
     'metrics' => [
+        'enabled' => filter_var(env('OPERATIONAL_METRICS_ENABLED', true), FILTER_VALIDATE_BOOL),
         'base_url' => env('OPERATIONAL_METRICS_URL', 'http://otel-lgtm:9090'),
         'timeout_seconds' => max(0.1, (float) env('OPERATIONAL_METRICS_TIMEOUT_SECONDS', 1.0)),
         'cache_seconds' => max(1, (int) env('OPERATIONAL_METRICS_CACHE_SECONDS', 10)),

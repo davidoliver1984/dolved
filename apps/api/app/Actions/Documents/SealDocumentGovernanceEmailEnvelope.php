@@ -7,10 +7,13 @@ namespace App\Actions\Documents;
 use App\Enums\GovernanceEmailEnvelopeStatus;
 use App\Models\DocumentGovernanceEmailEnvelope;
 use App\Models\Workspace;
+use App\Services\Branding\WorkspaceBranding;
 use Illuminate\Support\Facades\DB;
 
 final class SealDocumentGovernanceEmailEnvelope
 {
+    public function __construct(private readonly WorkspaceBranding $branding) {}
+
     public function handle(int $envelopeId): ?DocumentGovernanceEmailEnvelope
     {
         return DB::transaction(function () use ($envelopeId): ?DocumentGovernanceEmailEnvelope {
@@ -35,12 +38,13 @@ final class SealDocumentGovernanceEmailEnvelope
             $templateKey = $envelope->category_group === 'review_reminders'
                 ? 'governance.review.digest'
                 : $envelope->category_group;
+            $branding = $this->branding->emailSnapshot($workspace);
             $basis = [
                 'template_key' => $templateKey,
                 'template_version' => 1,
-                'branding_configuration_identity' => 'dolved-default-v1',
+                'branding_configuration_identity' => $branding['configuration_identity'],
                 'workspace_display_name_snapshot' => $workspace->name,
-                'resolved_accent_identity' => 'dolved-green-v1',
+                'resolved_accent_identity' => $branding['accent_identity'],
                 'sealed_membership_digest' => $membershipDigest,
             ];
             $envelope->forceFill([

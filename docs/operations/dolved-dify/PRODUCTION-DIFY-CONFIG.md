@@ -1,8 +1,8 @@
 # Production Dify application configuration
 
-Date: 19 November 2026  
-Status: reviewed production template; apply to the self-hosted Dify application and
-replace the dataset reference with the self-hosted dataset identity before freezing.
+Date: 25 November 2026
+Status: hosted production configuration recorded; one provider-free prompt-boundary
+correction is prepared locally but is not published or deployed.
 
 This record contains no credential, provider key or client document. It is the
 reviewed source for the one permitted general production prompt revision and the
@@ -79,9 +79,10 @@ tailored to released or sealed evaluation questions.
 - manual metadata filter: `scope_key is global OR scope_key is trusted_site`
 - chat model `gpt-5.6-sol`; reasoning effort `medium`; maximum output `4096`;
   service tier `default`
-- memory, vision, reasoning-tag separation and node retry off
+- memory enabled with record window size `10`; vision, reasoning-tag separation and
+  node retry off
 - native citations/attributions on
-- application private and unpublished during build and evaluation
+- application private; backend-service API published only to the private Dolved backplane
 
 ## Deployment verification
 
@@ -101,3 +102,36 @@ Before provider configuration or document ingestion:
 
 The final deployed export, plugin identities, dataset identity, corpus manifest and
 document mappings replace this template as authoritative freeze evidence.
+
+## Prepared conversation-input correction — 25 November 2026
+
+The published memory-enabled LLM node currently contains a user-role prompt entry that
+renders `{{#sys.query#}}`. Stock Dify 1.19.0 also appends the current query through its
+memory prompt-assembly path. The supported correction removes only that explicit
+user-role prompt entry. It does not deduplicate text and therefore preserves legitimate
+repeated wording in earlier turns.
+
+Provider-free before/corrected node snapshots are retained under
+`deployment/dolved-dify/workflow-config/20261125/`. The system prompt, freshly retrieved
+context, `trusted_site`, model and generation parameters, memory enabled state and memory
+window size `10` are byte-for-byte unchanged in those snapshots. The hosted workflow is
+still the published pre-correction version; publishing is a separate authorised action.
+
+In Dify 1.19.0, window `10` selects Dify message records, including the current incomplete
+record which is then removed from history. The resulting upper bound is nine completed
+prior turns (normally 18 user/assistant prompt messages), and the token budget may shorten
+that history further. Retrieval continues to receive only the exact latest question.
+
+## Prepared invited-pilot instruction correction — 26 November 2026
+
+The bounded post-evaluation correction is retained under
+`deployment/dolved-dify/workflow-config/20261126/`. It changes only the system-prompt
+string: it makes the established/not-established decision explicit and clarifies that
+retrieved content cannot override system instructions or require disclosure or actions.
+The full proposed node and a provider-free structural verifier are retained there with
+baseline and proposed prompt hashes.
+
+This correction is not saved or published. The model, generation parameters, memory,
+context selector, retrieval settings and corpus remain at the production values recorded
+above. Publication and live checking require the separately frozen six-case assessment
+and David's release.

@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Support\Pipeline\ActivePipelineCapabilities;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -19,6 +20,7 @@ class WorkspaceResource extends JsonResource
             'name' => $this->workspace->name,
             'slug' => $this->workspace->slug,
             'role' => $this->role->value,
+            'pipeline_capabilities' => app(ActivePipelineCapabilities::class)->workspace($this->workspace),
         ];
     }
 }

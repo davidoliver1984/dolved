@@ -96,7 +96,7 @@ export function GovernanceInbox({ workspacePublicId, preview }: Readonly<{ works
           <div className="flex items-start justify-between gap-4 border-b border-border pb-4">
             <div>
               <DialogPrimitive.Title className="text-xl font-bold">Notifications</DialogPrimitive.Title>
-              <DialogPrimitive.Description className="mt-1 text-sm text-foreground-muted" id="governance-inbox-description">Document updates and governance reminders for this workspace.</DialogPrimitive.Description>
+              <DialogPrimitive.Description className="mt-1 text-sm text-foreground-muted" id="governance-inbox-description">Document updates and review reminders for this workspace.</DialogPrimitive.Description>
             </div>
             <DialogPrimitive.Close asChild><Button aria-label="Close notifications" size="icon" variant="ghost"><X aria-hidden="true" /></Button></DialogPrimitive.Close>
           </div>
