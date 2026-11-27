@@ -1,7 +1,8 @@
 # Dolved knowledge system
 
 Dolved is a governed knowledge and document-answering system. The current hosted delivery
-is an invitation-only, single-client pilot: Next.js and Laravel provide the product,
+is approved for a bounded, invitation-only, single-client private pilot: Next.js and
+Laravel provide the product,
 identity, tenancy, governance and audit boundary, while private stock self-hosted Dify
 provides the bound retrieval and generation workflow.
 
@@ -11,18 +12,25 @@ pilot.
 
 Current navigation:
 
+- [Private-pilot acceptance and release decision](docs/operations/dolved-dify/PRIVATE-PILOT-ACCEPTANCE-20261127.md)
 - [Current pilot architecture](docs/operations/dolved-dify/CURRENT-ARCHITECTURE.md)
 - [Dolved–Dify delivery record](docs/operations/dolved-dify/DOLVED-DIFY-DELIVERY.md)
 - [Pilot security acceptance](docs/operations/dolved-dify/PILOT-SECURITY-ACCEPTANCE-20261126.md)
-- [Pilot launch checklist](docs/operations/dolved-dify/PILOT-LAUNCH-CHECKLIST-20261126.md)
+- [Pilot acceptance and onboarding checklist](docs/operations/dolved-dify/PILOT-LAUNCH-CHECKLIST-20261126.md)
 - [Project journey and future custom-RAG path](docs/PROJECT-PROGRESSION.md)
 - [Documentation index](docs/README.md)
 
-The pilot is not presented as production-certified, publicly launched, highly available or
-ready for unrestricted multi-client use. David's explicit invited-pilot release decision
-remains a separate acceptance step.
+David has accepted the documented residual risks and coverage gaps for this named-user
+feedback pilot. Invitations and participant onboarding are separate operational actions and
+are not claimed as complete. The decision is not a production-certification, public-launch,
+high-availability or unrestricted multi-client readiness claim.
 
 ## Getting started
+
+The workflow below starts the repository's full local development stack, including the
+preserved custom Laravel/Python/Qdrant path. It is not a reproduction of the accepted
+hosted Dify deployment; use the current architecture and delivery records above for that
+operating model.
 
 Docker with Docker Compose and Make are the only host tools required for the standard
 development workflow.

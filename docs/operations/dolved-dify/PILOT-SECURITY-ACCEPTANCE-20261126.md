@@ -1,5 +1,9 @@
 # Dolved–Dify pilot security acceptance
 
+> Historical assessment record. See the
+> [private-pilot acceptance](PRIVATE-PILOT-ACCEPTANCE-20261127.md) for the current release
+> decision. The findings and evidence below retain their original status.
+
 Date: 26 November 2026  
 Outcome: **READY FOR DAVID'S PILOT RELEASE DECISION**
 

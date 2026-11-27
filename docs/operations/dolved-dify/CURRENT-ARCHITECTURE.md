@@ -1,6 +1,8 @@
 # Current Dolved–Dify pilot architecture
 
-The current delivery is an invitation-only, single-client pilot. Dolved owns the user
+The current delivery is approved for a bounded, invitation-only, single-client private
+pilot. Invitations and participant onboarding are separate operational actions and are not
+claimed as complete. Dolved owns the user
 experience, identity/session boundary, workspace membership and policy enforcement,
 document governance, source-link permissions, feedback/review controls and operational
 views. Stock self-hosted Dify performs the bound retrieval and generation workflow behind
@@ -23,6 +25,7 @@ workspace data.
 
 This architecture does not make the pilot production-certified, highly available or ready
 for public/multi-client hosting. See [ADR-0041](../../adr/0041-use-stock-self-hosted-dify-for-single-client-delivery.md),
+the [private-pilot acceptance](PRIVATE-PILOT-ACCEPTANCE-20261127.md),
 the [delivery record](DOLVED-DIFY-DELIVERY.md), the
 [security acceptance](PILOT-SECURITY-ACCEPTANCE-20261126.md), and the
 [legacy custom-RAG recovery guide](LEGACY-RAG-RECOVERY.md).

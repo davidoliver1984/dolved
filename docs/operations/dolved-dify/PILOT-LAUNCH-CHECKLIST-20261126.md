@@ -1,13 +1,16 @@
 # Dolved invited-pilot launch checklist
 
 Date: 26 November 2026  
-Security phase: complete; hosted actor matrix complete; fixture-dependent controls remain
-Pilot release decision: **not yet recorded**
+Security phase: complete; hosted actor matrix complete
+Pilot release decision: **accepted by David on 27 November 2026**
 
-This is the short outstanding checklist for the invitation-only pilot. It does not
-authorise invitations or claim production, public-launch or multi-client readiness.
+This is the acceptance and onboarding checklist for the invitation-only pilot. The
+canonical decision is the
+[private-pilot acceptance](PRIVATE-PILOT-ACCEPTANCE-20261127.md). It approves the bounded
+pilot but does not itself send invitations or claim production, public-launch or
+multi-client readiness.
 
-- [ ] David reviews the residual medium findings and coverage limits in the
+- [x] David reviewed and accepted the residual medium findings and coverage limits in the
   [security-acceptance report](PILOT-SECURITY-ACCEPTANCE-20261126.md).
 - [x] Resolve the concrete actor-matrix prerequisite through supported lifecycle actions:
   two clearly synthetic Dolved workspaces and controlled owner/admin/member identities.
@@ -16,23 +19,26 @@ authorise invitations or claim production, public-launch or multi-client readine
   invitation expiry remains supported by retained deterministic evidence.
 - [x] Exercise cross-workspace conversation and synchronous usage-export denial with the
   synthetic actor matrix.
-- [ ] Retain a separate hosted result for a second submission of the same consumed reset
-  link; current hosted state proves consumption and engineering tests cover single use.
-- [ ] Exercise authorised source delivery, existing-link revocation and cross-workspace
-  source denial. No safe provider-free indexed synthetic-source mechanism currently
-  exists; do not touch the production corpus to manufacture coverage.
-- [ ] Exercise restricted question-review content opening, audit and post-revocation read.
-  Policy/effective-date/role checks passed, but no safe provider-free generated-answer
-  fixture exists. Retention expiry may continue to use deterministic evidence.
+- [x] Record the missing separately retained second submission of the exact consumed reset
+  link as an accepted coverage gap, not a hosted pass. Current state proves consumption and
+  engineering tests cover single use.
+- [x] Record authorised source delivery, existing-link revocation and real cross-workspace
+  source access as an accepted coverage gap, not a hosted pass. No safe provider-free
+  indexed synthetic-source mechanism exists; the production corpus was not altered to
+  manufacture coverage.
+- [x] Record restricted question-review content opening, audit and post-revocation read as
+  an accepted coverage gap, not a hosted pass. Policy/effective-date/role checks passed,
+  but no safe provider-free generated-answer fixture exists.
 - [x] Reconfirm the deployed document inventory and effective Dify configuration without
   changing frozen quality evidence: the six-case cleanup verifier preserved production at
   11 eligible documents / 248 searchable segments with unchanged identities and corpus
   timestamps.
 - [x] Remove the isolated six-case test app/dataset through Dify's supported lifecycle and
   preserve checksummed cleanup evidence.
-- [ ] Record David's explicit invited-pilot release decision in R30-S04c/R30-S05.
-- [ ] Send invitations only after that decision; preserve the bounded pilot audience,
-  backup/rollback and monitoring arrangements.
+- [x] Record David's explicit invited-pilot release decision in R30-S04c/R30-S05.
+- [ ] Send invitations through the separately authorised onboarding action; preserve the
+  bounded pilot audience, backup/rollback and monitoring arrangements.
+- [ ] Record invited participants and the pilot start date when onboarding actually occurs.
 
 Deferred maintenance that is not a present launch blocker: browser response-header
 hardening, least-privilege API container changes, and patching/removing the disabled

@@ -1,5 +1,9 @@
 # Dolved invited-pilot access-control acceptance addendum
 
+> Historical assessment record. See the
+> [private-pilot acceptance](PRIVATE-PILOT-ACCEPTANCE-20261127.md) for the current release
+> decision. The matrix below is preserved and its unexercised rows remain unexercised.
+
 Date: 26 November 2026  
 Outcome: **HANDS-ON ACCEPTANCE INCOMPLETE — NOT YET READY FOR DAVID'S INVITED-PILOT RELEASE DECISION**
 

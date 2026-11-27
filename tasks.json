@@ -5619,7 +5619,7 @@
       "title": "Private Prototype/Pilot Launch",
       "guide_start_line": 15838,
       "guide_end_line": 15918,
-      "status": "in_progress",
+      "status": "verified",
       "objective": "Launch and hand over one private, invitation-only single-client Dolved–Dify prototype on the approved non-AWS host, with bounded recovery, observability, security, quality and cost evidence but no production-readiness claim.",
       "sessions": [
         {
@@ -5673,7 +5673,7 @@
           "id": "R30-S03",
           "guide_stage": "Stage 30.3 — Deploy the invitation-only prototype/pilot",
           "title": "Deploy the Invitation-Only Prototype/Pilot",
-          "status": "in_progress",
+          "status": "verified",
           "objective": "Deploy verified Dolved images and pinned stock Dify to the approved host and prove TLS, private backplane, secret handling, bounded resources, legacy preservation, backup and rollback appropriate to the pilot.",
           "session_mode": "implementation",
           "requires_architecture_review": false,
@@ -5684,7 +5684,7 @@
           "journal": {
             "required": true,
             "path_template": "docs/journal/YYYY-MM-DD-r30-s03-deploy-private-prototype-pilot.md",
-            "status": "in_progress",
+            "status": "verified",
             "actual_path": "docs/journal/2026-11-21-r30-s03-deploy-private-prototype-pilot.md"
           },
           "completion_evidence": [
@@ -5692,14 +5692,14 @@
             "Release archive 79ccaef19fd541dbc013960c7d42dfd0a06c7547c9fecfdce094ec82f9a15f66 passed strengthened preflight and provider-free running verification.",
             "Workspace Usage loading was corrected in deployed commit 76bfeb4d and the server-hosted specialist consoles now use authenticated HTTPS gateway paths without laptop tunnels.",
             "Active-pipeline cleanup revision cc72a8da699cb3bbe11b847785379dd7a59c0f99 is deployed with verified OCI labels. Focused tests passed 24 Laravel tests / 195 assertions and 5 web files / 36 tests; hosted provider-free acceptance confirmed 248 freshly observed Dify segments across 11 available bindings, accurate unavailable history, tenant recovery branding, narrow layout, retained-run stop semantics and corrected deployed wording.",
-            "No existing workspace-admin/member account or two-version document family was available for the bounded hosted pass, so those exact presentations remain explicit gaps. Final hands-on lifecycle/permission acceptance and consolidated operational handoff remain open; R30-GATE is not complete."
+            "The later hosted synthetic actor matrix completed the invitation, recovery/session, role, cross-workspace, conversation, reduction/removal, export and review-policy checks. Remaining fixture-dependent coverage is recorded and accepted in docs/operations/dolved-dify/PRIVATE-PILOT-ACCEPTANCE-20261127.md."
           ]
         },
         {
           "id": "R30-S04",
           "guide_stage": "Stage 30.4 — Verify the bounded pilot",
           "title": "Verify the Bounded Pilot",
-          "status": "in_progress",
+          "status": "verified",
           "objective": "Run provider-free checks first and only explicitly authorised live smoke/evaluation calls, verifying invitation access, tenancy, document/citation flows, failure behaviour, usage/cost and privacy-safe trace correlation.",
           "session_mode": "implementation",
           "requires_architecture_review": false,
@@ -5710,14 +5710,14 @@
           "journal": {
             "required": true,
             "path_template": "docs/journal/YYYY-MM-DD-r30-s04-verify-bounded-pilot.md",
-            "status": "in_progress",
+            "status": "verified",
             "actual_path": "docs/journal/2026-11-26-r30-s04-verify-bounded-pilot.md"
           },
           "completion_evidence": [
             "docs/operations/dolved-dify/PILOT-ACCESS-CONTROL-ACCEPTANCE-ADDENDUM-20261126.md records the final bounded PASS/NOT EXERCISED matrix, live recovery/reset cleanup evidence, deterministic-only controls and exact hosted coverage blocker.",
             "docs/operations/dolved-dify/SIX-CASE-QUALITY-CLOSURE-20261126.md records supported removal of the isolated test app/dataset and preservation of the production 11-document / 248-segment corpus.",
             "docs/operations/dolved-dify/PILOT-ACCESS-CONTROL-ACCEPTANCE-CONTINUATION-20261126.md records the completed hosted two-workspace owner/admin/member matrix, supported synthetic cleanup and the exact provider-free fixture limitations.",
-            "Invitation, recovery/session, role, cross-workspace, conversation, membership-removal, usage-export and review-policy rows passed live. Authorised source/link and restricted review-content controls remain unexercised; David's release decision remains open."
+            "Invitation, recovery/session, role, cross-workspace, conversation, membership-removal, usage-export and review-policy rows passed live. Authorised source/link and restricted review-content controls remain unexercised and were explicitly accepted by David for this bounded pilot in docs/operations/dolved-dify/PRIVATE-PILOT-ACCEPTANCE-20261127.md."
           ]
         },
         {
@@ -5766,7 +5766,7 @@
           "id": "R30-S04c",
           "guide_stage": "Stage 30.4c — Hand over security acceptance and record the pilot release decision",
           "title": "Hand Over Security Acceptance and Record David's Release Decision",
-          "status": "not_started",
+          "status": "verified",
           "objective": "Present the sanitised security acceptance, residual risks, coverage limits and launch checklist, then record David's explicit invited-pilot release decision separately from production-readiness, public-launch and scale claims.",
           "session_mode": "architecture",
           "requires_architecture_review": true,
@@ -5777,15 +5777,18 @@
           ],
           "journal": {
             "required": false,
-            "status": "not_started"
+            "status": "verified"
           },
-          "completion_evidence": []
+          "completion_evidence": [
+            "docs/operations/dolved-dify/PRIVATE-PILOT-ACCEPTANCE-20261127.md records David's explicit acceptance of the named residual risks and coverage gaps for the bounded invitation-only pilot without converting unexercised checks into passes.",
+            "The accepted decision is distinct from invitation sending, participant activity, public launch, multi-client hosting, general production readiness and high availability."
+          ]
         },
         {
           "id": "R30-S05",
           "guide_stage": "Stage 30.5 — Hand over and decide pilot go/no-go",
           "title": "Hand Over and Decide Pilot Go/No-Go",
-          "status": "not_started",
+          "status": "verified",
           "objective": "Complete the operational/evidence handoff and record an explicit pilot decision that distinguishes pilot usefulness from production readiness, public launch and scale.",
           "session_mode": "architecture",
           "requires_architecture_review": true,
@@ -5796,20 +5799,27 @@
           "journal": {
             "required": true,
             "path_template": "docs/journal/YYYY-MM-DD-r30-s05-private-pilot-handoff-and-decision.md",
-            "status": "not_started"
+            "status": "verified",
+            "actual_path": "docs/journal/2026-11-27-r30-s05-private-pilot-handoff-and-decision.md"
           },
-          "completion_evidence": []
+          "completion_evidence": [
+            "The canonical handoff and decision are recorded in docs/operations/dolved-dify/PRIVATE-PILOT-ACCEPTANCE-20261127.md and the current onboarding actions remain open in PILOT-LAUNCH-CHECKLIST-20261126.md.",
+            "David approved the hosted application for the bounded invitation-only private pilot on 27 November 2026; no invitations or participant activity are claimed by this decision record."
+          ]
         }
       ],
       "gate": {
         "id": "R30-GATE",
         "title": "Private Prototype/Pilot Acceptance Gate",
-        "status": "not_started",
+        "status": "verified",
         "depends_on": [
           "R30-S05"
         ],
         "acceptance_scope": "The private invitation-only Dolved–Dify pilot is hosted with verified TLS, backplane, secrets, bounded backup/rollback, legacy recovery, privacy-safe telemetry, security/tenancy/smoke evidence, independently assessed quality where authorised, honest costs and an explicit pilot go/no-go. No AWS, production, public-launch or high-availability claim is made.",
-        "completion_evidence": []
+        "completion_evidence": [
+          "docs/operations/dolved-dify/PRIVATE-PILOT-ACCEPTANCE-20261127.md records the explicit bounded pilot go decision, accepted residual risks, accepted coverage gaps, operating guidance and non-production boundary.",
+          "Invitation sending and participant onboarding remain separate unchecked operational actions; the gate does not claim public launch, multi-client hosting, general production readiness, AWS delivery or high availability."
+        ]
       }
     },
     {

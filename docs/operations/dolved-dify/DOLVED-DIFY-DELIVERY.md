@@ -4,7 +4,7 @@ Date: 19 November 2026
 Owner: David
 Implementation: Codex
 Independent assessment: Claude
-Status: live hosted pilot undergoing consolidated engineering acceptance as of 21 November 2026; canonical repository `/Users/davidoliver/Developer/RAG`, implementation branch `codex/admin-observability-20261121`. Canonical roadmap remains R28-S04 until its independent gate is reconciled.
+Status: approved by David on 27 November 2026 for the bounded, invitation-only private pilot. Invitations and participant onboarding have not yet been recorded. See `PRIVATE-PILOT-ACCEPTANCE-20261127.md` for the current decision and accepted limits.
 
 ## Purpose and authority
 
@@ -75,22 +75,22 @@ The existing 106–166-hour estimate is provisional. Track actual focused effort
 | Deliverable | Completion evidence | Status |
 |---|---|---|
 | Architecture and local development setup | Isolated worktree, pinned dependencies, ADR, roadmap/tasks updated where required | Verified locally — worktree from `9e43561`; initial plan preserved; ADR-0041 and production runbook recorded |
-| Dolved production runtime | Working production frontend/API, required workers, no development server dependency | Deployed — production frontend/Laravel runtime at pilot.dolved.com per David's 20 November report; hosted engineering acceptance remains open |
+| Dolved production runtime | Working production frontend/API, required workers, no development server dependency | Verified — hosted immutable web/API and required workers passed the bounded engineering/security read-back recorded below |
 | Stock Dify deployment | Pinned release/plugins, persistent stores, supported API compatibility | Verified on host — stock Dify 1.19.0/`8e689e8`, private data services, loopback-only nginx, plugin debug port removed, HTTP 200; OpenAI plugin 1.1.0 |
-| Authentication and ownership | Workspace, conversation and document access checks verified | Implemented — local boundary checks and hosted sign-in correction recorded; complete hosted roles/ownership acceptance remains |
-| Document upload | Authorised user uploads via Dolved; original stored durably; status visible | Implemented and deployed — eleven originals stored/read-back verified; explicit organisation-wide or multi-location applicability and location administration are deployed; fresh hosted upload and complete lifecycle acceptance pending |
-| Governance synchronisation | Approval, eligibility, replacement, withdrawal and failure transitions verified | Verified locally — fail-closed contracts pass; hosted replacement, withdrawal, deletion and recovery acceptance pending |
-| Chat | Streaming where supported, saved history, fresh conversations, refresh consistency | Deployed — answers, persistence and reload reported working; first-message live update correction remains deployed. Dolved persists the native Dify conversation identity and the active stock Dify workflow now has bounded memory enabled for the last 10 messages. A hosted conversational follow-up check remains part of consolidated acceptance |
-| Site context | Backend-validated selections and correct global/site retrieval behaviour | Implemented — backend-validated registered selection or global-only; document import now requires organisation-wide or one-or-more registered locations and never infers applicability from wording. Complete hosted acceptance and final site mapping verification remain |
-| Sources | Honest source display and authorised links to mapped originals | Deployed — compact expandable Sources retrieved and authorised links reported working; hosted permission/link acceptance pending |
-| Hosting and recovery | HTTPS, restricted services, backups and isolated restore check | In progress — host and Dify are deployed and hardened. The restricted Dify snapshot at `/var/backups/dolved-pilot/20261119T214500Z` has checksum-manifest SHA-256 `ad3ddd8a01eb12389de6ccf89ceaf643bf605fffed2759f85ccb36e590473d4c`; its isolated database/original restore passed. The post-import Dolved backup at `/var/backups/dolved-pilot/20261119T220500Z` has checksum-manifest SHA-256 `97ad53a8b995b5dc4c5638313f4867c4321050149b042beca6208a869feb0f59`; its temporary database restored with eleven documents and all restored originals matched their source checksums. DNS/HTTPS, dedicated Dify credentials and SMTP configuration are now complete per David's 20 November report; actual mail delivery and remaining hosted operational acceptance are pending |
+| Authentication and ownership | Workspace, conversation and document access checks verified | Verified — hosted synthetic invitation, recovery/session, role, cross-workspace, conversation-ownership, reduction and removal checks passed; exact remaining fixture gaps are accepted in the release decision |
+| Document upload | Authorised user uploads via Dolved; original stored durably; status visible | Verified for the pilot scope — eleven originals and stored bytes were read back; explicit organisation-wide/multi-location applicability and location administration are deployed |
+| Governance synchronisation | Approval, eligibility, replacement, withdrawal and failure transitions verified | Implemented and verified through focused contracts and hosted pipeline evidence; no broader production-readiness claim is made |
+| Chat | Streaming where supported, saved history, fresh conversations, refresh consistency | Verified for the pilot scope — hosted answers, persistence, reload, conversation identity and bounded ten-message Dify memory are recorded; the supplementary six-case batch passed |
+| Site context | Backend-validated selections and correct global/site retrieval behaviour | Verified for the pilot scope — registered-location or global-only context is backend validated and document applicability is explicit |
+| Sources | Honest source display and authorised links to mapped originals | Deployed and accepted — source presentation and permission enforcement are implemented; the unexercised provider-free live source-link fixture rows remain documented and accepted |
+| Hosting and recovery | HTTPS, restricted services, backups and isolated restore check | Verified for the bounded pilot — private services, HTTPS, credentials, backups and isolated restore evidence are recorded; the single-VPS availability limit remains accepted |
 | Fixed product branding | Established Dolved identity across current product surfaces | Deployed — distinct from configurable branding |
 | Platform-admin branding controls | Bounded logo/colour and related settings through the reserved branding seam | Deployed — versioned editor, custom/default lifecycle, safe assets, branded correspondence and hosted refinements are live. David reported the resulting branded email and interface looked correct. Consolidated favicon persistence, fallback identity, mobile and light/dark acceptance remain open |
-| Privacy-safe observability | Allowlisted OpenTelemetry propagation/Collector routing without content or secrets in general telemetry; tenant usage and restricted question review remain separate | Deployed and provider-free verified — pinned Collector 0.153.0, Grafana OTEL LGTM 0.29.2 and Alertmanager 0.33.1 are healthy and localhost-only. The operational reader returned nine current signals with alert state available. Tenant usage, opt-in owner-derived question review, manual subjects and knowledge-gap summaries are deployed; hands-on permission/retention acceptance remains |
+| Privacy-safe observability | Allowlisted OpenTelemetry propagation/Collector routing without content or secrets in general telemetry; tenant usage and restricted question review remain separate | Verified — pinned Collector 0.153.0, Grafana OTEL LGTM 0.29.2 and Alertmanager 0.33.1 are private/healthy; nine operational signals, alert state, usage and bounded question-review permissions were exercised |
 | Restricted evaluation evidence capture | Exact assembled model input and user-visible answer/source/link records | Verified — existing hosted run directly records Dify 1.19.0's assembled `PromptMessage` sequence and natively correlates it to the global structured context, Dolved answer and ten ordered permission-enforced source routes; this is the Dify model-runtime boundary, not provider-wire bytes. Restricted package manifest SHA-256 `75ec5655326aba7d2b946a2db081d431fc2bcefc0d0b4b7198ee1859dc12656e`; no new provider call or setting change |
-| Final freeze | Application, Dify, plugins, prompt, corpus and settings recorded | Not started |
-| Independent evaluation | One hosted 40-question run and Claude's frozen-rubric assessment | Not started |
-| Handover | URL, secure access, costs, runbooks, limitations and client-access decision | Not started |
+| Final freeze | Application, Dify, plugins, prompt, corpus and settings recorded | Verified — production identities/configuration and the 11-document / 248-segment corpus were preserved through the supplementary assessment and test-resource cleanup |
+| Independent evaluation | One hosted 40-question run and Claude's frozen-rubric assessment | Completed — original 40-question and memory verdicts remain unchanged; the later bounded six-case supplementary assessment passed its frozen rule |
+| Handover | URL, secure access, costs, runbooks, limitations and client-access decision | Verified — David's bounded pilot acceptance is recorded in `PRIVATE-PILOT-ACCEPTANCE-20261127.md`; invitation sending/onboarding remains a separate action |
 
 Use states not started, in progress, verified or blocked. Attach evidence when marking verified. Maintain current milestone, next action, decisions and blockers here. Preserve failed checks in a concise log rather than creating approval packages for every correction.
 
@@ -686,3 +686,23 @@ Restricted continuation evidence is retained at
 `~/Desktop/dolved-experiments/dolved-pilot-synthetic-access-acceptance-20261126T192723Z/`;
 the checksum-manifest SHA-256 is
 `eb6403b0624f662492d80a65a3b5486be03ddb2c942be369d34c7df6e005b40b`.
+
+### Private-pilot release decision — 27 November 2026
+
+David reviewed the completed engineering/security work, hosted access-control matrix,
+original quality outcomes, supplementary six-case PASS and the exact residual risks and
+coverage gaps. He accepted them as sufficient for the bounded, invitation-only private
+pilot. No further pre-launch testing is required within that accepted scope.
+
+The canonical decision is
+[`PRIVATE-PILOT-ACCEPTANCE-20261127.md`](PRIVATE-PILOT-ACCEPTANCE-20261127.md). It records
+the accepted browser/container/passkey/availability risks, the provider-free source and
+restricted-review fixture gaps, the retained reset-link evidence limitation and the
+historical Dify memory-limit incident. Those controls remain accurately labelled; they are
+not converted into passes.
+
+This closes the Phase 30 review, verification, handoff and release-decision activities.
+Invitation sending and participant onboarding remain open operational actions. The decision
+does not claim public launch, multi-client hosting, general production readiness or high
+availability, and it does not complete the preserved custom-RAG roadmap or later visual and
+AWS gates.

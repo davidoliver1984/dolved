@@ -46,4 +46,9 @@ These specifications remain authoritative for the repository's retained custom R
 
 - [Current-Policy Question-Pool Conversation Profile](product-features/current-policy-question-pool.md) — accepted for the custom current-policy conversation path. Whether its profile-specific behaviour is carried forward through the Dify pilot is not established by the reclassification and must be confirmed against the integration before reuse.
 
-The current Dify architecture and delivery status are recorded by [ADR-0041](../adr/0041-use-stock-self-hosted-dify-for-single-client-delivery.md) and the [Dolved–Dify delivery plan](../operations/dolved-dify/DOLVED-DIFY-DELIVERY.md). The [legacy recovery guide](../operations/dolved-dify/LEGACY-RAG-RECOVERY.md) preserves the custom system without presenting it as the Dify implementation.
+The current Dify architecture and delivery status are recorded by
+[ADR-0041](../adr/0041-use-stock-self-hosted-dify-for-single-client-delivery.md), the
+[Dolved–Dify delivery plan](../operations/dolved-dify/DOLVED-DIFY-DELIVERY.md) and the
+[private-pilot acceptance](../operations/dolved-dify/PRIVATE-PILOT-ACCEPTANCE-20261127.md).
+The [legacy recovery guide](../operations/dolved-dify/LEGACY-RAG-RECOVERY.md) preserves the
+custom system without presenting it as the Dify implementation.

@@ -19,11 +19,15 @@ historical records with their original identities.
 ## Current position
 
 The hosted pilot is deployed and the bounded security-acceptance phase has completed with
-one confirmed live dependency blocker patched and deployed. Residual medium hardening and
-hands-on acceptance items remain. The current outcome is ready for David's pilot release
-decision, not an automatic launch or production-readiness claim. Start with the
+one confirmed live dependency blocker patched and deployed. Hosted access-control checks
+then covered the bounded invitation, recovery, role, tenancy, conversation and export
+matrix. David has accepted the documented residual risks and remaining fixture-dependent
+coverage gaps as sufficient for the invitation-only private pilot. Invitations and
+participant onboarding remain separate operational actions; this is not a public-launch or
+general production-readiness claim. Start with the
+[private-pilot acceptance](operations/dolved-dify/PRIVATE-PILOT-ACCEPTANCE-20261127.md),
 [security report](operations/dolved-dify/PILOT-SECURITY-ACCEPTANCE-20261126.md) and
-[launch checklist](operations/dolved-dify/PILOT-LAUNCH-CHECKLIST-20261126.md).
+[onboarding checklist](operations/dolved-dify/PILOT-LAUNCH-CHECKLIST-20261126.md).
 
 ## Future custom RAG path
 

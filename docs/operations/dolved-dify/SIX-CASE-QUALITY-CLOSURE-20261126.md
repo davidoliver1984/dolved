@@ -1,5 +1,9 @@
 # Bounded six-case quality-testing closure
 
+> Historical quality record. See the
+> [private-pilot acceptance](PRIVATE-PILOT-ACCEPTANCE-20261127.md) for the separate current
+> release decision. The PASS below remains supplementary and does not regrade earlier work.
+
 Date: 26 November 2026  
 Owner: David  
 Scope: supplementary six-case quality assessment and its isolated Dify test resources
