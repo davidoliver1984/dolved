@@ -10,6 +10,10 @@ canonical decision is the
 pilot but does not itself send invitations or claim production, public-launch or
 multi-client readiness.
 
+Participant onboarding materials: [welcome guide](../../onboarding/dolved-private-pilot/PARTICIPANT-WELCOME-GUIDE.md),
+[invitation message](../../onboarding/dolved-private-pilot/PARTICIPANT-INVITATION-MESSAGE.md)
+and [organiser checklist](../../onboarding/dolved-private-pilot/ORGANISER-CHECKLIST.md).
+
 - [x] David reviewed and accepted the residual medium findings and coverage limits in the
   [security-acceptance report](PILOT-SECURITY-ACCEPTANCE-20261126.md).
 - [x] Resolve the concrete actor-matrix prerequisite through supported lifecycle actions:
