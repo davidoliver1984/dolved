@@ -23,6 +23,11 @@ runtime-configuration relocation, accepted release documentation and corrected
 `tasks.json` delivery summary remain intact. Historical evidence and preservation refs were
 not rewritten.
 
+After this reconciliation, `main` is the single source of truth for the current integrated
+product. The contributor workflow and integration completion check are maintained in
+[`CONTRIBUTING.md`](../../../CONTRIBUTING.md); this report remains the historical record of
+the reconciliation rather than a competing branch-specific baseline.
+
 ## Reconciliation table
 
 | Feature area | Acceptance and implementation evidence | `main` before reconciliation | Recorded deployed revision | Reconciliation result / classification |

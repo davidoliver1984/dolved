@@ -710,3 +710,23 @@ AWS gates.
 The repository-history reconciliation that restored the complete accepted implementation
 to `main` without changing the hosted system is recorded in
 [`PILOT-IMPLEMENTATION-RECONCILIATION-20261127.md`](PILOT-IMPLEMENTATION-RECONCILIATION-20261127.md).
+
+### Repository source of truth — 28 November 2026
+
+`main` is the canonical repository state for the current integrated Dolved product. The
+accepted implementation was integrated by
+`abfd4c560970c0a9b9140b75a8a948405c1dd253`, and participant onboarding materials followed
+at `3633ca05d697a6a985e09b1c1206d66a6ee8e0f5`. Historical branches, tags and custom-RAG
+recovery assets remain preservation and development references, not alternative current
+product baselines.
+
+Repository integration is distinct from deployment. The recorded deployed application
+identities remain web revision `7b4c1df3b4f1437010601774021f1f2175d766be`, API revision
+`dd3d640bb59b5f32f3b8be0ba2d6001d502e6e42` with its immutable image, and the published
+Dify workflow and corpus identities recorded above. The later integration and
+documentation commits are not themselves labelled as deployed, even though the hosted
+application already contains their accepted application lineage.
+
+Future routine releases must identify a `main` commit, or a release tag pointing to a
+`main` commit, and record the exact deployed images and published configuration. The full
+workflow and completion check are in [`CONTRIBUTING.md`](../../../CONTRIBUTING.md).

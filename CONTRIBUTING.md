@@ -169,6 +169,57 @@ AI implementation assistants must not make significant architectural decisions i
 
 The human developer remains responsible for all final architectural decisions, implementation approval, commit boundaries and repository history. AI tools may recommend, prepare or create commits only after the human developer has explicitly agreed the implementation scope and authorised the commit.
 
+## Canonical main, integration and deployment status
+
+`main` is the repository's single source of truth for the current integrated product. It
+contains the application, specifications, task records, configuration templates and current
+documentation that belong together. Historical journals and evidence remain authoritative
+for the events they record; making `main` canonical does not authorise rewriting them.
+
+Use focused, short-lived branches as temporary workspaces. Work completed only on a branch
+must be described as **implemented on branch**, not integrated. Before recording accepted
+work as **integrated into main**, bring its implementation and necessary migrations,
+configuration templates, tests and documentation into `main` together. Do not maintain an
+accepted branch-only alternative to the current product or roadmap.
+
+Keep integration and deployment status explicit and separate:
+
+- **Implemented on branch** — the scoped change exists on a working branch.
+- **Integrated into main** — the scoped change and its dependencies are present on `main`.
+- **Deployed and verified** — deployment evidence identifies the running commit, images and
+  relevant published configuration identities and records the verification performed.
+
+`main` may legitimately be ahead of production. Do not describe the current `main` commit
+as deployed without evidence for that exact identity. An older deployed commit may contain
+the same application code when later `main` commits change documentation only. Keep
+production secrets and private runtime data outside Git.
+
+Routine releases must deploy an identified `main` commit or a release tag that points to a
+`main` commit. Do not deploy uncommitted working-tree changes or branch-only functionality.
+Record any emergency exception, retain the actual deployed identity and reconcile the
+exception into `main` promptly.
+
+The preserved custom-RAG implementation, recovery material and historical tags remain
+available for future work. Begin any resumed custom-RAG development on a focused branch
+based on current `main`, selectively reuse preserved implementation where appropriate and
+integrate it when ready. Do not establish it as a second current baseline or mark unfinished
+custom-RAG roadmap work complete because the Dify pilot is accepted.
+
+### Integration completion check
+
+Before closing an accepted delivery, confirm that:
+
+- the scoped implementation and its dependencies are integrated into `main`;
+- specifications, task records and current documentation agree;
+- deployment status and any deliberate difference from `main` are recorded;
+- unrelated and deferred work remains preserved; and
+- no accepted implementation remains solely on a working branch.
+
+Before retiring a branch or worktree, inspect it for unique commits, uncommitted changes and
+preservation requirements. Update existing canonical documents rather than creating a
+competing current plan. Do not delete a branch, worktree or preservation ref merely because
+its integrated work is complete.
+
 ## Architecture and implementation workflow
 
 This project deliberately separates **architecture** from **implementation**.

@@ -25,6 +25,13 @@ This repo treats documentation as load-bearing, not optional. Before making a ch
 Read `tasks.json` for the live phase and session. Do not infer current state from
 this file because it will become stale as the tracker advances.
 
+`main` is the canonical current integrated product. Treat branches as temporary workspaces:
+branch-local work is not integrated until its implementation and required migrations,
+templates, tests and documentation reach `main`. Keep **implemented on branch**,
+**integrated into main** and **deployed and verified** as distinct statuses. Routine
+deployments must use an identified `main` commit or a release tag pointing to one. See
+`CONTRIBUTING.md` for the integration completion check and preservation rules.
+
 ## How this repo wants AI-assisted work done
 
 `CONTRIBUTING.md` describes a teaching-session workflow originally built around Ralph/ChatGPT (architecture mentor) + Codex (implementer in teaching mode). When operating as the implementer in that loop:
