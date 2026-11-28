@@ -2,8 +2,9 @@ import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/re
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { ApiError } from "@/lib/api";
 
-const { apiFetchMock, routerPushMock } = vi.hoisted(() => ({
+const { apiFetchMock, documentReloadMock, routerPushMock } = vi.hoisted(() => ({
   apiFetchMock: vi.fn(),
+  documentReloadMock: vi.fn(),
   routerPushMock: vi.fn(),
 }));
 
@@ -16,11 +17,16 @@ vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: routerPushMock }),
 }));
 
+vi.mock("@/lib/browser-navigation", () => ({
+  navigateWithDocumentReload: documentReloadMock,
+}));
+
 import { AuthForm } from "@/components/AuthForm";
 
 describe("AuthForm", () => {
   beforeEach(() => {
     apiFetchMock.mockReset();
+    documentReloadMock.mockReset();
     routerPushMock.mockReset();
     window.localStorage.clear();
   });
@@ -56,10 +62,28 @@ describe("AuthForm", () => {
         name: mode === "login" ? "Sign in" : "Create account",
       }).closest("form")!);
 
-      await waitFor(() => expect(routerPushMock).toHaveBeenCalledWith("/app"));
+      if (mode === "login") {
+        await waitFor(() => expect(documentReloadMock).toHaveBeenCalledWith("/app"));
+        expect(routerPushMock).not.toHaveBeenCalled();
+      } else {
+        await waitFor(() => expect(routerPushMock).toHaveBeenCalledWith("/app"));
+        expect(documentReloadMock).not.toHaveBeenCalled();
+      }
       expect(screen.queryByRole("alert")).toBeNull();
     },
   );
+
+  it("reloads the authenticated dashboard after an ordinary successful sign-in", async () => {
+    apiFetchMock.mockResolvedValue({ data: { user: {} } });
+    render(<AuthForm mode="login" />);
+
+    fireEvent.change(screen.getByLabelText("Email address"), { target: { value: "member@example.test" } });
+    fireEvent.change(screen.getByLabelText("Password"), { target: { value: "password" } });
+    fireEvent.submit(screen.getByRole("button", { name: "Sign in" }).closest("form")!);
+
+    await waitFor(() => expect(documentReloadMock).toHaveBeenCalledWith("/app"));
+    expect(routerPushMock).not.toHaveBeenCalled();
+  });
 
   it("uses platform-specific sign-in copy and returns to the allowlisted operations route", async () => {
     apiFetchMock.mockResolvedValue({ data: { user: {} } });
@@ -72,7 +96,8 @@ describe("AuthForm", () => {
     fireEvent.change(screen.getByLabelText("Password"), { target: { value: "password" } });
     fireEvent.submit(screen.getByRole("button", { name: "Sign in" }).closest("form")!);
 
-    await waitFor(() => expect(routerPushMock).toHaveBeenCalledWith("/app/platform/operations"));
+    await waitFor(() => expect(documentReloadMock).toHaveBeenCalledWith("/app/platform/operations"));
+    expect(routerPushMock).not.toHaveBeenCalled();
   });
 
   it("keeps the invitation journey through registration and email verification", async () => {

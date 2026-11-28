@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Notice } from "@/components/ui/notice";
 import { PasswordInput, PasswordStrength } from "@/components/ui/password-input";
 import { apiFetch, ApiError, deploymentBranding, firstError, type EffectiveBranding, User } from "@/lib/api";
+import { navigateWithDocumentReload } from "@/lib/browser-navigation";
 
 type Mode = "login" | "register" | "forgot" | "reset";
 
@@ -114,8 +115,8 @@ export function AuthForm({ context = "workspace", mode, registrationEnabled = tr
           : "/verify-email");
       } else if (mode === "reset") {
         router.push("/login?reset=complete");
-      } else if (mode === "login" && response.data?.redirect_to) {
-        window.location.assign(response.data.redirect_to);
+      } else if (mode === "login") {
+        navigateWithDocumentReload(response.data?.redirect_to ?? returnTo ?? "/app");
       } else {
         router.push(returnTo ?? "/app");
       }
@@ -125,7 +126,11 @@ export function AuthForm({ context = "workspace", mode, registrationEnabled = tr
         caught.status === 409 &&
         (mode === "login" || mode === "register")
       ) {
-        router.push(returnTo ?? "/app");
+        if (mode === "login") {
+          navigateWithDocumentReload(returnTo ?? "/app");
+        } else {
+          router.push(returnTo ?? "/app");
+        }
       } else {
         const failure = firstError(caught);
         setError(failure);
